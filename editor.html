@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Main</title>
+    <script src="lib/codemirror.js"></script>
+    <link rel="stylesheet" href="lib/codemirror.css">
+    <script src="lib/markdown.js"></script>
+    <script src="main.js"></script>
+</head>
+<body>
+    <div id="cm">
+	<textarea id="cm-textarea">
+	</textarea>
+    </div>
+
+    <div id="elm">
+    </div>
+</body>
+<script>
+ var cm = CodeMirror.fromTextArea(document.getElementById("cm-textarea"));
+
+ var app = Elm.Main.init({
+     node: document.getElementById('elm')
+ });
+
+ // send current edit generation
+ /* setInterval(function(){
+  *     app.ports.currentGeneration.send(cm.changeGeneration());
+  * }, 100);
+  */
+
+ cm.on("changes", function(){
+          app.ports.currentGeneration.send(cm.changeGeneration());
+ });
+
+     
+ function sendContent() {
+     app.ports.cmContent.send( {
+	 generation: cm.changeGeneration(),
+	 content : cm.getValue()
+     }
+     );
+ }
+ 
+ app.ports.getContent.subscribe(function() {
+     sendContent();
+ });
+ 
+     // cm.setValue()
+     
+</script>
+</html>
