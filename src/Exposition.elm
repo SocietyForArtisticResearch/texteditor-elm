@@ -1,4 +1,4 @@
-module Exposition exposing (RCMediaObject(..), RCObjectData, objectDiv)
+module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject(..), RCObjectData, RCPlayerSettings, TOC, TOCEntry, asHtml, asMarkdown, mediaUrl, objectByNameOrId, replaceToolsWithImages, thumbUrl)
 
 import Html as H
 import Html.String as HStr
@@ -297,3 +297,6 @@ replaceToolsWithImages exp urlPrefix =
 -- removeObjectWithID
 -- addObject
 -- replaceObjectWithID
+-- updateOrCreateObject
+-- integrateMediaList
+-- integrateSerializedMediaInfo
