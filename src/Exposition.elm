@@ -177,21 +177,7 @@ asMarkdown : RCMediaObject -> String
 asMarkdown media =
     let
         dataobject =
-            case media of
-                RCImage data ->
-                    data
-
-                RCPdf data ->
-                    data
-
-                RCSvg data ->
-                    data
-
-                RCAudio data _ ->
-                    data
-
-                RCVideo data _ ->
-                    data
+            objData media
     in
     "![" ++ dataobject.name ++ "](" ++ mediaUrl dataobject ++ ")"
 
