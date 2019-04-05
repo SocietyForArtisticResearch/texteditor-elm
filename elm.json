@@ -14,9 +14,14 @@
             "elm-community/string-extra": "4.0.1",
             "elm-explorations/markdown": "1.0.0",
             "hecrj/html-parser": "2.3.3",
-            "marcosh/elm-html-to-unicode": "1.0.3"
+            "marcosh/elm-html-to-unicode": "1.0.3",
+            "zwilias/elm-html-string": "2.0.2"
         },
         "indirect": {
+            "NoRedInk/elm-string-conversions": "1.0.1",
+            "elm/bytes": "1.0.8",
+            "elm/file": "1.0.5",
+            "elm/http": "2.0.0",
             "elm/parser": "1.1.0",
             "elm/time": "1.0.0",
             "elm/url": "1.0.0",
