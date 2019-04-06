@@ -1,8 +1,8 @@
 module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject(..), RCObjectData, RCPlayerSettings, TOC, TOCEntry, asHtml, asMarkdown, mediaUrl, objectByNameOrId, replaceToolsWithImages, thumbUrl)
 
-import Html as H
-import Html.String as HStr
-import Html.String.Attributes as Attr
+import Html as Html
+import Html.Attributes as Attr
+import RCMD
 import Regex
 
 
@@ -12,7 +12,7 @@ type alias RCExposition msg =
     , authors : List String
     , id : Int
     , currentWeave : Int
-    , renderedHtml : HStr.Html msg
+    , renderedHtml : Html.Html msg
     , markdownInput : String
     , media : List RCMediaObject
     }
@@ -151,7 +151,7 @@ withPrefix prefix str =
             pre ++ str
 
 
-addDimensions : OptionalDimensions -> List (HStr.Attribute msg) -> List (HStr.Attribute msg)
+addDimensions : OptionalDimensions -> List (Html.Attribute msg) -> List (Html.Attribute msg)
 addDimensions dims attributes =
     case dims of
         Nothing ->
@@ -161,9 +161,9 @@ addDimensions dims attributes =
             attributes ++ [ Attr.height h, Attr.width w ]
 
 
-objectDiv : RCObjectData -> HStr.Html msg -> HStr.Html msg
+objectDiv : RCObjectData -> Html.Html msg -> Html.Html msg
 objectDiv objdata child =
-    HStr.div
+    Html.div
         [ Attr.id (String.fromInt objdata.id)
         , Attr.classList
             [ ( "rcobject", True )
@@ -182,20 +182,20 @@ asMarkdown media =
     "![" ++ dataobject.name ++ "](" ++ mediaUrl dataobject ++ ")"
 
 
-asHtml : RCMediaObject -> HStr.Html msg
+asHtml : RCMediaObject -> Html.Html msg
 asHtml media =
     case media of
         RCImage data ->
             objectDiv data <|
-                HStr.figure []
-                    [ HStr.img (addDimensions data.dimensions [ Attr.src (mediaUrl data), Attr.alt data.name ]) []
-                    , HStr.figcaption [] [ HStr.text data.caption ]
+                Html.figure []
+                    [ Html.img (addDimensions data.dimensions [ Attr.src (mediaUrl data), Attr.alt data.name ]) []
+                    , Html.figcaption [] [ Html.text data.caption ]
                     ]
 
         RCPdf data ->
             objectDiv data <|
-                HStr.figure []
-                    [ HStr.object
+                Html.figure []
+                    [ Html.object
                         (addDimensions data.dimensions
                             [ Attr.attribute "data" (mediaUrl data)
                             , Attr.attribute "type" "application/pdf"
@@ -203,13 +203,13 @@ asHtml media =
                             ]
                         )
                         []
-                    , HStr.figcaption [] [ HStr.text data.caption ]
+                    , Html.figcaption [] [ Html.text data.caption ]
                     ]
 
         RCSvg data ->
             objectDiv data <|
-                HStr.figure []
-                    [ HStr.object
+                Html.figure []
+                    [ Html.object
                         (addDimensions data.dimensions
                             [ Attr.attribute "data" (mediaUrl data)
                             , Attr.attribute "type" "application/svg+xml"
@@ -217,13 +217,13 @@ asHtml media =
                             ]
                         )
                         []
-                    , HStr.figcaption [] [ HStr.text data.caption ]
+                    , Html.figcaption [] [ Html.text data.caption ]
                     ]
 
         RCAudio data playerSettings ->
             objectDiv data <|
-                HStr.figure []
-                    [ HStr.audio
+                Html.figure []
+                    [ Html.audio
                         (addDimensions data.dimensions
                             [ Attr.controls True
                             , Attr.preload (preloadToString playerSettings.preload)
@@ -231,15 +231,15 @@ asHtml media =
                             , Attr.loop playerSettings.loop
                             ]
                         )
-                        [ HStr.source [ Attr.src (mediaUrl data) ] []
+                        [ Html.source [ Attr.src (mediaUrl data) ] []
                         ]
-                    , HStr.figcaption [] [ HStr.text data.caption ]
+                    , Html.figcaption [] [ Html.text data.caption ]
                     ]
 
         RCVideo data playerSettings ->
             objectDiv data <|
-                HStr.figure []
-                    [ HStr.video
+                Html.figure []
+                    [ Html.video
                         (addDimensions data.dimensions
                             [ Attr.controls True
                             , Attr.preload (preloadToString playerSettings.preload)
@@ -247,10 +247,25 @@ asHtml media =
                             , Attr.loop playerSettings.loop
                             ]
                         )
-                        [ HStr.source [ Attr.src (mediaUrl data), Attr.attribute "type" "video/mp4" ] []
+                        [ Html.source [ Attr.src (mediaUrl data), Attr.attribute "type" "video/mp4" ] []
                         ]
-                    , HStr.figcaption [] [ HStr.text data.caption ]
+                    , Html.figcaption [] [ Html.text data.caption ]
                     ]
+
+
+htmlForMediaString : RCExposition msg -> String -> Html.Html msg
+htmlForMediaString expo mediaString =
+    case objectByNameOrId mediaString expo of
+        Nothing ->
+            Html.div [] []
+
+        Just o ->
+            asHtml o
+
+
+render : RCExposition msg -> RCExposition msg
+render exp =
+    { exp | renderedHtml = RCMD.rcToHtml (htmlForMediaString exp) exp.markdownInput }
 
 
 replaceToolsWithImages : RCExposition msg -> Maybe String -> String
