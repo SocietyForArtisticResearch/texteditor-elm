@@ -1,29 +1,26 @@
 port module Main exposing (Msg(..), main, update, view)
 
 import Browser
-import ElmEscapeHtml as HtmlEsc
+import Exposition
 import Html exposing (Html, div, span, text)
 import Html.Attributes exposing (attribute)
 import Html.Events exposing (on, onInput)
 import Json.Decode as D
 import Json.Encode as E
-import Markdown as Md
 import Regex
 import String.Extra as Str
 
 
 type alias Model msg =
-    { contentMarkdown : String
-    , contentHtml : Html msg
+    { exposition : Exposition.RCExposition msg
     , editGeneration : Int
     }
 
 
 init : () -> ( Model msg, Cmd Msg )
 init _ =
-    ( { contentMarkdown = ""
-      , editGeneration = -1
-      , contentHtml = span [] []
+    ( { editGeneration = -1
+      , exposition = Exposition.empty
       }
     , Cmd.none
     )
@@ -79,8 +76,7 @@ update msg model =
                 ( Ok gen, Ok content ) ->
                     ( { model
                         | editGeneration = gen
-                        , contentMarkdown = content
-                        , contentHtml = Md.toHtml [] content
+                        , exposition = Exposition.render (Exposition.withMd model.exposition content)
                       }
                     , Cmd.none
                     )
@@ -91,4 +87,4 @@ update msg model =
 
 view : Model Msg -> Html Msg
 view model =
-    div [] [ model.contentHtml ]
+    div [] [ model.exposition.renderedHtml ]

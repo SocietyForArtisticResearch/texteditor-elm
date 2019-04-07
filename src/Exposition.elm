@@ -1,4 +1,4 @@
-module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject(..), RCObjectData, RCPlayerSettings, TOC, TOCEntry, asHtml, asMarkdown, mediaUrl, objectByNameOrId, replaceToolsWithImages, thumbUrl)
+module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject(..), RCObjectData, RCPlayerSettings, TOC, TOCEntry, asHtml, asMarkdown, empty, mediaUrl, objectByNameOrId, render, replaceToolsWithImages, thumbUrl, withMd)
 
 import Html as Html
 import Html.Attributes as Attr
@@ -16,6 +16,24 @@ type alias RCExposition msg =
     , markdownInput : String
     , media : List RCMediaObject
     }
+
+
+empty : RCExposition msg
+empty =
+    { css = ""
+    , title = ""
+    , authors = []
+    , id = 0
+    , currentWeave = 0
+    , renderedHtml = Html.div [] []
+    , markdownInput = ""
+    , media = []
+    }
+
+
+withMd : RCExposition msg -> String -> RCExposition msg
+withMd exp content =
+    { exp | markdownInput = content }
 
 
 type alias OptionalDimensions =
