@@ -2,7 +2,6 @@
 
 RC Team (luc.doebereiner@researchcatalogue.net), 2019
 
-
 New implementation of the text based editor using elm.
 
 The editor is codemirror. A built of version 5.45.0 is included in `lib`.
