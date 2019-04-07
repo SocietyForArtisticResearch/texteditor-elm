@@ -9,7 +9,7 @@ The editor is codemirror. A built of version 5.45.0 is included in `lib`.
 # Build
 
 ```
-elm make src / Main.elm --output=main.js
+elm make src/Main.elm --output=main.js
 ```
 
 
