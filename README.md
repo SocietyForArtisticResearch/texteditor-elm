@@ -1,4 +1,3 @@
-
 # Markdown Editor
 
 RC Team (luc.doebereiner@researchcatalogue.net), 2019
