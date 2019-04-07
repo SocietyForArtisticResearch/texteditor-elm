@@ -119,6 +119,32 @@ objectByNameOrId nameOrId exp =
             List.head nameLst
 
 
+removeObjectWithID : Int -> RCExposition msg -> RCExposition msg
+removeObjectWithID id exp =
+    { exp | media = List.filter (\m -> (objData m).id /= id) exp.media }
+
+
+replaceObject : RCMediaObject -> RCExposition msg -> RCExposition msg
+replaceObject obj exp =
+    { exp
+        | media =
+            List.map
+                (\m ->
+                    if (objData m).id == (objData obj).id then
+                        obj
+
+                    else
+                        m
+                )
+                exp.media
+    }
+
+
+addObject : RCMediaObject -> RCExposition msg -> RCExposition msg
+addObject obj exp =
+    { exp | media = obj :: exp.media }
+
+
 mediaUrl : RCObjectData -> String
 mediaUrl data =
     "/text-editor/simple-media-resource?research="
@@ -309,9 +335,6 @@ replaceToolsWithImages exp urlPrefix =
 
 
 -- getoc, h1,h2
--- removeObjectWithID
--- addObject
--- replaceObjectWithID
 -- updateOrCreateObject
 -- integrateMediaList
 -- integrateSerializedMediaInfo
