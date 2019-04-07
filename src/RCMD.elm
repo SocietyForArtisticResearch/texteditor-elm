@@ -1,10 +1,11 @@
-module RCMD exposing (rcToHtml)
+module RCMD exposing (rcToHtml, toc)
 
 import Html exposing (Html, div, h1, h2, h3, h4, h5, h6)
 import Html.Attributes as A
 import Markdown.Block as Block exposing (Block(..))
 import Markdown.Inline as Inline exposing (Inline(..))
 import Regex
+import String.Extra as Str
 
 
 type RCMedia
@@ -81,7 +82,7 @@ headingsWithIds htmlFun block =
                 hElement =
                     let
                         attrId =
-                            A.id (Inline.extractText inlines)
+                            A.id (Str.dasherize (Inline.extractText inlines))
                     in
                     case level of
                         1 ->
@@ -123,7 +124,7 @@ rcToHtml htmlFun str =
         |> Html.div []
 
 
-toc : String -> List ( Int, String )
+toc : String -> List ( Int, String, String )
 toc str =
     str
         |> Block.parse Nothing
@@ -131,11 +132,15 @@ toc str =
         |> List.concat
 
 
-getHeader : Block b i -> List ( Int, String )
+getHeader : Block b i -> List ( Int, String, String )
 getHeader block =
     case block of
         Heading _ lvl inlines ->
-            [ ( lvl, Inline.extractText inlines ) ]
+            let
+                txt =
+                    Inline.extractText inlines
+            in
+            [ ( lvl, txt, Str.dasherize txt ) ]
 
         _ ->
             []

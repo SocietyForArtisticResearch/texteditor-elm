@@ -5661,11 +5661,52 @@ var elm$html$Html$h3 = _VirtualDom_node('h3');
 var elm$html$Html$h4 = _VirtualDom_node('h4');
 var elm$html$Html$h5 = _VirtualDom_node('h5');
 var elm$html$Html$h6 = _VirtualDom_node('h6');
+var elm$core$Basics$always = F2(
+	function (a, _n0) {
+		return a;
+	});
 var elm$core$Basics$composeR = F3(
 	function (f, g, x) {
 		return g(
 			f(x));
 	});
+var elm$core$String$append = _String_append;
+var elm$core$String$toLower = _String_toLower;
+var elm$core$String$trim = _String_trim;
+var elm$regex$Regex$Match = F4(
+	function (match, index, number, submatches) {
+		return {index: index, match: match, number: number, submatches: submatches};
+	});
+var elm$regex$Regex$replace = _Regex_replaceAtMost(_Regex_infinity);
+var elm$regex$Regex$fromStringWith = _Regex_fromStringWith;
+var elm$regex$Regex$fromString = function (string) {
+	return A2(
+		elm$regex$Regex$fromStringWith,
+		{caseInsensitive: false, multiline: false},
+		string);
+};
+var elm$regex$Regex$never = _Regex_never;
+var elm_community$string_extra$String$Extra$regexFromString = A2(
+	elm$core$Basics$composeR,
+	elm$regex$Regex$fromString,
+	elm$core$Maybe$withDefault(elm$regex$Regex$never));
+var elm_community$string_extra$String$Extra$dasherize = function (string) {
+	return elm$core$String$toLower(
+		A3(
+			elm$regex$Regex$replace,
+			elm_community$string_extra$String$Extra$regexFromString('[_-\\s]+'),
+			elm$core$Basics$always('-'),
+			A3(
+				elm$regex$Regex$replace,
+				elm_community$string_extra$String$Extra$regexFromString('([A-Z])'),
+				A2(
+					elm$core$Basics$composeR,
+					function ($) {
+						return $.match;
+					},
+					elm$core$String$append('-')),
+				elm$core$String$trim(string))));
+};
 var elm$core$List$append = F2(
 	function (xs, ys) {
 		if (!ys.b) {
@@ -5858,7 +5899,8 @@ var author$project$RCMD$headingsWithIds = F2(
 			var inlines = block.c;
 			var hElement = function () {
 				var attrId = elm$html$Html$Attributes$id(
-					pablohirafuji$elm_markdown$Markdown$Inline$extractText(inlines));
+					elm_community$string_extra$String$Extra$dasherize(
+						pablohirafuji$elm_markdown$Markdown$Inline$extractText(inlines)));
 				switch (level) {
 					case 1:
 						return elm$html$Html$h1(
@@ -5917,18 +5959,7 @@ var author$project$RCMD$rcBlockView = F2(
 var author$project$RCMD$RCMedia = function (a) {
 	return {$: 'RCMedia', a: a};
 };
-var elm$regex$Regex$Match = F4(
-	function (match, index, number, submatches) {
-		return {index: index, match: match, number: number, submatches: submatches};
-	});
 var elm$regex$Regex$find = _Regex_findAtMost(_Regex_infinity);
-var elm$regex$Regex$fromStringWith = _Regex_fromStringWith;
-var elm$regex$Regex$fromString = function (string) {
-	return A2(
-		elm$regex$Regex$fromStringWith,
-		{caseInsensitive: false, multiline: false},
-		string);
-};
 var author$project$RCMD$matchRCMedia = function (str) {
 	var r = elm$regex$Regex$fromString('!{([^}]*)}');
 	if (r.$ === 'Nothing') {
@@ -6089,7 +6120,6 @@ var elm$core$String$right = F2(
 			elm$core$String$length(string),
 			string);
 	});
-var elm$core$String$trim = _String_trim;
 var pablohirafuji$elm_markdown$Markdown$Block$formatParagraphLine = function (rawParagraph) {
 	return (A2(elm$core$String$right, 2, rawParagraph) === '  ') ? (elm$core$String$trim(rawParagraph) + '  ') : elm$core$String$trim(rawParagraph);
 };
@@ -6100,7 +6130,6 @@ var pablohirafuji$elm_markdown$Markdown$Block$addToParagraph = F2(
 			paragraph + ('\n' + pablohirafuji$elm_markdown$Markdown$Block$formatParagraphLine(rawLine)),
 			_List_Nil);
 	});
-var elm$regex$Regex$never = _Regex_never;
 var pablohirafuji$elm_markdown$Markdown$Block$blockQuoteLineRegex = A2(
 	elm$core$Maybe$withDefault,
 	elm$regex$Regex$never,
@@ -6349,7 +6378,6 @@ var pablohirafuji$elm_markdown$Markdown$Block$maybeContinueParagraph = F2(
 var elm$core$String$concat = function (strings) {
 	return A2(elm$core$String$join, '', strings);
 };
-var elm$regex$Regex$replace = _Regex_replaceAtMost(_Regex_infinity);
 var elm$regex$Regex$replaceAtMost = _Regex_replaceAtMost;
 var pablohirafuji$elm_markdown$Markdown$Helpers$tabRegex = A2(
 	elm$core$Maybe$withDefault,
@@ -6968,7 +6996,6 @@ var elm$core$String$foldr = _String_foldr;
 var elm$core$String$toList = function (string) {
 	return A3(elm$core$String$foldr, elm$core$List$cons, _List_Nil, string);
 };
-var elm$core$String$toLower = _String_toLower;
 var pablohirafuji$elm_markdown$Markdown$Entity$hexToInt = A2(
 	elm$core$Basics$composeR,
 	elm$core$String$toLower,

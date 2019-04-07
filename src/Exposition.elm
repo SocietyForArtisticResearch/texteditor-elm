@@ -351,8 +351,19 @@ replaceToolsWithImages exp urlPrefix =
                 md
 
 
+toc : RCExposition msg -> List TOCEntry
+toc exp =
+    List.map
+        (\( level, title, id ) ->
+            { level = level
+            , title = title
+            , id = id
+            }
+        )
+        (RCMD.toc exp.markdownInput)
 
--- getoc, h1,h2
+
+
 -- updateOrCreateObject
 -- integrateMediaList
 -- integrateSerializedMediaInfo
