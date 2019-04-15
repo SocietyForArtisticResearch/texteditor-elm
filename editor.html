@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="lib/codemirror.css">
     <script src="lib/markdown.js"></script>
     <script src="main.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body>
     <div id="cm">
@@ -32,22 +33,40 @@
   */
 
  cm.on("changes", function(){
-          app.ports.currentGeneration.send(cm.changeGeneration());
+     app.ports.currentGeneration.send(cm.changeGeneration());
  });
 
-     
- function sendContent() {
-     app.ports.cmContent.send( {
-	 generation: cm.changeGeneration(),
-	 content : cm.getValue()
+
+
+ cm.on("mousedown", function(){
+     let pos = cm.getCursor();
+     let tok = cm.getTokenTypeAt(pos);
+     if (tok !== null && tok !== undefined) {
+	 if (tok.includes("rcmedia")) {
+	     let word = cm.findWordAt(pos);
+	     let content = cm.getRange(word.anchor, word.head)
+	     if (content !== "}" && content !== "!{") {
+		 app.ports.mediaDialog.send( 
+		     { media : content }
+		 );
+	     }
+	 }
      }
-     );
- }
- 
- app.ports.getContent.subscribe(function() {
-     sendContent();
  });
  
+     
+     function sendContent() {
+	 app.ports.cmContent.send( {
+	     generation: cm.changeGeneration(),
+	     content : cm.getValue()
+	 }
+	 );
+     }
+     
+     app.ports.getContent.subscribe(function() {
+	 sendContent();
+     });
+     
      // cm.setValue()
      
 </script>

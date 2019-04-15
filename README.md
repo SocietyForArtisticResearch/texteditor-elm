@@ -20,10 +20,7 @@ Open `editor.html`.
 
 # Todo
 
-- Evan's markdown lib does not seem to support HTML. We may need to
-  switch to https://github.com/pablohirafuji/elm-markdown
-- RC media module
-- Adjust mode to include RC media syntax
+- Adjust cm mode to include RC media syntax
 - upload to server
 - Buttons
 - RC Media Import
