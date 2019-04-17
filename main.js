@@ -6092,6 +6092,7 @@ var author$project$Main$init = function (flags) {
 			A3(author$project$RCAPI$getExposition, fl.research, fl.weave, author$project$Main$GotExposition));
 	} else {
 		var str = _n1.a;
+		var _n2 = A2(elm$core$Debug$log, 'err', str);
 		return _Utils_Tuple2(
 			{
 				editGeneration: -1,
