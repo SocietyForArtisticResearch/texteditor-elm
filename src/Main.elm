@@ -36,10 +36,6 @@ decodeFlags =
 
 init : D.Value -> ( Model msg, Cmd Msg )
 init flags =
-    let
-        _ =
-            Debug.log "flags" flags
-    in
     case D.decodeValue decodeFlags flags of
         Ok fl ->
             ( { editGeneration = -1

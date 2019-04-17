@@ -6077,10 +6077,9 @@ var elm$json$Json$Decode$decodeValue = _Json_run;
 var rundis$elm_bootstrap$Bootstrap$Modal$Hide = {$: 'Hide'};
 var rundis$elm_bootstrap$Bootstrap$Modal$hidden = rundis$elm_bootstrap$Bootstrap$Modal$Hide;
 var author$project$Main$init = function (flags) {
-	var _n0 = A2(elm$core$Debug$log, 'flags', flags);
-	var _n1 = A2(elm$json$Json$Decode$decodeValue, author$project$Main$decodeFlags, flags);
-	if (_n1.$ === 'Ok') {
-		var fl = _n1.a;
+	var _n0 = A2(elm$json$Json$Decode$decodeValue, author$project$Main$decodeFlags, flags);
+	if (_n0.$ === 'Ok') {
+		var fl = _n0.a;
 		return _Utils_Tuple2(
 			{
 				editGeneration: -1,
@@ -6091,8 +6090,8 @@ var author$project$Main$init = function (flags) {
 			},
 			A3(author$project$RCAPI$getExposition, fl.research, fl.weave, author$project$Main$GotExposition));
 	} else {
-		var str = _n1.a;
-		var _n2 = A2(elm$core$Debug$log, 'err', str);
+		var str = _n0.a;
+		var _n1 = A2(elm$core$Debug$log, 'err', str);
 		return _Utils_Tuple2(
 			{
 				editGeneration: -1,
