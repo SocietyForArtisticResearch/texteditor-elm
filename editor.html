@@ -19,10 +19,16 @@
     </div>
 </body>
 <script>
+
+ var urlParams = new URLSearchParams(window.location.search);
+
+
+ 
  var cm = CodeMirror.fromTextArea(document.getElementById("cm-textarea"));
 
  var app = Elm.Main.init({
-     node: document.getElementById('elm')
+     node: document.getElementById('elm'), 
+     flags: { research: urlParams.get('research'), weave:  urlParams.get('weave') }
  });
 
  
@@ -54,20 +60,20 @@
      }
  });
  
-     
-     function sendContent() {
-	 app.ports.cmContent.send( {
-	     generation: cm.changeGeneration(),
-	     content : cm.getValue()
-	 }
-	 );
+ 
+ function sendContent() {
+     app.ports.cmContent.send( {
+	 generation: cm.changeGeneration(),
+	 content : cm.getValue()
      }
-     
-     app.ports.getContent.subscribe(function() {
-	 sendContent();
-     });
-     
-     // cm.setValue()
-     
+     );
+ }
+ 
+ app.ports.getContent.subscribe(function() {
+     sendContent();
+ });
+ 
+ // cm.setValue()
+ 
 </script>
 </html>

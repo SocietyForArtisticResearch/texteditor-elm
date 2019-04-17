@@ -3,12 +3,15 @@ port module Main exposing (Msg(..), main, update, view)
 import Bootstrap.Button as Button
 import Bootstrap.Modal as Modal
 import Browser
+import Dict
 import Exposition
 import Html exposing (Html, div, p, span, text)
 import Html.Attributes exposing (attribute)
 import Html.Events exposing (on, onClick, onInput)
+import Http
 import Json.Decode as D
 import Json.Encode as E
+import RCAPI
 import Regex
 import String.Extra as Str
 
@@ -17,17 +20,42 @@ type alias Model msg =
     { exposition : Exposition.RCExposition msg
     , editGeneration : Int
     , mediaDialog : ( Modal.Visibility, String )
+    , weave : Maybe Int
+    , research : Maybe Int
     }
 
 
-init : () -> ( Model msg, Cmd Msg )
-init _ =
-    ( { editGeneration = -1
-      , exposition = Exposition.empty
-      , mediaDialog = ( Modal.hidden, "" )
-      }
-    , Cmd.none
-    )
+type alias Flags =
+    { weave : Int, research : Int }
+
+
+decodeFlags : D.Decoder Flags
+decodeFlags =
+    D.map2 Flags (D.field "weave" D.int) (D.field "research" D.int)
+
+
+init : D.Value -> ( Model msg, Cmd Msg )
+init flags =
+    case D.decodeValue decodeFlags flags of
+        Ok fl ->
+            ( { editGeneration = -1
+              , exposition = Exposition.empty
+              , mediaDialog = ( Modal.hidden, "" )
+              , research = Just fl.research
+              , weave = Just fl.weave
+              }
+            , RCAPI.getExposition fl.research fl.weave GotExposition
+            )
+
+        Err str ->
+            ( { editGeneration = -1
+              , exposition = Exposition.empty
+              , mediaDialog = ( Modal.hidden, "" )
+              , research = Nothing
+              , weave = Nothing
+              }
+            , Cmd.none
+            )
 
 
 main =
@@ -60,6 +88,7 @@ type Msg
     | MdContent E.Value
     | MediaDialog E.Value
     | CloseMediaDialog
+    | GotExposition (Result Http.Error (Dict.Dict String String))
 
 
 update : Msg -> Model msg -> ( Model msg, Cmd Msg )
@@ -105,6 +134,13 @@ update msg model =
         CloseMediaDialog ->
             ( { model | mediaDialog = ( Modal.hidden, "" ) }, Cmd.none )
 
+        GotExposition exp ->
+            let
+                _ =
+                    Debug.log "gotexposition" exp
+            in
+            ( model, Cmd.none )
+
 
 viewMediaDialog : ( Modal.Visibility, String ) -> Html Msg
 viewMediaDialog ( visibility, objectNameorId ) =
@@ -125,4 +161,9 @@ viewMediaDialog ( visibility, objectNameorId ) =
 
 view : Model Msg -> Html Msg
 view model =
-    div [] [ model.exposition.renderedHtml, viewMediaDialog model.mediaDialog ]
+    case ( model.research, model.weave ) of
+        ( Just r, Just w ) ->
+            div [] [ model.exposition.renderedHtml, viewMediaDialog model.mediaDialog ]
+
+        _ ->
+            div [] [ text "No exposition loaded" ]
