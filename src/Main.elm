@@ -52,6 +52,10 @@ init flags =
             )
 
         Err str ->
+            let
+                _ =
+                    Debug.log "err" str
+            in
             ( { editGeneration = -1
               , exposition = Exposition.empty
               , mediaDialog = ( Modal.hidden, "" )
