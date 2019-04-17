@@ -6070,15 +6070,17 @@ var author$project$RCAPI$getExposition = F3(
 var elm$core$Basics$negate = function (n) {
 	return -n;
 };
+var elm$core$Debug$log = _Debug_log;
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var elm$json$Json$Decode$decodeValue = _Json_run;
 var rundis$elm_bootstrap$Bootstrap$Modal$Hide = {$: 'Hide'};
 var rundis$elm_bootstrap$Bootstrap$Modal$hidden = rundis$elm_bootstrap$Bootstrap$Modal$Hide;
 var author$project$Main$init = function (flags) {
-	var _n0 = A2(elm$json$Json$Decode$decodeValue, author$project$Main$decodeFlags, flags);
-	if (_n0.$ === 'Ok') {
-		var fl = _n0.a;
+	var _n0 = A2(elm$core$Debug$log, 'flags', flags);
+	var _n1 = A2(elm$json$Json$Decode$decodeValue, author$project$Main$decodeFlags, flags);
+	if (_n1.$ === 'Ok') {
+		var fl = _n1.a;
 		return _Utils_Tuple2(
 			{
 				editGeneration: -1,
@@ -6089,7 +6091,7 @@ var author$project$Main$init = function (flags) {
 			},
 			A3(author$project$RCAPI$getExposition, fl.research, fl.weave, author$project$Main$GotExposition));
 	} else {
-		var str = _n0.a;
+		var str = _n1.a;
 		return _Utils_Tuple2(
 			{
 				editGeneration: -1,
@@ -10930,7 +10932,6 @@ var author$project$Main$getContent = _Platform_outgoingPort(
 	function ($) {
 		return elm$json$Json$Encode$null;
 	});
-var elm$core$Debug$log = _Debug_log;
 var rundis$elm_bootstrap$Bootstrap$Modal$Show = {$: 'Show'};
 var rundis$elm_bootstrap$Bootstrap$Modal$shown = rundis$elm_bootstrap$Bootstrap$Modal$Show;
 var author$project$Main$update = F2(
