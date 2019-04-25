@@ -91,7 +91,7 @@ type Msg
     = EditGeneration E.Value
     | MdContent E.Value
     | MediaDialog E.Value
-      --    | MediaEdit MediaDialog.Msg
+    | MediaEdit Exposition.RCMediaObject
     | CloseMediaDialog
     | GotExposition (Result Http.Error (Dict.Dict String String))
 

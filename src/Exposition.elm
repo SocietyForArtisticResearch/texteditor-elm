@@ -209,8 +209,8 @@ addDimensions dims attributes =
 -- VALIDATION
 
 
-validateName : RCMediaObject -> String -> RCExposition msg -> Result String String
-validateName obj newName exp =
+validateName : RCExposition msg -> RCMediaObject -> String -> Result String String
+validateName exp obj newName =
     if String.length newName < 4 then
         Err "Name is too short"
 
