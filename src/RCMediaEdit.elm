@@ -18,10 +18,7 @@ main =
         , update = update
         , subscriptions = subscriptions
         , view = view
-        }
-
-init : RCMediaObject
-init = RCMediaObject 
+        } 
         
 type Field
     = Name
@@ -46,6 +43,13 @@ type alias CssClass =
     , name : String
     }
 
+type alias RCMediaObjectValidation =
+    { name : Result
+    , description :Result
+    , copyright : Result
+    , file : Result
+    , cssClass : Result }
+        
 
 cssClasses : List CssClass
 cssClasses =
@@ -64,8 +68,9 @@ viewClassesPicker id classList currentSelection =
     let
         selectItem : CssClass -> Html Msg
         selectItem item =
+            let isSelected = (currentSelection.selector == selectItem) in
             Select.item [ Select.value item.selector
-                        , Html.Attributes.Selected currentSelection.selector ]
+                        , Html.Attributes.Selected isSelected ]
                 [ text item.name ]
     in
     Select.select [ Select.id id ] <|
@@ -76,16 +81,18 @@ viewInput : String -> String -> (String -> msg) -> Html msg
 viewInput placeholderArg valueArg toMsg =
     Input.text [ placeholder placeHolderArg, value valueArg, onInput toMsg ] []
 
-type alias MediaObjectID =
+
             
 
-createStringValidator : String -> String -> String =
-createStringValidator original =
-    (\value -> case value of
-                   "" -> original
+createStringValidator : Result -> String -> String =
+createStringValidator value original =
+    case value of
+        OK val -> val
 
-                   String x -> 
-                         
+        ERR val -> original
+                             
+
+validateRCMedia : RCMediaObject -> 
                      
 view : String -> String -> CssClass -> Html msg
 view  = objectName copy cssClass 
