@@ -6,20 +6,11 @@ import Bootstrap.Form.Input as Input
 import Bootstrap.Form.Select as Select
 import Bootstrap.Form.Textarea as Textarea
 import Bootstrap.Grid as Grid
-import Browser
 import Exposition exposing (RCExposition, RCMediaObject)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Validate exposing (Validator, fromErrors, ifBlank, ifNotInt, validate)
 
-main =
-    Browser.element
-        { init = init
-        , update = update
-        , subscriptions = subscriptions
-        , view = view
-        } 
-        
+
 type Field
     = Name
     | Description
@@ -30,12 +21,9 @@ type Field
 
 type alias MediaEditMessages msg =
     { insertTool : msg
-    , editTool : (RCMediaObject -> msg)
-    , deleteTool : (RCMediaObject -> msg)
+    , editTool : RCMediaObject -> msg
+    , deleteTool : RCMediaObject -> msg
     }
-      
-type File
-    = String
 
 
 type alias CssClass =
@@ -43,13 +31,19 @@ type alias CssClass =
     , name : String
     }
 
+
 type alias RCMediaObjectValidation =
     { name : Result String String
-    , description :Result String String
+    , description : Result String String
     , copyright : Result String String
     , file : Result String String
-    , cssClass : Result String String }
-        
+    , cssClass : Result String String
+    }
+
+
+
+-- presets for the user to use:
+
 
 cssClasses : List CssClass
 cssClasses =
@@ -68,75 +62,108 @@ viewClassesPicker id classList currentSelection =
     let
         selectItem : CssClass -> Html Msg
         selectItem item =
-            let isSelected = (currentSelection.selector == selectItem) in
-            Select.item [ Select.value item.selector
-                        , Html.Attributes.Selected isSelected ]
+            let
+                isSelected =
+                    currentSelection.selector == selectItem
+            in
+            Select.item
+                [ Select.value item.selector
+                , Html.Attributes.Selected isSelected
+                ]
                 [ text item.name ]
     in
     Select.select [ Select.id id ] <|
         List.map selectItem classList
 
 
-viewInput : String -> String -> (String -> msg) -> Html msg
-viewInput placeholderArg valueArg toMsg =
-    Input.text [ placeholder placeHolderArg, value valueArg, onInput toMsg ] []
+type alias InputWithLabelProperties =
+    { nodeId : String
+    , labeltext : String
+    , placeholder : String
+    , value : String
+    , onInput : String -> msg
+    , help : String
+    }
 
 
-            
 
-createStringValidator : Result -> String -> String =
-createStringValidator value original =
-    case value of
-        OK val -> val
+-- text input
 
-        ERR val -> original
-                             
 
-validateRCMedia : RCMediaObject -> 
+viewInputWithLabel : InputWithLabelProperties -> Html msg
+viewInputWithLabel props =
+    Form.group []
+        [ Form.label [ for props.id ] [ text props.labeltext ]
+        , Input.text [ placeholder props.placeholder, value props.value ] []
+        , Form.help [] [ text props.help ]
+        ]
 
--- view : ValidationStatus -> MediaEditMesages -> Html msg
-view : String -> String -> CssClass -> Html msg
-view  = objectName copy cssClass 
+
+
+-- textarea input
+
+
+viewTextAreaWithLabel : InputWithLabelProperties -> Html msg
+viewTextAreaWithLabel props =
+    Form.group []
+        [ label [ for props.id ] [ text props.labeltext ]
+        , Textarea.textarea
+            [ Textarea.id props.id
+            , Textarea.rows
+            , value props.value
+            ]
+            []
+        ]
+
+
+fromValidation : Result String String -> String
+fromValidation result =
+    case result of
+        Ok result ->
+            result
+
+        Err error ->
+            "error: " ++ error
+
+
+view : RCMediaObjectViewState -> MediaEditMesages -> Html msg
+view objectState messages =
     let
-        remove =
-            remove mediaID exposition
+        nameProps =
+            { nodeId = "name"
+            , labeltext = "name"
+            , placeholder = ""
+            , value = fromValidation objectState.validation.name
+            , onInput = messages.editTool
+            }
 
-            edit mediaID exposition
+        descriptionProps =
+            { nodeId = "description"
+            , labeltext = "description"
+            , placeholder = "optional"
+            , value = fromValidation objectState.validation.description
+            , onInput = message.editTool
+            }
+
+        copyrightProps =
+            { nodeId = "copyright"
+            , labeltext = "copyright"
+            , placeholder = ""
+            , value = fromValidation objectState.validation.copyright
+            , onInput = message.editTool
+            }
     in
     div []
         [ p [ text "media object" ++ String.fromInt MediaObjectID ] []
         , Form.form []
-            [ Form.group []
-                [ Form.label [ for "mediaName" ] [ text "Name" ]
-                , viewInput "media name" objectName
-                , Form.help [] [ text "Use a unique name" ]
-                ]
-            , From.group []
-                [ Form.label [ for "copyright" ] [ text "copyright" ]
-                , viewInput "copyright" copyright
-                , From.help [] [ text "Obligatory!" ]
-                ]
+            [ viewInputWitLabel nameProps
+            , viewInputWithLabel descriptionProps
             , Form.group []
                 [ Form.label [ for "classPicker" ] [ text "How should the media be displayed" ]
                 , viewClassesPicker "classPicker" cssClasses
                 ]
-            , Form.group []
-                [ label [ for "mediaDescription" ] [ text "description" ]
-                , Textarea.textarea
-                    [ Textarea.id "mediaDescription"
-                    , Textarea.rows 3
-                    ]
-                ]
+            , viewTextAreaWithLabel descriptionProps
             , Button.button [ Button.primary, onClick remove ] [ text "Insert" ]
             , Button.button [ Button.primary, onClick edit ] [ text "Remove" ]
             ]
         ]
-
-
-update : Msg -> MediaForm -> ( MediaForm, Cmd Msg )
-update msg model =
-    model
-
-
-
--- placeholder

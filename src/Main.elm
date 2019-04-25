@@ -12,6 +12,7 @@ import Http
 import Json.Decode as D
 import Json.Encode as E
 import RCAPI
+import RCMediaEdit
 import Regex
 import String.Extra as Str
 
