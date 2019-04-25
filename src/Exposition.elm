@@ -205,6 +205,34 @@ addDimensions dims attributes =
             attributes ++ [ Attr.height h, Attr.width w ]
 
 
+
+-- VALIDATION
+
+
+validateName : RCMediaObject -> String -> RCExposition msg -> Result String String
+validateName obj newName exp =
+    if String.length newName < 4 then
+        Err "Name is too short"
+
+    else
+        let
+            mediaNames =
+                List.map (\m -> (objData m).name) exp.media
+
+            objName =
+                (objData obj).name
+        in
+        if ((objData obj).name /= newName) && List.member newName mediaNames then
+            Err "Another media object already has this name"
+
+        else
+            Ok "newName"
+
+
+
+-- MARKDOWN and HTML rendering
+
+
 objectDiv : RCObjectData -> Html.Html msg -> Html.Html msg
 objectDiv objdata child =
     Html.div

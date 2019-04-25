@@ -20,6 +20,12 @@ Open `editor.html`.
 
 # Todo
 
+- media editor dialog view function gets from main
+  - a validations status containing strings and validation status
+  - a record with callback message functions which create messages for updating the rcmediaobject/model
+    (containing curried rcmediaobject)
+    - insert, delete and edit (copyright, name, description, class)
+
 - Adjust cm mode to include RC media syntax
 - upload to server
 - Buttons
