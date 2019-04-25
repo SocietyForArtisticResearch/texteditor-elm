@@ -229,6 +229,37 @@ validateName exp obj newName =
             Ok "newName"
 
 
+type alias RCMediaObjectValidation =
+    { name : Result String String
+    , description : Result String String
+    , copyright : Result String String
+    , userClass : Result String String
+    }
+
+
+type alias RCMediaObjectViewState =
+    { validation : RCMediaObjectValidation
+    , thumbUrl : String
+    , id : Int
+    }
+
+
+validateMediaObject : RCExposition msg -> RCMediaObject -> RCMediaObject -> RCMediaObjectViewState
+validateMediaObject exp objInModel objInEdit =
+    let
+        validation =
+            { name = validateName exp objInModel (objData objInEdit).name
+            , description = Ok (objData objInEdit).description
+            , copyright = Ok (objData objInEdit).copyright
+            , userClass = Ok (objData objInEdit).userClass
+            }
+    in
+    { validation = validation
+    , thumbUrl = thumbUrl (objData objInModel)
+    , id = (objData objInModel).id
+    }
+
+
 
 -- MARKDOWN and HTML rendering
 

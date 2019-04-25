@@ -92,8 +92,20 @@ type Msg
     | MdContent E.Value
     | MediaDialog E.Value
     | MediaEdit Exposition.RCMediaObject
+    | MediaDelete Exposition.RCMediaObject
+    | MediaReplace Exposition.RCMediaObject
+    | InsertTool Exposition.RCMediaObject
     | CloseMediaDialog
     | GotExposition (Result Http.Error (Dict.Dict String String))
+
+
+
+-- not yet validated, only update request
+
+
+makeMediaEditFun : Model msg -> RCMediaObject -> RCMediaEdit.Field -> String -> msg
+makeMediaEditFun model obj field input =
+    MediaEdit updatedObj
 
 
 update : Msg -> Model msg -> ( Model msg, Cmd Msg )

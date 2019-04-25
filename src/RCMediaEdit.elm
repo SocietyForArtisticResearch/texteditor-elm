@@ -28,10 +28,10 @@ type Field
     | File
 
 
-type alias Messages message =
-    { insertTool : message
-    , editTool : (RCMediaObject -> message)
-    , deleteTool : (RCMediaObject -> message)
+type alias MediaEditMessages msg =
+    { insertTool : msg
+    , editTool : (RCMediaObject -> msg)
+    , deleteTool : (RCMediaObject -> msg)
     }
       
 type File
@@ -44,11 +44,11 @@ type alias CssClass =
     }
 
 type alias RCMediaObjectValidation =
-    { name : Result
-    , description :Result
-    , copyright : Result
-    , file : Result
-    , cssClass : Result }
+    { name : Result String String
+    , description :Result String String
+    , copyright : Result String String
+    , file : Result String String
+    , cssClass : Result String String }
         
 
 cssClasses : List CssClass
@@ -93,7 +93,8 @@ createStringValidator value original =
                              
 
 validateRCMedia : RCMediaObject -> 
-                     
+
+-- view : ValidationStatus -> MediaEditMesages -> Html msg
 view : String -> String -> CssClass -> Html msg
 view  = objectName copy cssClass 
     let
