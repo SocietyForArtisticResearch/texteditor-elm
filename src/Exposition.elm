@@ -1,4 +1,4 @@
-module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject(..), RCObjectData, RCPlayerSettings, TOC, TOCEntry, asHtml, asMarkdown, empty, mediaUrl, objectByNameOrId, render, replaceToolsWithImages, thumbUrl, withMd)
+module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject(..), RCMediaObjectViewState, RCObjectData, RCPlayerSettings, TOC, TOCEntry, asHtml, asMarkdown, empty, mediaUrl, objectByNameOrId, render, replaceToolsWithImages, thumbUrl, withMd)
 
 import Html as Html
 import Html.Attributes as Attr

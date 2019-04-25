@@ -1,14 +1,16 @@
 module RCMediaEdit exposing (view)
 
+import Bootstrap.Button as Button
 import Bootstrap.CDN as CDN
-import Bootstrap.Form
+import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import Bootstrap.Form.Select as Select
 import Bootstrap.Form.Textarea as Textarea
 import Bootstrap.Grid as Grid
-import Exposition exposing (RCExposition, RCMediaObject)
+import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectViewState)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events as Events
 
 
 type Field
@@ -57,18 +59,18 @@ cssClasses =
     ]
 
 
-viewClassesPicker : String -> List CssClass -> CssClass -> Html Msg
+viewClassesPicker : String -> List CssClass -> CssClass -> Html msg
 viewClassesPicker id classList currentSelection =
     let
-        selectItem : CssClass -> Html Msg
+        selectItem : CssClass -> Select.Item msg
         selectItem item =
             let
                 isSelected =
-                    currentSelection.selector == selectItem
+                    currentSelection.selector == item.selector
             in
             Select.item
-                [ Select.value item.selector
-                , Html.Attributes.Selected isSelected
+                [ value item.selector
+                , selected isSelected
                 ]
                 [ text item.name ]
     in
@@ -76,7 +78,7 @@ viewClassesPicker id classList currentSelection =
         List.map selectItem classList
 
 
-type alias InputWithLabelProperties =
+type alias InputWithLabelProperties msg =
     { nodeId : String
     , labeltext : String
     , placeholder : String
@@ -90,11 +92,14 @@ type alias InputWithLabelProperties =
 -- text input
 
 
-viewInputWithLabel : InputWithLabelProperties -> Html msg
+viewInputWithLabel : InputWithLabelProperties msg -> Html msg
 viewInputWithLabel props =
     Form.group []
-        [ Form.label [ for props.id ] [ text props.labeltext ]
-        , Input.text [ placeholder props.placeholder, value props.value ] []
+        [ Form.label [ for props.nodeId ] [ text props.labeltext ]
+        , Input.text
+            [ Input.attrs
+                [ placeholder props.placeholder, value props.value ]
+            ]
         , Form.help [] [ text props.help ]
         ]
 
@@ -103,30 +108,29 @@ viewInputWithLabel props =
 -- textarea input
 
 
-viewTextAreaWithLabel : InputWithLabelProperties -> Html msg
+viewTextAreaWithLabel : InputWithLabelProperties msg -> Html msg
 viewTextAreaWithLabel props =
     Form.group []
-        [ label [ for props.id ] [ text props.labeltext ]
+        [ label [ for props.nodeId ] [ text props.labeltext ]
         , Textarea.textarea
-            [ Textarea.id props.id
-            , Textarea.rows
-            , value props.value
+            [ Textarea.id props.nodeId
+            , Textarea.rows 7
+            , Textarea.attrs [ value props.value ]
             ]
-            []
         ]
 
 
 fromValidation : Result String String -> String
 fromValidation result =
     case result of
-        Ok result ->
-            result
+        Ok userinput ->
+            userinput
 
         Err error ->
-            "error: " ++ error
+            "error!" ++ error
 
 
-view : RCMediaObjectViewState -> MediaEditMesages -> Html msg
+view : RCMediaObjectViewState -> MediaEditMessages msg -> Html msg
 view objectState messages =
     let
         nameProps =
@@ -135,6 +139,7 @@ view objectState messages =
             , placeholder = ""
             , value = fromValidation objectState.validation.name
             , onInput = messages.editTool
+            , help = "token is !{}"
             }
 
         descriptionProps =
@@ -142,7 +147,8 @@ view objectState messages =
             , labeltext = "description"
             , placeholder = "optional"
             , value = fromValidation objectState.validation.description
-            , onInput = message.editTool
+            , onInput = messages.editTool
+            , help = "no help yet"
             }
 
         copyrightProps =
@@ -150,20 +156,20 @@ view objectState messages =
             , labeltext = "copyright"
             , placeholder = ""
             , value = fromValidation objectState.validation.copyright
-            , onInput = message.editTool
+            , onInput = messages.editTool
+            , help = "no help!"
             }
     in
     div []
-        [ p [ text "media object" ++ String.fromInt MediaObjectID ] []
-        , Form.form []
-            [ viewInputWitLabel nameProps
+        [ Form.form []
+            [ viewInputWithLabel nameProps
             , viewInputWithLabel descriptionProps
             , Form.group []
                 [ Form.label [ for "classPicker" ] [ text "How should the media be displayed" ]
                 , viewClassesPicker "classPicker" cssClasses
                 ]
             , viewTextAreaWithLabel descriptionProps
-            , Button.button [ Button.primary, onClick remove ] [ text "Insert" ]
-            , Button.button [ Button.primary, onClick edit ] [ text "Remove" ]
+            , Button.button [ Button.primary, Events.onClick messages.insertTool ] [ text "Insert" ]
+            , Button.button [ Button.primary, Events.onClick messages.deleteTool ] [ text "Remove" ]
             ]
         ]
