@@ -27,6 +27,11 @@ Open `editor.html`.
     - insert, delete and edit (copyright, name, description, class)
 
 - Adjust cm mode to include RC media syntax
+- Evan's markdown lib does not seem to support HTML. We may need to
+  switch to https://github.com/pablohirafuji/elm-markdown
+- HTML style tag as in `<span style="font-size:14px"><span>`
+- RC media module
+- Adjust mode to include RC media syntax
 - upload to server
 - Buttons
 - RC Media Import
