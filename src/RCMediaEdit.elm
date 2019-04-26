@@ -1,4 +1,4 @@
-module RCMediaEdit exposing (view)
+module RCMediaEdit exposing (Field, view)
 
 import Bootstrap.Button as Button
 import Bootstrap.CDN as CDN
@@ -23,8 +23,8 @@ type Field
 
 type alias MediaEditMessages msg =
     { insertTool : msg
-    , editTool : RCMediaObject -> msg
-    , deleteTool : RCMediaObject -> msg
+    , editTool : msg
+    , deleteTool : msg
     }
 
 
@@ -44,7 +44,7 @@ type alias RCMediaObjectValidation =
 
 
 
--- presets for the user to use:
+-- css class presets
 
 
 cssClasses : List CssClass
@@ -59,14 +59,14 @@ cssClasses =
     ]
 
 
-viewClassesPicker : String -> List CssClass -> CssClass -> Html msg
+viewClassesPicker : String -> List CssClass -> String -> Html msg
 viewClassesPicker id classList currentSelection =
     let
         selectItem : CssClass -> Select.Item msg
         selectItem item =
             let
                 isSelected =
-                    currentSelection.selector == item.selector
+                    currentSelection == item.selector
             in
             Select.item
                 [ value item.selector
@@ -83,7 +83,7 @@ type alias InputWithLabelProperties msg =
     , labeltext : String
     , placeholder : String
     , value : String
-    , onInput : String -> msg
+    , onInput : msg
     , help : String
     }
 
@@ -159,6 +159,14 @@ view objectState messages =
             , onInput = messages.editTool
             , help = "no help!"
             }
+
+        currentClass =
+            case objectState.validation.userClass of
+                Ok val ->
+                    val
+
+                Err _ ->
+                    "big"
     in
     div []
         [ Form.form []
@@ -166,10 +174,18 @@ view objectState messages =
             , viewInputWithLabel descriptionProps
             , Form.group []
                 [ Form.label [ for "classPicker" ] [ text "How should the media be displayed" ]
-                , viewClassesPicker "classPicker" cssClasses
+                , viewClassesPicker "classPicker" cssClasses currentClass
                 ]
             , viewTextAreaWithLabel descriptionProps
-            , Button.button [ Button.primary, Events.onClick messages.insertTool ] [ text "Insert" ]
-            , Button.button [ Button.primary, Events.onClick messages.deleteTool ] [ text "Remove" ]
+            , Button.button
+                [ Button.primary
+                , Button.attrs [ Events.onClick messages.insertTool ]
+                ]
+                [ text "Insert" ]
+            , Button.button
+                [ Button.primary
+                , Button.attrs [ Events.onClick messages.deleteTool ]
+                ]
+                [ text "Remove" ]
             ]
         ]
