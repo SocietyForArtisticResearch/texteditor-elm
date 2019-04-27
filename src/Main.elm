@@ -172,10 +172,23 @@ update msg model =
             ( { model | mediaDialog = ( Modal.hidden, "" ) }, Cmd.none )
 
         GotExposition exp ->
+            -- not implemented
             let
                 _ =
                     Debug.log "gotexposition" exp
             in
+            ( model, Cmd.none )
+
+        MediaEdit obj ->
+            -- not implemented
+            ( model, Cmd.none )
+
+        MediaDelete obj ->
+            -- not implemented
+            ( model, Cmd.none )
+
+        InsertTool obj ->
+            -- not implemented
             ( model, Cmd.none )
 
 

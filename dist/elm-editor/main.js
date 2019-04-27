@@ -6209,18 +6209,18 @@ var elm$html$Html$Attributes$classList = function (classes) {
 };
 var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var author$project$Exposition$objectDiv = F2(
-	function (objdata, child) {
+	function (obj, child) {
 		return A2(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
 					elm$html$Html$Attributes$id(
-					elm$core$String$fromInt(objdata.id)),
+					elm$core$String$fromInt(obj.id)),
 					elm$html$Html$Attributes$classList(
 					_List_fromArray(
 						[
 							_Utils_Tuple2('rcobject', true),
-							_Utils_Tuple2(objdata.userClass, objdata.userClass !== '')
+							_Utils_Tuple2(obj.userClass, obj.userClass !== '')
 						]))
 				]),
 			_List_fromArray(
@@ -6273,9 +6273,11 @@ var elm$html$Html$Attributes$src = function (url) {
 		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
 var author$project$Exposition$asHtml = function (media) {
-	switch (media.$) {
+	var _n0 = _Utils_Tuple2(media.mediaType, media);
+	switch (_n0.a.$) {
 		case 'RCImage':
-			var data = media.a;
+			var _n1 = _n0.a;
+			var data = _n0.b;
 			return A2(
 				author$project$Exposition$objectDiv,
 				data,
@@ -6305,7 +6307,8 @@ var author$project$Exposition$asHtml = function (media) {
 								]))
 						])));
 		case 'RCPdf':
-			var data = media.a;
+			var _n2 = _n0.a;
+			var data = _n0.b;
 			return A2(
 				author$project$Exposition$objectDiv,
 				data,
@@ -6338,7 +6341,8 @@ var author$project$Exposition$asHtml = function (media) {
 								]))
 						])));
 		case 'RCSvg':
-			var data = media.a;
+			var _n3 = _n0.a;
+			var data = _n0.b;
 			return A2(
 				author$project$Exposition$objectDiv,
 				data,
@@ -6371,8 +6375,8 @@ var author$project$Exposition$asHtml = function (media) {
 								]))
 						])));
 		case 'RCAudio':
-			var data = media.a;
-			var playerSettings = media.b;
+			var playerData = _n0.a.a;
+			var data = _n0.b;
 			return A2(
 				author$project$Exposition$objectDiv,
 				data,
@@ -6390,9 +6394,9 @@ var author$project$Exposition$asHtml = function (media) {
 									[
 										elm$html$Html$Attributes$controls(true),
 										elm$html$Html$Attributes$preload(
-										author$project$Exposition$preloadToString(playerSettings.preload)),
-										elm$html$Html$Attributes$autoplay(playerSettings.autoplay),
-										elm$html$Html$Attributes$loop(playerSettings.loop)
+										author$project$Exposition$preloadToString(playerData.preload)),
+										elm$html$Html$Attributes$autoplay(playerData.autoplay),
+										elm$html$Html$Attributes$loop(playerData.loop)
 									])),
 							_List_fromArray(
 								[
@@ -6414,8 +6418,8 @@ var author$project$Exposition$asHtml = function (media) {
 								]))
 						])));
 		default:
-			var data = media.a;
-			var playerSettings = media.b;
+			var playerData = _n0.a.a;
+			var data = _n0.b;
 			return A2(
 				author$project$Exposition$objectDiv,
 				data,
@@ -6433,9 +6437,9 @@ var author$project$Exposition$asHtml = function (media) {
 									[
 										elm$html$Html$Attributes$controls(true),
 										elm$html$Html$Attributes$preload(
-										author$project$Exposition$preloadToString(playerSettings.preload)),
-										elm$html$Html$Attributes$autoplay(playerSettings.autoplay),
-										elm$html$Html$Attributes$loop(playerSettings.loop)
+										author$project$Exposition$preloadToString(playerData.preload)),
+										elm$html$Html$Attributes$autoplay(playerData.autoplay),
+										elm$html$Html$Attributes$loop(playerData.loop)
 									])),
 							_List_fromArray(
 								[
@@ -6459,25 +6463,6 @@ var author$project$Exposition$asHtml = function (media) {
 						])));
 	}
 };
-var author$project$Exposition$objData = function (media) {
-	switch (media.$) {
-		case 'RCVideo':
-			var d = media.a;
-			return d;
-		case 'RCAudio':
-			var d = media.a;
-			return d;
-		case 'RCSvg':
-			var d = media.a;
-			return d;
-		case 'RCPdf':
-			var d = media.a;
-			return d;
-		default:
-			var d = media.a;
-			return d;
-	}
-};
 var elm$core$List$head = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -6496,9 +6481,7 @@ var author$project$Exposition$objectByNameOrId = F2(
 			var idLst = A2(
 				elm$core$List$filter,
 				function (m) {
-					return _Utils_eq(
-						author$project$Exposition$objData(m).id,
-						id);
+					return _Utils_eq(m.id, id);
 				},
 				exp.media);
 			return elm$core$List$head(idLst);
@@ -6506,9 +6489,7 @@ var author$project$Exposition$objectByNameOrId = F2(
 			var nameLst = A2(
 				elm$core$List$filter,
 				function (m) {
-					return _Utils_eq(
-						author$project$Exposition$objData(m).name,
-						nameOrId);
+					return _Utils_eq(m.name, nameOrId);
 				},
 				exp.media);
 			return elm$core$List$head(nameLst);
@@ -11002,9 +10983,18 @@ var author$project$Main$update = F2(
 							mediaDialog: _Utils_Tuple2(rundis$elm_bootstrap$Bootstrap$Modal$hidden, '')
 						}),
 					elm$core$Platform$Cmd$none);
-			default:
+			case 'GotExposition':
 				var exp = msg.a;
 				var _n4 = A2(elm$core$Debug$log, 'gotexposition', exp);
+				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+			case 'MediaEdit':
+				var obj = msg.a;
+				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+			case 'MediaDelete':
+				var obj = msg.a;
+				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+			default:
+				var obj = msg.a;
 				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 		}
 	});
