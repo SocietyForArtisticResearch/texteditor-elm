@@ -16,7 +16,7 @@ import Html.Events as Events
 type Field
     = Name
     | Description
-    | StylingClass
+    | UserClass
     | Copyright
     | File
 
@@ -138,7 +138,7 @@ view objectState messages =
             , labeltext = "name"
             , placeholder = ""
             , value = fromValidation objectState.validation.name
-            , onInput = messages.editTool
+            , onInput = messages.editTool Name
             , help = "token is !{}"
             }
 
@@ -147,7 +147,7 @@ view objectState messages =
             , labeltext = "description"
             , placeholder = "optional"
             , value = fromValidation objectState.validation.description
-            , onInput = messages.editTool
+            , onInput = messages.editTool Description
             , help = "no help yet"
             }
 
@@ -156,7 +156,7 @@ view objectState messages =
             , labeltext = "copyright"
             , placeholder = ""
             , value = fromValidation objectState.validation.copyright
-            , onInput = messages.editTool
+            , onInput = messages.editTool Copyright
             , help = "no help!"
             }
 

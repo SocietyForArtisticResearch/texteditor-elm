@@ -104,7 +104,7 @@ type Msg
 -- not yet validated, only update request
 
 
-makeMediaEditFun : Model msg -> RCMediaObject -> RCMediaEdit.Field -> String -> msg
+makeMediaEditFun : Model msg -> Exposition.RCMediaObject -> RCMediaEdit.Field -> String -> msg
 makeMediaEditFun model obj field input =
     MediaEdit updatedObj
 
