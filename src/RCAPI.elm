@@ -1,4 +1,4 @@
-module RCAPI exposing (getExposition, getMediaList)
+module RCAPI exposing (APIExposition, getExposition, getMediaList)
 
 import Dict
 import Http
