@@ -1,2 +1,2 @@
-lib/* linguist-vendored
-main.js linguist-vendored
+elm-editor/lib/* linguist-vendored
+elm-editor/main.js linguist-vendored
