@@ -1,4 +1,4 @@
-module RCMediaEdit exposing (Field, view)
+module RCMediaEdit exposing (Field(..), MediaEditMessages, view)
 
 import Bootstrap.Button as Button
 import Bootstrap.CDN as CDN
@@ -7,7 +7,7 @@ import Bootstrap.Form.Input as Input
 import Bootstrap.Form.Select as Select
 import Bootstrap.Form.Textarea as Textarea
 import Bootstrap.Grid as Grid
-import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectViewState)
+import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events as Events
@@ -18,12 +18,16 @@ type Field
     | Description
     | UserClass
     | Copyright
-    | File
+
+
+
+-- luc: file needs to updated differently?
+--    | File
 
 
 type alias MediaEditMessages msg =
     { insertTool : msg
-    , editTool : msg
+    , editTool : Field -> String -> msg
     , deleteTool : msg
     }
 
@@ -31,15 +35,6 @@ type alias MediaEditMessages msg =
 type alias CssClass =
     { selector : String
     , name : String
-    }
-
-
-type alias RCMediaObjectValidation =
-    { name : Result String String
-    , description : Result String String
-    , copyright : Result String String
-    , file : Result String String
-    , cssClass : Result String String
     }
 
 
@@ -83,7 +78,7 @@ type alias InputWithLabelProperties msg =
     , labeltext : String
     , placeholder : String
     , value : String
-    , onInput : msg
+    , onInput : String -> msg
     , help : String
     }
 
