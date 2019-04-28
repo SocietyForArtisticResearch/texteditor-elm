@@ -4202,6 +4202,184 @@ function _Url_percentDecode(string)
 }
 
 
+// DECODER
+
+var _File_decoder = _Json_decodePrim(function(value) {
+	// NOTE: checks if `File` exists in case this is run on node
+	return (typeof File !== 'undefined' && value instanceof File)
+		? elm$core$Result$Ok(value)
+		: _Json_expecting('a FILE', value);
+});
+
+
+// METADATA
+
+function _File_name(file) { return file.name; }
+function _File_mime(file) { return file.type; }
+function _File_size(file) { return file.size; }
+
+function _File_lastModified(file)
+{
+	return elm$time$Time$millisToPosix(file.lastModified);
+}
+
+
+// DOWNLOAD
+
+var _File_downloadNode;
+
+function _File_getDownloadNode()
+{
+	return _File_downloadNode || (_File_downloadNode = document.createElement('a'));
+}
+
+var _File_download = F3(function(name, mime, content)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var blob = new Blob([content], {type: mime});
+
+		// for IE10+
+		if (navigator.msSaveOrOpenBlob)
+		{
+			navigator.msSaveOrOpenBlob(blob, name);
+			return;
+		}
+
+		// for HTML5
+		var node = _File_getDownloadNode();
+		var objectUrl = URL.createObjectURL(blob);
+		node.href = objectUrl;
+		node.download = name;
+		_File_click(node);
+		URL.revokeObjectURL(objectUrl);
+	});
+});
+
+function _File_downloadUrl(href)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var node = _File_getDownloadNode();
+		node.href = href;
+		node.download = '';
+		node.origin === location.origin || (node.target = '_blank');
+		_File_click(node);
+	});
+}
+
+
+// IE COMPATIBILITY
+
+function _File_makeBytesSafeForInternetExplorer(bytes)
+{
+	// only needed by IE10 and IE11 to fix https://github.com/elm/file/issues/10
+	// all other browsers can just run `new Blob([bytes])` directly with no problem
+	//
+	return new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+}
+
+function _File_click(node)
+{
+	// only needed by IE10 and IE11 to fix https://github.com/elm/file/issues/11
+	// all other browsers have MouseEvent and do not need this conditional stuff
+	//
+	if (typeof MouseEvent === 'function')
+	{
+		node.dispatchEvent(new MouseEvent('click'));
+	}
+	else
+	{
+		var event = document.createEvent('MouseEvents');
+		event.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+		document.body.appendChild(node);
+		node.dispatchEvent(event);
+		document.body.removeChild(node);
+	}
+}
+
+
+// UPLOAD
+
+var _File_node;
+
+function _File_uploadOne(mimes)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		_File_node = document.createElement('input');
+		_File_node.type = 'file';
+		_File_node.accept = A2(elm$core$String$join, ',', mimes);
+		_File_node.addEventListener('change', function(event)
+		{
+			callback(_Scheduler_succeed(event.target.files[0]));
+		});
+		_File_click(_File_node);
+	});
+}
+
+function _File_uploadOneOrMore(mimes)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		_File_node = document.createElement('input');
+		_File_node.type = 'file';
+		_File_node.multiple = true;
+		_File_node.accept = A2(elm$core$String$join, ',', mimes);
+		_File_node.addEventListener('change', function(event)
+		{
+			var elmFiles = _List_fromArray(event.target.files);
+			callback(_Scheduler_succeed(_Utils_Tuple2(elmFiles.a, elmFiles.b)));
+		});
+		_File_click(_File_node);
+	});
+}
+
+
+// CONTENT
+
+function _File_toString(blob)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var reader = new FileReader();
+		reader.addEventListener('loadend', function() {
+			callback(_Scheduler_succeed(reader.result));
+		});
+		reader.readAsText(blob);
+		return function() { reader.abort(); };
+	});
+}
+
+function _File_toBytes(blob)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var reader = new FileReader();
+		reader.addEventListener('loadend', function() {
+			callback(_Scheduler_succeed(new DataView(reader.result)));
+		});
+		reader.readAsArrayBuffer(blob);
+		return function() { reader.abort(); };
+	});
+}
+
+function _File_toUrl(blob)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var reader = new FileReader();
+		reader.addEventListener('loadend', function() {
+			callback(_Scheduler_succeed(reader.result));
+		});
+		reader.readAsDataURL(blob);
+		return function() { reader.abort(); };
+	});
+}
+
+
+
+
 
 // ELEMENT
 
@@ -5147,6 +5325,7 @@ var author$project$Exposition$empty = {
 var author$project$Main$GotExposition = function (a) {
 	return {$: 'GotExposition', a: a};
 };
+var author$project$Main$Ready = {$: 'Ready'};
 var author$project$Main$Flags = F2(
 	function (weave, research) {
 		return {research: research, weave: weave};
@@ -6102,6 +6281,7 @@ var author$project$Main$init = function (flags) {
 				exposition: author$project$Exposition$empty,
 				mediaDialog: _Utils_Tuple2(rundis$elm_bootstrap$Bootstrap$Modal$hidden, ''),
 				research: elm$core$Maybe$Just(fl.research),
+				uploadStatus: author$project$Main$Ready,
 				weave: elm$core$Maybe$Just(fl.weave)
 			},
 			A3(author$project$RCAPI$getExposition, fl.research, fl.weave, author$project$Main$GotExposition));
@@ -6115,6 +6295,7 @@ var author$project$Main$init = function (flags) {
 				exposition: author$project$Exposition$empty,
 				mediaDialog: _Utils_Tuple2(rundis$elm_bootstrap$Bootstrap$Modal$hidden, ''),
 				research: elm$core$Maybe$Nothing,
+				uploadStatus: author$project$Main$Ready,
 				weave: elm$core$Maybe$Nothing
 			},
 			elm$core$Platform$Cmd$none);
@@ -6122,6 +6303,9 @@ var author$project$Main$init = function (flags) {
 };
 var author$project$Main$EditGeneration = function (a) {
 	return {$: 'EditGeneration', a: a};
+};
+var author$project$Main$GotUploadProgress = function (a) {
+	return {$: 'GotUploadProgress', a: a};
 };
 var author$project$Main$MdContent = function (a) {
 	return {$: 'MdContent', a: a};
@@ -6134,13 +6318,19 @@ var author$project$Main$cmContent = _Platform_incomingPort('cmContent', elm$json
 var author$project$Main$currentGeneration = _Platform_incomingPort('currentGeneration', elm$json$Json$Decode$value);
 var author$project$Main$mediaDialog = _Platform_incomingPort('mediaDialog', elm$json$Json$Decode$value);
 var elm$core$Platform$Sub$batch = _Platform_batch;
+var elm$http$Http$track = F2(
+	function (tracker, toMsg) {
+		return elm$http$Http$subscription(
+			A2(elm$http$Http$MySub, tracker, toMsg));
+	});
 var author$project$Main$subscriptions = function (model) {
 	return elm$core$Platform$Sub$batch(
 		_List_fromArray(
 			[
 				author$project$Main$currentGeneration(author$project$Main$EditGeneration),
 				author$project$Main$cmContent(author$project$Main$MdContent),
-				author$project$Main$mediaDialog(author$project$Main$MediaDialog)
+				author$project$Main$mediaDialog(author$project$Main$MediaDialog),
+				A2(elm$http$Http$track, 'upload', author$project$Main$GotUploadProgress)
 			]));
 };
 var elm$html$Html$Attributes$height = function (n) {
@@ -10939,6 +11129,15 @@ var author$project$Exposition$withMd = F2(
 var author$project$Main$GotMediaList = function (a) {
 	return {$: 'GotMediaList', a: a};
 };
+var author$project$Main$UploadMediaFileSelected = function (a) {
+	return {$: 'UploadMediaFileSelected', a: a};
+};
+var author$project$Main$Uploaded = function (a) {
+	return {$: 'Uploaded', a: a};
+};
+var author$project$Main$Uploading = function (a) {
+	return {$: 'Uploading', a: a};
+};
 var elm$json$Json$Encode$null = _Json_encodeNull;
 var author$project$Main$getContent = _Platform_outgoingPort(
 	'getContent',
@@ -10965,6 +11164,103 @@ var author$project$RCAPI$getMediaList = F2(
 				url: '/text-editor/simple-media-list?research=' + elm$core$String$fromInt(id)
 			});
 	});
+var elm$core$Task$Perform = function (a) {
+	return {$: 'Perform', a: a};
+};
+var elm$core$Task$init = elm$core$Task$succeed(_Utils_Tuple0);
+var elm$core$Task$map = F2(
+	function (func, taskA) {
+		return A2(
+			elm$core$Task$andThen,
+			function (a) {
+				return elm$core$Task$succeed(
+					func(a));
+			},
+			taskA);
+	});
+var elm$core$Task$spawnCmd = F2(
+	function (router, _n0) {
+		var task = _n0.a;
+		return _Scheduler_spawn(
+			A2(
+				elm$core$Task$andThen,
+				elm$core$Platform$sendToApp(router),
+				task));
+	});
+var elm$core$Task$onEffects = F3(
+	function (router, commands, state) {
+		return A2(
+			elm$core$Task$map,
+			function (_n0) {
+				return _Utils_Tuple0;
+			},
+			elm$core$Task$sequence(
+				A2(
+					elm$core$List$map,
+					elm$core$Task$spawnCmd(router),
+					commands)));
+	});
+var elm$core$Task$onSelfMsg = F3(
+	function (_n0, _n1, _n2) {
+		return elm$core$Task$succeed(_Utils_Tuple0);
+	});
+var elm$core$Task$cmdMap = F2(
+	function (tagger, _n0) {
+		var task = _n0.a;
+		return elm$core$Task$Perform(
+			A2(elm$core$Task$map, tagger, task));
+	});
+_Platform_effectManagers['Task'] = _Platform_createManager(elm$core$Task$init, elm$core$Task$onEffects, elm$core$Task$onSelfMsg, elm$core$Task$cmdMap);
+var elm$core$Task$command = _Platform_leaf('Task');
+var elm$core$Task$perform = F2(
+	function (toMessage, task) {
+		return elm$core$Task$command(
+			elm$core$Task$Perform(
+				A2(elm$core$Task$map, toMessage, task)));
+	});
+var elm$time$Time$Posix = function (a) {
+	return {$: 'Posix', a: a};
+};
+var elm$time$Time$millisToPosix = elm$time$Time$Posix;
+var elm$file$File$Select$file = F2(
+	function (mimes, toMsg) {
+		return A2(
+			elm$core$Task$perform,
+			toMsg,
+			_File_uploadOne(mimes));
+	});
+var elm$http$Http$expectBytesResponse = F2(
+	function (toMsg, toResult) {
+		return A3(
+			_Http_expect,
+			'arraybuffer',
+			_Http_toDataView,
+			A2(elm$core$Basics$composeR, toResult, toMsg));
+	});
+var elm$http$Http$expectWhatever = function (toMsg) {
+	return A2(
+		elm$http$Http$expectBytesResponse,
+		toMsg,
+		elm$http$Http$resolve(
+			function (_n0) {
+				return elm$core$Result$Ok(_Utils_Tuple0);
+			}));
+};
+var elm$http$Http$filePart = _Http_pair;
+var elm$core$Basics$clamp = F3(
+	function (low, high, number) {
+		return (_Utils_cmp(number, low) < 0) ? low : ((_Utils_cmp(number, high) > 0) ? high : number);
+	});
+var elm$http$Http$fractionSent = function (p) {
+	return (!p.size) ? 1 : A3(elm$core$Basics$clamp, 0, 1, p.sent / p.size);
+};
+var elm$http$Http$multipartBody = function (parts) {
+	return A2(
+		_Http_pair,
+		'',
+		_Http_toFormData(parts));
+};
+var elm$http$Http$stringPart = _Http_pair;
 var rundis$elm_bootstrap$Bootstrap$Modal$Show = {$: 'Show'};
 var rundis$elm_bootstrap$Bootstrap$Modal$shown = rundis$elm_bootstrap$Bootstrap$Modal$Show;
 var author$project$Main$update = F2(
@@ -11057,9 +11353,68 @@ var author$project$Main$update = F2(
 			case 'MediaDelete':
 				var obj = msg.a;
 				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
-			default:
+			case 'InsertTool':
 				var obj = msg.a;
 				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+			case 'UploadMediaFileSelect':
+				return _Utils_Tuple2(
+					model,
+					A2(
+						elm$file$File$Select$file,
+						_List_fromArray(
+							['image/jpeg', 'image/png']),
+						author$project$Main$UploadMediaFileSelected));
+			case 'UploadMediaFileSelected':
+				var file = msg.a;
+				return _Utils_Tuple2(
+					model,
+					elm$http$Http$request(
+						{
+							body: elm$http$Http$multipartBody(
+								_List_fromArray(
+									[
+										A2(elm$http$Http$stringPart, 'mediatype', 'image'),
+										A2(elm$http$Http$stringPart, 'name', 'tmpName'),
+										A2(elm$http$Http$stringPart, 'copyrightholder', 'copyrightholder'),
+										A2(elm$http$Http$stringPart, 'description', 'description'),
+										A2(elm$http$Http$filePart, 'media', file),
+										A2(elm$http$Http$stringPart, 'thumb', '')
+									])),
+							expect: elm$http$Http$expectWhatever(author$project$Main$Uploaded),
+							headers: _List_Nil,
+							method: 'POST',
+							timeout: elm$core$Maybe$Nothing,
+							tracker: elm$core$Maybe$Just('upload'),
+							url: '/'
+						}));
+			case 'GotUploadProgress':
+				var progress = msg.a;
+				if (progress.$ === 'Sending') {
+					var p = progress.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								uploadStatus: author$project$Main$Uploading(
+									elm$http$Http$fractionSent(p))
+							}),
+						elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				}
+			default:
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{uploadStatus: author$project$Main$Ready}),
+						elm$core$Platform$Cmd$none);
+				} else {
+					var e = result.a;
+					var _n9 = A2(elm$core$Debug$log, 'error uploading: ', e);
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				}
 		}
 	});
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
@@ -11715,6 +12070,33 @@ var author$project$Main$viewMediaDialog = function (_n0) {
 						rundis$elm_bootstrap$Bootstrap$Modal$small(
 							rundis$elm_bootstrap$Bootstrap$Modal$config(author$project$Main$CloseMediaDialog)))))));
 };
+var author$project$Main$UploadMediaFileSelect = {$: 'UploadMediaFileSelect'};
+var elm$core$Basics$round = _Basics_round;
+var author$project$Main$viewUpload = function (status) {
+	if (status.$ === 'Ready') {
+		return A2(
+			elm$html$Html$button,
+			_List_fromArray(
+				[
+					elm$html$Html$Events$onClick(author$project$Main$UploadMediaFileSelect)
+				]),
+			_List_fromArray(
+				[
+					elm$html$Html$text('Upload Media')
+				]));
+	} else {
+		var fraction = status.a;
+		return A2(
+			elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					elm$html$Html$text(
+					elm$core$String$fromInt(
+						elm$core$Basics$round(100 * fraction)) + '%')
+				]));
+	}
+};
 var author$project$Main$view = function (model) {
 	var _n0 = _Utils_Tuple2(model.research, model.weave);
 	if ((_n0.a.$ === 'Just') && (_n0.b.$ === 'Just')) {
@@ -11726,7 +12108,8 @@ var author$project$Main$view = function (model) {
 			_List_fromArray(
 				[
 					model.exposition.renderedHtml,
-					author$project$Main$viewMediaDialog(model.mediaDialog)
+					author$project$Main$viewMediaDialog(model.mediaDialog),
+					author$project$Main$viewUpload(model.uploadStatus)
 				]));
 	} else {
 		return A2(
@@ -11756,60 +12139,6 @@ var elm$core$Basics$never = function (_n0) {
 		continue never;
 	}
 };
-var elm$core$Task$Perform = function (a) {
-	return {$: 'Perform', a: a};
-};
-var elm$core$Task$init = elm$core$Task$succeed(_Utils_Tuple0);
-var elm$core$Task$map = F2(
-	function (func, taskA) {
-		return A2(
-			elm$core$Task$andThen,
-			function (a) {
-				return elm$core$Task$succeed(
-					func(a));
-			},
-			taskA);
-	});
-var elm$core$Task$spawnCmd = F2(
-	function (router, _n0) {
-		var task = _n0.a;
-		return _Scheduler_spawn(
-			A2(
-				elm$core$Task$andThen,
-				elm$core$Platform$sendToApp(router),
-				task));
-	});
-var elm$core$Task$onEffects = F3(
-	function (router, commands, state) {
-		return A2(
-			elm$core$Task$map,
-			function (_n0) {
-				return _Utils_Tuple0;
-			},
-			elm$core$Task$sequence(
-				A2(
-					elm$core$List$map,
-					elm$core$Task$spawnCmd(router),
-					commands)));
-	});
-var elm$core$Task$onSelfMsg = F3(
-	function (_n0, _n1, _n2) {
-		return elm$core$Task$succeed(_Utils_Tuple0);
-	});
-var elm$core$Task$cmdMap = F2(
-	function (tagger, _n0) {
-		var task = _n0.a;
-		return elm$core$Task$Perform(
-			A2(elm$core$Task$map, tagger, task));
-	});
-_Platform_effectManagers['Task'] = _Platform_createManager(elm$core$Task$init, elm$core$Task$onEffects, elm$core$Task$onSelfMsg, elm$core$Task$cmdMap);
-var elm$core$Task$command = _Platform_leaf('Task');
-var elm$core$Task$perform = F2(
-	function (toMessage, task) {
-		return elm$core$Task$command(
-			elm$core$Task$Perform(
-				A2(elm$core$Task$map, toMessage, task)));
-	});
 var elm$url$Url$Http = {$: 'Http'};
 var elm$url$Url$Https = {$: 'Https'};
 var elm$core$String$indexes = _String_indexes;

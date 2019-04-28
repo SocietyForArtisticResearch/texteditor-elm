@@ -5,7 +5,9 @@ import Bootstrap.Modal as Modal
 import Browser
 import Dict
 import Exposition
-import Html exposing (Html, div, p, span, text)
+import File exposing (File)
+import File.Select as Select
+import Html exposing (Html, button, div, p, span, text)
 import Html.Attributes exposing (attribute)
 import Html.Events exposing (on, onClick, onInput)
 import Http
@@ -24,7 +26,13 @@ type alias Model msg =
     , weave : Maybe Int
     , research : Maybe Int
     , apiExposition : Maybe RCAPI.APIExposition -- got from rc
+    , uploadStatus : UploadStatus
     }
+
+
+type UploadStatus
+    = Ready
+    | Uploading Float
 
 
 type alias Flags =
@@ -46,6 +54,7 @@ init flags =
               , research = Just fl.research
               , weave = Just fl.weave
               , apiExposition = Nothing
+              , uploadStatus = Ready
               }
             , RCAPI.getExposition fl.research fl.weave GotExposition
             )
@@ -61,6 +70,7 @@ init flags =
               , research = Nothing
               , weave = Nothing
               , apiExposition = Nothing
+              , uploadStatus = Ready
               }
             , Cmd.none
             )
@@ -88,6 +98,7 @@ subscriptions model =
         [ currentGeneration EditGeneration
         , cmContent MdContent
         , mediaDialog MediaDialog
+        , Http.track "upload" GotUploadProgress
         ]
 
 
@@ -101,6 +112,10 @@ type Msg
     | CloseMediaDialog
     | GotExposition (Result Http.Error RCAPI.APIExposition)
     | GotMediaList (Result Http.Error (List (Dict.Dict String String)))
+    | UploadMediaFileSelect
+    | UploadMediaFileSelected File
+    | GotUploadProgress Http.Progress
+    | Uploaded (Result Http.Error ())
 
 
 
@@ -208,6 +223,52 @@ update msg model =
             -- not implemented
             ( model, Cmd.none )
 
+        UploadMediaFileSelect ->
+            ( model
+            , Select.file [ "image/jpeg", "image/png" ] UploadMediaFileSelected
+            )
+
+        UploadMediaFileSelected file ->
+            ( model
+            , Http.request
+                { method = "POST"
+                , url = "/"
+                , headers = []
+                , body =
+                    Http.multipartBody
+                        [ Http.stringPart "mediatype" "image"
+                        , Http.stringPart "name" "tmpName"
+                        , Http.stringPart "copyrightholder" "copyrightholder"
+                        , Http.stringPart "description" "description"
+                        , Http.filePart "media" file
+                        , Http.stringPart "thumb" ""
+                        ]
+                , expect = Http.expectWhatever Uploaded
+                , timeout = Nothing
+                , tracker = Just "upload"
+                }
+            )
+
+        GotUploadProgress progress ->
+            case progress of
+                Http.Sending p ->
+                    ( { model | uploadStatus = Uploading (Http.fractionSent p) }, Cmd.none )
+
+                Http.Receiving _ ->
+                    ( model, Cmd.none )
+
+        Uploaded result ->
+            case result of
+                Ok _ ->
+                    ( { model | uploadStatus = Ready }, Cmd.none )
+
+                Err e ->
+                    let
+                        _ =
+                            Debug.log "error uploading: " e
+                    in
+                    ( model, Cmd.none )
+
 
 viewMediaDialog : ( Modal.Visibility, String ) -> Html Msg
 viewMediaDialog ( visibility, objectNameorId ) =
@@ -226,11 +287,21 @@ viewMediaDialog ( visibility, objectNameorId ) =
         |> Modal.view visibility
 
 
+viewUpload : UploadStatus -> Html Msg
+viewUpload status =
+    case status of
+        Ready ->
+            button [ onClick UploadMediaFileSelect ] [ text "Upload Media" ]
+
+        Uploading fraction ->
+            div [] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
+
+
 view : Model Msg -> Html Msg
 view model =
     case ( model.research, model.weave ) of
         ( Just r, Just w ) ->
-            div [] [ model.exposition.renderedHtml, viewMediaDialog model.mediaDialog ]
+            div [] [ model.exposition.renderedHtml, viewMediaDialog model.mediaDialog, viewUpload model.uploadStatus ]
 
         _ ->
             div [] [ text "No exposition loaded" ]
