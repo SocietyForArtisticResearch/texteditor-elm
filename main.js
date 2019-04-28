@@ -11368,25 +11368,33 @@ var author$project$Main$update = F2(
 				var file = msg.a;
 				return _Utils_Tuple2(
 					model,
-					elm$http$Http$request(
-						{
-							body: elm$http$Http$multipartBody(
-								_List_fromArray(
-									[
-										A2(elm$http$Http$stringPart, 'mediatype', 'image'),
-										A2(elm$http$Http$stringPart, 'name', 'tmpName'),
-										A2(elm$http$Http$stringPart, 'copyrightholder', 'copyrightholder'),
-										A2(elm$http$Http$stringPart, 'description', 'description'),
-										A2(elm$http$Http$filePart, 'media', file),
-										A2(elm$http$Http$stringPart, 'thumb', '')
-									])),
-							expect: elm$http$Http$expectWhatever(author$project$Main$Uploaded),
-							headers: _List_Nil,
-							method: 'POST',
-							timeout: elm$core$Maybe$Nothing,
-							tracker: elm$core$Maybe$Just('upload'),
-							url: '/'
-						}));
+					function () {
+						var _n7 = model.research;
+						if (_n7.$ === 'Nothing') {
+							return elm$core$Platform$Cmd$none;
+						} else {
+							var id = _n7.a;
+							return elm$http$Http$request(
+								{
+									body: elm$http$Http$multipartBody(
+										_List_fromArray(
+											[
+												A2(elm$http$Http$stringPart, 'mediatype', 'image'),
+												A2(elm$http$Http$stringPart, 'name', '--TODO: mpName'),
+												A2(elm$http$Http$stringPart, 'copyrightholder', 'copyrightholder'),
+												A2(elm$http$Http$stringPart, 'description', 'description'),
+												A2(elm$http$Http$filePart, 'media', file),
+												A2(elm$http$Http$stringPart, 'thumb', '')
+											])),
+									expect: elm$http$Http$expectWhatever(author$project$Main$Uploaded),
+									headers: _List_Nil,
+									method: 'POST',
+									timeout: elm$core$Maybe$Nothing,
+									tracker: elm$core$Maybe$Just('upload'),
+									url: 'text-editor/simple-media-add' + ('?research=' + elm$core$String$fromInt(id))
+								});
+						}
+					}());
 			case 'GotUploadProgress':
 				var progress = msg.a;
 				if (progress.$ === 'Sending') {
@@ -11412,7 +11420,7 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				} else {
 					var e = result.a;
-					var _n9 = A2(elm$core$Debug$log, 'error uploading: ', e);
+					var _n10 = A2(elm$core$Debug$log, 'error uploading: ', e);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 		}
