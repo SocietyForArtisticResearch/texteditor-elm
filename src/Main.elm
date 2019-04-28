@@ -230,23 +230,28 @@ update msg model =
 
         UploadMediaFileSelected file ->
             ( model
-            , Http.request
-                { method = "POST"
-                , url = "/"
-                , headers = []
-                , body =
-                    Http.multipartBody
-                        [ Http.stringPart "mediatype" "image"
-                        , Http.stringPart "name" "tmpName"
-                        , Http.stringPart "copyrightholder" "copyrightholder"
-                        , Http.stringPart "description" "description"
-                        , Http.filePart "media" file
-                        , Http.stringPart "thumb" ""
-                        ]
-                , expect = Http.expectWhatever Uploaded
-                , timeout = Nothing
-                , tracker = Just "upload"
-                }
+            , case model.research of
+                Nothing ->
+                    Cmd.none
+
+                Just id ->
+                    Http.request
+                        { method = "POST"
+                        , url = "text-editor/simple-media-add" ++ "?research=" ++ String.fromInt id
+                        , headers = []
+                        , body =
+                            Http.multipartBody
+                                [ Http.stringPart "mediatype" "image"
+                                , Http.stringPart "name" "--TODO: mpName"
+                                , Http.stringPart "copyrightholder" "copyrightholder"
+                                , Http.stringPart "description" "description"
+                                , Http.filePart "media" file
+                                , Http.stringPart "thumb" ""
+                                ]
+                        , expect = Http.expectWhatever Uploaded
+                        , timeout = Nothing
+                        , tracker = Just "upload"
+                        }
             )
 
         GotUploadProgress progress ->
