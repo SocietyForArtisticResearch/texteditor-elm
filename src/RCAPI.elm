@@ -9,6 +9,10 @@ type alias APIExposition =
     { html : String, markdown : String, metadata : String, style : String, title : String }
 
 
+type alias APIMedia =
+    { id : Int, mediaType : String, description : String, copyright : String, name : String }
+
+
 apiExposition : Decoder APIExposition
 apiExposition =
     map5 APIExposition
@@ -19,10 +23,20 @@ apiExposition =
         (at [ "title" ] string)
 
 
+apiMedia : Decoder APIMedia
+apiMedia =
+    map5 APIMedia
+        (at [ "id" ] int)
+        (at [ "type" ] string)
+        (at [ "description" ] string)
+        (at [ "copyright" ] string)
+        (at [ "name" ] string)
+
+
 getMediaList id msg =
     Http.get
         { url = "/text-editor/simple-media-list?research=" ++ String.fromInt id
-        , expect = Http.expectJson msg (list (dict string))
+        , expect = Http.expectJson msg apiMedia
         }
 
 
