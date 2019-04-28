@@ -11144,13 +11144,38 @@ var author$project$Main$getContent = _Platform_outgoingPort(
 	function ($) {
 		return elm$json$Json$Encode$null;
 	});
-var elm$json$Json$Decode$keyValuePairs = _Json_decodeKeyValuePairs;
-var elm$json$Json$Decode$dict = function (decoder) {
-	return A2(
-		elm$json$Json$Decode$map,
-		elm$core$Dict$fromList,
-		elm$json$Json$Decode$keyValuePairs(decoder));
-};
+var author$project$RCAPI$APIMedia = F5(
+	function (id, mediaType, description, copyright, name) {
+		return {copyright: copyright, description: description, id: id, mediaType: mediaType, name: name};
+	});
+var author$project$RCAPI$apiMedia = A6(
+	elm$json$Json$Decode$map5,
+	author$project$RCAPI$APIMedia,
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['id']),
+		elm$json$Json$Decode$int),
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['type']),
+		elm$json$Json$Decode$string),
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['description']),
+		elm$json$Json$Decode$string),
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['copyright']),
+		elm$json$Json$Decode$string),
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['name']),
+		elm$json$Json$Decode$string));
 var elm$json$Json$Decode$list = _Json_decodeList;
 var author$project$RCAPI$getMediaList = F2(
 	function (id, msg) {
@@ -11159,8 +11184,7 @@ var author$project$RCAPI$getMediaList = F2(
 				expect: A2(
 					elm$http$Http$expectJson,
 					msg,
-					elm$json$Json$Decode$list(
-						elm$json$Json$Decode$dict(elm$json$Json$Decode$string))),
+					elm$json$Json$Decode$list(author$project$RCAPI$apiMedia)),
 				url: '/text-editor/simple-media-list?research=' + elm$core$String$fromInt(id)
 			});
 	});

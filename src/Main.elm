@@ -111,7 +111,7 @@ type Msg
     | InsertTool Exposition.RCMediaObject
     | CloseMediaDialog
     | GotExposition (Result Http.Error RCAPI.APIExposition)
-    | GotMediaList (Result Http.Error (List (Dict.Dict String String)))
+    | GotMediaList (Result Http.Error (List RCAPI.APIMedia))
     | UploadMediaFileSelect
     | UploadMediaFileSelected File
     | GotUploadProgress Http.Progress

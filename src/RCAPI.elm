@@ -1,4 +1,4 @@
-module RCAPI exposing (APIExposition, getExposition, getMediaList)
+module RCAPI exposing (APIExposition, APIMedia, getExposition, getMediaList)
 
 import Dict
 import Http
@@ -36,7 +36,7 @@ apiMedia =
 getMediaList id msg =
     Http.get
         { url = "/text-editor/simple-media-list?research=" ++ String.fromInt id
-        , expect = Http.expectJson msg apiMedia
+        , expect = Http.expectJson msg (list apiMedia)
         }
 
 
