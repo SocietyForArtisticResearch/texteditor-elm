@@ -100,7 +100,7 @@ type Msg
     | InsertTool Exposition.RCMediaObject
     | CloseMediaDialog
     | GotExposition (Result Http.Error RCAPI.APIExposition)
-    | GotMediaList (Result Http.Error (Dict.Dict String String))
+    | GotMediaList (Result Http.Error (List (Dict.Dict String String)))
 
 
 

@@ -22,7 +22,7 @@ apiExposition =
 getMediaList id msg =
     Http.get
         { url = "/text-editor/simple-media-list?research=" ++ String.fromInt id
-        , expect = Http.expectJson msg (dict string)
+        , expect = Http.expectJson msg (list (dict string))
         }
 
 

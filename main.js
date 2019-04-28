@@ -10952,6 +10952,7 @@ var elm$json$Json$Decode$dict = function (decoder) {
 		elm$core$Dict$fromList,
 		elm$json$Json$Decode$keyValuePairs(decoder));
 };
+var elm$json$Json$Decode$list = _Json_decodeList;
 var author$project$RCAPI$getMediaList = F2(
 	function (id, msg) {
 		return elm$http$Http$get(
@@ -10959,7 +10960,8 @@ var author$project$RCAPI$getMediaList = F2(
 				expect: A2(
 					elm$http$Http$expectJson,
 					msg,
-					elm$json$Json$Decode$dict(elm$json$Json$Decode$string)),
+					elm$json$Json$Decode$list(
+						elm$json$Json$Decode$dict(elm$json$Json$Decode$string))),
 				url: '/text-editor/simple-media-list?research=' + elm$core$String$fromInt(id)
 			});
 	});
