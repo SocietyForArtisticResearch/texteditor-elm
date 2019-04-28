@@ -94,19 +94,38 @@ type Msg
     | MediaDialog E.Value
     | MediaEdit Exposition.RCMediaObject
     | MediaDelete Exposition.RCMediaObject
-    | MediaReplace Exposition.RCMediaObject
     | InsertTool Exposition.RCMediaObject
     | CloseMediaDialog
-    | GotExposition (Result Http.Error (Dict.Dict String String))
+    | GotExposition (Result Http.Error RCAPI.APIExposition)
 
 
 
+--    | MediaReplace Exposition.RCMediaObject
 -- not yet validated, only update request
 
 
-makeMediaEditFun : Model msg -> Exposition.RCMediaObject -> RCMediaEdit.Field -> String -> msg
-makeMediaEditFun model obj field input =
-    MediaEdit updatedObj
+makeMediaEditFun : Exposition.RCMediaObject -> RCMediaEdit.Field -> String -> Msg
+makeMediaEditFun obj field input =
+    case field of
+        RCMediaEdit.Name ->
+            MediaEdit { obj | name = input }
+
+        RCMediaEdit.Description ->
+            MediaEdit { obj | description = input }
+
+        RCMediaEdit.UserClass ->
+            MediaEdit { obj | userClass = input }
+
+        RCMediaEdit.Copyright ->
+            MediaEdit { obj | copyright = input }
+
+
+makeMediaEditMsgs : Exposition.RCMediaObject -> RCMediaEdit.MediaEditMessages Msg
+makeMediaEditMsgs obj =
+    { insertTool = InsertTool obj
+    , editTool = makeMediaEditFun obj
+    , deleteTool = MediaDelete obj
+    }
 
 
 update : Msg -> Model msg -> ( Model msg, Cmd Msg )
@@ -153,10 +172,23 @@ update msg model =
             ( { model | mediaDialog = ( Modal.hidden, "" ) }, Cmd.none )
 
         GotExposition exp ->
+            -- not implemented
             let
                 _ =
                     Debug.log "gotexposition" exp
             in
+            ( model, Cmd.none )
+
+        MediaEdit obj ->
+            -- not implemented
+            ( model, Cmd.none )
+
+        MediaDelete obj ->
+            -- not implemented
+            ( model, Cmd.none )
+
+        InsertTool obj ->
+            -- not implemented
             ( model, Cmd.none )
 
 
