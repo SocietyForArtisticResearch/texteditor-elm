@@ -23,7 +23,7 @@ type Field
 
 type alias MediaEditMessages msg =
     { insertTool : msg
-    , editTool : msg
+    , editTool : Field -> String -> msg
     , deleteTool : msg
     }
 
@@ -59,8 +59,13 @@ cssClasses =
     ]
 
 
-viewClassesPicker : String -> List CssClass -> String -> Html msg
-viewClassesPicker id classList currentSelection =
+
+-- Note to self, Select requires some ugly beast to parse the values, unless we do not support IE:
+-- https://stackoverflow.com/questions/39371105/how-to-use-select-dropdown-tag-in-elm-lang
+
+
+viewClassesPicker : String -> List CssClass -> String -> (String -> msg) -> Html msg
+viewClassesPicker id classList currentSelection editMessage =
     let
         selectItem : CssClass -> Select.Item msg
         selectItem item =
@@ -74,7 +79,11 @@ viewClassesPicker id classList currentSelection =
                 ]
                 [ text item.name ]
     in
-    Select.select [ Select.id id ] <|
+    Select.select
+        [ Select.id id
+        , Select.attrs [ Events.onInput editMessage ]
+        ]
+    <|
         List.map selectItem classList
 
 
@@ -83,7 +92,7 @@ type alias InputWithLabelProperties msg =
     , labeltext : String
     , placeholder : String
     , value : String
-    , onInput : msg
+    , onInput : String -> msg
     , help : String
     }
 
@@ -98,7 +107,10 @@ viewInputWithLabel props =
         [ Form.label [ for props.nodeId ] [ text props.labeltext ]
         , Input.text
             [ Input.attrs
-                [ placeholder props.placeholder, value props.value ]
+                [ placeholder props.placeholder
+                , value props.value
+                , Events.onInput props.onInput
+                ]
             ]
         , Form.help [] [ text props.help ]
         ]
@@ -115,7 +127,10 @@ viewTextAreaWithLabel props =
         , Textarea.textarea
             [ Textarea.id props.nodeId
             , Textarea.rows 7
-            , Textarea.attrs [ value props.value ]
+            , Textarea.attrs
+                [ value props.value
+                , Events.onInput props.onInput
+                ]
             ]
         ]
 
@@ -174,7 +189,7 @@ view objectState messages =
             , viewInputWithLabel descriptionProps
             , Form.group []
                 [ Form.label [ for "classPicker" ] [ text "How should the media be displayed" ]
-                , viewClassesPicker "classPicker" cssClasses currentClass
+                , viewClassesPicker "classPicker" cssClasses currentClass (messages.editTool UserClass)
                 ]
             , viewTextAreaWithLabel descriptionProps
             , Button.button
