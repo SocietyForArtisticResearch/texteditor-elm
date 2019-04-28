@@ -23,6 +23,7 @@ type alias Model msg =
     , mediaDialog : ( Modal.Visibility, String )
     , weave : Maybe Int
     , research : Maybe Int
+    , apiExposition : Maybe RCAPI.APIExposition -- got from rc
     }
 
 
@@ -44,6 +45,7 @@ init flags =
               , mediaDialog = ( Modal.hidden, "" )
               , research = Just fl.research
               , weave = Just fl.weave
+              , apiExposition = Nothing
               }
             , RCAPI.getExposition fl.research fl.weave GotExposition
             )
@@ -58,6 +60,7 @@ init flags =
               , mediaDialog = ( Modal.hidden, "" )
               , research = Nothing
               , weave = Nothing
+              , apiExposition = Nothing
               }
             , Cmd.none
             )
@@ -97,6 +100,7 @@ type Msg
     | InsertTool Exposition.RCMediaObject
     | CloseMediaDialog
     | GotExposition (Result Http.Error RCAPI.APIExposition)
+    | GotMediaList (Result Http.Error (Dict.Dict String String))
 
 
 
@@ -176,6 +180,19 @@ update msg model =
             let
                 _ =
                     Debug.log "gotexposition" exp
+            in
+            case model.research of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just id ->
+                    ( model, RCAPI.getMediaList id GotMediaList )
+
+        GotMediaList exp ->
+            -- not implemented
+            let
+                _ =
+                    Debug.log "gotmedialist" exp
             in
             ( model, Cmd.none )
 
