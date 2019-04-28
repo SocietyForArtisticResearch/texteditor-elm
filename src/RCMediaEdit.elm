@@ -140,6 +140,16 @@ fromValidation result =
             "error!" ++ error
 
 
+helpFromValidation : Result String String -> String
+helpFromValidation result =
+    case result of
+        Ok _ ->
+            "ok"
+
+        Err err ->
+            "error: " ++ err
+
+
 view : RCMediaObjectViewState -> MediaEditMessages msg -> Html msg
 view objectState messages =
     let
@@ -149,7 +159,7 @@ view objectState messages =
             , placeholder = ""
             , value = fromValidation objectState.validation.name
             , onInput = messages.editTool Name
-            , help = "token is !{}"
+            , help = helpFromValidation objectState.validation.name
             }
 
         descriptionProps =
@@ -158,7 +168,7 @@ view objectState messages =
             , placeholder = "optional"
             , value = fromValidation objectState.validation.description
             , onInput = messages.editTool Description
-            , help = "no help yet"
+            , help = helpFromValidation objectState.validation.description
             }
 
         copyrightProps =
@@ -167,7 +177,7 @@ view objectState messages =
             , placeholder = ""
             , value = fromValidation objectState.validation.copyright
             , onInput = messages.editTool Copyright
-            , help = "no help!"
+            , help = helpFromValidation objectState.validation.copyright
             }
 
         currentClass =
