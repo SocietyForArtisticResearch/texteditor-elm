@@ -11144,13 +11144,41 @@ var author$project$Main$getContent = _Platform_outgoingPort(
 	function ($) {
 		return elm$json$Json$Encode$null;
 	});
-var author$project$RCAPI$APIMedia = F5(
-	function (id, mediaType, description, copyright, name) {
-		return {copyright: copyright, description: description, id: id, mediaType: mediaType, name: name};
+var author$project$RCAPI$APIMediaEntry = F5(
+	function (id, media, description, copyright, name) {
+		return {copyright: copyright, description: description, id: id, media: media, name: name};
 	});
-var author$project$RCAPI$apiMedia = A6(
-	elm$json$Json$Decode$map5,
+var author$project$RCAPI$APIMedia = F4(
+	function (mediaType, status, width, height) {
+		return {height: height, mediaType: mediaType, status: status, width: width};
+	});
+var elm$json$Json$Decode$map4 = _Json_map4;
+var author$project$RCAPI$apiMedia = A5(
+	elm$json$Json$Decode$map4,
 	author$project$RCAPI$APIMedia,
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['type']),
+		elm$json$Json$Decode$string),
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['status']),
+		elm$json$Json$Decode$string),
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['width']),
+		elm$json$Json$Decode$int),
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['height']),
+		elm$json$Json$Decode$int));
+var author$project$RCAPI$apiMediaEntry = A6(
+	elm$json$Json$Decode$map5,
+	author$project$RCAPI$APIMediaEntry,
 	A2(
 		elm$json$Json$Decode$at,
 		_List_fromArray(
@@ -11159,8 +11187,8 @@ var author$project$RCAPI$apiMedia = A6(
 	A2(
 		elm$json$Json$Decode$at,
 		_List_fromArray(
-			['type']),
-		elm$json$Json$Decode$string),
+			['media']),
+		author$project$RCAPI$apiMedia),
 	A2(
 		elm$json$Json$Decode$at,
 		_List_fromArray(
@@ -11184,7 +11212,7 @@ var author$project$RCAPI$getMediaList = F2(
 				expect: A2(
 					elm$http$Http$expectJson,
 					msg,
-					elm$json$Json$Decode$list(author$project$RCAPI$apiMedia)),
+					elm$json$Json$Decode$list(author$project$RCAPI$apiMediaEntry)),
 				url: '/text-editor/simple-media-list?research=' + elm$core$String$fromInt(id)
 			});
 	});
