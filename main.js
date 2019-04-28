@@ -6097,6 +6097,7 @@ var author$project$Main$init = function (flags) {
 		var fl = _n0.a;
 		return _Utils_Tuple2(
 			{
+				apiExposition: elm$core$Maybe$Nothing,
 				editGeneration: -1,
 				exposition: author$project$Exposition$empty,
 				mediaDialog: _Utils_Tuple2(rundis$elm_bootstrap$Bootstrap$Modal$hidden, ''),
@@ -6109,6 +6110,7 @@ var author$project$Main$init = function (flags) {
 		var _n1 = A2(elm$core$Debug$log, 'err', str);
 		return _Utils_Tuple2(
 			{
+				apiExposition: elm$core$Maybe$Nothing,
 				editGeneration: -1,
 				exposition: author$project$Exposition$empty,
 				mediaDialog: _Utils_Tuple2(rundis$elm_bootstrap$Bootstrap$Modal$hidden, ''),
@@ -10934,11 +10936,32 @@ var author$project$Exposition$withMd = F2(
 			exp,
 			{markdownInput: content});
 	});
+var author$project$Main$GotMediaList = function (a) {
+	return {$: 'GotMediaList', a: a};
+};
 var elm$json$Json$Encode$null = _Json_encodeNull;
 var author$project$Main$getContent = _Platform_outgoingPort(
 	'getContent',
 	function ($) {
 		return elm$json$Json$Encode$null;
+	});
+var elm$json$Json$Decode$keyValuePairs = _Json_decodeKeyValuePairs;
+var elm$json$Json$Decode$dict = function (decoder) {
+	return A2(
+		elm$json$Json$Decode$map,
+		elm$core$Dict$fromList,
+		elm$json$Json$Decode$keyValuePairs(decoder));
+};
+var author$project$RCAPI$getMediaList = F2(
+	function (id, msg) {
+		return elm$http$Http$get(
+			{
+				expect: A2(
+					elm$http$Http$expectJson,
+					msg,
+					elm$json$Json$Decode$dict(elm$json$Json$Decode$string)),
+				url: '/text-editor/simple-media-list?research=' + elm$core$String$fromInt(id)
+			});
 	});
 var rundis$elm_bootstrap$Bootstrap$Modal$Show = {$: 'Show'};
 var rundis$elm_bootstrap$Bootstrap$Modal$shown = rundis$elm_bootstrap$Bootstrap$Modal$Show;
@@ -11013,6 +11036,18 @@ var author$project$Main$update = F2(
 			case 'GotExposition':
 				var exp = msg.a;
 				var _n4 = A2(elm$core$Debug$log, 'gotexposition', exp);
+				var _n5 = model.research;
+				if (_n5.$ === 'Nothing') {
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				} else {
+					var id = _n5.a;
+					return _Utils_Tuple2(
+						model,
+						A2(author$project$RCAPI$getMediaList, id, author$project$Main$GotMediaList));
+				}
+			case 'GotMediaList':
+				var exp = msg.a;
+				var _n6 = A2(elm$core$Debug$log, 'gotmedialist', exp);
 				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 			case 'MediaEdit':
 				var obj = msg.a;
