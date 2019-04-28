@@ -1,2 +1,3 @@
-elm-editor/lib/* linguist-vendored
-elm-editor/main.js linguist-vendored
+lib/* linguist-vendored
+main.js linguist-vendored
+rc-media-widget.js linguist-vendored
