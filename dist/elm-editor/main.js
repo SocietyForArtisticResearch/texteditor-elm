@@ -5326,19 +5326,6 @@ var author$project$Main$GotExposition = function (a) {
 	return {$: 'GotExposition', a: a};
 };
 var author$project$Main$Ready = {$: 'Ready'};
-var author$project$Exposition$addObject = F2(
-	function (obj, exp) {
-		return _Utils_update(
-			exp,
-			{
-				media: A2(elm$core$List$cons, obj, exp.media)
-			});
-	});
-var author$project$Exposition$RCImage = {$: 'RCImage'};
-var author$project$Main$debugObject = {caption: 'CAPTION', copyright: 'Casper Schipper 2019', description: ' this is a description', dimensions: elm$core$Maybe$Nothing, expositionId: 1, htmlId: 'test-obj', id: 3, mediaType: author$project$Exposition$RCImage, name: 'test-obj', thumb: 'angryCatImage.png', userClass: 'test', version: 1};
-var author$project$Main$addTestObject = function (exposition) {
-	return A2(author$project$Exposition$addObject, author$project$Main$debugObject, exposition);
-};
 var author$project$Main$Flags = F2(
 	function (weave, research) {
 		return {research: research, weave: weave};
@@ -6305,7 +6292,7 @@ var author$project$Main$init = function (flags) {
 			{
 				apiExposition: elm$core$Maybe$Nothing,
 				editGeneration: -1,
-				exposition: author$project$Main$addTestObject(author$project$Exposition$empty),
+				exposition: author$project$Exposition$empty,
 				mediaDialog: _Utils_Tuple2(rundis$elm_bootstrap$Bootstrap$Modal$hidden, ''),
 				research: elm$core$Maybe$Nothing,
 				uploadStatus: author$project$Main$Ready,
@@ -11491,6 +11478,8 @@ var author$project$Main$update = F2(
 		}
 	});
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
+var author$project$Exposition$RCImage = {$: 'RCImage'};
+var author$project$Main$debugObject = {caption: 'CAPTION', copyright: 'Casper Schipper 2019', description: ' this is a description', dimensions: elm$core$Maybe$Nothing, expositionId: 1, htmlId: 'test-obj', id: 3, mediaType: author$project$Exposition$RCImage, name: 'test-obj', thumb: 'angryCatImage.png', userClass: 'test', version: 1};
 var author$project$Main$InsertTool = function (a) {
 	return {$: 'InsertTool', a: a};
 };

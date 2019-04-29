@@ -65,7 +65,7 @@ init flags =
                     Debug.log "err" str
             in
             ( { editGeneration = -1
-              , exposition = addTestObject Exposition.empty
+              , exposition = Exposition.empty
               , mediaDialog = ( Modal.hidden, "" )
               , research = Nothing
               , weave = Nothing
@@ -94,12 +94,7 @@ debugObject =
 
 
 
--- DEBUG: just to have something to test in an empty exposition
-
-
-addTestObject : Exposition.RCExposition msg -> Exposition.RCExposition msg
-addTestObject exposition =
-    Exposition.addObject debugObject exposition
+-- DEBUG: just to have something to test in an empty 
 
 
 main =
