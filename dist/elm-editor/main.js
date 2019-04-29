@@ -11120,6 +11120,19 @@ var author$project$Exposition$render = function (exp) {
 				exp.markdownInput)
 		});
 };
+var author$project$Exposition$replaceObject = F2(
+	function (obj, exp) {
+		return _Utils_update(
+			exp,
+			{
+				media: A2(
+					elm$core$List$map,
+					function (m) {
+						return _Utils_eq(m.id, obj.id) ? obj : m;
+					},
+					exp.media)
+			});
+	});
 var author$project$Exposition$withMd = F2(
 	function (exp, content) {
 		return _Utils_update(
@@ -11401,7 +11414,14 @@ var author$project$Main$update = F2(
 				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 			case 'MediaEdit':
 				var obj = msg.a;
-				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				var _n7 = A2(elm$core$Debug$log, 'model should be changed', obj);
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							exposition: A2(author$project$Exposition$replaceObject, obj, model.exposition)
+						}),
+					elm$core$Platform$Cmd$none);
 			case 'MediaDelete':
 				var obj = msg.a;
 				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
@@ -11421,11 +11441,11 @@ var author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					model,
 					function () {
-						var _n7 = model.research;
-						if (_n7.$ === 'Nothing') {
+						var _n8 = model.research;
+						if (_n8.$ === 'Nothing') {
 							return elm$core$Platform$Cmd$none;
 						} else {
-							var id = _n7.a;
+							var id = _n8.a;
 							return elm$http$Http$request(
 								{
 									body: elm$http$Http$multipartBody(
@@ -11472,7 +11492,7 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				} else {
 					var e = result.a;
-					var _n10 = A2(elm$core$Debug$log, 'error uploading: ', e);
+					var _n11 = A2(elm$core$Debug$log, 'error uploading: ', e);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 		}

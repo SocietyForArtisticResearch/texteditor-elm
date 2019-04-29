@@ -233,8 +233,11 @@ update msg model =
             ( model, Cmd.none )
 
         MediaEdit obj ->
-            -- not implemented
-            ( model, Cmd.none )
+            -- casper tries to implement
+            let
+                _ = Debug.log "model should be changed" obj
+            in
+            ( { model | exposition = (Exposition.replaceObject obj model.exposition)}, Cmd.none )
 
         MediaDelete obj ->
             -- not implemented
@@ -306,14 +309,14 @@ viewMediaDialog model ( visibility, objectNameorId ) =
         object : Exposition.RCMediaObject
         object =
             case Exposition.objectByNameOrId objectNameorId exposition of
-                Just obj ->
+                Just obj -> -- somehow doesn't find any object, even if exists ?
                     obj
 
                 Nothing ->
                     -- Just for debug:
                     debugObject objectNameorId
 
-        -- How do we get the old and new state of the media object here ?
+        -- How do we get the old and new state of the mdei object here ?
         viewObjectState : Exposition.RCMediaObjectViewState
         viewObjectState = Exposition.validateMediaObject exposition object object
 
