@@ -20,6 +20,10 @@ Open `editor.html`.
 
 # Todo
 
+Casper:
+- How does the edit media view in main.elm line 317, get the old and (changed) media object ?
+- Why can the user not change the object fields ?
+
 - media editor dialog view function gets from main
   - a validations status containing strings and validation status
   - a record with callback message functions which create messages for updating the rcmediaobject/model

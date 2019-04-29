@@ -313,7 +313,7 @@ viewMediaDialog model ( visibility, objectNameorId ) =
                     -- Just for debug:
                     debugObject objectNameorId
 
-        -- hmmm, maybe validation should happen only when field is changed ?
+        -- How do we get the old and new state of the media object here ?
         viewObjectState : Exposition.RCMediaObjectViewState
         viewObjectState = Exposition.validateMediaObject exposition object object
 
