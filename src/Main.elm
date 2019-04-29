@@ -309,4 +309,4 @@ view model =
             div [] [ model.exposition.renderedHtml, viewMediaDialog model.mediaDialog, viewUpload model.uploadStatus ]
 
         _ ->
-            div [] [ text "No exposition loaded" ]
+            div [] [ model.exposition.renderedHtml, viewMediaDialog model.mediaDialog, viewUpload model.uploadStatus, text "test, No exposition loaded" ]
