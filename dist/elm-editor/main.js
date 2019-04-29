@@ -11477,9 +11477,43 @@ var author$project$Main$update = F2(
 				}
 		}
 	});
+var author$project$Exposition$thumbUrl = function (data) {
+	return '/text-editor/simple-media-thumb?research=' + (elm$core$String$fromInt(data.expositionId) + ('&simple-media=' + (elm$core$String$fromInt(data.id) + '&width=132&height=132')));
+};
+var author$project$Exposition$validateName = F3(
+	function (exp, obj, newName) {
+		if (elm$core$String$length(newName) < 4) {
+			return elm$core$Result$Err('Name is too short');
+		} else {
+			var objName = obj.name;
+			var mediaNames = A2(
+				elm$core$List$map,
+				function (m) {
+					return m.name;
+				},
+				exp.media);
+			return ((!_Utils_eq(obj.name, newName)) && A2(elm$core$List$member, newName, mediaNames)) ? elm$core$Result$Err('Another media object already has this name') : elm$core$Result$Ok('newName');
+		}
+	});
+var author$project$Exposition$validateMediaObject = F3(
+	function (exp, objInModel, objInEdit) {
+		var validation = {
+			copyright: elm$core$Result$Ok(objInEdit.copyright),
+			description: elm$core$Result$Ok(objInEdit.description),
+			name: A3(author$project$Exposition$validateName, exp, objInModel, objInEdit.name),
+			userClass: elm$core$Result$Ok(objInEdit.userClass)
+		};
+		return {
+			id: objInModel.id,
+			thumbUrl: author$project$Exposition$thumbUrl(objInModel),
+			validation: validation
+		};
+	});
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
 var author$project$Exposition$RCImage = {$: 'RCImage'};
-var author$project$Main$debugObject = {caption: 'CAPTION', copyright: 'Casper Schipper 2019', description: ' this is a description', dimensions: elm$core$Maybe$Nothing, expositionId: 1, htmlId: 'test-obj', id: 3, mediaType: author$project$Exposition$RCImage, name: 'test-obj', thumb: 'angryCatImage.png', userClass: 'test', version: 1};
+var author$project$Main$debugObject = function (objectName) {
+	return {caption: 'CAPTION', copyright: 'Casper Schipper 2019', description: 'description', dimensions: elm$core$Maybe$Nothing, expositionId: 1, htmlId: '', id: 1, mediaType: author$project$Exposition$RCImage, name: objectName, thumb: 'angryCatImage.png', userClass: '', version: 1};
+};
 var author$project$Main$InsertTool = function (a) {
 	return {$: 'InsertTool', a: a};
 };
@@ -12906,16 +12940,10 @@ var author$project$Main$viewMediaDialog = F2(
 				var obj = _n1.a;
 				return obj;
 			} else {
-				return author$project$Main$debugObject;
+				return author$project$Main$debugObject(objectNameorId);
 			}
 		}();
-		var validation = {
-			copyright: elm$core$Result$Ok(object.copyright),
-			description: elm$core$Result$Ok(object.description),
-			name: elm$core$Result$Ok(object.name),
-			userClass: elm$core$Result$Ok(object.userClass)
-		};
-		var viewObjectState = {id: object.id, thumbUrl: '', validation: validation};
+		var viewObjectState = A3(author$project$Exposition$validateMediaObject, exposition, object, object);
 		var mediaEditView = A2(
 			author$project$RCMediaEdit$view,
 			viewObjectState,

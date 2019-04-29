@@ -76,16 +76,16 @@ init flags =
             )
 
 
-debugObject : Exposition.RCMediaObject
-debugObject =
-    { userClass = "test"
+debugObject :String -> Exposition.RCMediaObject
+debugObject objectName =
+    { userClass = ""
     , dimensions = Nothing
-    , id = 3
-    , htmlId = "test-obj"
+    , id = 1
+    , htmlId = ""
     , thumb = "angryCatImage.png"
     , expositionId = 1
-    , name = "test-obj"
-    , description = " this is a description"
+    , name = objectName
+    , description = "description"
     , copyright = "Casper Schipper 2019"
     , caption = "CAPTION"
     , version = 1
@@ -311,23 +311,11 @@ viewMediaDialog model ( visibility, objectNameorId ) =
 
                 Nothing ->
                     -- Just for debug:
-                    debugObject
+                    debugObject objectNameorId
 
         -- hmmm, maybe validation should happen only when field is changed ?
-        validation : Exposition.RCMediaObjectValidation
-        validation =
-            { name = Ok object.name
-            , description = Ok object.description
-            , copyright = Ok object.copyright
-            , userClass = Ok object.userClass
-            }
-
         viewObjectState : Exposition.RCMediaObjectViewState
-        viewObjectState =
-            { validation = validation
-            , thumbUrl = ""
-            , id = object.id
-            }
+        viewObjectState = Exposition.validateMediaObject exposition object object
 
         mediaEditView =
             RCMediaEdit.view viewObjectState (makeMediaEditMsgs object)
