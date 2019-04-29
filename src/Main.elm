@@ -65,7 +65,7 @@ init flags =
                     Debug.log "err" str
             in
             ( { editGeneration = -1
-              , exposition = Exposition.empty
+              , exposition = addTestObject Exposition.empty
               , mediaDialog = ( Modal.hidden, "" )
               , research = Nothing
               , weave = Nothing
@@ -74,6 +74,32 @@ init flags =
               }
             , Cmd.none
             )
+
+
+debugObject : Exposition.RCMediaObject
+debugObject =
+    { userClass = "test"
+    , dimensions = Nothing
+    , id = 3
+    , htmlId = "test-obj"
+    , thumb = "angryCatImage.png"
+    , expositionId = 1
+    , name = "test-obj"
+    , description = " this is a description"
+    , copyright = "Casper Schipper 2019"
+    , caption = "CAPTION"
+    , version = 1
+    , mediaType = Exposition.RCImage
+    }
+
+
+
+-- DEBUG: just to have something to test in an empty exposition
+
+
+addTestObject : Exposition.RCExposition msg -> Exposition.RCExposition msg
+addTestObject exposition =
+    Exposition.addObject debugObject exposition
 
 
 main =
@@ -275,13 +301,47 @@ update msg model =
                     ( model, Cmd.none )
 
 
-viewMediaDialog : ( Modal.Visibility, String ) -> Html Msg
-viewMediaDialog ( visibility, objectNameorId ) =
+viewMediaDialog : Model Msg -> ( Modal.Visibility, String ) -> Html Msg
+viewMediaDialog model ( visibility, objectNameorId ) =
+    let
+        exposition : Exposition.RCExposition Msg
+        exposition =
+            model.exposition
+
+        object : Exposition.RCMediaObject
+        object =
+            case Exposition.objectByNameOrId objectNameorId exposition of
+                Just obj ->
+                    obj
+
+                Nothing ->
+                    -- Just for debug:
+                    debugObject
+
+        -- hmmm, maybe validation should happen only when field is changed ?
+        validation : Exposition.RCMediaObjectValidation
+        validation =
+            { name = Ok object.name
+            , description = Ok object.description
+            , copyright = Ok object.copyright
+            , userClass = Ok object.userClass
+            }
+
+        viewObjectState : Exposition.RCMediaObjectViewState
+        viewObjectState =
+            { validation = validation
+            , thumbUrl = ""
+            , id = object.id
+            }
+
+        mediaEditView =
+            RCMediaEdit.view viewObjectState (makeMediaEditMsgs object)
+    in
     Modal.config CloseMediaDialog
         |> Modal.small
         |> Modal.hideOnBackdropClick True
         |> Modal.h3 [] [ text "Modal header" ]
-        |> Modal.body [] [ p [] [ text <| "This is a modal for object " ++ objectNameorId ] ]
+        |> Modal.body [] [ p [] [ mediaEditView, text <| "This is a modal for object " ++ objectNameorId ] ]
         |> Modal.footer []
             [ Button.button
                 [ Button.outlinePrimary
@@ -306,7 +366,16 @@ view : Model Msg -> Html Msg
 view model =
     case ( model.research, model.weave ) of
         ( Just r, Just w ) ->
-            div [] [ model.exposition.renderedHtml, viewMediaDialog model.mediaDialog, viewUpload model.uploadStatus ]
+            div []
+                [ model.exposition.renderedHtml
+                , viewMediaDialog model model.mediaDialog
+                , viewUpload model.uploadStatus
+                ]
 
         _ ->
-            div [] [ model.exposition.renderedHtml, viewMediaDialog model.mediaDialog, viewUpload model.uploadStatus, text "test, No exposition loaded" ]
+            div []
+                [ model.exposition.renderedHtml
+                , viewMediaDialog model model.mediaDialog
+                , viewUpload model.uploadStatus
+                , text "test, No exposition loaded"
+                ]
