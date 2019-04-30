@@ -1,8 +1,23 @@
-module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, getExposition, getMediaList)
+module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, getExposition, getMediaList, toRCExposition)
 
 import Dict
+import Exposition exposing (RCExposition)
+import Html exposing (Html, span)
 import Http
 import Json.Decode exposing (..)
+
+
+toRCExposition : APIExposition -> Int -> Int -> RCExposition msg
+toRCExposition apiExpo id weave =
+    { css = apiExpo.style
+    , title = apiExpo.title
+    , authors = []
+    , id = id
+    , currentWeave = weave
+    , renderedHtml = span [] [] -- we don't actually use the html in the saved object
+    , markdownInput = apiExpo.markdown
+    , media = []
+    }
 
 
 type alias APIExposition =

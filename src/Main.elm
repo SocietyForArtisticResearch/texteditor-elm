@@ -23,8 +23,8 @@ type alias Model msg =
     { exposition : Exposition.RCExposition msg
     , editGeneration : Int
     , mediaDialog : ( Modal.Visibility, String )
-    , weave : Maybe Int
-    , research : Maybe Int
+    , weave : Int
+    , research : Int
     , apiExposition : Maybe RCAPI.APIExposition -- got from rc
     , uploadStatus : UploadStatus
     }
@@ -51,8 +51,8 @@ init flags =
             ( { editGeneration = -1
               , exposition = Exposition.empty
               , mediaDialog = ( Modal.hidden, "" )
-              , research = Just fl.research
-              , weave = Just fl.weave
+              , research = fl.research
+              , weave = fl.weave
               , apiExposition = Nothing
               , uploadStatus = Ready
               }
@@ -67,13 +67,17 @@ init flags =
             ( { editGeneration = -1
               , exposition = Exposition.addObject (debugObject "mytest") Exposition.empty -- add an object so we can test
               , mediaDialog = ( Modal.hidden, "" )
-              , research = Nothing
-              , weave = Nothing
+              , research = -1
+              , weave = -1
               , apiExposition = Nothing
               , uploadStatus = Ready
               }
             , Cmd.none
             )
+
+
+
+-- for testing only
 
 
 debugObject : String -> Exposition.RCMediaObject
@@ -212,17 +216,16 @@ update msg model =
             ( { model | mediaDialog = ( Modal.hidden, "" ) }, Cmd.none )
 
         GotExposition exp ->
-            -- not implemented
-            let
-                _ =
-                    Debug.log "gotexposition" exp
-            in
-            case model.research of
-                Nothing ->
-                    ( model, Cmd.none )
+            case exp of
+                Ok e ->
+                    ( { model | exposition = RCAPI.toRCExposition e model.research model.weave }, RCAPI.getMediaList model.research GotMediaList )
 
-                Just id ->
-                    ( model, RCAPI.getMediaList id GotMediaList )
+                Err err ->
+                    let
+                        _ =
+                            Debug.log "could not load exposition: " err
+                    in
+                    ( model, Cmd.none )
 
         GotMediaList exp ->
             -- not implemented
@@ -251,28 +254,23 @@ update msg model =
 
         UploadMediaFileSelected file ->
             ( model
-            , case model.research of
-                Nothing ->
-                    Cmd.none
-
-                Just id ->
-                    Http.request
-                        { method = "POST"
-                        , url = "text-editor/simple-media-add" ++ "?research=" ++ String.fromInt id
-                        , headers = []
-                        , body =
-                            Http.multipartBody
-                                [ Http.stringPart "mediatype" "image"
-                                , Http.stringPart "name" "--TODO: mpName"
-                                , Http.stringPart "copyrightholder" "copyrightholder"
-                                , Http.stringPart "description" "description"
-                                , Http.filePart "media" file
-                                , Http.stringPart "thumb" ""
-                                ]
-                        , expect = Http.expectWhatever Uploaded
-                        , timeout = Nothing
-                        , tracker = Just "upload"
-                        }
+            , Http.request
+                { method = "POST"
+                , url = "text-editor/simple-media-add" ++ "?research=" ++ String.fromInt model.research
+                , headers = []
+                , body =
+                    Http.multipartBody
+                        [ Http.stringPart "mediatype" "image"
+                        , Http.stringPart "name" "--TODO: mpName"
+                        , Http.stringPart "copyrightholder" "copyrightholder"
+                        , Http.stringPart "description" "description"
+                        , Http.filePart "media" file
+                        , Http.stringPart "thumb" ""
+                        ]
+                , expect = Http.expectWhatever Uploaded
+                , timeout = Nothing
+                , tracker = Just "upload"
+                }
             )
 
         GotUploadProgress progress ->
@@ -360,18 +358,8 @@ viewUpload status =
 
 view : Model Msg -> Html Msg
 view model =
-    case ( model.research, model.weave ) of
-        ( Just r, Just w ) ->
-            div []
-                [ model.exposition.renderedHtml
-                , viewMediaDialog model model.mediaDialog
-                , viewUpload model.uploadStatus
-                ]
-
-        _ ->
-            div []
-                [ model.exposition.renderedHtml
-                , viewMediaDialog model model.mediaDialog
-                , viewUpload model.uploadStatus
-                , text "test, No exposition loaded"
-                ]
+    div []
+        [ model.exposition.renderedHtml
+        , viewMediaDialog model model.mediaDialog
+        , viewUpload model.uploadStatus
+        ]

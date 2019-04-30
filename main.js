@@ -6292,9 +6292,9 @@ var author$project$Main$init = function (flags) {
 				editGeneration: -1,
 				exposition: author$project$Exposition$empty,
 				mediaDialog: _Utils_Tuple2(rundis$elm_bootstrap$Bootstrap$Modal$hidden, ''),
-				research: elm$core$Maybe$Just(fl.research),
+				research: fl.research,
 				uploadStatus: author$project$Main$Ready,
-				weave: elm$core$Maybe$Just(fl.weave)
+				weave: fl.weave
 			},
 			A3(author$project$RCAPI$getExposition, fl.research, fl.weave, author$project$Main$GotExposition));
 	} else {
@@ -6309,9 +6309,9 @@ var author$project$Main$init = function (flags) {
 					author$project$Main$debugObject('mytest'),
 					author$project$Exposition$empty),
 				mediaDialog: _Utils_Tuple2(rundis$elm_bootstrap$Bootstrap$Modal$hidden, ''),
-				research: elm$core$Maybe$Nothing,
+				research: -1,
 				uploadStatus: author$project$Main$Ready,
-				weave: elm$core$Maybe$Nothing
+				weave: -1
 			},
 			elm$core$Platform$Cmd$none);
 	}
@@ -11244,6 +11244,20 @@ var author$project$RCAPI$getMediaList = F2(
 				url: '/text-editor/simple-media-list?research=' + elm$core$String$fromInt(id)
 			});
 	});
+var elm$html$Html$span = _VirtualDom_node('span');
+var author$project$RCAPI$toRCExposition = F3(
+	function (apiExpo, id, weave) {
+		return {
+			authors: _List_Nil,
+			css: apiExpo.style,
+			currentWeave: weave,
+			id: id,
+			markdownInput: apiExpo.markdown,
+			media: _List_Nil,
+			renderedHtml: A2(elm$html$Html$span, _List_Nil, _List_Nil),
+			title: apiExpo.title
+		};
+	});
 var elm$core$Task$Perform = function (a) {
 	return {$: 'Perform', a: a};
 };
@@ -11413,15 +11427,19 @@ var author$project$Main$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'GotExposition':
 				var exp = msg.a;
-				var _n4 = A2(elm$core$Debug$log, 'gotexposition', exp);
-				var _n5 = model.research;
-				if (_n5.$ === 'Nothing') {
-					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
-				} else {
-					var id = _n5.a;
+				if (exp.$ === 'Ok') {
+					var e = exp.a;
 					return _Utils_Tuple2(
-						model,
-						A2(author$project$RCAPI$getMediaList, id, author$project$Main$GotMediaList));
+						_Utils_update(
+							model,
+							{
+								exposition: A3(author$project$RCAPI$toRCExposition, e, model.research, model.weave)
+							}),
+						A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
+				} else {
+					var err = exp.a;
+					var _n5 = A2(elm$core$Debug$log, 'could not load exposition: ', err);
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 			case 'GotMediaList':
 				var exp = msg.a;
@@ -11454,33 +11472,25 @@ var author$project$Main$update = F2(
 				var file = msg.a;
 				return _Utils_Tuple2(
 					model,
-					function () {
-						var _n7 = model.research;
-						if (_n7.$ === 'Nothing') {
-							return elm$core$Platform$Cmd$none;
-						} else {
-							var id = _n7.a;
-							return elm$http$Http$request(
-								{
-									body: elm$http$Http$multipartBody(
-										_List_fromArray(
-											[
-												A2(elm$http$Http$stringPart, 'mediatype', 'image'),
-												A2(elm$http$Http$stringPart, 'name', '--TODO: mpName'),
-												A2(elm$http$Http$stringPart, 'copyrightholder', 'copyrightholder'),
-												A2(elm$http$Http$stringPart, 'description', 'description'),
-												A2(elm$http$Http$filePart, 'media', file),
-												A2(elm$http$Http$stringPart, 'thumb', '')
-											])),
-									expect: elm$http$Http$expectWhatever(author$project$Main$Uploaded),
-									headers: _List_Nil,
-									method: 'POST',
-									timeout: elm$core$Maybe$Nothing,
-									tracker: elm$core$Maybe$Just('upload'),
-									url: 'text-editor/simple-media-add' + ('?research=' + elm$core$String$fromInt(id))
-								});
-						}
-					}());
+					elm$http$Http$request(
+						{
+							body: elm$http$Http$multipartBody(
+								_List_fromArray(
+									[
+										A2(elm$http$Http$stringPart, 'mediatype', 'image'),
+										A2(elm$http$Http$stringPart, 'name', '--TODO: mpName'),
+										A2(elm$http$Http$stringPart, 'copyrightholder', 'copyrightholder'),
+										A2(elm$http$Http$stringPart, 'description', 'description'),
+										A2(elm$http$Http$filePart, 'media', file),
+										A2(elm$http$Http$stringPart, 'thumb', '')
+									])),
+							expect: elm$http$Http$expectWhatever(author$project$Main$Uploaded),
+							headers: _List_Nil,
+							method: 'POST',
+							timeout: elm$core$Maybe$Nothing,
+							tracker: elm$core$Maybe$Just('upload'),
+							url: 'text-editor/simple-media-add' + ('?research=' + elm$core$String$fromInt(model.research))
+						}));
 			case 'GotUploadProgress':
 				var progress = msg.a;
 				if (progress.$ === 'Sending') {
@@ -11506,7 +11516,7 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				} else {
 					var e = result.a;
-					var _n10 = A2(elm$core$Debug$log, 'error uploading: ', e);
+					var _n9 = A2(elm$core$Debug$log, 'error uploading: ', e);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 		}
@@ -13060,31 +13070,15 @@ var author$project$Main$viewUpload = function (status) {
 	}
 };
 var author$project$Main$view = function (model) {
-	var _n0 = _Utils_Tuple2(model.research, model.weave);
-	if ((_n0.a.$ === 'Just') && (_n0.b.$ === 'Just')) {
-		var r = _n0.a.a;
-		var w = _n0.b.a;
-		return A2(
-			elm$html$Html$div,
-			_List_Nil,
-			_List_fromArray(
-				[
-					model.exposition.renderedHtml,
-					A2(author$project$Main$viewMediaDialog, model, model.mediaDialog),
-					author$project$Main$viewUpload(model.uploadStatus)
-				]));
-	} else {
-		return A2(
-			elm$html$Html$div,
-			_List_Nil,
-			_List_fromArray(
-				[
-					model.exposition.renderedHtml,
-					A2(author$project$Main$viewMediaDialog, model, model.mediaDialog),
-					author$project$Main$viewUpload(model.uploadStatus),
-					elm$html$Html$text('test, No exposition loaded')
-				]));
-	}
+	return A2(
+		elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				model.exposition.renderedHtml,
+				A2(author$project$Main$viewMediaDialog, model, model.mediaDialog),
+				author$project$Main$viewUpload(model.uploadStatus)
+			]));
 };
 var elm$browser$Browser$External = function (a) {
 	return {$: 'External', a: a};
