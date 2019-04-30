@@ -7,6 +7,7 @@ import Bootstrap.Form.Input as Input
 import Bootstrap.Form.Select as Select
 import Bootstrap.Form.Textarea as Textarea
 import Bootstrap.Grid as Grid
+import Bootstrap.Utilities.Spacing as Spacing 
 import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -191,21 +192,23 @@ view objectState messages =
     div []
         [ Form.form []
             [ viewInputWithLabel nameProps
-            , viewInputWithLabel descriptionProps
             , Form.group []
                 [ Form.label [ for "classPicker" ] [ text "How should the media be displayed" ]
                 , viewClassesPicker "classPicker" cssClasses currentClass (messages.editTool UserClass)
                 ]
             , viewTextAreaWithLabel descriptionProps
-            , Button.button
-                [ Button.primary
-                , Button.attrs [ Events.onClick messages.insertTool ]
+            , viewInputWithLabel copyrightProps
+            , Form.group []
+                [ Button.button
+                    [ Button.primary
+                    , Button.attrs [ Events.onClick messages.insertTool ]
+                    ]
+                    [ text "Insert" ]
+                , Button.button
+                    [ Button.danger
+                    , Button.attrs [ Events.onClick messages.deleteTool, Spacing.ml1  ]
+                    ]
+                    [ text "Remove" ]
                 ]
-                [ text "Insert" ]
-            , Button.button
-                [ Button.primary
-                , Button.attrs [ Events.onClick messages.deleteTool ]
-                ]
-                [ text "Remove" ]
             ]
         ]

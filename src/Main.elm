@@ -334,8 +334,8 @@ viewMediaDialog model ( visibility, objectNameorId ) =
     Modal.config CloseMediaDialog
         |> Modal.small
         |> Modal.hideOnBackdropClick True
-        |> Modal.h3 [] [ text "Modal header" ]
-        |> Modal.body [] [ p [] [ mediaEditView, text <| "This is a modal for object " ++ objectNameorId ] ]
+        |> Modal.h5 [] [ text <| "Edit object " ++ objectNameorId ]
+        |> Modal.body [] [ p [] [ mediaEditView ] ]
         |> Modal.footer []
             [ Button.button
                 [ Button.outlinePrimary
