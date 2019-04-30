@@ -80,271 +80,6 @@ function A9(fun, a, b, c, d, e, f, g, h, i) {
 console.warn('Compiled in DEV mode. Follow the advice at https://elm-lang.org/0.19.0/optimize for better performance and smaller assets.');
 
 
-var _List_Nil_UNUSED = { $: 0 };
-var _List_Nil = { $: '[]' };
-
-function _List_Cons_UNUSED(hd, tl) { return { $: 1, a: hd, b: tl }; }
-function _List_Cons(hd, tl) { return { $: '::', a: hd, b: tl }; }
-
-
-var _List_cons = F2(_List_Cons);
-
-function _List_fromArray(arr)
-{
-	var out = _List_Nil;
-	for (var i = arr.length; i--; )
-	{
-		out = _List_Cons(arr[i], out);
-	}
-	return out;
-}
-
-function _List_toArray(xs)
-{
-	for (var out = []; xs.b; xs = xs.b) // WHILE_CONS
-	{
-		out.push(xs.a);
-	}
-	return out;
-}
-
-var _List_map2 = F3(function(f, xs, ys)
-{
-	for (var arr = []; xs.b && ys.b; xs = xs.b, ys = ys.b) // WHILE_CONSES
-	{
-		arr.push(A2(f, xs.a, ys.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map3 = F4(function(f, xs, ys, zs)
-{
-	for (var arr = []; xs.b && ys.b && zs.b; xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A3(f, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map4 = F5(function(f, ws, xs, ys, zs)
-{
-	for (var arr = []; ws.b && xs.b && ys.b && zs.b; ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A4(f, ws.a, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map5 = F6(function(f, vs, ws, xs, ys, zs)
-{
-	for (var arr = []; vs.b && ws.b && xs.b && ys.b && zs.b; vs = vs.b, ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A5(f, vs.a, ws.a, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_sortBy = F2(function(f, xs)
-{
-	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
-		return _Utils_cmp(f(a), f(b));
-	}));
-});
-
-var _List_sortWith = F2(function(f, xs)
-{
-	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
-		var ord = A2(f, a, b);
-		return ord === elm$core$Basics$EQ ? 0 : ord === elm$core$Basics$LT ? -1 : 1;
-	}));
-});
-
-
-
-// EQUALITY
-
-function _Utils_eq(x, y)
-{
-	for (
-		var pair, stack = [], isEqual = _Utils_eqHelp(x, y, 0, stack);
-		isEqual && (pair = stack.pop());
-		isEqual = _Utils_eqHelp(pair.a, pair.b, 0, stack)
-		)
-	{}
-
-	return isEqual;
-}
-
-function _Utils_eqHelp(x, y, depth, stack)
-{
-	if (depth > 100)
-	{
-		stack.push(_Utils_Tuple2(x,y));
-		return true;
-	}
-
-	if (x === y)
-	{
-		return true;
-	}
-
-	if (typeof x !== 'object' || x === null || y === null)
-	{
-		typeof x === 'function' && _Debug_crash(5);
-		return false;
-	}
-
-	/**/
-	if (x.$ === 'Set_elm_builtin')
-	{
-		x = elm$core$Set$toList(x);
-		y = elm$core$Set$toList(y);
-	}
-	if (x.$ === 'RBNode_elm_builtin' || x.$ === 'RBEmpty_elm_builtin')
-	{
-		x = elm$core$Dict$toList(x);
-		y = elm$core$Dict$toList(y);
-	}
-	//*/
-
-	/**_UNUSED/
-	if (x.$ < 0)
-	{
-		x = elm$core$Dict$toList(x);
-		y = elm$core$Dict$toList(y);
-	}
-	//*/
-
-	for (var key in x)
-	{
-		if (!_Utils_eqHelp(x[key], y[key], depth + 1, stack))
-		{
-			return false;
-		}
-	}
-	return true;
-}
-
-var _Utils_equal = F2(_Utils_eq);
-var _Utils_notEqual = F2(function(a, b) { return !_Utils_eq(a,b); });
-
-
-
-// COMPARISONS
-
-// Code in Generate/JavaScript.hs, Basics.js, and List.js depends on
-// the particular integer values assigned to LT, EQ, and GT.
-
-function _Utils_cmp(x, y, ord)
-{
-	if (typeof x !== 'object')
-	{
-		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
-	}
-
-	/**/
-	if (x instanceof String)
-	{
-		var a = x.valueOf();
-		var b = y.valueOf();
-		return a === b ? 0 : a < b ? -1 : 1;
-	}
-	//*/
-
-	/**_UNUSED/
-	if (typeof x.$ === 'undefined')
-	//*/
-	/**/
-	if (x.$[0] === '#')
-	//*/
-	{
-		return (ord = _Utils_cmp(x.a, y.a))
-			? ord
-			: (ord = _Utils_cmp(x.b, y.b))
-				? ord
-				: _Utils_cmp(x.c, y.c);
-	}
-
-	// traverse conses until end of a list or a mismatch
-	for (; x.b && y.b && !(ord = _Utils_cmp(x.a, y.a)); x = x.b, y = y.b) {} // WHILE_CONSES
-	return ord || (x.b ? /*GT*/ 1 : y.b ? /*LT*/ -1 : /*EQ*/ 0);
-}
-
-var _Utils_lt = F2(function(a, b) { return _Utils_cmp(a, b) < 0; });
-var _Utils_le = F2(function(a, b) { return _Utils_cmp(a, b) < 1; });
-var _Utils_gt = F2(function(a, b) { return _Utils_cmp(a, b) > 0; });
-var _Utils_ge = F2(function(a, b) { return _Utils_cmp(a, b) >= 0; });
-
-var _Utils_compare = F2(function(x, y)
-{
-	var n = _Utils_cmp(x, y);
-	return n < 0 ? elm$core$Basics$LT : n ? elm$core$Basics$GT : elm$core$Basics$EQ;
-});
-
-
-// COMMON VALUES
-
-var _Utils_Tuple0_UNUSED = 0;
-var _Utils_Tuple0 = { $: '#0' };
-
-function _Utils_Tuple2_UNUSED(a, b) { return { a: a, b: b }; }
-function _Utils_Tuple2(a, b) { return { $: '#2', a: a, b: b }; }
-
-function _Utils_Tuple3_UNUSED(a, b, c) { return { a: a, b: b, c: c }; }
-function _Utils_Tuple3(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
-
-function _Utils_chr_UNUSED(c) { return c; }
-function _Utils_chr(c) { return new String(c); }
-
-
-// RECORDS
-
-function _Utils_update(oldRecord, updatedFields)
-{
-	var newRecord = {};
-
-	for (var key in oldRecord)
-	{
-		newRecord[key] = oldRecord[key];
-	}
-
-	for (var key in updatedFields)
-	{
-		newRecord[key] = updatedFields[key];
-	}
-
-	return newRecord;
-}
-
-
-// APPEND
-
-var _Utils_append = F2(_Utils_ap);
-
-function _Utils_ap(xs, ys)
-{
-	// append Strings
-	if (typeof xs === 'string')
-	{
-		return xs + ys;
-	}
-
-	// append Lists
-	if (!xs.b)
-	{
-		return ys;
-	}
-	var root = _List_Cons(xs.a, ys);
-	xs = xs.b
-	for (var curr = root; xs.b; xs = xs.b) // WHILE_CONS
-	{
-		curr = curr.b = _List_Cons(xs.a, ys);
-	}
-	return root;
-}
-
-
-
 var _JsArray_empty = [];
 
 function _JsArray_singleton(value)
@@ -790,6 +525,271 @@ function _Debug_regionToString(region)
 	}
 	return 'on lines ' + region.start.line + ' through ' + region.end.line;
 }
+
+
+
+// EQUALITY
+
+function _Utils_eq(x, y)
+{
+	for (
+		var pair, stack = [], isEqual = _Utils_eqHelp(x, y, 0, stack);
+		isEqual && (pair = stack.pop());
+		isEqual = _Utils_eqHelp(pair.a, pair.b, 0, stack)
+		)
+	{}
+
+	return isEqual;
+}
+
+function _Utils_eqHelp(x, y, depth, stack)
+{
+	if (depth > 100)
+	{
+		stack.push(_Utils_Tuple2(x,y));
+		return true;
+	}
+
+	if (x === y)
+	{
+		return true;
+	}
+
+	if (typeof x !== 'object' || x === null || y === null)
+	{
+		typeof x === 'function' && _Debug_crash(5);
+		return false;
+	}
+
+	/**/
+	if (x.$ === 'Set_elm_builtin')
+	{
+		x = elm$core$Set$toList(x);
+		y = elm$core$Set$toList(y);
+	}
+	if (x.$ === 'RBNode_elm_builtin' || x.$ === 'RBEmpty_elm_builtin')
+	{
+		x = elm$core$Dict$toList(x);
+		y = elm$core$Dict$toList(y);
+	}
+	//*/
+
+	/**_UNUSED/
+	if (x.$ < 0)
+	{
+		x = elm$core$Dict$toList(x);
+		y = elm$core$Dict$toList(y);
+	}
+	//*/
+
+	for (var key in x)
+	{
+		if (!_Utils_eqHelp(x[key], y[key], depth + 1, stack))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+var _Utils_equal = F2(_Utils_eq);
+var _Utils_notEqual = F2(function(a, b) { return !_Utils_eq(a,b); });
+
+
+
+// COMPARISONS
+
+// Code in Generate/JavaScript.hs, Basics.js, and List.js depends on
+// the particular integer values assigned to LT, EQ, and GT.
+
+function _Utils_cmp(x, y, ord)
+{
+	if (typeof x !== 'object')
+	{
+		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
+	}
+
+	/**/
+	if (x instanceof String)
+	{
+		var a = x.valueOf();
+		var b = y.valueOf();
+		return a === b ? 0 : a < b ? -1 : 1;
+	}
+	//*/
+
+	/**_UNUSED/
+	if (typeof x.$ === 'undefined')
+	//*/
+	/**/
+	if (x.$[0] === '#')
+	//*/
+	{
+		return (ord = _Utils_cmp(x.a, y.a))
+			? ord
+			: (ord = _Utils_cmp(x.b, y.b))
+				? ord
+				: _Utils_cmp(x.c, y.c);
+	}
+
+	// traverse conses until end of a list or a mismatch
+	for (; x.b && y.b && !(ord = _Utils_cmp(x.a, y.a)); x = x.b, y = y.b) {} // WHILE_CONSES
+	return ord || (x.b ? /*GT*/ 1 : y.b ? /*LT*/ -1 : /*EQ*/ 0);
+}
+
+var _Utils_lt = F2(function(a, b) { return _Utils_cmp(a, b) < 0; });
+var _Utils_le = F2(function(a, b) { return _Utils_cmp(a, b) < 1; });
+var _Utils_gt = F2(function(a, b) { return _Utils_cmp(a, b) > 0; });
+var _Utils_ge = F2(function(a, b) { return _Utils_cmp(a, b) >= 0; });
+
+var _Utils_compare = F2(function(x, y)
+{
+	var n = _Utils_cmp(x, y);
+	return n < 0 ? elm$core$Basics$LT : n ? elm$core$Basics$GT : elm$core$Basics$EQ;
+});
+
+
+// COMMON VALUES
+
+var _Utils_Tuple0_UNUSED = 0;
+var _Utils_Tuple0 = { $: '#0' };
+
+function _Utils_Tuple2_UNUSED(a, b) { return { a: a, b: b }; }
+function _Utils_Tuple2(a, b) { return { $: '#2', a: a, b: b }; }
+
+function _Utils_Tuple3_UNUSED(a, b, c) { return { a: a, b: b, c: c }; }
+function _Utils_Tuple3(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
+
+function _Utils_chr_UNUSED(c) { return c; }
+function _Utils_chr(c) { return new String(c); }
+
+
+// RECORDS
+
+function _Utils_update(oldRecord, updatedFields)
+{
+	var newRecord = {};
+
+	for (var key in oldRecord)
+	{
+		newRecord[key] = oldRecord[key];
+	}
+
+	for (var key in updatedFields)
+	{
+		newRecord[key] = updatedFields[key];
+	}
+
+	return newRecord;
+}
+
+
+// APPEND
+
+var _Utils_append = F2(_Utils_ap);
+
+function _Utils_ap(xs, ys)
+{
+	// append Strings
+	if (typeof xs === 'string')
+	{
+		return xs + ys;
+	}
+
+	// append Lists
+	if (!xs.b)
+	{
+		return ys;
+	}
+	var root = _List_Cons(xs.a, ys);
+	xs = xs.b
+	for (var curr = root; xs.b; xs = xs.b) // WHILE_CONS
+	{
+		curr = curr.b = _List_Cons(xs.a, ys);
+	}
+	return root;
+}
+
+
+
+var _List_Nil_UNUSED = { $: 0 };
+var _List_Nil = { $: '[]' };
+
+function _List_Cons_UNUSED(hd, tl) { return { $: 1, a: hd, b: tl }; }
+function _List_Cons(hd, tl) { return { $: '::', a: hd, b: tl }; }
+
+
+var _List_cons = F2(_List_Cons);
+
+function _List_fromArray(arr)
+{
+	var out = _List_Nil;
+	for (var i = arr.length; i--; )
+	{
+		out = _List_Cons(arr[i], out);
+	}
+	return out;
+}
+
+function _List_toArray(xs)
+{
+	for (var out = []; xs.b; xs = xs.b) // WHILE_CONS
+	{
+		out.push(xs.a);
+	}
+	return out;
+}
+
+var _List_map2 = F3(function(f, xs, ys)
+{
+	for (var arr = []; xs.b && ys.b; xs = xs.b, ys = ys.b) // WHILE_CONSES
+	{
+		arr.push(A2(f, xs.a, ys.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map3 = F4(function(f, xs, ys, zs)
+{
+	for (var arr = []; xs.b && ys.b && zs.b; xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A3(f, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map4 = F5(function(f, ws, xs, ys, zs)
+{
+	for (var arr = []; ws.b && xs.b && ys.b && zs.b; ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A4(f, ws.a, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map5 = F6(function(f, vs, ws, xs, ys, zs)
+{
+	for (var arr = []; vs.b && ws.b && xs.b && ys.b && zs.b; vs = vs.b, ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A5(f, vs.a, ws.a, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_sortBy = F2(function(f, xs)
+{
+	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
+		return _Utils_cmp(f(a), f(b));
+	}));
+});
+
+var _List_sortWith = F2(function(f, xs)
+{
+	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
+		var ord = A2(f, a, b);
+		return ord === elm$core$Basics$EQ ? 0 : ord === elm$core$Basics$LT ? -1 : 1;
+	}));
+});
 
 
 
@@ -4818,26 +4818,33 @@ function _Browser_load(url)
 		}
 	}));
 }
-var elm$core$Basics$identity = function (x) {
-	return x;
-};
-var elm$core$Basics$False = {$: 'False'};
-var elm$core$Basics$True = {$: 'True'};
-var elm$core$Result$isOk = function (result) {
-	if (result.$ === 'Ok') {
-		return true;
-	} else {
-		return false;
-	}
-};
-var elm$core$Array$branchFactor = 32;
-var elm$core$Array$Array_elm_builtin = F4(
-	function (a, b, c, d) {
-		return {$: 'Array_elm_builtin', a: a, b: b, c: c, d: d};
-	});
 var elm$core$Basics$EQ = {$: 'EQ'};
-var elm$core$Basics$GT = {$: 'GT'};
 var elm$core$Basics$LT = {$: 'LT'};
+var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
+var elm$core$Array$foldr = F3(
+	function (func, baseCase, _n0) {
+		var tree = _n0.c;
+		var tail = _n0.d;
+		var helper = F2(
+			function (node, acc) {
+				if (node.$ === 'SubTree') {
+					var subTree = node.a;
+					return A3(elm$core$Elm$JsArray$foldr, helper, acc, subTree);
+				} else {
+					var values = node.a;
+					return A3(elm$core$Elm$JsArray$foldr, func, acc, values);
+				}
+			});
+		return A3(
+			elm$core$Elm$JsArray$foldr,
+			helper,
+			A3(elm$core$Elm$JsArray$foldr, func, baseCase, tail),
+			tree);
+	});
+var elm$core$Array$toList = function (array) {
+	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
+};
+var elm$core$Basics$GT = {$: 'GT'};
 var elm$core$Dict$foldr = F3(
 	function (func, acc, t) {
 		foldr:
@@ -4863,7 +4870,6 @@ var elm$core$Dict$foldr = F3(
 			}
 		}
 	});
-var elm$core$List$cons = _List_cons;
 var elm$core$Dict$toList = function (dict) {
 	return A3(
 		elm$core$Dict$foldr,
@@ -4891,30 +4897,32 @@ var elm$core$Set$toList = function (_n0) {
 	var dict = _n0.a;
 	return elm$core$Dict$keys(dict);
 };
-var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
-var elm$core$Array$foldr = F3(
-	function (func, baseCase, _n0) {
-		var tree = _n0.c;
-		var tail = _n0.d;
-		var helper = F2(
-			function (node, acc) {
-				if (node.$ === 'SubTree') {
-					var subTree = node.a;
-					return A3(elm$core$Elm$JsArray$foldr, helper, acc, subTree);
-				} else {
-					var values = node.a;
-					return A3(elm$core$Elm$JsArray$foldr, func, acc, values);
-				}
+var elm$core$List$cons = _List_cons;
+var author$project$Exposition$addObject = F2(
+	function (obj, exp) {
+		return _Utils_update(
+			exp,
+			{
+				media: A2(elm$core$List$cons, obj, exp.media)
 			});
-		return A3(
-			elm$core$Elm$JsArray$foldr,
-			helper,
-			A3(elm$core$Elm$JsArray$foldr, func, baseCase, tail),
-			tree);
 	});
-var elm$core$Array$toList = function (array) {
-	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
+var elm$core$Basics$identity = function (x) {
+	return x;
 };
+var elm$core$Basics$False = {$: 'False'};
+var elm$core$Basics$True = {$: 'True'};
+var elm$core$Result$isOk = function (result) {
+	if (result.$ === 'Ok') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var elm$core$Array$branchFactor = 32;
+var elm$core$Array$Array_elm_builtin = F4(
+	function (a, b, c, d) {
+		return {$: 'Array_elm_builtin', a: a, b: b, c: c, d: d};
+	});
 var elm$core$Basics$ceiling = _Basics_ceiling;
 var elm$core$Basics$fdiv = _Basics_fdiv;
 var elm$core$Basics$logBase = F2(
@@ -5326,6 +5334,10 @@ var author$project$Main$GotExposition = function (a) {
 	return {$: 'GotExposition', a: a};
 };
 var author$project$Main$Ready = {$: 'Ready'};
+var author$project$Exposition$RCImage = {$: 'RCImage'};
+var author$project$Main$debugObject = function (objectName) {
+	return {caption: 'CAPTION', copyright: 'Casper Schipper 2019', description: 'description', dimensions: elm$core$Maybe$Nothing, expositionId: 1, htmlId: '', id: 1, mediaType: author$project$Exposition$RCImage, name: objectName, thumb: 'angryCatImage.png', userClass: '', version: 1};
+};
 var author$project$Main$Flags = F2(
 	function (weave, research) {
 		return {research: research, weave: weave};
@@ -6292,7 +6304,10 @@ var author$project$Main$init = function (flags) {
 			{
 				apiExposition: elm$core$Maybe$Nothing,
 				editGeneration: -1,
-				exposition: author$project$Exposition$empty,
+				exposition: A2(
+					author$project$Exposition$addObject,
+					author$project$Main$debugObject('mytest'),
+					author$project$Exposition$empty),
 				mediaDialog: _Utils_Tuple2(rundis$elm_bootstrap$Bootstrap$Modal$hidden, ''),
 				research: elm$core$Maybe$Nothing,
 				uploadStatus: author$project$Main$Ready,
@@ -11120,6 +11135,19 @@ var author$project$Exposition$render = function (exp) {
 				exp.markdownInput)
 		});
 };
+var author$project$Exposition$replaceObject = F2(
+	function (obj, exp) {
+		return _Utils_update(
+			exp,
+			{
+				media: A2(
+					elm$core$List$map,
+					function (m) {
+						return _Utils_eq(m.id, obj.id) ? obj : m;
+					},
+					exp.media)
+			});
+	});
 var author$project$Exposition$withMd = F2(
 	function (exp, content) {
 		return _Utils_update(
@@ -11401,7 +11429,13 @@ var author$project$Main$update = F2(
 				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 			case 'MediaEdit':
 				var obj = msg.a;
-				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							exposition: A2(author$project$Exposition$replaceObject, obj, model.exposition)
+						}),
+					elm$core$Platform$Cmd$none);
 			case 'MediaDelete':
 				var obj = msg.a;
 				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
@@ -11477,11 +11511,228 @@ var author$project$Main$update = F2(
 				}
 		}
 	});
+var author$project$Exposition$thumbUrl = function (data) {
+	return '/text-editor/simple-media-thumb?research=' + (elm$core$String$fromInt(data.expositionId) + ('&simple-media=' + (elm$core$String$fromInt(data.id) + '&width=132&height=132')));
+};
+var author$project$Exposition$validateName = F3(
+	function (exp, obj, newName) {
+		if (elm$core$String$length(newName) < 4) {
+			return elm$core$Result$Err('Name is too short');
+		} else {
+			var objName = obj.name;
+			var mediaNames = A2(
+				elm$core$List$map,
+				function (m) {
+					return m.name;
+				},
+				exp.media);
+			return ((!_Utils_eq(obj.name, newName)) && A2(elm$core$List$member, newName, mediaNames)) ? elm$core$Result$Err('Another media object already has this name') : elm$core$Result$Ok(newName);
+		}
+	});
+var author$project$Exposition$validateMediaObject = F3(
+	function (exp, objInModel, objInEdit) {
+		var validation = {
+			copyright: elm$core$Result$Ok(objInEdit.copyright),
+			description: elm$core$Result$Ok(objInEdit.description),
+			name: A3(author$project$Exposition$validateName, exp, objInModel, objInEdit.name),
+			userClass: elm$core$Result$Ok(objInEdit.userClass)
+		};
+		return {
+			id: objInModel.id,
+			thumbUrl: author$project$Exposition$thumbUrl(objInModel),
+			validation: validation
+		};
+	});
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
+var author$project$Main$InsertTool = function (a) {
+	return {$: 'InsertTool', a: a};
+};
+var author$project$Main$MediaDelete = function (a) {
+	return {$: 'MediaDelete', a: a};
+};
+var author$project$Main$MediaEdit = function (a) {
+	return {$: 'MediaEdit', a: a};
+};
+var author$project$Main$makeMediaEditFun = F3(
+	function (obj, field, input) {
+		switch (field.$) {
+			case 'Name':
+				return author$project$Main$MediaEdit(
+					_Utils_update(
+						obj,
+						{name: input}));
+			case 'Description':
+				return author$project$Main$MediaEdit(
+					_Utils_update(
+						obj,
+						{description: input}));
+			case 'UserClass':
+				return author$project$Main$MediaEdit(
+					_Utils_update(
+						obj,
+						{userClass: input}));
+			default:
+				return author$project$Main$MediaEdit(
+					_Utils_update(
+						obj,
+						{copyright: input}));
+		}
+	});
+var author$project$Main$makeMediaEditMsgs = function (obj) {
+	return {
+		deleteTool: author$project$Main$MediaDelete(obj),
+		editTool: author$project$Main$makeMediaEditFun(obj),
+		insertTool: author$project$Main$InsertTool(obj)
+	};
+};
+var author$project$RCMediaEdit$Copyright = {$: 'Copyright'};
+var author$project$RCMediaEdit$Description = {$: 'Description'};
+var author$project$RCMediaEdit$Name = {$: 'Name'};
+var author$project$RCMediaEdit$UserClass = {$: 'UserClass'};
+var author$project$RCMediaEdit$CssClass = F2(
+	function (selector, name) {
+		return {name: name, selector: selector};
+	});
+var author$project$RCMediaEdit$cssClasses = _List_fromArray(
+	[
+		A2(author$project$RCMediaEdit$CssClass, 'big', 'big'),
+		A2(author$project$RCMediaEdit$CssClass, 'medium', 'medium'),
+		A2(author$project$RCMediaEdit$CssClass, 'small', 'small'),
+		A2(author$project$RCMediaEdit$CssClass, 'floatLeftSmall', 'small & float left'),
+		A2(author$project$RCMediaEdit$CssClass, 'floatRightSmall', 'small & float right'),
+		A2(author$project$RCMediaEdit$CssClass, 'floatRightMedium', 'medium & float right'),
+		A2(author$project$RCMediaEdit$CssClass, 'floatLeftMedium', 'medium & float left')
+	]);
+var author$project$RCMediaEdit$fromValidation = function (result) {
+	if (result.$ === 'Ok') {
+		var userinput = result.a;
+		return userinput;
+	} else {
+		var error = result.a;
+		return 'error!' + error;
+	}
+};
+var author$project$RCMediaEdit$helpFromValidation = function (result) {
+	if (result.$ === 'Ok') {
+		return 'ok';
+	} else {
+		var err = result.a;
+		return 'error: ' + err;
+	}
+};
+var elm$html$Html$Attributes$selected = elm$html$Html$Attributes$boolProperty('selected');
+var elm$html$Html$Attributes$value = elm$html$Html$Attributes$stringProperty('value');
+var elm$html$Html$Events$alwaysStop = function (x) {
+	return _Utils_Tuple2(x, true);
+};
+var elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
+	return {$: 'MayStopPropagation', a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$stopPropagationOn = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
+	});
+var elm$html$Html$Events$targetValue = A2(
+	elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	elm$json$Json$Decode$string);
+var elm$html$Html$Events$onInput = function (tagger) {
+	return A2(
+		elm$html$Html$Events$stopPropagationOn,
+		'input',
+		A2(
+			elm$json$Json$Decode$map,
+			elm$html$Html$Events$alwaysStop,
+			A2(elm$json$Json$Decode$map, tagger, elm$html$Html$Events$targetValue)));
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Select$Attrs = function (a) {
+	return {$: 'Attrs', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Select$attrs = function (attrs_) {
+	return rundis$elm_bootstrap$Bootstrap$Form$Select$Attrs(attrs_);
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Select$Id = function (a) {
+	return {$: 'Id', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Select$id = function (id_) {
+	return rundis$elm_bootstrap$Bootstrap$Form$Select$Id(id_);
+};
+var elm$html$Html$option = _VirtualDom_node('option');
+var rundis$elm_bootstrap$Bootstrap$Form$Select$Item = function (a) {
+	return {$: 'Item', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Select$item = F2(
+	function (attributes, children) {
+		return rundis$elm_bootstrap$Bootstrap$Form$Select$Item(
+			A2(elm$html$Html$option, attributes, children));
+	});
+var rundis$elm_bootstrap$Bootstrap$Form$Select$Select = function (a) {
+	return {$: 'Select', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Select$create = F2(
+	function (options, items) {
+		return rundis$elm_bootstrap$Bootstrap$Form$Select$Select(
+			{items: items, options: options});
+	});
+var elm$html$Html$select = _VirtualDom_node('select');
+var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
+var rundis$elm_bootstrap$Bootstrap$Form$Select$applyModifier = F2(
+	function (modifier, options) {
+		switch (modifier.$) {
+			case 'Size':
+				var size_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						size: elm$core$Maybe$Just(size_)
+					});
+			case 'Id':
+				var id_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						id: elm$core$Maybe$Just(id_)
+					});
+			case 'Custom':
+				return _Utils_update(
+					options,
+					{custom: true});
+			case 'Disabled':
+				var val = modifier.a;
+				return _Utils_update(
+					options,
+					{disabled: val});
+			case 'OnChange':
+				var onChange_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						onChange: elm$core$Maybe$Just(onChange_)
+					});
+			case 'Validation':
+				var validation_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						validation: elm$core$Maybe$Just(validation_)
+					});
+			default:
+				var attrs_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						attributes: _Utils_ap(options.attributes, attrs_)
+					});
+		}
+	});
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
 var elm$html$Html$Events$on = F2(
 	function (event, decoder) {
 		return A2(
@@ -11489,20 +11740,13 @@ var elm$html$Html$Events$on = F2(
 			event,
 			elm$virtual_dom$VirtualDom$Normal(decoder));
 	});
-var elm$html$Html$Events$onClick = function (msg) {
+var rundis$elm_bootstrap$Bootstrap$Form$Select$customEventOnChange = function (tagger) {
 	return A2(
 		elm$html$Html$Events$on,
-		'click',
-		elm$json$Json$Decode$succeed(msg));
+		'change',
+		A2(elm$json$Json$Decode$map, tagger, elm$html$Html$Events$targetValue));
 };
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
-	return {$: 'Attrs', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Button$attrs = function (attrs_) {
-	return rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs(attrs_);
-};
-var elm$html$Html$button = _VirtualDom_node('button');
-var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
+var rundis$elm_bootstrap$Bootstrap$Form$Select$defaultOptions = {attributes: _List_Nil, custom: false, disabled: false, id: elm$core$Maybe$Nothing, onChange: elm$core$Maybe$Nothing, size: elm$core$Maybe$Nothing, validation: elm$core$Maybe$Nothing};
 var rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption = function (size) {
 	switch (size.$) {
 		case 'XS':
@@ -11517,6 +11761,531 @@ var rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption = function 
 			return elm$core$Maybe$Just('xl');
 	}
 };
+var rundis$elm_bootstrap$Bootstrap$Form$Select$sizeAttribute = F2(
+	function (isCustom, size_) {
+		var prefix = isCustom ? 'custom-select-' : 'form-control-';
+		return A2(
+			elm$core$Maybe$map,
+			function (s) {
+				return elm$html$Html$Attributes$class(
+					_Utils_ap(prefix, s));
+			},
+			rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption(size_));
+	});
+var rundis$elm_bootstrap$Bootstrap$Form$FormInternal$validationToString = function (validation) {
+	if (validation.$ === 'Success') {
+		return 'is-valid';
+	} else {
+		return 'is-invalid';
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Select$validationAttribute = function (validation_) {
+	return elm$html$Html$Attributes$class(
+		rundis$elm_bootstrap$Bootstrap$Form$FormInternal$validationToString(validation_));
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Select$toAttributes = function (modifiers) {
+	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Form$Select$applyModifier, rundis$elm_bootstrap$Bootstrap$Form$Select$defaultOptions, modifiers);
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$classList(
+				_List_fromArray(
+					[
+						_Utils_Tuple2('form-control', !options.custom),
+						_Utils_Tuple2('custom-select', options.custom)
+					])),
+				elm$html$Html$Attributes$disabled(options.disabled)
+			]),
+		_Utils_ap(
+			A2(
+				elm$core$List$filterMap,
+				elm$core$Basics$identity,
+				_List_fromArray(
+					[
+						A2(elm$core$Maybe$map, elm$html$Html$Attributes$id, options.id),
+						A2(
+						elm$core$Maybe$andThen,
+						rundis$elm_bootstrap$Bootstrap$Form$Select$sizeAttribute(options.custom),
+						options.size),
+						A2(elm$core$Maybe$map, rundis$elm_bootstrap$Bootstrap$Form$Select$customEventOnChange, options.onChange),
+						A2(elm$core$Maybe$map, rundis$elm_bootstrap$Bootstrap$Form$Select$validationAttribute, options.validation)
+					])),
+			options.attributes));
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Select$view = function (_n0) {
+	var options = _n0.a.options;
+	var items = _n0.a.items;
+	return A2(
+		elm$html$Html$select,
+		rundis$elm_bootstrap$Bootstrap$Form$Select$toAttributes(options),
+		A2(
+			elm$core$List$map,
+			function (_n1) {
+				var e = _n1.a;
+				return e;
+			},
+			items));
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Select$select = F2(
+	function (options, items) {
+		return rundis$elm_bootstrap$Bootstrap$Form$Select$view(
+			A2(rundis$elm_bootstrap$Bootstrap$Form$Select$create, options, items));
+	});
+var author$project$RCMediaEdit$viewClassesPicker = F4(
+	function (id, classList, currentSelection, editMessage) {
+		var selectItem = function (item) {
+			var isSelected = _Utils_eq(currentSelection, item.selector);
+			return A2(
+				rundis$elm_bootstrap$Bootstrap$Form$Select$item,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$value(item.selector),
+						elm$html$Html$Attributes$selected(isSelected)
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text(item.name)
+					]));
+		};
+		return A2(
+			rundis$elm_bootstrap$Bootstrap$Form$Select$select,
+			_List_fromArray(
+				[
+					rundis$elm_bootstrap$Bootstrap$Form$Select$id(id),
+					rundis$elm_bootstrap$Bootstrap$Form$Select$attrs(
+					_List_fromArray(
+						[
+							elm$html$Html$Events$onInput(editMessage)
+						]))
+				]),
+			A2(elm$core$List$map, selectItem, classList));
+	});
+var elm$html$Html$Attributes$for = elm$html$Html$Attributes$stringProperty('htmlFor');
+var elm$html$Html$Attributes$placeholder = elm$html$Html$Attributes$stringProperty('placeholder');
+var rundis$elm_bootstrap$Bootstrap$Form$applyModifier = F2(
+	function (modifier, options) {
+		var value = modifier.a;
+		return _Utils_update(
+			options,
+			{
+				attributes: _Utils_ap(options.attributes, value)
+			});
+	});
+var rundis$elm_bootstrap$Bootstrap$Form$defaultOptions = {attributes: _List_Nil};
+var rundis$elm_bootstrap$Bootstrap$Form$toAttributes = function (modifiers) {
+	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Form$applyModifier, rundis$elm_bootstrap$Bootstrap$Form$defaultOptions, modifiers);
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('form-group')
+			]),
+		options.attributes);
+};
+var rundis$elm_bootstrap$Bootstrap$Form$group = F2(
+	function (options, children) {
+		return A2(
+			elm$html$Html$div,
+			rundis$elm_bootstrap$Bootstrap$Form$toAttributes(options),
+			children);
+	});
+var elm$html$Html$small = _VirtualDom_node('small');
+var rundis$elm_bootstrap$Bootstrap$Form$help = F2(
+	function (attributes, children) {
+		return A2(
+			elm$html$Html$small,
+			A2(
+				elm$core$List$cons,
+				elm$html$Html$Attributes$class('form-text text-muted'),
+				attributes),
+			children);
+	});
+var elm$html$Html$label = _VirtualDom_node('label');
+var rundis$elm_bootstrap$Bootstrap$Form$label = F2(
+	function (attributes, children) {
+		return A2(
+			elm$html$Html$label,
+			A2(
+				elm$core$List$cons,
+				elm$html$Html$Attributes$class('form-control-label'),
+				attributes),
+			children);
+	});
+var rundis$elm_bootstrap$Bootstrap$Form$Input$Attrs = function (a) {
+	return {$: 'Attrs', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$attrs = function (attrs_) {
+	return rundis$elm_bootstrap$Bootstrap$Form$Input$Attrs(attrs_);
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$Text = {$: 'Text'};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$Input = function (a) {
+	return {$: 'Input', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$Type = function (a) {
+	return {$: 'Type', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$create = F2(
+	function (tipe, options) {
+		return rundis$elm_bootstrap$Bootstrap$Form$Input$Input(
+			{
+				options: A2(
+					elm$core$List$cons,
+					rundis$elm_bootstrap$Bootstrap$Form$Input$Type(tipe),
+					options)
+			});
+	});
+var elm$html$Html$input = _VirtualDom_node('input');
+var elm$html$Html$Attributes$readonly = elm$html$Html$Attributes$boolProperty('readOnly');
+var rundis$elm_bootstrap$Bootstrap$Form$Input$applyModifier = F2(
+	function (modifier, options) {
+		switch (modifier.$) {
+			case 'Size':
+				var size_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						size: elm$core$Maybe$Just(size_)
+					});
+			case 'Id':
+				var id_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						id: elm$core$Maybe$Just(id_)
+					});
+			case 'Type':
+				var tipe = modifier.a;
+				return _Utils_update(
+					options,
+					{tipe: tipe});
+			case 'Disabled':
+				var val = modifier.a;
+				return _Utils_update(
+					options,
+					{disabled: val});
+			case 'Value':
+				var value_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						value: elm$core$Maybe$Just(value_)
+					});
+			case 'Placeholder':
+				var value_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						placeholder: elm$core$Maybe$Just(value_)
+					});
+			case 'OnInput':
+				var onInput_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						onInput: elm$core$Maybe$Just(onInput_)
+					});
+			case 'Validation':
+				var validation_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						validation: elm$core$Maybe$Just(validation_)
+					});
+			case 'Readonly':
+				var val = modifier.a;
+				return _Utils_update(
+					options,
+					{readonly: val});
+			default:
+				var attrs_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						attributes: _Utils_ap(options.attributes, attrs_)
+					});
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Form$Input$defaultOptions = {attributes: _List_Nil, disabled: false, id: elm$core$Maybe$Nothing, onInput: elm$core$Maybe$Nothing, placeholder: elm$core$Maybe$Nothing, readonly: false, size: elm$core$Maybe$Nothing, tipe: rundis$elm_bootstrap$Bootstrap$Form$Input$Text, validation: elm$core$Maybe$Nothing, value: elm$core$Maybe$Nothing};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$sizeAttribute = function (size) {
+	return A2(
+		elm$core$Maybe$map,
+		function (s) {
+			return elm$html$Html$Attributes$class('form-control-' + s);
+		},
+		rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption(size));
+};
+var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
+var rundis$elm_bootstrap$Bootstrap$Form$Input$typeAttribute = function (inputType) {
+	return elm$html$Html$Attributes$type_(
+		function () {
+			switch (inputType.$) {
+				case 'Text':
+					return 'text';
+				case 'Password':
+					return 'password';
+				case 'DatetimeLocal':
+					return 'datetime-local';
+				case 'Date':
+					return 'date';
+				case 'Month':
+					return 'month';
+				case 'Time':
+					return 'time';
+				case 'Week':
+					return 'week';
+				case 'Number':
+					return 'number';
+				case 'Email':
+					return 'email';
+				case 'Url':
+					return 'url';
+				case 'Search':
+					return 'search';
+				case 'Tel':
+					return 'tel';
+				default:
+					return 'color';
+			}
+		}());
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$validationAttribute = function (validation) {
+	return elm$html$Html$Attributes$class(
+		rundis$elm_bootstrap$Bootstrap$Form$FormInternal$validationToString(validation));
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$toAttributes = function (modifiers) {
+	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Form$Input$applyModifier, rundis$elm_bootstrap$Bootstrap$Form$Input$defaultOptions, modifiers);
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('form-control'),
+				elm$html$Html$Attributes$disabled(options.disabled),
+				elm$html$Html$Attributes$readonly(options.readonly),
+				rundis$elm_bootstrap$Bootstrap$Form$Input$typeAttribute(options.tipe)
+			]),
+		_Utils_ap(
+			A2(
+				elm$core$List$filterMap,
+				elm$core$Basics$identity,
+				_List_fromArray(
+					[
+						A2(elm$core$Maybe$map, elm$html$Html$Attributes$id, options.id),
+						A2(elm$core$Maybe$andThen, rundis$elm_bootstrap$Bootstrap$Form$Input$sizeAttribute, options.size),
+						A2(elm$core$Maybe$map, elm$html$Html$Attributes$value, options.value),
+						A2(elm$core$Maybe$map, elm$html$Html$Attributes$placeholder, options.placeholder),
+						A2(elm$core$Maybe$map, elm$html$Html$Events$onInput, options.onInput),
+						A2(elm$core$Maybe$map, rundis$elm_bootstrap$Bootstrap$Form$Input$validationAttribute, options.validation)
+					])),
+			options.attributes));
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$view = function (_n0) {
+	var options = _n0.a.options;
+	return A2(
+		elm$html$Html$input,
+		rundis$elm_bootstrap$Bootstrap$Form$Input$toAttributes(options),
+		_List_Nil);
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$input = F2(
+	function (tipe, options) {
+		return rundis$elm_bootstrap$Bootstrap$Form$Input$view(
+			A2(rundis$elm_bootstrap$Bootstrap$Form$Input$create, tipe, options));
+	});
+var rundis$elm_bootstrap$Bootstrap$Form$Input$text = rundis$elm_bootstrap$Bootstrap$Form$Input$input(rundis$elm_bootstrap$Bootstrap$Form$Input$Text);
+var author$project$RCMediaEdit$viewInputWithLabel = function (props) {
+	return A2(
+		rundis$elm_bootstrap$Bootstrap$Form$group,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				rundis$elm_bootstrap$Bootstrap$Form$label,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$for(props.nodeId)
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text(props.labeltext)
+					])),
+				rundis$elm_bootstrap$Bootstrap$Form$Input$text(
+				_List_fromArray(
+					[
+						rundis$elm_bootstrap$Bootstrap$Form$Input$attrs(
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$placeholder(props.placeholder),
+								elm$html$Html$Attributes$value(props.value),
+								elm$html$Html$Events$onInput(props.onInput)
+							]))
+					])),
+				A2(
+				rundis$elm_bootstrap$Bootstrap$Form$help,
+				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$text(props.help)
+					]))
+			]));
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Textarea$Attrs = function (a) {
+	return {$: 'Attrs', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Textarea$attrs = function (attrs_) {
+	return rundis$elm_bootstrap$Bootstrap$Form$Textarea$Attrs(attrs_);
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Textarea$Id = function (a) {
+	return {$: 'Id', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Textarea$id = function (id_) {
+	return rundis$elm_bootstrap$Bootstrap$Form$Textarea$Id(id_);
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Textarea$Rows = function (a) {
+	return {$: 'Rows', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Textarea$rows = function (rows_) {
+	return rundis$elm_bootstrap$Bootstrap$Form$Textarea$Rows(rows_);
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Textarea$Textarea = function (a) {
+	return {$: 'Textarea', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Textarea$create = function (options) {
+	return rundis$elm_bootstrap$Bootstrap$Form$Textarea$Textarea(
+		{options: options});
+};
+var elm$html$Html$textarea = _VirtualDom_node('textarea');
+var elm$html$Html$Attributes$rows = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'rows',
+		elm$core$String$fromInt(n));
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Textarea$applyModifier = F2(
+	function (modifier, options) {
+		switch (modifier.$) {
+			case 'Id':
+				var id_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						id: elm$core$Maybe$Just(id_)
+					});
+			case 'Rows':
+				var rows_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						rows: elm$core$Maybe$Just(rows_)
+					});
+			case 'Disabled':
+				return _Utils_update(
+					options,
+					{disabled: true});
+			case 'Value':
+				var value_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						value: elm$core$Maybe$Just(value_)
+					});
+			case 'OnInput':
+				var onInput_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						onInput: elm$core$Maybe$Just(onInput_)
+					});
+			case 'Validation':
+				var validation = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						validation: elm$core$Maybe$Just(validation)
+					});
+			default:
+				var attrs_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						attributes: _Utils_ap(options.attributes, attrs_)
+					});
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Form$Textarea$defaultOptions = {attributes: _List_Nil, disabled: false, id: elm$core$Maybe$Nothing, onInput: elm$core$Maybe$Nothing, rows: elm$core$Maybe$Nothing, validation: elm$core$Maybe$Nothing, value: elm$core$Maybe$Nothing};
+var rundis$elm_bootstrap$Bootstrap$Form$Textarea$validationAttribute = function (validation) {
+	return elm$html$Html$Attributes$class(
+		rundis$elm_bootstrap$Bootstrap$Form$FormInternal$validationToString(validation));
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Textarea$toAttributes = function (modifiers) {
+	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Form$Textarea$applyModifier, rundis$elm_bootstrap$Bootstrap$Form$Textarea$defaultOptions, modifiers);
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('form-control'),
+				elm$html$Html$Attributes$disabled(options.disabled)
+			]),
+		_Utils_ap(
+			A2(
+				elm$core$List$filterMap,
+				elm$core$Basics$identity,
+				_List_fromArray(
+					[
+						A2(elm$core$Maybe$map, elm$html$Html$Attributes$id, options.id),
+						A2(elm$core$Maybe$map, elm$html$Html$Attributes$rows, options.rows),
+						A2(elm$core$Maybe$map, elm$html$Html$Attributes$value, options.value),
+						A2(elm$core$Maybe$map, elm$html$Html$Events$onInput, options.onInput),
+						A2(elm$core$Maybe$map, rundis$elm_bootstrap$Bootstrap$Form$Textarea$validationAttribute, options.validation)
+					])),
+			options.attributes));
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Textarea$view = function (_n0) {
+	var options = _n0.a.options;
+	return A2(
+		elm$html$Html$textarea,
+		rundis$elm_bootstrap$Bootstrap$Form$Textarea$toAttributes(options),
+		_List_Nil);
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Textarea$textarea = A2(elm$core$Basics$composeL, rundis$elm_bootstrap$Bootstrap$Form$Textarea$view, rundis$elm_bootstrap$Bootstrap$Form$Textarea$create);
+var author$project$RCMediaEdit$viewTextAreaWithLabel = function (props) {
+	return A2(
+		rundis$elm_bootstrap$Bootstrap$Form$group,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$label,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$for(props.nodeId)
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text(props.labeltext)
+					])),
+				rundis$elm_bootstrap$Bootstrap$Form$Textarea$textarea(
+				_List_fromArray(
+					[
+						rundis$elm_bootstrap$Bootstrap$Form$Textarea$id(props.nodeId),
+						rundis$elm_bootstrap$Bootstrap$Form$Textarea$rows(7),
+						rundis$elm_bootstrap$Bootstrap$Form$Textarea$attrs(
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$value(props.value),
+								elm$html$Html$Events$onInput(props.onInput)
+							]))
+					]))
+			]));
+};
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
+	return {$: 'Attrs', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Button$attrs = function (attrs_) {
+	return rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs(attrs_);
+};
+var elm$html$Html$button = _VirtualDom_node('button');
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier = F2(
 	function (modifier, options) {
 		switch (modifier.$) {
@@ -11637,10 +12406,123 @@ var rundis$elm_bootstrap$Bootstrap$Button$button = F2(
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
 	return {$: 'Coloring', a: a};
 };
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
+	return {$: 'Roled', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Button$primary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
+var elm$html$Html$form = _VirtualDom_node('form');
+var rundis$elm_bootstrap$Bootstrap$Form$form = F2(
+	function (attributes, children) {
+		return A2(elm$html$Html$form, attributes, children);
+	});
+var author$project$RCMediaEdit$view = F2(
+	function (objectState, messages) {
+		var nameProps = {
+			help: author$project$RCMediaEdit$helpFromValidation(objectState.validation.name),
+			labeltext: 'name',
+			nodeId: 'name',
+			onInput: messages.editTool(author$project$RCMediaEdit$Name),
+			placeholder: '',
+			value: author$project$RCMediaEdit$fromValidation(objectState.validation.name)
+		};
+		var descriptionProps = {
+			help: author$project$RCMediaEdit$helpFromValidation(objectState.validation.description),
+			labeltext: 'description',
+			nodeId: 'description',
+			onInput: messages.editTool(author$project$RCMediaEdit$Description),
+			placeholder: 'optional',
+			value: author$project$RCMediaEdit$fromValidation(objectState.validation.description)
+		};
+		var currentClass = function () {
+			var _n0 = objectState.validation.userClass;
+			if (_n0.$ === 'Ok') {
+				var val = _n0.a;
+				return val;
+			} else {
+				return 'big';
+			}
+		}();
+		var copyrightProps = {
+			help: author$project$RCMediaEdit$helpFromValidation(objectState.validation.copyright),
+			labeltext: 'copyright',
+			nodeId: 'copyright',
+			onInput: messages.editTool(author$project$RCMediaEdit$Copyright),
+			placeholder: '',
+			value: author$project$RCMediaEdit$fromValidation(objectState.validation.copyright)
+		};
+		return A2(
+			elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Form$form,
+					_List_Nil,
+					_List_fromArray(
+						[
+							author$project$RCMediaEdit$viewInputWithLabel(nameProps),
+							author$project$RCMediaEdit$viewInputWithLabel(descriptionProps),
+							A2(
+							rundis$elm_bootstrap$Bootstrap$Form$group,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									rundis$elm_bootstrap$Bootstrap$Form$label,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$for('classPicker')
+										]),
+									_List_fromArray(
+										[
+											elm$html$Html$text('How should the media be displayed')
+										])),
+									A4(
+									author$project$RCMediaEdit$viewClassesPicker,
+									'classPicker',
+									author$project$RCMediaEdit$cssClasses,
+									currentClass,
+									messages.editTool(author$project$RCMediaEdit$UserClass))
+								])),
+							author$project$RCMediaEdit$viewTextAreaWithLabel(descriptionProps),
+							A2(
+							rundis$elm_bootstrap$Bootstrap$Button$button,
+							_List_fromArray(
+								[
+									rundis$elm_bootstrap$Bootstrap$Button$primary,
+									rundis$elm_bootstrap$Bootstrap$Button$attrs(
+									_List_fromArray(
+										[
+											elm$html$Html$Events$onClick(messages.insertTool)
+										]))
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Insert')
+								])),
+							A2(
+							rundis$elm_bootstrap$Bootstrap$Button$button,
+							_List_fromArray(
+								[
+									rundis$elm_bootstrap$Bootstrap$Button$primary,
+									rundis$elm_bootstrap$Bootstrap$Button$attrs(
+									_List_fromArray(
+										[
+											elm$html$Html$Events$onClick(messages.deleteTool)
+										]))
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Remove')
+								]))
+						]))
+				]));
+	});
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
 	return {$: 'Outlined', a: a};
 };
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
 var rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {
@@ -12077,59 +12959,79 @@ var rundis$elm_bootstrap$Bootstrap$Modal$view = F2(
 					]),
 				A2(rundis$elm_bootstrap$Bootstrap$Modal$backdrop, visibility, conf)));
 	});
-var author$project$Main$viewMediaDialog = function (_n0) {
-	var visibility = _n0.a;
-	var objectNameorId = _n0.b;
-	return A2(
-		rundis$elm_bootstrap$Bootstrap$Modal$view,
-		visibility,
-		A3(
-			rundis$elm_bootstrap$Bootstrap$Modal$footer,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A2(
-					rundis$elm_bootstrap$Bootstrap$Button$button,
-					_List_fromArray(
-						[
-							rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary,
-							rundis$elm_bootstrap$Bootstrap$Button$attrs(
-							_List_fromArray(
-								[
-									elm$html$Html$Events$onClick(author$project$Main$CloseMediaDialog)
-								]))
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('Close')
-						]))
-				]),
+var author$project$Main$viewMediaDialog = F2(
+	function (model, _n0) {
+		var visibility = _n0.a;
+		var objectNameorId = _n0.b;
+		var exposition = model.exposition;
+		var object = function () {
+			var _n1 = A2(author$project$Exposition$objectByNameOrId, objectNameorId, exposition);
+			if (_n1.$ === 'Just') {
+				var obj = _n1.a;
+				var _n2 = elm$core$Debug$log('found object');
+				return obj;
+			} else {
+				var _n3 = A2(elm$core$Debug$log, 'object not found, object name or id =', objectNameorId);
+				var _n4 = A2(elm$core$Debug$log, 'model =', model);
+				return author$project$Main$debugObject(objectNameorId);
+			}
+		}();
+		var viewObjectState = A3(author$project$Exposition$validateMediaObject, exposition, object, object);
+		var mediaEditView = A2(
+			author$project$RCMediaEdit$view,
+			viewObjectState,
+			author$project$Main$makeMediaEditMsgs(object));
+		return A2(
+			rundis$elm_bootstrap$Bootstrap$Modal$view,
+			visibility,
 			A3(
-				rundis$elm_bootstrap$Bootstrap$Modal$body,
+				rundis$elm_bootstrap$Bootstrap$Modal$footer,
 				_List_Nil,
 				_List_fromArray(
 					[
 						A2(
-						elm$html$Html$p,
-						_List_Nil,
+						rundis$elm_bootstrap$Bootstrap$Button$button,
 						_List_fromArray(
 							[
-								elm$html$Html$text('This is a modal for object ' + objectNameorId)
+								rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary,
+								rundis$elm_bootstrap$Bootstrap$Button$attrs(
+								_List_fromArray(
+									[
+										elm$html$Html$Events$onClick(author$project$Main$CloseMediaDialog)
+									]))
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Close')
 							]))
 					]),
 				A3(
-					rundis$elm_bootstrap$Bootstrap$Modal$h3,
+					rundis$elm_bootstrap$Bootstrap$Modal$body,
 					_List_Nil,
 					_List_fromArray(
 						[
-							elm$html$Html$text('Modal header')
+							A2(
+							elm$html$Html$p,
+							_List_Nil,
+							_List_fromArray(
+								[
+									mediaEditView,
+									elm$html$Html$text('This is a modal for object ' + objectNameorId)
+								]))
 						]),
-					A2(
-						rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
-						true,
-						rundis$elm_bootstrap$Bootstrap$Modal$small(
-							rundis$elm_bootstrap$Bootstrap$Modal$config(author$project$Main$CloseMediaDialog)))))));
-};
+					A3(
+						rundis$elm_bootstrap$Bootstrap$Modal$h3,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text('Modal header')
+							]),
+						A2(
+							rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
+							true,
+							rundis$elm_bootstrap$Bootstrap$Modal$small(
+								rundis$elm_bootstrap$Bootstrap$Modal$config(author$project$Main$CloseMediaDialog)))))));
+	});
 var author$project$Main$UploadMediaFileSelect = {$: 'UploadMediaFileSelect'};
 var elm$core$Basics$round = _Basics_round;
 var author$project$Main$viewUpload = function (status) {
@@ -12168,7 +13070,7 @@ var author$project$Main$view = function (model) {
 			_List_fromArray(
 				[
 					model.exposition.renderedHtml,
-					author$project$Main$viewMediaDialog(model.mediaDialog),
+					A2(author$project$Main$viewMediaDialog, model, model.mediaDialog),
 					author$project$Main$viewUpload(model.uploadStatus)
 				]));
 	} else {
@@ -12177,7 +13079,10 @@ var author$project$Main$view = function (model) {
 			_List_Nil,
 			_List_fromArray(
 				[
-					elm$html$Html$text('No exposition loaded')
+					model.exposition.renderedHtml,
+					A2(author$project$Main$viewMediaDialog, model, model.mediaDialog),
+					author$project$Main$viewUpload(model.uploadStatus),
+					elm$html$Html$text('test, No exposition loaded')
 				]));
 	}
 };
