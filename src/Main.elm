@@ -65,7 +65,7 @@ init flags =
                     Debug.log "err" str
             in
             ( { editGeneration = -1
-              , exposition = Exposition.empty
+              , exposition = Exposition.addObject (debugObject "mytest") Exposition.empty -- add an object so we can test
               , mediaDialog = ( Modal.hidden, "" )
               , research = Nothing
               , weave = Nothing
@@ -76,7 +76,7 @@ init flags =
             )
 
 
-debugObject :String -> Exposition.RCMediaObject
+debugObject : String -> Exposition.RCMediaObject
 debugObject objectName =
     { userClass = ""
     , dimensions = Nothing
@@ -94,7 +94,7 @@ debugObject objectName =
 
 
 
--- DEBUG: just to have something to test in an empty 
+-- DEBUG: just to have something to test in an empty
 
 
 main =
@@ -233,11 +233,8 @@ update msg model =
             ( model, Cmd.none )
 
         MediaEdit obj ->
-            -- casper tries to implement
-            let
-                _ = Debug.log "model should be changed" obj
-            in
-            ( { model | exposition = (Exposition.replaceObject obj model.exposition)}, Cmd.none )
+            -- update model
+            ( { model | exposition = Exposition.replaceObject obj model.exposition }, Cmd.none )
 
         MediaDelete obj ->
             -- not implemented
@@ -309,16 +306,29 @@ viewMediaDialog model ( visibility, objectNameorId ) =
         object : Exposition.RCMediaObject
         object =
             case Exposition.objectByNameOrId objectNameorId exposition of
-                Just obj -> -- somehow doesn't find any object, even if exists ?
+                Just obj ->
+                    -- somehow doesn't find any object, even if exists ?
+                    let
+                        _ =
+                            Debug.log "found object"
+                    in
                     obj
 
                 Nothing ->
                     -- Just for debug:
+                    let
+                        _ =
+                            Debug.log "object not found, object name or id =" objectNameorId
+
+                        _ =
+                            Debug.log "model =" model
+                    in
                     debugObject objectNameorId
 
         -- How do we get the old and new state of the mdei object here ?
         viewObjectState : Exposition.RCMediaObjectViewState
-        viewObjectState = Exposition.validateMediaObject exposition object object
+        viewObjectState =
+            Exposition.validateMediaObject exposition object object
 
         mediaEditView =
             RCMediaEdit.view viewObjectState (makeMediaEditMsgs object)

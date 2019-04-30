@@ -208,7 +208,7 @@ validateName exp obj newName =
             Err "Another media object already has this name"
 
         else
-            Ok "newName"
+            Ok newName
 
 
 type alias RCMediaObjectValidation =
