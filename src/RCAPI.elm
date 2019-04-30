@@ -1,23 +1,10 @@
 module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, getExposition, getMediaList, toRCExposition)
 
 import Dict
-import Exposition exposing (RCExposition)
+import Exposition exposing (OptionalDimensions, RCExposition, RCMediaObject, RCMediaType(..), defaultPlayerSettings)
 import Html exposing (Html, span)
 import Http
 import Json.Decode exposing (..)
-
-
-toRCExposition : APIExposition -> Int -> Int -> RCExposition msg
-toRCExposition apiExpo id weave =
-    { css = apiExpo.style
-    , title = apiExpo.title
-    , authors = []
-    , id = id
-    , currentWeave = weave
-    , renderedHtml = span [] [] -- we don't actually use the html in the saved object
-    , markdownInput = apiExpo.markdown
-    , media = []
-    }
 
 
 type alias APIExposition =
@@ -74,3 +61,71 @@ getExposition researchId weave msg =
         { url = " text-editor/load?research=" ++ String.fromInt researchId ++ "&weave=" ++ String.fromInt weave
         , expect = Http.expectJson msg apiExposition
         }
+
+
+
+-- POST PROCESS API RETURN VALUES
+
+
+toRCExposition : APIExposition -> Int -> Int -> RCExposition msg
+toRCExposition apiExpo id weave =
+    { css = apiExpo.style
+    , title = apiExpo.title
+    , authors = []
+    , id = id
+    , currentWeave = weave
+    , renderedHtml = span [] [] -- we don't actually use the html in the saved object
+    , markdownInput = apiExpo.markdown
+    , media = []
+    }
+
+
+getDimensions : APIMedia -> OptionalDimensions
+getDimensions media =
+    Just ( media.width, media.height )
+
+
+getType : APIMedia -> Result String RCMediaType
+getType media =
+    case media.mediaType of
+        "image" ->
+            Ok RCImage
+
+        "pdf" ->
+            Ok RCPdf
+
+        "audio" ->
+            Ok (RCAudio defaultPlayerSettings)
+
+        "video" ->
+            Ok (RCVideo defaultPlayerSettings)
+
+        str ->
+            Err ("Unknown Media Type: " ++ str)
+
+
+toRCMediaObject : APIMediaEntry -> Int -> Result String RCMediaObject
+toRCMediaObject mediaEntry researchId =
+    let
+        mediaType =
+            getType mediaEntry.media
+    in
+    case mediaType of
+        Ok mtype ->
+            Ok
+                { userClass = "" -- needed?
+                , dimensions = getDimensions mediaEntry.media
+                , id = mediaEntry.id
+                , htmlId = "" -- needed?
+                , thumb = "" -- needed?
+                , expositionId = researchId
+                , name = mediaEntry.name
+                , description = mediaEntry.description
+                , copyright = mediaEntry.copyright
+                , caption = "" -- needd?
+                , version = 0 -- needed?
+                , mediaType = mtype
+                }
+
+        Err s ->
+            Err s
