@@ -80,6 +80,271 @@ function A9(fun, a, b, c, d, e, f, g, h, i) {
 console.warn('Compiled in DEV mode. Follow the advice at https://elm-lang.org/0.19.0/optimize for better performance and smaller assets.');
 
 
+var _List_Nil_UNUSED = { $: 0 };
+var _List_Nil = { $: '[]' };
+
+function _List_Cons_UNUSED(hd, tl) { return { $: 1, a: hd, b: tl }; }
+function _List_Cons(hd, tl) { return { $: '::', a: hd, b: tl }; }
+
+
+var _List_cons = F2(_List_Cons);
+
+function _List_fromArray(arr)
+{
+	var out = _List_Nil;
+	for (var i = arr.length; i--; )
+	{
+		out = _List_Cons(arr[i], out);
+	}
+	return out;
+}
+
+function _List_toArray(xs)
+{
+	for (var out = []; xs.b; xs = xs.b) // WHILE_CONS
+	{
+		out.push(xs.a);
+	}
+	return out;
+}
+
+var _List_map2 = F3(function(f, xs, ys)
+{
+	for (var arr = []; xs.b && ys.b; xs = xs.b, ys = ys.b) // WHILE_CONSES
+	{
+		arr.push(A2(f, xs.a, ys.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map3 = F4(function(f, xs, ys, zs)
+{
+	for (var arr = []; xs.b && ys.b && zs.b; xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A3(f, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map4 = F5(function(f, ws, xs, ys, zs)
+{
+	for (var arr = []; ws.b && xs.b && ys.b && zs.b; ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A4(f, ws.a, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map5 = F6(function(f, vs, ws, xs, ys, zs)
+{
+	for (var arr = []; vs.b && ws.b && xs.b && ys.b && zs.b; vs = vs.b, ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A5(f, vs.a, ws.a, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_sortBy = F2(function(f, xs)
+{
+	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
+		return _Utils_cmp(f(a), f(b));
+	}));
+});
+
+var _List_sortWith = F2(function(f, xs)
+{
+	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
+		var ord = A2(f, a, b);
+		return ord === elm$core$Basics$EQ ? 0 : ord === elm$core$Basics$LT ? -1 : 1;
+	}));
+});
+
+
+
+// EQUALITY
+
+function _Utils_eq(x, y)
+{
+	for (
+		var pair, stack = [], isEqual = _Utils_eqHelp(x, y, 0, stack);
+		isEqual && (pair = stack.pop());
+		isEqual = _Utils_eqHelp(pair.a, pair.b, 0, stack)
+		)
+	{}
+
+	return isEqual;
+}
+
+function _Utils_eqHelp(x, y, depth, stack)
+{
+	if (depth > 100)
+	{
+		stack.push(_Utils_Tuple2(x,y));
+		return true;
+	}
+
+	if (x === y)
+	{
+		return true;
+	}
+
+	if (typeof x !== 'object' || x === null || y === null)
+	{
+		typeof x === 'function' && _Debug_crash(5);
+		return false;
+	}
+
+	/**/
+	if (x.$ === 'Set_elm_builtin')
+	{
+		x = elm$core$Set$toList(x);
+		y = elm$core$Set$toList(y);
+	}
+	if (x.$ === 'RBNode_elm_builtin' || x.$ === 'RBEmpty_elm_builtin')
+	{
+		x = elm$core$Dict$toList(x);
+		y = elm$core$Dict$toList(y);
+	}
+	//*/
+
+	/**_UNUSED/
+	if (x.$ < 0)
+	{
+		x = elm$core$Dict$toList(x);
+		y = elm$core$Dict$toList(y);
+	}
+	//*/
+
+	for (var key in x)
+	{
+		if (!_Utils_eqHelp(x[key], y[key], depth + 1, stack))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+var _Utils_equal = F2(_Utils_eq);
+var _Utils_notEqual = F2(function(a, b) { return !_Utils_eq(a,b); });
+
+
+
+// COMPARISONS
+
+// Code in Generate/JavaScript.hs, Basics.js, and List.js depends on
+// the particular integer values assigned to LT, EQ, and GT.
+
+function _Utils_cmp(x, y, ord)
+{
+	if (typeof x !== 'object')
+	{
+		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
+	}
+
+	/**/
+	if (x instanceof String)
+	{
+		var a = x.valueOf();
+		var b = y.valueOf();
+		return a === b ? 0 : a < b ? -1 : 1;
+	}
+	//*/
+
+	/**_UNUSED/
+	if (typeof x.$ === 'undefined')
+	//*/
+	/**/
+	if (x.$[0] === '#')
+	//*/
+	{
+		return (ord = _Utils_cmp(x.a, y.a))
+			? ord
+			: (ord = _Utils_cmp(x.b, y.b))
+				? ord
+				: _Utils_cmp(x.c, y.c);
+	}
+
+	// traverse conses until end of a list or a mismatch
+	for (; x.b && y.b && !(ord = _Utils_cmp(x.a, y.a)); x = x.b, y = y.b) {} // WHILE_CONSES
+	return ord || (x.b ? /*GT*/ 1 : y.b ? /*LT*/ -1 : /*EQ*/ 0);
+}
+
+var _Utils_lt = F2(function(a, b) { return _Utils_cmp(a, b) < 0; });
+var _Utils_le = F2(function(a, b) { return _Utils_cmp(a, b) < 1; });
+var _Utils_gt = F2(function(a, b) { return _Utils_cmp(a, b) > 0; });
+var _Utils_ge = F2(function(a, b) { return _Utils_cmp(a, b) >= 0; });
+
+var _Utils_compare = F2(function(x, y)
+{
+	var n = _Utils_cmp(x, y);
+	return n < 0 ? elm$core$Basics$LT : n ? elm$core$Basics$GT : elm$core$Basics$EQ;
+});
+
+
+// COMMON VALUES
+
+var _Utils_Tuple0_UNUSED = 0;
+var _Utils_Tuple0 = { $: '#0' };
+
+function _Utils_Tuple2_UNUSED(a, b) { return { a: a, b: b }; }
+function _Utils_Tuple2(a, b) { return { $: '#2', a: a, b: b }; }
+
+function _Utils_Tuple3_UNUSED(a, b, c) { return { a: a, b: b, c: c }; }
+function _Utils_Tuple3(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
+
+function _Utils_chr_UNUSED(c) { return c; }
+function _Utils_chr(c) { return new String(c); }
+
+
+// RECORDS
+
+function _Utils_update(oldRecord, updatedFields)
+{
+	var newRecord = {};
+
+	for (var key in oldRecord)
+	{
+		newRecord[key] = oldRecord[key];
+	}
+
+	for (var key in updatedFields)
+	{
+		newRecord[key] = updatedFields[key];
+	}
+
+	return newRecord;
+}
+
+
+// APPEND
+
+var _Utils_append = F2(_Utils_ap);
+
+function _Utils_ap(xs, ys)
+{
+	// append Strings
+	if (typeof xs === 'string')
+	{
+		return xs + ys;
+	}
+
+	// append Lists
+	if (!xs.b)
+	{
+		return ys;
+	}
+	var root = _List_Cons(xs.a, ys);
+	xs = xs.b
+	for (var curr = root; xs.b; xs = xs.b) // WHILE_CONS
+	{
+		curr = curr.b = _List_Cons(xs.a, ys);
+	}
+	return root;
+}
+
+
+
 var _JsArray_empty = [];
 
 function _JsArray_singleton(value)
@@ -525,271 +790,6 @@ function _Debug_regionToString(region)
 	}
 	return 'on lines ' + region.start.line + ' through ' + region.end.line;
 }
-
-
-
-// EQUALITY
-
-function _Utils_eq(x, y)
-{
-	for (
-		var pair, stack = [], isEqual = _Utils_eqHelp(x, y, 0, stack);
-		isEqual && (pair = stack.pop());
-		isEqual = _Utils_eqHelp(pair.a, pair.b, 0, stack)
-		)
-	{}
-
-	return isEqual;
-}
-
-function _Utils_eqHelp(x, y, depth, stack)
-{
-	if (depth > 100)
-	{
-		stack.push(_Utils_Tuple2(x,y));
-		return true;
-	}
-
-	if (x === y)
-	{
-		return true;
-	}
-
-	if (typeof x !== 'object' || x === null || y === null)
-	{
-		typeof x === 'function' && _Debug_crash(5);
-		return false;
-	}
-
-	/**/
-	if (x.$ === 'Set_elm_builtin')
-	{
-		x = elm$core$Set$toList(x);
-		y = elm$core$Set$toList(y);
-	}
-	if (x.$ === 'RBNode_elm_builtin' || x.$ === 'RBEmpty_elm_builtin')
-	{
-		x = elm$core$Dict$toList(x);
-		y = elm$core$Dict$toList(y);
-	}
-	//*/
-
-	/**_UNUSED/
-	if (x.$ < 0)
-	{
-		x = elm$core$Dict$toList(x);
-		y = elm$core$Dict$toList(y);
-	}
-	//*/
-
-	for (var key in x)
-	{
-		if (!_Utils_eqHelp(x[key], y[key], depth + 1, stack))
-		{
-			return false;
-		}
-	}
-	return true;
-}
-
-var _Utils_equal = F2(_Utils_eq);
-var _Utils_notEqual = F2(function(a, b) { return !_Utils_eq(a,b); });
-
-
-
-// COMPARISONS
-
-// Code in Generate/JavaScript.hs, Basics.js, and List.js depends on
-// the particular integer values assigned to LT, EQ, and GT.
-
-function _Utils_cmp(x, y, ord)
-{
-	if (typeof x !== 'object')
-	{
-		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
-	}
-
-	/**/
-	if (x instanceof String)
-	{
-		var a = x.valueOf();
-		var b = y.valueOf();
-		return a === b ? 0 : a < b ? -1 : 1;
-	}
-	//*/
-
-	/**_UNUSED/
-	if (typeof x.$ === 'undefined')
-	//*/
-	/**/
-	if (x.$[0] === '#')
-	//*/
-	{
-		return (ord = _Utils_cmp(x.a, y.a))
-			? ord
-			: (ord = _Utils_cmp(x.b, y.b))
-				? ord
-				: _Utils_cmp(x.c, y.c);
-	}
-
-	// traverse conses until end of a list or a mismatch
-	for (; x.b && y.b && !(ord = _Utils_cmp(x.a, y.a)); x = x.b, y = y.b) {} // WHILE_CONSES
-	return ord || (x.b ? /*GT*/ 1 : y.b ? /*LT*/ -1 : /*EQ*/ 0);
-}
-
-var _Utils_lt = F2(function(a, b) { return _Utils_cmp(a, b) < 0; });
-var _Utils_le = F2(function(a, b) { return _Utils_cmp(a, b) < 1; });
-var _Utils_gt = F2(function(a, b) { return _Utils_cmp(a, b) > 0; });
-var _Utils_ge = F2(function(a, b) { return _Utils_cmp(a, b) >= 0; });
-
-var _Utils_compare = F2(function(x, y)
-{
-	var n = _Utils_cmp(x, y);
-	return n < 0 ? elm$core$Basics$LT : n ? elm$core$Basics$GT : elm$core$Basics$EQ;
-});
-
-
-// COMMON VALUES
-
-var _Utils_Tuple0_UNUSED = 0;
-var _Utils_Tuple0 = { $: '#0' };
-
-function _Utils_Tuple2_UNUSED(a, b) { return { a: a, b: b }; }
-function _Utils_Tuple2(a, b) { return { $: '#2', a: a, b: b }; }
-
-function _Utils_Tuple3_UNUSED(a, b, c) { return { a: a, b: b, c: c }; }
-function _Utils_Tuple3(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
-
-function _Utils_chr_UNUSED(c) { return c; }
-function _Utils_chr(c) { return new String(c); }
-
-
-// RECORDS
-
-function _Utils_update(oldRecord, updatedFields)
-{
-	var newRecord = {};
-
-	for (var key in oldRecord)
-	{
-		newRecord[key] = oldRecord[key];
-	}
-
-	for (var key in updatedFields)
-	{
-		newRecord[key] = updatedFields[key];
-	}
-
-	return newRecord;
-}
-
-
-// APPEND
-
-var _Utils_append = F2(_Utils_ap);
-
-function _Utils_ap(xs, ys)
-{
-	// append Strings
-	if (typeof xs === 'string')
-	{
-		return xs + ys;
-	}
-
-	// append Lists
-	if (!xs.b)
-	{
-		return ys;
-	}
-	var root = _List_Cons(xs.a, ys);
-	xs = xs.b
-	for (var curr = root; xs.b; xs = xs.b) // WHILE_CONS
-	{
-		curr = curr.b = _List_Cons(xs.a, ys);
-	}
-	return root;
-}
-
-
-
-var _List_Nil_UNUSED = { $: 0 };
-var _List_Nil = { $: '[]' };
-
-function _List_Cons_UNUSED(hd, tl) { return { $: 1, a: hd, b: tl }; }
-function _List_Cons(hd, tl) { return { $: '::', a: hd, b: tl }; }
-
-
-var _List_cons = F2(_List_Cons);
-
-function _List_fromArray(arr)
-{
-	var out = _List_Nil;
-	for (var i = arr.length; i--; )
-	{
-		out = _List_Cons(arr[i], out);
-	}
-	return out;
-}
-
-function _List_toArray(xs)
-{
-	for (var out = []; xs.b; xs = xs.b) // WHILE_CONS
-	{
-		out.push(xs.a);
-	}
-	return out;
-}
-
-var _List_map2 = F3(function(f, xs, ys)
-{
-	for (var arr = []; xs.b && ys.b; xs = xs.b, ys = ys.b) // WHILE_CONSES
-	{
-		arr.push(A2(f, xs.a, ys.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map3 = F4(function(f, xs, ys, zs)
-{
-	for (var arr = []; xs.b && ys.b && zs.b; xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A3(f, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map4 = F5(function(f, ws, xs, ys, zs)
-{
-	for (var arr = []; ws.b && xs.b && ys.b && zs.b; ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A4(f, ws.a, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map5 = F6(function(f, vs, ws, xs, ys, zs)
-{
-	for (var arr = []; vs.b && ws.b && xs.b && ys.b && zs.b; vs = vs.b, ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A5(f, vs.a, ws.a, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_sortBy = F2(function(f, xs)
-{
-	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
-		return _Utils_cmp(f(a), f(b));
-	}));
-});
-
-var _List_sortWith = F2(function(f, xs)
-{
-	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
-		var ord = A2(f, a, b);
-		return ord === elm$core$Basics$EQ ? 0 : ord === elm$core$Basics$LT ? -1 : 1;
-	}));
-});
 
 
 
@@ -4818,33 +4818,26 @@ function _Browser_load(url)
 		}
 	}));
 }
-var elm$core$Basics$EQ = {$: 'EQ'};
-var elm$core$Basics$LT = {$: 'LT'};
-var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
-var elm$core$Array$foldr = F3(
-	function (func, baseCase, _n0) {
-		var tree = _n0.c;
-		var tail = _n0.d;
-		var helper = F2(
-			function (node, acc) {
-				if (node.$ === 'SubTree') {
-					var subTree = node.a;
-					return A3(elm$core$Elm$JsArray$foldr, helper, acc, subTree);
-				} else {
-					var values = node.a;
-					return A3(elm$core$Elm$JsArray$foldr, func, acc, values);
-				}
-			});
-		return A3(
-			elm$core$Elm$JsArray$foldr,
-			helper,
-			A3(elm$core$Elm$JsArray$foldr, func, baseCase, tail),
-			tree);
-	});
-var elm$core$Array$toList = function (array) {
-	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
+var elm$core$Basics$identity = function (x) {
+	return x;
 };
+var elm$core$Basics$False = {$: 'False'};
+var elm$core$Basics$True = {$: 'True'};
+var elm$core$Result$isOk = function (result) {
+	if (result.$ === 'Ok') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var elm$core$Array$branchFactor = 32;
+var elm$core$Array$Array_elm_builtin = F4(
+	function (a, b, c, d) {
+		return {$: 'Array_elm_builtin', a: a, b: b, c: c, d: d};
+	});
+var elm$core$Basics$EQ = {$: 'EQ'};
 var elm$core$Basics$GT = {$: 'GT'};
+var elm$core$Basics$LT = {$: 'LT'};
 var elm$core$Dict$foldr = F3(
 	function (func, acc, t) {
 		foldr:
@@ -4870,6 +4863,7 @@ var elm$core$Dict$foldr = F3(
 			}
 		}
 	});
+var elm$core$List$cons = _List_cons;
 var elm$core$Dict$toList = function (dict) {
 	return A3(
 		elm$core$Dict$foldr,
@@ -4897,32 +4891,30 @@ var elm$core$Set$toList = function (_n0) {
 	var dict = _n0.a;
 	return elm$core$Dict$keys(dict);
 };
-var elm$core$List$cons = _List_cons;
-var author$project$Exposition$addObject = F2(
-	function (obj, exp) {
-		return _Utils_update(
-			exp,
-			{
-				media: A2(elm$core$List$cons, obj, exp.media)
+var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
+var elm$core$Array$foldr = F3(
+	function (func, baseCase, _n0) {
+		var tree = _n0.c;
+		var tail = _n0.d;
+		var helper = F2(
+			function (node, acc) {
+				if (node.$ === 'SubTree') {
+					var subTree = node.a;
+					return A3(elm$core$Elm$JsArray$foldr, helper, acc, subTree);
+				} else {
+					var values = node.a;
+					return A3(elm$core$Elm$JsArray$foldr, func, acc, values);
+				}
 			});
+		return A3(
+			elm$core$Elm$JsArray$foldr,
+			helper,
+			A3(elm$core$Elm$JsArray$foldr, func, baseCase, tail),
+			tree);
 	});
-var elm$core$Basics$identity = function (x) {
-	return x;
+var elm$core$Array$toList = function (array) {
+	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
 };
-var elm$core$Basics$False = {$: 'False'};
-var elm$core$Basics$True = {$: 'True'};
-var elm$core$Result$isOk = function (result) {
-	if (result.$ === 'Ok') {
-		return true;
-	} else {
-		return false;
-	}
-};
-var elm$core$Array$branchFactor = 32;
-var elm$core$Array$Array_elm_builtin = F4(
-	function (a, b, c, d) {
-		return {$: 'Array_elm_builtin', a: a, b: b, c: c, d: d};
-	});
 var elm$core$Basics$ceiling = _Basics_ceiling;
 var elm$core$Basics$fdiv = _Basics_fdiv;
 var elm$core$Basics$logBase = F2(
@@ -5334,10 +5326,6 @@ var author$project$Main$GotExposition = function (a) {
 	return {$: 'GotExposition', a: a};
 };
 var author$project$Main$Ready = {$: 'Ready'};
-var author$project$Exposition$RCImage = {$: 'RCImage'};
-var author$project$Main$debugObject = function (objectName) {
-	return {caption: 'CAPTION', copyright: 'Casper Schipper 2019', description: 'description', dimensions: elm$core$Maybe$Nothing, expositionId: 1, htmlId: '', id: 1, mediaType: author$project$Exposition$RCImage, name: objectName, thumb: 'angryCatImage.png', userClass: '', version: 1};
-};
 var author$project$Main$Flags = F2(
 	function (weave, research) {
 		return {research: research, weave: weave};
@@ -5349,6 +5337,7 @@ var author$project$Main$decodeFlags = A3(
 	author$project$Main$Flags,
 	A2(elm$json$Json$Decode$field, 'weave', elm$json$Json$Decode$int),
 	A2(elm$json$Json$Decode$field, 'research', elm$json$Json$Decode$int));
+var author$project$Problems$WrongExpositionUrl = {$: 'WrongExpositionUrl'};
 var author$project$RCAPI$APIExposition = F5(
 	function (html, markdown, metadata, style, title) {
 		return {html: html, markdown: markdown, metadata: metadata, style: style, title: title};
@@ -6288,10 +6277,10 @@ var author$project$Main$init = function (flags) {
 		var fl = _n0.a;
 		return _Utils_Tuple2(
 			{
-				apiExposition: elm$core$Maybe$Nothing,
 				editGeneration: -1,
 				exposition: author$project$Exposition$empty,
 				mediaDialog: _Utils_Tuple2(rundis$elm_bootstrap$Bootstrap$Modal$hidden, ''),
+				problems: _List_Nil,
 				research: fl.research,
 				uploadStatus: author$project$Main$Ready,
 				weave: fl.weave
@@ -6302,13 +6291,11 @@ var author$project$Main$init = function (flags) {
 		var _n1 = A2(elm$core$Debug$log, 'err', str);
 		return _Utils_Tuple2(
 			{
-				apiExposition: elm$core$Maybe$Nothing,
 				editGeneration: -1,
-				exposition: A2(
-					author$project$Exposition$addObject,
-					author$project$Main$debugObject('mytest'),
-					author$project$Exposition$empty),
+				exposition: author$project$Exposition$empty,
 				mediaDialog: _Utils_Tuple2(rundis$elm_bootstrap$Bootstrap$Modal$hidden, ''),
+				problems: _List_fromArray(
+					[author$project$Problems$WrongExpositionUrl]),
 				research: -1,
 				uploadStatus: author$project$Main$Ready,
 				weave: -1
@@ -6348,6 +6335,71 @@ var author$project$Main$subscriptions = function (model) {
 				A2(elm$http$Http$track, 'upload', author$project$Main$GotUploadProgress)
 			]));
 };
+var author$project$Exposition$addObject = F2(
+	function (obj, exp) {
+		return _Utils_update(
+			exp,
+			{
+				media: A2(elm$core$List$cons, obj, exp.media)
+			});
+	});
+var elm$core$List$map = F2(
+	function (f, xs) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, acc) {
+					return A2(
+						elm$core$List$cons,
+						f(x),
+						acc);
+				}),
+			_List_Nil,
+			xs);
+	});
+var author$project$Exposition$replaceObject = F2(
+	function (obj, exp) {
+		return _Utils_update(
+			exp,
+			{
+				media: A2(
+					elm$core$List$map,
+					function (m) {
+						return _Utils_eq(m.id, obj.id) ? obj : m;
+					},
+					exp.media)
+			});
+	});
+var elm$core$List$any = F2(
+	function (isOkay, list) {
+		any:
+		while (true) {
+			if (!list.b) {
+				return false;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				if (isOkay(x)) {
+					return true;
+				} else {
+					var $temp$isOkay = isOkay,
+						$temp$list = xs;
+					isOkay = $temp$isOkay;
+					list = $temp$list;
+					continue any;
+				}
+			}
+		}
+	});
+var author$project$Exposition$addOrReplaceObject = F2(
+	function (obj, exp) {
+		return A2(
+			elm$core$List$any,
+			function (m) {
+				return _Utils_eq(m.id, obj.id);
+			},
+			exp.media) ? A2(author$project$Exposition$replaceObject, obj, exp) : A2(author$project$Exposition$addObject, obj, exp);
+	});
 var elm$html$Html$Attributes$height = function (n) {
 	return A2(
 		_VirtualDom_attribute,
@@ -6391,20 +6443,6 @@ var elm$core$List$filter = F2(
 				}),
 			_List_Nil,
 			list);
-	});
-var elm$core$List$map = F2(
-	function (f, xs) {
-		return A3(
-			elm$core$List$foldr,
-			F2(
-				function (x, acc) {
-					return A2(
-						elm$core$List$cons,
-						f(x),
-						acc);
-				}),
-			_List_Nil,
-			xs);
 	});
 var elm$core$Tuple$second = function (_n0) {
 	var y = _n0.b;
@@ -7290,27 +7328,6 @@ var elm$core$Basics$composeL = F3(
 			f(x));
 	});
 var elm$core$Basics$not = _Basics_not;
-var elm$core$List$any = F2(
-	function (isOkay, list) {
-		any:
-		while (true) {
-			if (!list.b) {
-				return false;
-			} else {
-				var x = list.a;
-				var xs = list.b;
-				if (isOkay(x)) {
-					return true;
-				} else {
-					var $temp$isOkay = isOkay,
-						$temp$list = xs;
-					isOkay = $temp$isOkay;
-					list = $temp$list;
-					continue any;
-				}
-			}
-		}
-	});
 var elm$core$List$all = F2(
 	function (isOkay, list) {
 		return !A2(
@@ -11135,19 +11152,6 @@ var author$project$Exposition$render = function (exp) {
 				exp.markdownInput)
 		});
 };
-var author$project$Exposition$replaceObject = F2(
-	function (obj, exp) {
-		return _Utils_update(
-			exp,
-			{
-				media: A2(
-					elm$core$List$map,
-					function (m) {
-						return _Utils_eq(m.id, obj.id) ? obj : m;
-					},
-					exp.media)
-			});
-	});
 var author$project$Exposition$withMd = F2(
 	function (exp, content) {
 		return _Utils_update(
@@ -11166,12 +11170,65 @@ var author$project$Main$Uploaded = function (a) {
 var author$project$Main$Uploading = function (a) {
 	return {$: 'Uploading', a: a};
 };
+var author$project$Main$addProblem = F2(
+	function (model, problem) {
+		return _Utils_update(
+			model,
+			{
+				problems: A2(elm$core$List$cons, problem, model.problems)
+			});
+	});
+var author$project$Main$addProblems = F2(
+	function (model, problems) {
+		return _Utils_update(
+			model,
+			{
+				problems: _Utils_ap(problems, model.problems)
+			});
+	});
 var elm$json$Json$Encode$null = _Json_encodeNull;
 var author$project$Main$getContent = _Platform_outgoingPort(
 	'getContent',
 	function ($) {
 		return elm$json$Json$Encode$null;
 	});
+var author$project$Problems$CannotLoadMedia = function (a) {
+	return {$: 'CannotLoadMedia', a: a};
+};
+var author$project$Problems$splitResultListAcc = F3(
+	function (results, problems, oks) {
+		splitResultListAcc:
+		while (true) {
+			if (!results.b) {
+				return _Utils_Tuple2(problems, oks);
+			} else {
+				if (results.a.$ === 'Ok') {
+					var a = results.a.a;
+					var rest = results.b;
+					var $temp$results = rest,
+						$temp$problems = problems,
+						$temp$oks = A2(elm$core$List$cons, a, oks);
+					results = $temp$results;
+					problems = $temp$problems;
+					oks = $temp$oks;
+					continue splitResultListAcc;
+				} else {
+					var p = results.a.a;
+					var rest = results.b;
+					var $temp$results = rest,
+						$temp$problems = A2(elm$core$List$cons, p, problems),
+						$temp$oks = oks;
+					results = $temp$results;
+					problems = $temp$problems;
+					oks = $temp$oks;
+					continue splitResultListAcc;
+				}
+			}
+		}
+	});
+var author$project$Problems$splitResultList = function (results) {
+	return A3(author$project$Problems$splitResultListAcc, results, _List_Nil, _List_Nil);
+};
 var author$project$RCAPI$APIMediaEntry = F5(
 	function (id, media, description, copyright, name) {
 		return {copyright: copyright, description: description, id: id, media: media, name: name};
@@ -11258,6 +11315,94 @@ var author$project$RCAPI$toRCExposition = F3(
 			title: apiExpo.title
 		};
 	});
+var author$project$RCAPI$getDimensions = function (media) {
+	return elm$core$Maybe$Just(
+		_Utils_Tuple2(media.width, media.height));
+};
+var author$project$Exposition$RCAudio = function (a) {
+	return {$: 'RCAudio', a: a};
+};
+var author$project$Exposition$RCImage = {$: 'RCImage'};
+var author$project$Exposition$RCPdf = {$: 'RCPdf'};
+var author$project$Exposition$RCVideo = function (a) {
+	return {$: 'RCVideo', a: a};
+};
+var author$project$Exposition$Auto = {$: 'Auto'};
+var author$project$Exposition$defaultPlayerSettings = {autoplay: false, loop: false, preload: author$project$Exposition$Auto};
+var author$project$RCAPI$getType = function (media) {
+	var _n0 = media.mediaType;
+	switch (_n0) {
+		case 'image':
+			return elm$core$Result$Ok(author$project$Exposition$RCImage);
+		case 'pdf':
+			return elm$core$Result$Ok(author$project$Exposition$RCPdf);
+		case 'audio':
+			return elm$core$Result$Ok(
+				author$project$Exposition$RCAudio(author$project$Exposition$defaultPlayerSettings));
+		case 'video':
+			return elm$core$Result$Ok(
+				author$project$Exposition$RCVideo(author$project$Exposition$defaultPlayerSettings));
+		default:
+			var str = _n0;
+			return elm$core$Result$Err('Unknown Media Type: ' + str);
+	}
+};
+var author$project$RCAPI$toRCMediaObject = F2(
+	function (researchId, mediaEntry) {
+		var mediaType = author$project$RCAPI$getType(mediaEntry.media);
+		if (mediaType.$ === 'Ok') {
+			var mtype = mediaType.a;
+			return elm$core$Result$Ok(
+				{
+					caption: '',
+					copyright: mediaEntry.copyright,
+					description: mediaEntry.description,
+					dimensions: author$project$RCAPI$getDimensions(mediaEntry.media),
+					expositionId: researchId,
+					htmlId: '',
+					id: mediaEntry.id,
+					mediaType: mtype,
+					name: mediaEntry.name,
+					thumb: '',
+					userClass: '',
+					version: 0
+				});
+		} else {
+			var s = mediaType.a;
+			return elm$core$Result$Err(
+				author$project$Problems$CannotLoadMedia(s));
+		}
+	});
+var elm$http$Http$filePart = _Http_pair;
+var elm$http$Http$multipartBody = function (parts) {
+	return A2(
+		_Http_pair,
+		'',
+		_Http_toFormData(parts));
+};
+var elm$http$Http$stringPart = _Http_pair;
+var author$project$RCAPI$uploadMedia = F3(
+	function (researchId, file, expect) {
+		return elm$http$Http$request(
+			{
+				body: elm$http$Http$multipartBody(
+					_List_fromArray(
+						[
+							A2(elm$http$Http$stringPart, 'mediatype', 'image'),
+							A2(elm$http$Http$stringPart, 'name', 'tmpName'),
+							A2(elm$http$Http$stringPart, 'copyrightholder', 'copyrightholder'),
+							A2(elm$http$Http$stringPart, 'description', 'description'),
+							A2(elm$http$Http$filePart, 'media', file),
+							A2(elm$http$Http$stringPart, 'thumb', '')
+						])),
+				expect: expect,
+				headers: _List_Nil,
+				method: 'POST',
+				timeout: elm$core$Maybe$Nothing,
+				tracker: elm$core$Maybe$Just('upload'),
+				url: 'text-editor/simple-media-add' + ('?research=' + elm$core$String$fromInt(researchId))
+			});
+	});
 var elm$core$Task$Perform = function (a) {
 	return {$: 'Perform', a: a};
 };
@@ -11340,7 +11485,6 @@ var elm$http$Http$expectWhatever = function (toMsg) {
 				return elm$core$Result$Ok(_Utils_Tuple0);
 			}));
 };
-var elm$http$Http$filePart = _Http_pair;
 var elm$core$Basics$clamp = F3(
 	function (low, high, number) {
 		return (_Utils_cmp(number, low) < 0) ? low : ((_Utils_cmp(number, high) > 0) ? high : number);
@@ -11348,13 +11492,6 @@ var elm$core$Basics$clamp = F3(
 var elm$http$Http$fractionSent = function (p) {
 	return (!p.size) ? 1 : A3(elm$core$Basics$clamp, 0, 1, p.sent / p.size);
 };
-var elm$http$Http$multipartBody = function (parts) {
-	return A2(
-		_Http_pair,
-		'',
-		_Http_toFormData(parts));
-};
-var elm$http$Http$stringPart = _Http_pair;
 var rundis$elm_bootstrap$Bootstrap$Modal$Show = {$: 'Show'};
 var rundis$elm_bootstrap$Bootstrap$Modal$shown = rundis$elm_bootstrap$Bootstrap$Modal$Show;
 var author$project$Main$update = F2(
@@ -11429,6 +11566,7 @@ var author$project$Main$update = F2(
 				var exp = msg.a;
 				if (exp.$ === 'Ok') {
 					var e = exp.a;
+					var _n5 = A2(elm$core$Debug$log, 'loaded exposition: ', e);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -11438,13 +11576,35 @@ var author$project$Main$update = F2(
 						A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 				} else {
 					var err = exp.a;
-					var _n5 = A2(elm$core$Debug$log, 'could not load exposition: ', err);
+					var _n6 = A2(elm$core$Debug$log, 'could not load exposition: ', err);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 			case 'GotMediaList':
-				var exp = msg.a;
-				var _n6 = A2(elm$core$Debug$log, 'gotmedialist', exp);
-				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				var mediaResult = msg.a;
+				if (mediaResult.$ === 'Err') {
+					return _Utils_Tuple2(
+						A2(
+							author$project$Main$addProblem,
+							model,
+							author$project$Problems$CannotLoadMedia('http request failed')),
+						elm$core$Platform$Cmd$none);
+				} else {
+					var media = mediaResult.a;
+					var _n8 = author$project$Problems$splitResultList(
+						A2(
+							elm$core$List$map,
+							author$project$RCAPI$toRCMediaObject(model.research),
+							media));
+					var problems = _n8.a;
+					var mediaEntries = _n8.b;
+					var modelWithProblems = A2(author$project$Main$addProblems, model, problems);
+					var expositionWithMedia = A3(elm$core$List$foldr, author$project$Exposition$addOrReplaceObject, modelWithProblems.exposition, mediaEntries);
+					return _Utils_Tuple2(
+						_Utils_update(
+							modelWithProblems,
+							{exposition: expositionWithMedia}),
+						elm$core$Platform$Cmd$none);
+				}
 			case 'MediaEdit':
 				var obj = msg.a;
 				return _Utils_Tuple2(
@@ -11472,25 +11632,11 @@ var author$project$Main$update = F2(
 				var file = msg.a;
 				return _Utils_Tuple2(
 					model,
-					elm$http$Http$request(
-						{
-							body: elm$http$Http$multipartBody(
-								_List_fromArray(
-									[
-										A2(elm$http$Http$stringPart, 'mediatype', 'image'),
-										A2(elm$http$Http$stringPart, 'name', '--TODO: mpName'),
-										A2(elm$http$Http$stringPart, 'copyrightholder', 'copyrightholder'),
-										A2(elm$http$Http$stringPart, 'description', 'description'),
-										A2(elm$http$Http$filePart, 'media', file),
-										A2(elm$http$Http$stringPart, 'thumb', '')
-									])),
-							expect: elm$http$Http$expectWhatever(author$project$Main$Uploaded),
-							headers: _List_Nil,
-							method: 'POST',
-							timeout: elm$core$Maybe$Nothing,
-							tracker: elm$core$Maybe$Just('upload'),
-							url: 'text-editor/simple-media-add' + ('?research=' + elm$core$String$fromInt(model.research))
-						}));
+					A3(
+						author$project$RCAPI$uploadMedia,
+						model.research,
+						file,
+						elm$http$Http$expectWhatever(author$project$Main$Uploaded)));
 			case 'GotUploadProgress':
 				var progress = msg.a;
 				if (progress.$ === 'Sending') {
@@ -11516,7 +11662,7 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				} else {
 					var e = result.a;
-					var _n9 = A2(elm$core$Debug$log, 'error uploading: ', e);
+					var _n11 = A2(elm$core$Debug$log, 'error uploading: ', e);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 		}
@@ -11554,6 +11700,9 @@ var author$project$Exposition$validateMediaObject = F3(
 		};
 	});
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
+var author$project$Main$debugObject = function (objectName) {
+	return {caption: 'CAPTION', copyright: 'Casper Schipper 2019', description: 'description', dimensions: elm$core$Maybe$Nothing, expositionId: 1, htmlId: '', id: 1, mediaType: author$project$Exposition$RCImage, name: objectName, thumb: 'angryCatImage.png', userClass: '', version: 1};
+};
 var author$project$Main$InsertTool = function (a) {
 	return {$: 'InsertTool', a: a};
 };
@@ -12416,10 +12565,13 @@ var rundis$elm_bootstrap$Bootstrap$Button$button = F2(
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
 	return {$: 'Coloring', a: a};
 };
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger = {$: 'Danger'};
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
 	return {$: 'Roled', a: a};
 };
+var rundis$elm_bootstrap$Bootstrap$Button$danger = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
 var rundis$elm_bootstrap$Bootstrap$Button$primary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
 var elm$html$Html$form = _VirtualDom_node('form');
@@ -12427,6 +12579,7 @@ var rundis$elm_bootstrap$Bootstrap$Form$form = F2(
 	function (attributes, children) {
 		return A2(elm$html$Html$form, attributes, children);
 	});
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1 = elm$html$Html$Attributes$class('ml-1');
 var author$project$RCMediaEdit$view = F2(
 	function (objectState, messages) {
 		var nameProps = {
@@ -12473,7 +12626,6 @@ var author$project$RCMediaEdit$view = F2(
 					_List_fromArray(
 						[
 							author$project$RCMediaEdit$viewInputWithLabel(nameProps),
-							author$project$RCMediaEdit$viewInputWithLabel(descriptionProps),
 							A2(
 							rundis$elm_bootstrap$Bootstrap$Form$group,
 							_List_Nil,
@@ -12497,35 +12649,43 @@ var author$project$RCMediaEdit$view = F2(
 									messages.editTool(author$project$RCMediaEdit$UserClass))
 								])),
 							author$project$RCMediaEdit$viewTextAreaWithLabel(descriptionProps),
+							author$project$RCMediaEdit$viewInputWithLabel(copyrightProps),
 							A2(
-							rundis$elm_bootstrap$Bootstrap$Button$button,
+							rundis$elm_bootstrap$Bootstrap$Form$group,
+							_List_Nil,
 							_List_fromArray(
 								[
-									rundis$elm_bootstrap$Bootstrap$Button$primary,
-									rundis$elm_bootstrap$Bootstrap$Button$attrs(
+									A2(
+									rundis$elm_bootstrap$Bootstrap$Button$button,
 									_List_fromArray(
 										[
-											elm$html$Html$Events$onClick(messages.insertTool)
-										]))
-								]),
-							_List_fromArray(
-								[
-									elm$html$Html$text('Insert')
-								])),
-							A2(
-							rundis$elm_bootstrap$Bootstrap$Button$button,
-							_List_fromArray(
-								[
-									rundis$elm_bootstrap$Bootstrap$Button$primary,
-									rundis$elm_bootstrap$Bootstrap$Button$attrs(
+											rundis$elm_bootstrap$Bootstrap$Button$primary,
+											rundis$elm_bootstrap$Bootstrap$Button$attrs(
+											_List_fromArray(
+												[
+													elm$html$Html$Events$onClick(messages.insertTool)
+												]))
+										]),
 									_List_fromArray(
 										[
-											elm$html$Html$Events$onClick(messages.deleteTool)
+											elm$html$Html$text('Insert')
+										])),
+									A2(
+									rundis$elm_bootstrap$Bootstrap$Button$button,
+									_List_fromArray(
+										[
+											rundis$elm_bootstrap$Bootstrap$Button$danger,
+											rundis$elm_bootstrap$Bootstrap$Button$attrs(
+											_List_fromArray(
+												[
+													elm$html$Html$Events$onClick(messages.deleteTool),
+													rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1
+												]))
+										]),
+									_List_fromArray(
+										[
+											elm$html$Html$text('Remove')
 										]))
-								]),
-							_List_fromArray(
-								[
-									elm$html$Html$text('Remove')
 								]))
 						]))
 				]));
@@ -12610,7 +12770,7 @@ var rundis$elm_bootstrap$Bootstrap$Modal$titledHeader = F3(
 					children)
 				]));
 	});
-var rundis$elm_bootstrap$Bootstrap$Modal$h3 = rundis$elm_bootstrap$Bootstrap$Modal$titledHeader(elm$html$Html$h3);
+var rundis$elm_bootstrap$Bootstrap$Modal$h5 = rundis$elm_bootstrap$Bootstrap$Modal$titledHeader(elm$html$Html$h5);
 var rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick = F2(
 	function (hide, _n0) {
 		var conf = _n0.a;
@@ -13024,17 +13184,14 @@ var author$project$Main$viewMediaDialog = F2(
 							elm$html$Html$p,
 							_List_Nil,
 							_List_fromArray(
-								[
-									mediaEditView,
-									elm$html$Html$text('This is a modal for object ' + objectNameorId)
-								]))
+								[mediaEditView]))
 						]),
 					A3(
-						rundis$elm_bootstrap$Bootstrap$Modal$h3,
+						rundis$elm_bootstrap$Bootstrap$Modal$h5,
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('Modal header')
+								elm$html$Html$text('Edit object ' + objectNameorId)
 							]),
 						A2(
 							rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,

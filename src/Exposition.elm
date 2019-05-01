@@ -1,4 +1,4 @@
-module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addObject, asHtml, asMarkdown, defaultPlayerSettings, empty, mediaUrl, objectByNameOrId, render, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withMd)
+module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, mediaUrl, objectByNameOrId, render, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withMd)
 
 import Html as Html
 import Html.Attributes as Attr
@@ -148,6 +148,15 @@ replaceObject obj exp =
 addObject : RCMediaObject -> RCExposition msg -> RCExposition msg
 addObject obj exp =
     { exp | media = obj :: exp.media }
+
+
+addOrReplaceObject : RCMediaObject -> RCExposition msg -> RCExposition msg
+addOrReplaceObject obj exp =
+    if List.any (\m -> m.id == obj.id) exp.media then
+        replaceObject obj exp
+
+    else
+        addObject obj exp
 
 
 mediaUrl : RCMediaObject -> String
@@ -412,6 +421,5 @@ toc exp =
 
 
 
--- updateOrCreateObject
 -- integrateMediaList
 -- integrateSerializedMediaInfo

@@ -13,6 +13,7 @@ import Html.Events exposing (on, onClick, onInput)
 import Http
 import Json.Decode as D
 import Json.Encode as E
+import Problems
 import RCAPI
 import RCMediaEdit
 import Regex
@@ -25,8 +26,8 @@ type alias Model msg =
     , mediaDialog : ( Modal.Visibility, String )
     , weave : Int
     , research : Int
-    , apiExposition : Maybe RCAPI.APIExposition -- got from rc
     , uploadStatus : UploadStatus
+    , problems : List Problems.Problem
     }
 
 
@@ -53,8 +54,8 @@ init flags =
               , mediaDialog = ( Modal.hidden, "" )
               , research = fl.research
               , weave = fl.weave
-              , apiExposition = Nothing
               , uploadStatus = Ready
+              , problems = []
               }
             , RCAPI.getExposition fl.research fl.weave GotExposition
             )
@@ -65,40 +66,25 @@ init flags =
                     Debug.log "err" str
             in
             ( { editGeneration = -1
-              , exposition = Exposition.addObject (debugObject "mytest") Exposition.empty -- add an object so we can test
+              , exposition = Exposition.empty
               , mediaDialog = ( Modal.hidden, "" )
               , research = -1
               , weave = -1
-              , apiExposition = Nothing
               , uploadStatus = Ready
+              , problems = [ Problems.WrongExpositionUrl ]
               }
             , Cmd.none
             )
 
 
-
--- for testing only
-
-
-debugObject : String -> Exposition.RCMediaObject
-debugObject objectName =
-    { userClass = ""
-    , dimensions = Nothing
-    , id = 1
-    , htmlId = ""
-    , thumb = "angryCatImage.png"
-    , expositionId = 1
-    , name = objectName
-    , description = "description"
-    , copyright = "Casper Schipper 2019"
-    , caption = "CAPTION"
-    , version = 1
-    , mediaType = Exposition.RCImage
-    }
+addProblem : Model msg -> Problems.Problem -> Model msg
+addProblem model problem =
+    { model | problems = problem :: model.problems }
 
 
-
--- DEBUG: just to have something to test in an empty
+addProblems : Model msg -> List Problems.Problem -> Model msg
+addProblems model problems =
+    { model | problems = problems ++ model.problems }
 
 
 main =
@@ -218,6 +204,10 @@ update msg model =
         GotExposition exp ->
             case exp of
                 Ok e ->
+                    let
+                        _ =
+                            Debug.log "loaded exposition: " e
+                    in
                     ( { model | exposition = RCAPI.toRCExposition e model.research model.weave }, RCAPI.getMediaList model.research GotMediaList )
 
                 Err err ->
@@ -227,16 +217,25 @@ update msg model =
                     in
                     ( model, Cmd.none )
 
-        GotMediaList exp ->
-            -- not implemented
-            let
-                _ =
-                    Debug.log "gotmedialist" exp
-            in
-            ( model, Cmd.none )
+        GotMediaList mediaResult ->
+            case mediaResult of
+                Err _ ->
+                    ( addProblem model (Problems.CannotLoadMedia "http request failed"), Cmd.none )
+
+                Ok media ->
+                    let
+                        ( problems, mediaEntries ) =
+                            Problems.splitResultList (List.map (RCAPI.toRCMediaObject model.research) media)
+
+                        modelWithProblems =
+                            addProblems model problems
+
+                        expositionWithMedia =
+                            List.foldr Exposition.addOrReplaceObject modelWithProblems.exposition mediaEntries
+                    in
+                    ( { modelWithProblems | exposition = expositionWithMedia }, Cmd.none )
 
         MediaEdit obj ->
-            -- update model
             ( { model | exposition = Exposition.replaceObject obj model.exposition }, Cmd.none )
 
         MediaDelete obj ->
@@ -254,23 +253,7 @@ update msg model =
 
         UploadMediaFileSelected file ->
             ( model
-            , Http.request
-                { method = "POST"
-                , url = "text-editor/simple-media-add" ++ "?research=" ++ String.fromInt model.research
-                , headers = []
-                , body =
-                    Http.multipartBody
-                        [ Http.stringPart "mediatype" "image"
-                        , Http.stringPart "name" "--TODO: mpName"
-                        , Http.stringPart "copyrightholder" "copyrightholder"
-                        , Http.stringPart "description" "description"
-                        , Http.filePart "media" file
-                        , Http.stringPart "thumb" ""
-                        ]
-                , expect = Http.expectWhatever Uploaded
-                , timeout = Nothing
-                , tracker = Just "upload"
-                }
+            , RCAPI.uploadMedia model.research file (Http.expectWhatever Uploaded)
             )
 
         GotUploadProgress progress ->
@@ -363,3 +346,28 @@ view model =
         , viewMediaDialog model model.mediaDialog
         , viewUpload model.uploadStatus
         ]
+
+
+
+-- -- for testing only
+
+
+debugObject : String -> Exposition.RCMediaObject
+debugObject objectName =
+    { userClass = ""
+    , dimensions = Nothing
+    , id = 1
+    , htmlId = ""
+    , thumb = "angryCatImage.png"
+    , expositionId = 1
+    , name = objectName
+    , description = "description"
+    , copyright = "Casper Schipper 2019"
+    , caption = "CAPTION"
+    , version = 1
+    , mediaType = Exposition.RCImage
+    }
+
+
+
+--DEBUG: just to have something to test in an empty

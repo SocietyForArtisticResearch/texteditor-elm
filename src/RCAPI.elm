@@ -1,10 +1,12 @@
-module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, getExposition, getMediaList, toRCExposition)
+module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, getExposition, getMediaList, toRCExposition, toRCMediaObject, uploadMedia)
 
 import Dict
 import Exposition exposing (OptionalDimensions, RCExposition, RCMediaObject, RCMediaType(..), defaultPlayerSettings)
+import File exposing (File)
 import Html exposing (Html, span)
 import Http
 import Json.Decode exposing (..)
+import Problems exposing (..)
 
 
 type alias APIExposition =
@@ -64,6 +66,31 @@ getExposition researchId weave msg =
 
 
 
+--
+
+
+uploadMedia : Int -> File -> Http.Expect msg -> Cmd msg
+uploadMedia researchId file expect =
+    Http.request
+        { method = "POST"
+        , url = "text-editor/simple-media-add" ++ "?research=" ++ String.fromInt researchId
+        , headers = []
+        , body =
+            Http.multipartBody
+                [ Http.stringPart "mediatype" "image"
+                , Http.stringPart "name" "tmpName"
+                , Http.stringPart "copyrightholder" "copyrightholder"
+                , Http.stringPart "description" "description"
+                , Http.filePart "media" file
+                , Http.stringPart "thumb" ""
+                ]
+        , expect = expect
+        , timeout = Nothing
+        , tracker = Just "upload"
+        }
+
+
+
 -- POST PROCESS API RETURN VALUES
 
 
@@ -104,8 +131,8 @@ getType media =
             Err ("Unknown Media Type: " ++ str)
 
 
-toRCMediaObject : APIMediaEntry -> Int -> Result String RCMediaObject
-toRCMediaObject mediaEntry researchId =
+toRCMediaObject : Int -> APIMediaEntry -> Result Problem RCMediaObject
+toRCMediaObject researchId mediaEntry =
     let
         mediaType =
             getType mediaEntry.media
@@ -128,4 +155,10 @@ toRCMediaObject mediaEntry researchId =
                 }
 
         Err s ->
-            Err s
+            Err (CannotLoadMedia s)
+
+
+
+-- TODO
+-- get user class from rc metadata
+-- process rc expo metadata
