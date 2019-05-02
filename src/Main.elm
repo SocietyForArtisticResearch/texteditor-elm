@@ -288,11 +288,6 @@ viewMediaDialog model ( visibility, objectNameorId ) =
         object =
             case Exposition.objectByNameOrId objectNameorId exposition of
                 Just obj ->
-                    -- somehow doesn't find any object, even if exists ?
-                    let
-                        _ =
-                            Debug.log "found object"
-                    in
                     obj
 
                 Nothing ->
@@ -300,9 +295,6 @@ viewMediaDialog model ( visibility, objectNameorId ) =
                     let
                         _ =
                             Debug.log "object not found, object name or id =" objectNameorId
-
-                        _ =
-                            Debug.log "model =" model
                     in
                     debugObject objectNameorId
 

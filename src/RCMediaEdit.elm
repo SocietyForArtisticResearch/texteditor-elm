@@ -59,6 +59,7 @@ cssClasses =
 -- Note to self, Select requires some ugly beast to parse the values, unless we do not support IE:
 -- https://stackoverflow.com/questions/39371105/how-to-use-select-dropdown-tag-in-elm-lang
 
+-- For custom classes, we could also use "dropdown with addon", see http://elm-bootstrap.info/inputgroup
 
 viewClassesPicker : String -> List CssClass -> String -> (String -> msg) -> Html msg
 viewClassesPicker id classList currentSelection editMessage =
