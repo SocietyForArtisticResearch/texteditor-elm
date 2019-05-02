@@ -4,7 +4,7 @@ import Bootstrap.Button as Button
 import Bootstrap.Modal as Modal
 import Browser
 import Dict
-import Exposition
+import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectViewState)
 import File exposing (File)
 import File.Select as Select
 import Html exposing (Html, button, div, p, span, text)
@@ -21,9 +21,9 @@ import String.Extra as Str
 
 
 type alias Model msg =
-    { exposition : Exposition.RCExposition msg
+    { exposition : RCExposition msg
     , editGeneration : Int
-    , mediaDialog : ( Modal.Visibility, String )
+    , mediaDialog : ( Modal.Visibility, Maybe RCMediaObject, Maybe RCMediaObjectViewState )
     , weave : Int
     , research : Int
     , uploadStatus : UploadStatus
@@ -51,7 +51,7 @@ init flags =
         Ok fl ->
             ( { editGeneration = -1
               , exposition = Exposition.empty
-              , mediaDialog = ( Modal.hidden, "" )
+              , mediaDialog = ( Modal.hidden, Nothing, Nothing )
               , research = fl.research
               , weave = fl.weave
               , uploadStatus = Ready
@@ -67,7 +67,7 @@ init flags =
             in
             ( { editGeneration = -1
               , exposition = Exposition.empty
-              , mediaDialog = ( Modal.hidden, "" )
+              , mediaDialog = ( Modal.hidden, Nothing, Nothing )
               , research = -1
               , weave = -1
               , uploadStatus = Ready
@@ -150,7 +150,7 @@ makeMediaEditFun obj field input =
             MediaEdit { obj | copyright = input }
 
 
-makeMediaEditMsgs : Exposition.RCMediaObject -> RCMediaEdit.MediaEditMessages Msg
+makeMediaEditMsgs : RCMediaObject -> RCMediaEdit.MediaEditMessages Msg
 makeMediaEditMsgs obj =
     { insertTool = InsertTool obj
     , editTool = makeMediaEditFun obj
@@ -193,13 +193,26 @@ update msg model =
         MediaDialog val ->
             case D.decodeValue (D.field "media" D.string) val of
                 Ok mediaNameOrId ->
-                    ( { model | mediaDialog = ( Modal.shown, mediaNameOrId ) }, Cmd.none )
+                    case Exposition.objectByNameOrId mediaNameOrId model.exposition of
+                        Just obj ->
+                            ( { model | mediaDialog = ( Modal.shown, Just obj, Nothing ) }, Cmd.none )
+
+                        Nothing ->
+                            let
+                                modelWithProblem =
+                                    addProblem model Problems.NoMediaWithNameOrId
+                            in
+                            ( { modelWithProblem
+                                | mediaDialog = ( Modal.hidden, Nothing, Nothing )
+                              }
+                            , Cmd.none
+                            )
 
                 _ ->
                     ( model, Cmd.none )
 
         CloseMediaDialog ->
-            ( { model | mediaDialog = ( Modal.hidden, "" ) }, Cmd.none )
+            ( { model | mediaDialog = ( Modal.hidden, Nothing, Nothing ) }, Cmd.none )
 
         GotExposition exp ->
             case exp of
@@ -208,7 +221,9 @@ update msg model =
                         _ =
                             Debug.log "loaded exposition: " e
                     in
-                    ( { model | exposition = RCAPI.toRCExposition e model.research model.weave }, RCAPI.getMediaList model.research GotMediaList )
+                    ( { model | exposition = RCAPI.toRCExposition e model.research model.weave }
+                    , RCAPI.getMediaList model.research GotMediaList
+                    )
 
                 Err err ->
                     let
@@ -235,11 +250,41 @@ update msg model =
                     in
                     ( { modelWithProblems | exposition = expositionWithMedia }, Cmd.none )
 
-        MediaEdit obj ->
-            ( { model | exposition = Exposition.replaceObject obj model.exposition }, Cmd.none )
+        MediaEdit objFromDialog ->
+            -- TODO: store in backend
+            case Exposition.objectByNameOrId objFromDialog.name model.exposition of
+                Nothing ->
+                    let
+                        modelWithProblem =
+                            addProblem model Problems.NoMediaWithNameOrId
+                    in
+                    ( modelWithProblem, Cmd.none )
+
+                Just objInModel ->
+                    let
+                        viewObjectState =
+                            Exposition.validateMediaObject model.exposition objInModel objFromDialog
+
+                        ( viewStatus, objInEdit, _ ) =
+                            model.mediaDialog
+                    in
+                    case Exposition.isValid viewObjectState.validation of
+                        False ->
+                            ( { model | mediaDialog = ( viewStatus, Just objFromDialog, Just viewObjectState ) }
+                            , Cmd.none
+                            )
+
+                        True ->
+                            ( { model
+                                | mediaDialog = ( viewStatus, Just objFromDialog, Just viewObjectState )
+                                , exposition =
+                                    Exposition.replaceObject objFromDialog model.exposition
+                              }
+                            , Cmd.none
+                            )
 
         MediaDelete obj ->
-            -- not implemented
+            -- TODO: delete in backend
             ( model, Cmd.none )
 
         InsertTool obj ->
@@ -267,7 +312,7 @@ update msg model =
         Uploaded result ->
             case result of
                 Ok _ ->
-                    ( { model | uploadStatus = Ready }, Cmd.none )
+                    ( { model | uploadStatus = Ready }, RCAPI.getMediaList model.research GotMediaList )
 
                 Err e ->
                     let
@@ -277,39 +322,16 @@ update msg model =
                     ( model, Cmd.none )
 
 
-viewMediaDialog : Model Msg -> ( Modal.Visibility, String ) -> Html Msg
-viewMediaDialog model ( visibility, objectNameorId ) =
+viewMediaDialog : RCExposition Msg -> ( Modal.Visibility, RCMediaObject, RCMediaObjectViewState ) -> Html Msg
+viewMediaDialog exposition ( visibility, object, viewObjectState ) =
     let
-        exposition : Exposition.RCExposition Msg
-        exposition =
-            model.exposition
-
-        object : Exposition.RCMediaObject
-        object =
-            case Exposition.objectByNameOrId objectNameorId exposition of
-                Just obj ->
-                    obj
-
-                Nothing ->
-                    -- Just for debug:
-                    let
-                        _ =
-                            Debug.log "object not found, object name or id =" objectNameorId
-                    in
-                    debugObject objectNameorId
-
-        -- How do we get the old and new state of the mdei object here ?
-        viewObjectState : Exposition.RCMediaObjectViewState
-        viewObjectState =
-            Exposition.validateMediaObject exposition object object
-
         mediaEditView =
             RCMediaEdit.view viewObjectState (makeMediaEditMsgs object)
     in
     Modal.config CloseMediaDialog
         |> Modal.small
         |> Modal.hideOnBackdropClick True
-        |> Modal.h5 [] [ text <| "Edit object " ++ objectNameorId ]
+        |> Modal.h5 [] [ text <| "Edit object " ++ object.name ]
         |> Modal.body [] [ p [] [ mediaEditView ] ]
         |> Modal.footer []
             [ Button.button
@@ -333,9 +355,18 @@ viewUpload status =
 
 view : Model Msg -> Html Msg
 view model =
+    let
+        mediaDialogHtml =
+            case model.mediaDialog of
+                ( vis, Just obj, Just valid ) ->
+                    viewMediaDialog model.exposition ( vis, obj, valid )
+
+                _ ->
+                    div [] []
+    in
     div []
         [ model.exposition.renderedHtml
-        , viewMediaDialog model model.mediaDialog
+        , mediaDialogHtml
         , viewUpload model.uploadStatus
         ]
 

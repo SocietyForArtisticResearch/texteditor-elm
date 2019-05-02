@@ -1,11 +1,14 @@
 module Problems exposing (Problem(..), splitResultList)
 
+-- problem idea comes from rtfeldman sp-application talk youtube
+
 
 type Problem
     = CannotFindServer
     | WrongExpositionUrl
     | CannotLoadMedia String
     | CannotLoadExposition
+    | NoMediaWithNameOrId
 
 
 splitResultList : List (Result Problem a) -> ( List Problem, List a )
