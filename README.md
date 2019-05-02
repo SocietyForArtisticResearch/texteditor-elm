@@ -21,8 +21,17 @@ Open `editor.html`.
 # Todo
 
 Casper:
-- How does the edit media view in main.elm line 317, get the old and (changed) media object ?
-- Why can the user not change the object fields ?
+- Medialist display
+- Layout issues
+- Validation display
+- Why can the user not change the object name/copyright/ ?
+
+Luc:
+- Backend update of changes (RC API)
+- Get userclass and metadata
+- Rendered HTML
+- Transcoding status type
+- Saving/Loading (& markdown display in codemirror)
 
 - media editor dialog view function gets from main
   - a validations status containing strings and validation status
