@@ -11627,7 +11627,6 @@ var author$project$Main$update = F2(
 				var exp = msg.a;
 				if (exp.$ === 'Ok') {
 					var e = exp.a;
-					var _n6 = A2(elm$core$Debug$log, 'loaded exposition: ', e);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -11637,7 +11636,7 @@ var author$project$Main$update = F2(
 						A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 				} else {
 					var err = exp.a;
-					var _n7 = A2(elm$core$Debug$log, 'could not load exposition: ', err);
+					var _n6 = A2(elm$core$Debug$log, 'could not load exposition: ', err);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 			case 'GotMediaList':
@@ -11651,15 +11650,16 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				} else {
 					var media = mediaResult.a;
-					var _n9 = author$project$Problems$splitResultList(
+					var _n8 = author$project$Problems$splitResultList(
 						A2(
 							elm$core$List$map,
 							author$project$RCAPI$toRCMediaObject(model.research),
 							media));
-					var problems = _n9.a;
-					var mediaEntries = _n9.b;
+					var problems = _n8.a;
+					var mediaEntries = _n8.b;
 					var modelWithProblems = A2(author$project$Main$addProblems, model, problems);
 					var expositionWithMedia = A3(elm$core$List$foldr, author$project$Exposition$addOrReplaceObject, modelWithProblems.exposition, mediaEntries);
+					var _n9 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithMedia);
 					return _Utils_Tuple2(
 						_Utils_update(
 							modelWithProblems,

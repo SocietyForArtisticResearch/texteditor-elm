@@ -217,10 +217,6 @@ update msg model =
         GotExposition exp ->
             case exp of
                 Ok e ->
-                    let
-                        _ =
-                            Debug.log "loaded exposition: " e
-                    in
                     ( { model | exposition = RCAPI.toRCExposition e model.research model.weave }
                     , RCAPI.getMediaList model.research GotMediaList
                     )
@@ -247,6 +243,9 @@ update msg model =
 
                         expositionWithMedia =
                             List.foldr Exposition.addOrReplaceObject modelWithProblems.exposition mediaEntries
+
+                        _ =
+                            Debug.log "loaded exposition with media: " expositionWithMedia
                     in
                     ( { modelWithProblems | exposition = expositionWithMedia }, Cmd.none )
 
