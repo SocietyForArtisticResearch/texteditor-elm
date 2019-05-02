@@ -11592,6 +11592,7 @@ var author$project$Main$update = F2(
 					var _n4 = A2(author$project$Exposition$objectByNameOrId, mediaNameOrId, model.exposition);
 					if (_n4.$ === 'Just') {
 						var obj = _n4.a;
+						var _n5 = A2(elm$core$Debug$log, 'some success', obj);
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -11604,6 +11605,7 @@ var author$project$Main$update = F2(
 							elm$core$Platform$Cmd$none);
 					} else {
 						var modelWithProblem = A2(author$project$Main$addProblem, model, author$project$Problems$NoMediaWithNameOrId);
+						var _n6 = A2(elm$core$Debug$log, 'no object', model);
 						return _Utils_Tuple2(
 							_Utils_update(
 								modelWithProblem,
@@ -11613,6 +11615,7 @@ var author$project$Main$update = F2(
 							elm$core$Platform$Cmd$none);
 					}
 				} else {
+					var _n7 = A2(elm$core$Debug$log, 'no mediaName or ID', val);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 			case 'CloseMediaDialog':
@@ -11636,7 +11639,7 @@ var author$project$Main$update = F2(
 						A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 				} else {
 					var err = exp.a;
-					var _n6 = A2(elm$core$Debug$log, 'could not load exposition: ', err);
+					var _n9 = A2(elm$core$Debug$log, 'could not load exposition: ', err);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 			case 'GotMediaList':
@@ -11650,16 +11653,16 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				} else {
 					var media = mediaResult.a;
-					var _n8 = author$project$Problems$splitResultList(
+					var _n11 = author$project$Problems$splitResultList(
 						A2(
 							elm$core$List$map,
 							author$project$RCAPI$toRCMediaObject(model.research),
 							media));
-					var problems = _n8.a;
-					var mediaEntries = _n8.b;
+					var problems = _n11.a;
+					var mediaEntries = _n11.b;
 					var modelWithProblems = A2(author$project$Main$addProblems, model, problems);
 					var expositionWithMedia = A3(elm$core$List$foldr, author$project$Exposition$addOrReplaceObject, modelWithProblems.exposition, mediaEntries);
-					var _n9 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithMedia);
+					var _n12 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithMedia);
 					return _Utils_Tuple2(
 						_Utils_update(
 							modelWithProblems,
@@ -11668,18 +11671,18 @@ var author$project$Main$update = F2(
 				}
 			case 'MediaEdit':
 				var objFromDialog = msg.a;
-				var _n10 = A2(author$project$Exposition$objectByNameOrId, objFromDialog.name, model.exposition);
-				if (_n10.$ === 'Nothing') {
+				var _n13 = A2(author$project$Exposition$objectByNameOrId, objFromDialog.name, model.exposition);
+				if (_n13.$ === 'Nothing') {
 					var modelWithProblem = A2(author$project$Main$addProblem, model, author$project$Problems$NoMediaWithNameOrId);
 					return _Utils_Tuple2(modelWithProblem, elm$core$Platform$Cmd$none);
 				} else {
-					var objInModel = _n10.a;
+					var objInModel = _n13.a;
 					var viewObjectState = A3(author$project$Exposition$validateMediaObject, model.exposition, objInModel, objFromDialog);
-					var _n11 = model.mediaDialog;
-					var viewStatus = _n11.a;
-					var objInEdit = _n11.b;
-					var _n12 = author$project$Exposition$isValid(viewObjectState.validation);
-					if (!_n12) {
+					var _n14 = model.mediaDialog;
+					var viewStatus = _n14.a;
+					var objInEdit = _n14.b;
+					var _n15 = author$project$Exposition$isValid(viewObjectState.validation);
+					if (!_n15) {
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -11752,7 +11755,7 @@ var author$project$Main$update = F2(
 						A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 				} else {
 					var e = result.a;
-					var _n15 = A2(elm$core$Debug$log, 'error uploading: ', e);
+					var _n18 = A2(elm$core$Debug$log, 'error uploading: ', e);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 		}

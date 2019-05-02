@@ -195,6 +195,7 @@ update msg model =
                 Ok mediaNameOrId ->
                     case Exposition.objectByNameOrId mediaNameOrId model.exposition of
                         Just obj ->
+                            let _ = Debug.log "some success" obj in
                             ( { model | mediaDialog = ( Modal.shown, Just obj, Nothing ) }, Cmd.none )
 
                         Nothing ->
@@ -202,6 +203,7 @@ update msg model =
                                 modelWithProblem =
                                     addProblem model Problems.NoMediaWithNameOrId
                             in
+                                let _ = Debug.log "no object" model in
                             ( { modelWithProblem
                                 | mediaDialog = ( Modal.hidden, Nothing, Nothing )
                               }
@@ -209,6 +211,10 @@ update msg model =
                             )
 
                 _ ->
+                    let
+                        _ =
+                            Debug.log "no mediaName or ID" val
+                    in
                     ( model, Cmd.none )
 
         CloseMediaDialog ->
