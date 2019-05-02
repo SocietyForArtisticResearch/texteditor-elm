@@ -11592,6 +11592,7 @@ var author$project$Main$update = F2(
 					var _n4 = A2(author$project$Exposition$objectByNameOrId, mediaNameOrId, model.exposition);
 					if (_n4.$ === 'Just') {
 						var obj = _n4.a;
+						var viewObjectState = A3(author$project$Exposition$validateMediaObject, model.exposition, obj, obj);
 						var _n5 = A2(elm$core$Debug$log, 'some success', obj);
 						return _Utils_Tuple2(
 							_Utils_update(
@@ -11600,7 +11601,7 @@ var author$project$Main$update = F2(
 									mediaDialog: _Utils_Tuple3(
 										rundis$elm_bootstrap$Bootstrap$Modal$shown,
 										elm$core$Maybe$Just(obj),
-										elm$core$Maybe$Nothing)
+										elm$core$Maybe$Just(viewObjectState))
 								}),
 							elm$core$Platform$Cmd$none);
 					} else {
