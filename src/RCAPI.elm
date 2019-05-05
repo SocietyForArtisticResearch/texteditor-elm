@@ -1,4 +1,4 @@
-module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, getExposition, getMediaList, toRCExposition, toRCMediaObject, uploadMedia)
+module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, getExposition, getMediaList, toMediaClassesDict, toRCExposition, toRCMediaObject, uploadMedia)
 
 import Dict
 import Exposition exposing (OptionalDimensions, RCExposition, RCMediaObject, RCMediaType(..), defaultPlayerSettings)
@@ -7,10 +7,30 @@ import Html exposing (Html, span)
 import Http
 import Json.Decode exposing (..)
 import Problems exposing (..)
+import Settings
+
+
+
+-- BACKEND DATA TYPES
+
+
+type alias APIExpositionMetadata =
+    -- spelled "editorversion" in json
+    { editorVersion : String, contentVersion : Int }
+
+
+type alias APIAdditionalMediaMetadata =
+    { id : Int, name : String, userClass : Maybe String }
 
 
 type alias APIExposition =
-    { html : String, markdown : String, metadata : String, style : String, title : String }
+    { html : String
+    , markdown : String
+    , media : List APIAdditionalMediaMetadata
+    , metadata : APIExpositionMetadata
+    , style : String
+    , title : String
+    }
 
 
 type alias APIMediaEntry =
@@ -23,31 +43,52 @@ type alias APIMedia =
 
 apiExposition : Decoder APIExposition
 apiExposition =
-    map5 APIExposition
-        (at [ "html" ] string)
-        (at [ "markdown" ] string)
-        (at [ "metadata" ] string)
-        (at [ "style" ] string)
-        (at [ "title" ] string)
+    map6 APIExposition
+        (field "html" string)
+        (field "markdown" string)
+        (field "media" (list apiAdditionalMediaMetadata))
+        (field "metadata" apiExpositionMetadata)
+        (field "style" string)
+        (field "title" string)
+
+
+apiAdditionalMediaMetadata : Decoder APIAdditionalMediaMetadata
+apiAdditionalMediaMetadata =
+    map3 APIAdditionalMediaMetadata
+        (field "id" int)
+        (field "name" string)
+        (maybe (field "userClass" string))
+
+
+apiExpositionMetadata : Decoder APIExpositionMetadata
+apiExpositionMetadata =
+    map2
+        APIExpositionMetadata
+        (field "editorversion" string)
+        (field "contentVersion" int)
 
 
 apiMediaEntry : Decoder APIMediaEntry
 apiMediaEntry =
     map5 APIMediaEntry
-        (at [ "id" ] int)
-        (at [ "media" ] apiMedia)
-        (at [ "description" ] string)
-        (at [ "copyright" ] string)
-        (at [ "name" ] string)
+        (field "id" int)
+        (field "media" apiMedia)
+        (field "description" string)
+        (field "copyright" string)
+        (field "name" string)
 
 
 apiMedia : Decoder APIMedia
 apiMedia =
     map4 APIMedia
-        (at [ "type" ] string)
-        (at [ "status" ] string)
-        (at [ "width" ] int)
-        (at [ "height" ] int)
+        (field "type" string)
+        (field "status" string)
+        (field "width" int)
+        (field "height" int)
+
+
+
+-- HTTP REQUESTS
 
 
 getMediaList id msg =
@@ -63,10 +104,6 @@ getExposition researchId weave msg =
         { url = " text-editor/load?research=" ++ String.fromInt researchId ++ "&weave=" ++ String.fromInt weave
         , expect = Http.expectJson msg apiExposition
         }
-
-
-
---
 
 
 uploadMedia : Int -> File -> Http.Expect msg -> Cmd msg
@@ -104,7 +141,26 @@ toRCExposition apiExpo id weave =
     , renderedHtml = span [] [] -- we don't actually use the html in the saved object
     , markdownInput = apiExpo.markdown
     , media = []
+    , editorVersion = apiExpo.metadata.editorVersion
+    , contentVersion = apiExpo.metadata.contentVersion
     }
+
+
+toMediaClassesDict : APIExposition -> Dict.Dict Int String
+toMediaClassesDict apiExpo =
+    List.foldr (\( id, cl ) d -> Dict.insert id cl d)
+        Dict.empty
+        (List.filterMap
+            (\m ->
+                case m.userClass of
+                    Just cl ->
+                        Just ( m.id, cl )
+
+                    Nothing ->
+                        Nothing
+            )
+            apiExpo.media
+        )
 
 
 getDimensions : APIMedia -> OptionalDimensions
@@ -140,11 +196,10 @@ toRCMediaObject researchId mediaEntry =
     case mediaType of
         Ok mtype ->
             Ok
-                { userClass = "" -- needed?
+                { userClass = ""
                 , dimensions = getDimensions mediaEntry.media
                 , id = mediaEntry.id
                 , htmlId = "" -- needed?
-                , thumb = "" -- needed?
                 , expositionId = researchId
                 , name = mediaEntry.name
                 , description = mediaEntry.description
@@ -160,5 +215,4 @@ toRCMediaObject researchId mediaEntry =
 
 
 -- TODO
--- get user class from rc metadata
--- process rc expo metadata
+-- saving

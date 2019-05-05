@@ -28,29 +28,33 @@ Casper:
 
 Luc:
 - Backend update of changes (RC API)
-- Get userclass and metadata
 - Rendered HTML
 - Transcoding status type
-- Saving/Loading (& markdown display in codemirror)
+- Saving
 
-- media editor dialog view function gets from main
-  - a validations status containing strings and validation status
-  - a record with callback message functions which create messages for updating the rcmediaobject/model
-    (containing curried rcmediaobject)
-    - insert, delete and edit (copyright, name, description, class)
+Other:
 
-- Adjust cm mode to include RC media syntax
-- Evan's markdown lib does not seem to support HTML. We may need to
-  switch to https://github.com/pablohirafuji/elm-markdown
-- HTML style tag as in `<span style="font-size:14px"><span>`
-- RC media module
-- Adjust mode to include RC media syntax
-- upload to server
 - Buttons
 - RC Media Import
-- RC Media Upload
 - Media browser
 - Import/Export
 - Drag and drop of media
 - Switch Textarea/Codemirror
 - Styling
+
+
+## DONE
+- Get userclass and metadata
+- RC Media Upload
+- upload to server
+- Adjust cm mode to include RC media syntax
+- Evan's markdown lib does not seem to support HTML. We may need to
+  switch to https://github.com/pablohirafuji/elm-markdown
+- HTML style tag as in `<span style="font-size:14px"><span>`
+- RC media module
+- media editor dialog view function gets from main
+  - a validations status containing strings and validation status
+  - a record with callback message functions which create messages for updating the rcmediaobject/model
+    (containing curried rcmediaobject)
+    - insert, delete and edit (copyright, name, description, class)
+- Loading, markdown display in codemirror

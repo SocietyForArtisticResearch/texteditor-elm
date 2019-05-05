@@ -4,7 +4,7 @@ import Bootstrap.Button as Button
 import Bootstrap.Modal as Modal
 import Browser
 import Dict
-import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectViewState)
+import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectViewState, addMediaUserClasses, incContentVersion)
 import File exposing (File)
 import File.Select as Select
 import Html exposing (Html, button, div, p, span, text)
@@ -28,6 +28,7 @@ type alias Model msg =
     , research : Int
     , uploadStatus : UploadStatus
     , problems : List Problems.Problem
+    , mediaClassesDict : Dict.Dict Int String -- stores userclasses for media to be added to media list
     }
 
 
@@ -45,18 +46,24 @@ decodeFlags =
     D.map2 Flags (D.field "weave" D.int) (D.field "research" D.int)
 
 
+emptyModel : Int -> Int -> Model msg
+emptyModel research weave =
+    { editGeneration = -1
+    , exposition = Exposition.empty
+    , mediaDialog = ( Modal.hidden, Nothing, Nothing )
+    , research = research
+    , weave = weave
+    , uploadStatus = Ready
+    , problems = []
+    , mediaClassesDict = Dict.empty
+    }
+
+
 init : D.Value -> ( Model msg, Cmd Msg )
 init flags =
     case D.decodeValue decodeFlags flags of
         Ok fl ->
-            ( { editGeneration = -1
-              , exposition = Exposition.empty
-              , mediaDialog = ( Modal.hidden, Nothing, Nothing )
-              , research = fl.research
-              , weave = fl.weave
-              , uploadStatus = Ready
-              , problems = []
-              }
+            ( emptyModel fl.research fl.weave
             , RCAPI.getExposition fl.research fl.weave GotExposition
             )
 
@@ -65,14 +72,7 @@ init flags =
                 _ =
                     Debug.log "err" str
             in
-            ( { editGeneration = -1
-              , exposition = Exposition.empty
-              , mediaDialog = ( Modal.hidden, Nothing, Nothing )
-              , research = -1
-              , weave = -1
-              , uploadStatus = Ready
-              , problems = [ Problems.WrongExpositionUrl ]
-              }
+            ( addProblem (emptyModel -1 -1) Problems.WrongExpositionUrl
             , Cmd.none
             )
 
@@ -98,6 +98,9 @@ port cmContent : (E.Value -> msg) -> Sub msg
 
 
 port getContent : () -> Cmd msg
+
+
+port setValue : String -> Cmd msg
 
 
 port mediaDialog : (E.Value -> msg) -> Sub msg
@@ -130,7 +133,7 @@ type Msg
 
 
 
---    | MediaReplace Exposition.RCMediaObject
+-- | MediaReplace Exposition.RCMediaObject
 -- not yet validated, only update request
 
 
@@ -165,7 +168,12 @@ update msg model =
             case D.decodeValue D.int val of
                 Ok gen ->
                     if gen /= model.editGeneration then
-                        ( { model | editGeneration = gen }, getContent () )
+                        ( { model
+                            | editGeneration = gen
+                            , exposition = incContentVersion model.exposition
+                          }
+                        , getContent ()
+                        )
 
                     else
                         ( model, Cmd.none )
@@ -232,8 +240,11 @@ update msg model =
         GotExposition exp ->
             case exp of
                 Ok e ->
-                    ( { model | exposition = RCAPI.toRCExposition e model.research model.weave }
-                    , RCAPI.getMediaList model.research GotMediaList
+                    ( { model
+                        | exposition = RCAPI.toRCExposition e model.research model.weave
+                        , mediaClassesDict = RCAPI.toMediaClassesDict e
+                      }
+                    , Cmd.batch [ RCAPI.getMediaList model.research GotMediaList, setValue model.exposition.markdownInput ]
                     )
 
                 Err err ->
@@ -262,7 +273,7 @@ update msg model =
                         _ =
                             Debug.log "loaded exposition with media: " expositionWithMedia
                     in
-                    ( { modelWithProblems | exposition = expositionWithMedia }, Cmd.none )
+                    ( { modelWithProblems | exposition = addMediaUserClasses expositionWithMedia model.mediaClassesDict }, Cmd.none )
 
         MediaEdit objFromDialog ->
             -- TODO: store in backend
@@ -383,28 +394,3 @@ view model =
         , mediaDialogHtml
         , viewUpload model.uploadStatus
         ]
-
-
-
--- -- for testing only
-
-
-debugObject : String -> Exposition.RCMediaObject
-debugObject objectName =
-    { userClass = ""
-    , dimensions = Nothing
-    , id = 1
-    , htmlId = ""
-    , thumb = "angryCatImage.png"
-    , expositionId = 1
-    , name = objectName
-    , description = "description"
-    , copyright = "Casper Schipper 2019"
-    , caption = "CAPTION"
-    , version = 1
-    , mediaType = Exposition.RCImage
-    }
-
-
-
---DEBUG: just to have something to test in an empty

@@ -1,9 +1,11 @@
-module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, isValid, mediaUrl, objectByNameOrId, render, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withMd)
+module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, isValid, mediaUrl, objectByNameOrId, render, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withMd)
 
+import Dict
 import Html as Html
 import Html.Attributes as Attr
 import RCMD
 import Regex
+import Settings
 
 
 type alias RCExposition msg =
@@ -15,6 +17,8 @@ type alias RCExposition msg =
     , renderedHtml : Html.Html msg
     , markdownInput : String
     , media : List RCMediaObject
+    , editorVersion : String
+    , contentVersion : Int
     }
 
 
@@ -28,7 +32,32 @@ empty =
     , renderedHtml = Html.div [] []
     , markdownInput = ""
     , media = []
+    , editorVersion = Settings.editorVersion
+    , contentVersion = 0
     }
+
+
+incContentVersion : RCExposition msg -> RCExposition msg
+incContentVersion exp =
+    { exp | contentVersion = exp.contentVersion + 1 }
+
+
+addMediaUserClasses : RCExposition msg -> Dict.Dict Int String -> RCExposition msg
+addMediaUserClasses expo classesDict =
+    let
+        mediaWithClasses =
+            List.map
+                (\m ->
+                    case Dict.get m.id classesDict of
+                        Nothing ->
+                            m
+
+                        Just class ->
+                            { m | userClass = class }
+                )
+                expo.media
+    in
+    { expo | media = mediaWithClasses }
 
 
 withMd : RCExposition msg -> String -> RCExposition msg
@@ -65,7 +94,6 @@ type alias RCMediaObject =
     , dimensions : OptionalDimensions
     , id : Int
     , htmlId : String
-    , thumb : String
     , expositionId : Int
     , name : String
     , description : String

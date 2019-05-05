@@ -71,8 +71,12 @@
  app.ports.getContent.subscribe(function() {
      sendContent();
  });
- 
- // cm.setValue()
+
+
+ app.ports.setValue.subscribe(function(content) {
+     cm.setValue(content);
+ });
+
  
 </script>
 </html>
