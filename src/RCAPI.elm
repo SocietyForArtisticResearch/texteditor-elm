@@ -26,7 +26,7 @@ type alias APIAdditionalMediaMetadata =
 type alias APIExposition =
     { html : String
     , markdown : String
-    , media : List APIAdditionalMediaMetadata
+    , media : String -- List APIAdditionalMediaMetadata
     , metadata : APIExpositionMetadata
     , style : String
     , title : String
@@ -46,7 +46,7 @@ apiExposition =
     map6 APIExposition
         (field "html" string)
         (field "markdown" string)
-        (field "media" (list apiAdditionalMediaMetadata))
+        (field "media" string)
         (field "metadata" apiExpositionMetadata)
         (field "style" string)
         (field "title" string)
@@ -148,19 +148,27 @@ toRCExposition apiExpo id weave =
 
 toMediaClassesDict : APIExposition -> Dict.Dict Int String
 toMediaClassesDict apiExpo =
-    List.foldr (\( id, cl ) d -> Dict.insert id cl d)
-        Dict.empty
-        (List.filterMap
-            (\m ->
-                case m.userClass of
-                    Just cl ->
-                        Just ( m.id, cl )
+    case decodeString (list apiAdditionalMediaMetadata) apiExpo.media of
+        Ok lst ->
+            Dict.fromList
+                (List.filterMap
+                    (\m ->
+                        case m.userClass of
+                            Just cl ->
+                                Just ( m.id, cl )
 
-                    Nothing ->
-                        Nothing
-            )
-            apiExpo.media
-        )
+                            Nothing ->
+                                Nothing
+                    )
+                    lst
+                )
+
+        Err err ->
+            let
+                _ =
+                    Debug.log "error decoding user classes media list: " err
+            in
+            Dict.empty
 
 
 getDimensions : APIMedia -> OptionalDimensions

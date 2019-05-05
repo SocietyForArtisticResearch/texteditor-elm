@@ -5373,48 +5373,23 @@ var author$project$RCAPI$APIExposition = F6(
 	function (html, markdown, media, metadata, style, title) {
 		return {html: html, markdown: markdown, media: media, metadata: metadata, style: style, title: title};
 	});
-var author$project$RCAPI$APIAdditionalMediaMetadata = F3(
-	function (id, name, userClass) {
-		return {id: id, name: name, userClass: userClass};
-	});
-var elm$json$Json$Decode$map3 = _Json_map3;
-var elm$json$Json$Decode$oneOf = _Json_oneOf;
-var elm$json$Json$Decode$maybe = function (decoder) {
-	return elm$json$Json$Decode$oneOf(
-		_List_fromArray(
-			[
-				A2(elm$json$Json$Decode$map, elm$core$Maybe$Just, decoder),
-				elm$json$Json$Decode$succeed(elm$core$Maybe$Nothing)
-			]));
-};
-var elm$json$Json$Decode$string = _Json_decodeString;
-var author$project$RCAPI$apiAdditionalMediaMetadata = A4(
-	elm$json$Json$Decode$map3,
-	author$project$RCAPI$APIAdditionalMediaMetadata,
-	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'userClass', elm$json$Json$Decode$string)));
 var author$project$RCAPI$APIExpositionMetadata = F2(
 	function (editorVersion, contentVersion) {
 		return {contentVersion: contentVersion, editorVersion: editorVersion};
 	});
+var elm$json$Json$Decode$string = _Json_decodeString;
 var author$project$RCAPI$apiExpositionMetadata = A3(
 	elm$json$Json$Decode$map2,
 	author$project$RCAPI$APIExpositionMetadata,
 	A2(elm$json$Json$Decode$field, 'editorversion', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'contentVersion', elm$json$Json$Decode$int));
-var elm$json$Json$Decode$list = _Json_decodeList;
 var elm$json$Json$Decode$map6 = _Json_map6;
 var author$project$RCAPI$apiExposition = A7(
 	elm$json$Json$Decode$map6,
 	author$project$RCAPI$APIExposition,
 	A2(elm$json$Json$Decode$field, 'html', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'markdown', elm$json$Json$Decode$string),
-	A2(
-		elm$json$Json$Decode$field,
-		'media',
-		elm$json$Json$Decode$list(author$project$RCAPI$apiAdditionalMediaMetadata)),
+	A2(elm$json$Json$Decode$field, 'media', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'metadata', author$project$RCAPI$apiExpositionMetadata),
 	A2(elm$json$Json$Decode$field, 'style', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'title', elm$json$Json$Decode$string));
@@ -11338,6 +11313,7 @@ var author$project$RCAPI$apiMediaEntry = A6(
 	A2(elm$json$Json$Decode$field, 'description', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'copyright', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string));
+var elm$json$Json$Decode$list = _Json_decodeList;
 var author$project$RCAPI$getMediaList = F2(
 	function (id, msg) {
 		return elm$http$Http$get(
@@ -11349,29 +11325,53 @@ var author$project$RCAPI$getMediaList = F2(
 				url: '/text-editor/simple-media-list?research=' + elm$core$String$fromInt(id)
 			});
 	});
+var author$project$RCAPI$APIAdditionalMediaMetadata = F3(
+	function (id, name, userClass) {
+		return {id: id, name: name, userClass: userClass};
+	});
+var elm$json$Json$Decode$map3 = _Json_map3;
+var elm$json$Json$Decode$oneOf = _Json_oneOf;
+var elm$json$Json$Decode$maybe = function (decoder) {
+	return elm$json$Json$Decode$oneOf(
+		_List_fromArray(
+			[
+				A2(elm$json$Json$Decode$map, elm$core$Maybe$Just, decoder),
+				elm$json$Json$Decode$succeed(elm$core$Maybe$Nothing)
+			]));
+};
+var author$project$RCAPI$apiAdditionalMediaMetadata = A4(
+	elm$json$Json$Decode$map3,
+	author$project$RCAPI$APIAdditionalMediaMetadata,
+	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'userClass', elm$json$Json$Decode$string)));
 var author$project$RCAPI$toMediaClassesDict = function (apiExpo) {
-	return A3(
-		elm$core$List$foldr,
-		F2(
-			function (_n0, d) {
-				var id = _n0.a;
-				var cl = _n0.b;
-				return A3(elm$core$Dict$insert, id, cl, d);
-			}),
-		elm$core$Dict$empty,
-		A2(
-			elm$core$List$filterMap,
-			function (m) {
-				var _n1 = m.userClass;
-				if (_n1.$ === 'Just') {
-					var cl = _n1.a;
-					return elm$core$Maybe$Just(
-						_Utils_Tuple2(m.id, cl));
-				} else {
-					return elm$core$Maybe$Nothing;
-				}
-			},
-			apiExpo.media));
+	var _n0 = A2(
+		elm$json$Json$Decode$decodeString,
+		elm$json$Json$Decode$list(author$project$RCAPI$apiAdditionalMediaMetadata),
+		apiExpo.media);
+	if (_n0.$ === 'Ok') {
+		var lst = _n0.a;
+		return elm$core$Dict$fromList(
+			A2(
+				elm$core$List$filterMap,
+				function (m) {
+					var _n1 = m.userClass;
+					if (_n1.$ === 'Just') {
+						var cl = _n1.a;
+						return elm$core$Maybe$Just(
+							_Utils_Tuple2(m.id, cl));
+					} else {
+						return elm$core$Maybe$Nothing;
+					}
+				},
+				lst));
+	} else {
+		var err = _n0.a;
+		var _n2 = A2(elm$core$Debug$log, 'error decoding user classes media list: ', err);
+		return elm$core$Dict$empty;
+	}
 };
 var elm$html$Html$span = _VirtualDom_node('span');
 var author$project$RCAPI$toRCExposition = F3(
