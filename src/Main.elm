@@ -139,6 +139,7 @@ type Msg
     = EditGeneration E.Value
     | MdContent E.Value
     | MediaDialog E.Value
+    | TableMediaDialog Int -- opened from table
     | GotConvertedHtml String
     | MediaEdit Exposition.RCMediaObject
     | MediaDelete Exposition.RCMediaObject
@@ -265,6 +266,39 @@ update msg model =
                             Debug.log "no mediaName or ID" val
                     in
                     ( model, Cmd.none )
+
+        TableMediaDialog id ->
+            let
+                idString =
+                    String.fromInt id
+            in
+            case Exposition.objectByNameOrId idString model.exposition of
+                Just obj ->
+                    let
+                        --                       _ =
+                        --                         Debug.log "some success" obj
+                        viewObjectState =
+                            Exposition.validateMediaObject model.exposition obj obj
+                    in
+                    ( { model | mediaDialog = ( Modal.shown, Just obj, Just viewObjectState ) }, Cmd.none )
+
+                Nothing ->
+                    let
+                        modelWithProblem =
+                            addProblem model Problems.NoMediaWithNameOrId
+                    in
+                    let
+                        _ =
+                            Debug.log "no object" model
+                    in
+                    ( { modelWithProblem
+                        | mediaDialog = ( Modal.hidden, Nothing, Nothing )
+                      }
+                    , Cmd.none
+                    )
+
+               
+               
 
         CloseMediaDialog ->
             ( { model | mediaDialog = ( Modal.hidden, Nothing, Nothing ) }, Cmd.none )
@@ -458,6 +492,6 @@ view model =
         [ model.exposition.renderedHtml
         , mediaDialogHtml
         , viewUpload model.uploadStatus
-        , RCMediaList.view model.exposition.media
+        , RCMediaList.view model.exposition.media { editTool = TableMediaDialog }
         , saveButton
         ]

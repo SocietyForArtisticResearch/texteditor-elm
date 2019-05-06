@@ -11835,6 +11835,34 @@ var author$project$Main$update = F2(
 					var _n8 = A2(elm$core$Debug$log, 'no mediaName or ID', val);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
+			case 'TableMediaDialog':
+				var id = msg.a;
+				var idString = elm$core$String$fromInt(id);
+				var _n9 = A2(author$project$Exposition$objectByNameOrId, idString, model.exposition);
+				if (_n9.$ === 'Just') {
+					var obj = _n9.a;
+					var viewObjectState = A3(author$project$Exposition$validateMediaObject, model.exposition, obj, obj);
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								mediaDialog: _Utils_Tuple3(
+									rundis$elm_bootstrap$Bootstrap$Modal$shown,
+									elm$core$Maybe$Just(obj),
+									elm$core$Maybe$Just(viewObjectState))
+							}),
+						elm$core$Platform$Cmd$none);
+				} else {
+					var modelWithProblem = A2(author$project$Main$addProblem, model, author$project$Problems$NoMediaWithNameOrId);
+					var _n10 = A2(elm$core$Debug$log, 'no object', model);
+					return _Utils_Tuple2(
+						_Utils_update(
+							modelWithProblem,
+							{
+								mediaDialog: _Utils_Tuple3(rundis$elm_bootstrap$Bootstrap$Modal$hidden, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing)
+							}),
+						elm$core$Platform$Cmd$none);
+				}
 			case 'CloseMediaDialog':
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -11862,7 +11890,7 @@ var author$project$Main$update = F2(
 								])));
 				} else {
 					var err = exp.a;
-					var _n10 = A2(elm$core$Debug$log, 'could not load exposition: ', err);
+					var _n12 = A2(elm$core$Debug$log, 'could not load exposition: ', err);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 			case 'SaveExposition':
@@ -11894,16 +11922,16 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				} else {
 					var media = mediaResult.a;
-					var _n13 = author$project$Problems$splitResultList(
+					var _n15 = author$project$Problems$splitResultList(
 						A2(
 							elm$core$List$map,
 							author$project$RCAPI$toRCMediaObject(model.research),
 							media));
-					var problems = _n13.a;
-					var mediaEntries = _n13.b;
+					var problems = _n15.a;
+					var mediaEntries = _n15.b;
 					var modelWithProblems = A2(author$project$Main$addProblems, model, problems);
 					var expositionWithMedia = A3(elm$core$List$foldr, author$project$Exposition$addOrReplaceObject, modelWithProblems.exposition, mediaEntries);
-					var _n14 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithMedia);
+					var _n16 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithMedia);
 					return _Utils_Tuple2(
 						_Utils_update(
 							modelWithProblems,
@@ -11914,18 +11942,18 @@ var author$project$Main$update = F2(
 				}
 			case 'MediaEdit':
 				var objFromDialog = msg.a;
-				var _n15 = A2(author$project$Exposition$objectByNameOrId, objFromDialog.name, model.exposition);
-				if (_n15.$ === 'Nothing') {
+				var _n17 = A2(author$project$Exposition$objectByNameOrId, objFromDialog.name, model.exposition);
+				if (_n17.$ === 'Nothing') {
 					var modelWithProblem = A2(author$project$Main$addProblem, model, author$project$Problems$NoMediaWithNameOrId);
 					return _Utils_Tuple2(modelWithProblem, elm$core$Platform$Cmd$none);
 				} else {
-					var objInModel = _n15.a;
+					var objInModel = _n17.a;
 					var viewObjectState = A3(author$project$Exposition$validateMediaObject, model.exposition, objInModel, objFromDialog);
-					var _n16 = model.mediaDialog;
-					var viewStatus = _n16.a;
-					var objInEdit = _n16.b;
-					var _n17 = author$project$Exposition$isValid(viewObjectState.validation);
-					if (!_n17) {
+					var _n18 = model.mediaDialog;
+					var viewStatus = _n18.a;
+					var objInEdit = _n18.b;
+					var _n19 = author$project$Exposition$isValid(viewObjectState.validation);
+					if (!_n19) {
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -11998,12 +12026,15 @@ var author$project$Main$update = F2(
 						A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 				} else {
 					var e = result.a;
-					var _n20 = A2(elm$core$Debug$log, 'error uploading: ', e);
+					var _n22 = A2(elm$core$Debug$log, 'error uploading: ', e);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 		}
 	});
 var author$project$Main$SaveExposition = {$: 'SaveExposition'};
+var author$project$Main$TableMediaDialog = function (a) {
+	return {$: 'TableMediaDialog', a: a};
+};
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
 var author$project$Main$InsertTool = function (a) {
 	return {$: 'InsertTool', a: a};
@@ -13519,6 +13550,8 @@ var author$project$Main$viewUpload = function (status) {
 				]));
 	}
 };
+var rundis$elm_bootstrap$Bootstrap$Table$Hover = {$: 'Hover'};
+var rundis$elm_bootstrap$Bootstrap$Table$hover = rundis$elm_bootstrap$Bootstrap$Table$Hover;
 var rundis$elm_bootstrap$Bootstrap$Table$THead = function (a) {
 	return {$: 'THead', a: a};
 };
@@ -13544,6 +13577,10 @@ var rundis$elm_bootstrap$Bootstrap$Table$simpleThead = function (cells) {
 				A2(rundis$elm_bootstrap$Bootstrap$Table$tr, _List_Nil, cells)
 			]));
 };
+var rundis$elm_bootstrap$Bootstrap$Table$Small = {$: 'Small'};
+var rundis$elm_bootstrap$Bootstrap$Table$small = rundis$elm_bootstrap$Bootstrap$Table$Small;
+var rundis$elm_bootstrap$Bootstrap$Table$Striped = {$: 'Striped'};
+var rundis$elm_bootstrap$Bootstrap$Table$striped = rundis$elm_bootstrap$Bootstrap$Table$Striped;
 var elm$html$Html$table = _VirtualDom_node('table');
 var rundis$elm_bootstrap$Bootstrap$Table$Inversed = {$: 'Inversed'};
 var rundis$elm_bootstrap$Bootstrap$Table$isResponsive = function (option) {
@@ -14060,81 +14097,97 @@ var rundis$elm_bootstrap$Bootstrap$Table$th = F2(
 		return rundis$elm_bootstrap$Bootstrap$Table$Th(
 			{children: children, options: options});
 	});
-var author$project$RCMediaList$view = function (objectList) {
-	if (!objectList.b) {
-		return A2(
-			elm$html$Html$span,
-			_List_Nil,
-			_List_fromArray(
-				[
-					elm$html$Html$text('no objects')
-				]));
-	} else {
-		var rowFromRCObject = function (object) {
-			var info = 'file url?';
+var author$project$RCMediaList$view = F2(
+	function (objectList, messages) {
+		if (!objectList.b) {
 			return A2(
-				rundis$elm_bootstrap$Bootstrap$Table$tr,
+				elm$html$Html$span,
 				_List_Nil,
 				_List_fromArray(
 					[
+						elm$html$Html$text('no objects')
+					]));
+		} else {
+			var rowFromRCObject = function (object) {
+				var info = 'file url?';
+				var editButton = A2(
+					rundis$elm_bootstrap$Bootstrap$Button$button,
+					_List_fromArray(
+						[
+							rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary,
+							rundis$elm_bootstrap$Bootstrap$Button$attrs(
+							_List_fromArray(
+								[
+									elm$html$Html$Events$onClick(
+									messages.editTool(object.id))
+								]))
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('edit')
+						]));
+				return A2(
+					rundis$elm_bootstrap$Bootstrap$Table$tr,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							rundis$elm_bootstrap$Bootstrap$Table$td,
+							_List_Nil,
+							_List_fromArray(
+								[
+									elm$html$Html$text(
+									elm$core$String$fromInt(object.id))
+								])),
+							A2(
+							rundis$elm_bootstrap$Bootstrap$Table$td,
+							_List_Nil,
+							_List_fromArray(
+								[
+									elm$html$Html$text(object.name)
+								])),
+							A2(
+							rundis$elm_bootstrap$Bootstrap$Table$td,
+							_List_Nil,
+							_List_fromArray(
+								[editButton]))
+						]));
+			};
+			var rows = A2(elm$core$List$map, rowFromRCObject, objectList);
+			var head = rundis$elm_bootstrap$Bootstrap$Table$simpleThead(
+				_List_fromArray(
+					[
 						A2(
-						rundis$elm_bootstrap$Bootstrap$Table$td,
+						rundis$elm_bootstrap$Bootstrap$Table$th,
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text(
-								elm$core$String$fromInt(object.id))
+								elm$html$Html$text('id')
 							])),
 						A2(
-						rundis$elm_bootstrap$Bootstrap$Table$td,
+						rundis$elm_bootstrap$Bootstrap$Table$th,
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text(object.name)
+								elm$html$Html$text('name')
 							])),
 						A2(
-						rundis$elm_bootstrap$Bootstrap$Table$td,
+						rundis$elm_bootstrap$Bootstrap$Table$th,
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text(info)
+								elm$html$Html$text('info')
 							]))
 					]));
-		};
-		var rows = A2(elm$core$List$map, rowFromRCObject, objectList);
-		var head = rundis$elm_bootstrap$Bootstrap$Table$simpleThead(
-			_List_fromArray(
-				[
-					A2(
-					rundis$elm_bootstrap$Bootstrap$Table$th,
-					_List_Nil,
-					_List_fromArray(
-						[
-							elm$html$Html$text('id')
-						])),
-					A2(
-					rundis$elm_bootstrap$Bootstrap$Table$th,
-					_List_Nil,
-					_List_fromArray(
-						[
-							elm$html$Html$text('name')
-						])),
-					A2(
-					rundis$elm_bootstrap$Bootstrap$Table$th,
-					_List_Nil,
-					_List_fromArray(
-						[
-							elm$html$Html$text('info')
-						]))
-				]));
-		return rundis$elm_bootstrap$Bootstrap$Table$table(
-			{
-				options: _List_Nil,
-				tbody: A2(rundis$elm_bootstrap$Bootstrap$Table$tbody, _List_Nil, rows),
-				thead: head
-			});
-	}
-};
+			return rundis$elm_bootstrap$Bootstrap$Table$table(
+				{
+					options: _List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$Table$hover, rundis$elm_bootstrap$Bootstrap$Table$striped, rundis$elm_bootstrap$Bootstrap$Table$small]),
+					tbody: A2(rundis$elm_bootstrap$Bootstrap$Table$tbody, _List_Nil, rows),
+					thead: head
+				});
+		}
+	});
 var author$project$Main$view = function (model) {
 	var saveButtonText = model.saved ? 'Saved' : 'Not Saved';
 	var saveButton = A2(
@@ -14169,7 +14222,10 @@ var author$project$Main$view = function (model) {
 				model.exposition.renderedHtml,
 				mediaDialogHtml,
 				author$project$Main$viewUpload(model.uploadStatus),
-				author$project$RCMediaList$view(model.exposition.media),
+				A2(
+				author$project$RCMediaList$view,
+				model.exposition.media,
+				{editTool: author$project$Main$TableMediaDialog}),
 				saveButton
 			]));
 };
