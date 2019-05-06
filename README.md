@@ -21,26 +21,23 @@ Open `editor.html`.
 # Todo
 
 Casper:
-- Medialist display
+- Medialist display/Media browser
 - Layout issues
 - Validation display
 - Why can the user not change the object name/copyright/ ?
+- Drag and drop of media
+- Switch Textarea/Codemirror/CSS Edit
+- Buttons
+- Styling
 
 Luc:
-- Backend update of changes (RC API)
-- Rendered HTML
+- Switch completely to marked markdown rendering
+- Insert media html into markdown before passing it to marked
+- Set innerhtml of preview via port
+- Check rendered html
 - Transcoding status type
-- Saving
-
-Other:
-
-- Buttons
-- RC Media Import
-- Media browser
-- Import/Export
-- Drag and drop of media
-- Switch Textarea/Codemirror
-- Styling
+- Load corrected (new) version of json of additional media metadata list and expo metadata
+- Import/Export (Pandoc calls)
 
 
 ## DONE
@@ -58,3 +55,5 @@ Other:
     (containing curried rcmediaobject)
     - insert, delete and edit (copyright, name, description, class)
 - Loading, markdown display in codemirror
+- Saving
+- Backend update of changes (RC API)

@@ -151,6 +151,9 @@ saveExposition exposition expect =
                 ++ String.fromInt exposition.id
                 ++ "&weave="
                 ++ String.fromInt exposition.currentWeave
+
+        _ =
+            Debug.log "about to save markdown: " exposition.markdownInput
     in
     Http.request
         { method = "POST"
@@ -349,4 +352,4 @@ toRCMediaObject researchId mediaEntry =
 
 
 -- TODO
--- saving
+-- loading of correct json for metadata and additional media metadata

@@ -223,7 +223,9 @@ update msg model =
                 ( Ok gen, Ok content ) ->
                     ( { model
                         | editGeneration = gen
-                        , exposition = Exposition.render (Exposition.withMd model.exposition content)
+                        , exposition =
+                            Exposition.render
+                                (Exposition.withMd model.exposition content)
                       }
                     , convertMarkdown content
                     )
@@ -306,13 +308,17 @@ update msg model =
         GotExposition exp ->
             case exp of
                 Ok e ->
+                    let
+                        newExposition =
+                            RCAPI.toRCExposition e model.research model.weave
+                    in
                     ( { model
                         | exposition = RCAPI.toRCExposition e model.research model.weave
                         , mediaClassesDict = RCAPI.toMediaClassesDict e
                       }
                     , Cmd.batch
                         [ RCAPI.getMediaList model.research GotMediaList
-                        , setContent model.exposition.markdownInput
+                        , setContent newExposition.markdownInput
                         ]
                     )
 
@@ -332,6 +338,10 @@ update msg model =
                     ( { model | saved = True }, Cmd.none )
 
                 Err s ->
+                    let
+                        _ =
+                            Debug.log "save error: " s
+                    in
                     ( addProblem model Problems.CannotSave, Cmd.none )
 
         GotMediaList mediaResult ->
