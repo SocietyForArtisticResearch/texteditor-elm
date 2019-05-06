@@ -14,6 +14,16 @@ import Settings
 -- BACKEND DATA TYPES
 
 
+type Either a b
+    = Left a
+    | Right b
+
+
+eitherString : Decoder (Either String b)
+eitherString =
+    map Left string
+
+
 type alias APIExpositionMetadata =
     -- spelled "editorversion" in json
     { editorVersion : String, contentVersion : Int }
@@ -26,8 +36,8 @@ type alias APIAdditionalMediaMetadata =
 type alias APIExposition =
     { html : String
     , markdown : String
-    , media : String -- List APIAdditionalMediaMetadata
-    , metadata : APIExpositionMetadata
+    , media : Either String (List APIAdditionalMediaMetadata)
+    , metadata : Either String APIExpositionMetadata
     , style : String
     , title : String
     }
@@ -46,8 +56,10 @@ apiExposition =
     map6 APIExposition
         (field "html" string)
         (field "markdown" string)
-        (field "media" string)
-        (field "metadata" apiExpositionMetadata)
+        (field "media" eitherString)
+        -- should work for both ways of encoding
+        (field "metadata" eitherString)
+        -- should work for both ways of encoding
         (field "style" string)
         (field "title" string)
 
@@ -129,10 +141,67 @@ uploadMedia researchId file expect =
 
 
 -- POST PROCESS API RETURN VALUES
+-- needs to be done because older api encodes field as string
+
+
+decodeMedia : APIExposition -> APIExposition
+decodeMedia exp =
+    let
+        mediaField =
+            case exp.media of
+                Left s ->
+                    case decodeString (list apiAdditionalMediaMetadata) s of
+                        Ok data ->
+                            Right data
+
+                        _ ->
+                            Left s
+
+                Right d ->
+                    Right d
+    in
+    { exp | media = mediaField }
+
+
+
+-- needs to be done because older api encodes field as string
+
+
+decodeMetadata : APIExposition -> APIExposition
+decodeMetadata exp =
+    let
+        metadataField =
+            case exp.metadata of
+                Left s ->
+                    case decodeString apiExpositionMetadata s of
+                        Ok data ->
+                            Right data
+
+                        _ ->
+                            Left s
+
+                Right d ->
+                    Right d
+    in
+    { exp | metadata = metadataField }
+
+
+getMetadata : APIExposition -> APIExpositionMetadata
+getMetadata exp =
+    case exp.metadata of
+        Left s ->
+            { editorVersion = Settings.editorVersion, contentVersion = 0 }
+
+        Right d ->
+            d
 
 
 toRCExposition : APIExposition -> Int -> Int -> RCExposition msg
 toRCExposition apiExpo id weave =
+    let
+        exp =
+            decodeMetadata (decodeMedia apiExpo)
+    in
     { css = apiExpo.style
     , title = apiExpo.title
     , authors = []
@@ -141,15 +210,19 @@ toRCExposition apiExpo id weave =
     , renderedHtml = span [] [] -- we don't actually use the html in the saved object
     , markdownInput = apiExpo.markdown
     , media = []
-    , editorVersion = apiExpo.metadata.editorVersion
-    , contentVersion = apiExpo.metadata.contentVersion
+    , editorVersion = (getMetadata exp).editorVersion
+    , contentVersion = (getMetadata exp).contentVersion
     }
 
 
 toMediaClassesDict : APIExposition -> Dict.Dict Int String
 toMediaClassesDict apiExpo =
-    case decodeString (list apiAdditionalMediaMetadata) apiExpo.media of
-        Ok lst ->
+    let
+        exp =
+            decodeMetadata (decodeMedia apiExpo)
+    in
+    case exp.media of
+        Right lst ->
             Dict.fromList
                 (List.filterMap
                     (\m ->
@@ -163,10 +236,10 @@ toMediaClassesDict apiExpo =
                     lst
                 )
 
-        Err err ->
+        Left _ ->
             let
                 _ =
-                    Debug.log "error decoding user classes media list: " err
+                    Debug.log "error decoding user classes media list: " ()
             in
             Dict.empty
 
