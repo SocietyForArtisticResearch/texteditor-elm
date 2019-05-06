@@ -11338,22 +11338,11 @@ var author$project$RCAPI$getMediaList = F2(
 				url: '/text-editor/simple-media-list?research=' + elm$core$String$fromInt(id)
 			});
 	});
-var elm$http$Http$expectBytesResponse = F2(
-	function (toMsg, toResult) {
-		return A3(
-			_Http_expect,
-			'arraybuffer',
-			_Http_toDataView,
-			A2(elm$core$Basics$composeR, toResult, toMsg));
-	});
-var elm$http$Http$expectWhatever = function (toMsg) {
+var elm$http$Http$expectString = function (toMsg) {
 	return A2(
-		elm$http$Http$expectBytesResponse,
+		elm$http$Http$expectStringResponse,
 		toMsg,
-		elm$http$Http$resolve(
-			function (_n0) {
-				return elm$core$Result$Ok(_Utils_Tuple0);
-			}));
+		elm$http$Http$resolve(elm$core$Result$Ok));
 };
 var elm$http$Http$multipartBody = function (parts) {
 	return A2(
@@ -11442,7 +11431,7 @@ var author$project$RCAPI$saveExposition = F2(
 								0,
 								elm$json$Json$Encode$object(_List_Nil)))
 						])),
-				expect: elm$http$Http$expectWhatever(expect),
+				expect: elm$http$Http$expectString(expect),
 				headers: _List_Nil,
 				method: 'POST',
 				timeout: elm$core$Maybe$Nothing,
@@ -11732,6 +11721,23 @@ var elm$file$File$Select$file = F2(
 			toMsg,
 			_File_uploadOne(mimes));
 	});
+var elm$http$Http$expectBytesResponse = F2(
+	function (toMsg, toResult) {
+		return A3(
+			_Http_expect,
+			'arraybuffer',
+			_Http_toDataView,
+			A2(elm$core$Basics$composeR, toResult, toMsg));
+	});
+var elm$http$Http$expectWhatever = function (toMsg) {
+	return A2(
+		elm$http$Http$expectBytesResponse,
+		toMsg,
+		elm$http$Http$resolve(
+			function (_n0) {
+				return elm$core$Result$Ok(_Utils_Tuple0);
+			}));
+};
 var elm$core$Basics$clamp = F3(
 	function (low, high, number) {
 		return (_Utils_cmp(number, low) < 0) ? low : ((_Utils_cmp(number, high) > 0) ? high : number);
@@ -11872,6 +11878,8 @@ var author$project$Main$update = F2(
 			case 'SavedExposition':
 				var result = msg.a;
 				if (result.$ === 'Ok') {
+					var s = result.a;
+					var _n12 = A2(elm$core$Debug$log, 'result of save: ', s);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -11879,6 +11887,7 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				} else {
 					var s = result.a;
+					var _n13 = A2(elm$core$Debug$log, 'save error: ', s);
 					return _Utils_Tuple2(
 						A2(author$project$Main$addProblem, model, author$project$Problems$CannotSave),
 						elm$core$Platform$Cmd$none);
@@ -11894,16 +11903,16 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				} else {
 					var media = mediaResult.a;
-					var _n13 = author$project$Problems$splitResultList(
+					var _n15 = author$project$Problems$splitResultList(
 						A2(
 							elm$core$List$map,
 							author$project$RCAPI$toRCMediaObject(model.research),
 							media));
-					var problems = _n13.a;
-					var mediaEntries = _n13.b;
+					var problems = _n15.a;
+					var mediaEntries = _n15.b;
 					var modelWithProblems = A2(author$project$Main$addProblems, model, problems);
 					var expositionWithMedia = A3(elm$core$List$foldr, author$project$Exposition$addOrReplaceObject, modelWithProblems.exposition, mediaEntries);
-					var _n14 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithMedia);
+					var _n16 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithMedia);
 					return _Utils_Tuple2(
 						_Utils_update(
 							modelWithProblems,
@@ -11914,18 +11923,18 @@ var author$project$Main$update = F2(
 				}
 			case 'MediaEdit':
 				var objFromDialog = msg.a;
-				var _n15 = A2(author$project$Exposition$objectByNameOrId, objFromDialog.name, model.exposition);
-				if (_n15.$ === 'Nothing') {
+				var _n17 = A2(author$project$Exposition$objectByNameOrId, objFromDialog.name, model.exposition);
+				if (_n17.$ === 'Nothing') {
 					var modelWithProblem = A2(author$project$Main$addProblem, model, author$project$Problems$NoMediaWithNameOrId);
 					return _Utils_Tuple2(modelWithProblem, elm$core$Platform$Cmd$none);
 				} else {
-					var objInModel = _n15.a;
+					var objInModel = _n17.a;
 					var viewObjectState = A3(author$project$Exposition$validateMediaObject, model.exposition, objInModel, objFromDialog);
-					var _n16 = model.mediaDialog;
-					var viewStatus = _n16.a;
-					var objInEdit = _n16.b;
-					var _n17 = author$project$Exposition$isValid(viewObjectState.validation);
-					if (!_n17) {
+					var _n18 = model.mediaDialog;
+					var viewStatus = _n18.a;
+					var objInEdit = _n18.b;
+					var _n19 = author$project$Exposition$isValid(viewObjectState.validation);
+					if (!_n19) {
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -11998,7 +12007,7 @@ var author$project$Main$update = F2(
 						A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 				} else {
 					var e = result.a;
-					var _n20 = A2(elm$core$Debug$log, 'error uploading: ', e);
+					var _n22 = A2(elm$core$Debug$log, 'error uploading: ', e);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 		}

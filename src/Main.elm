@@ -150,7 +150,7 @@ type Msg
     | GotUploadProgress Http.Progress
     | Uploaded (Result Http.Error ())
     | SaveExposition
-    | SavedExposition (Result Http.Error ())
+    | SavedExposition (Result Http.Error String)
 
 
 
@@ -293,10 +293,18 @@ update msg model =
 
         SavedExposition result ->
             case result of
-                Ok _ ->
+                Ok s ->
+                    let
+                        _ =
+                            Debug.log "result of save: " s
+                    in
                     ( { model | saved = True }, Cmd.none )
 
                 Err s ->
+                    let
+                        _ =
+                            Debug.log "save error: " s
+                    in
                     ( addProblem model Problems.CannotSave, Cmd.none )
 
         GotMediaList mediaResult ->
