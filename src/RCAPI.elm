@@ -140,6 +140,42 @@ uploadMedia researchId file expect =
 
 
 
+-- saveExposition : RCExposition msg -> Http.Expect msg -> Cmd msg
+-- saveExposition exposition expect =
+--     let url = "text-editor/save" ++ "?research=" ++
+--               String.fromInt exposition.id ++ "&weave=" ++
+--                   String.fromInt exposition.currentWeave
+--     in
+--     Http.request
+--         { method = "POST"
+--         , url = url
+--         , headers = []
+--         , body =
+--             Http.multipartBody
+--                 [ Http.stringPart "html" exposition.renderedHtml
+--                 , Http.stringPart "name" "tmpName"
+--                 , Http.stringPart "copyrightholder" "copyrightholder"
+--                 , Http.stringPart "description" "description"
+--                 , Http.filePart "media" file
+--                 , Http.stringPart "thumb" ""
+--                 ]
+--         , expect = expect
+--         , timeout = Nothing
+--         , tracker = Nothing
+--         }
+--                 fd.append("html", this.exposition.renderedHTML);
+--                 fd.append("markdown", this.exposition.markdownInput);
+--                 fd.append("media", this.exposition.serializeMedia()); // TODO send media list/see if necessary
+--                 fd.append("style", this.exposition.style);
+--                 fd.append("title", this.exposition.title);
+--                 fd.append("metadata", JSON.stringify({
+--                     "editorversion": this.editorVersion,
+--                     "contentVersion": upcomingVersion
+--                 }));
+--                 // console.log(fd);
+--                 try {
+--                     fd.append("toc", JSON.stringify(this.exposition.getTOC()));
+--                 }
 -- POST PROCESS API RETURN VALUES
 -- needs to be done because older api encodes field as string
 

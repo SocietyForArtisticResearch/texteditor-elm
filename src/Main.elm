@@ -91,6 +91,11 @@ main =
     Browser.element { init = init, update = update, view = view, subscriptions = subscriptions }
 
 
+
+-- PORTS
+-- code mirror
+
+
 port currentGeneration : (E.Value -> msg) -> Sub msg
 
 
@@ -106,11 +111,22 @@ port setContent : String -> Cmd msg
 port mediaDialog : (E.Value -> msg) -> Sub msg
 
 
+
+--- markdown conversion using marked
+
+
+port convertMarkdown : String -> Cmd msg
+
+
+port getHtml : (String -> msg) -> Sub msg
+
+
 subscriptions : Model msg -> Sub Msg
 subscriptions model =
     Sub.batch
         [ currentGeneration EditGeneration
         , cmContent MdContent
+        , getHtml GotConvertedHtml
         , mediaDialog MediaDialog
         , Http.track "upload" GotUploadProgress
         ]
@@ -120,6 +136,7 @@ type Msg
     = EditGeneration E.Value
     | MdContent E.Value
     | MediaDialog E.Value
+    | GotConvertedHtml String
     | MediaEdit Exposition.RCMediaObject
     | MediaDelete Exposition.RCMediaObject
     | InsertTool Exposition.RCMediaObject
@@ -164,6 +181,13 @@ makeMediaEditMsgs obj =
 update : Msg -> Model msg -> ( Model msg, Cmd Msg )
 update msg model =
     case msg of
+        GotConvertedHtml html ->
+            let
+                _ =
+                    Debug.log "recevied html from marked" html
+            in
+            ( model, Cmd.none )
+
         EditGeneration val ->
             case D.decodeValue D.int val of
                 Ok gen ->
@@ -192,7 +216,7 @@ update msg model =
                         | editGeneration = gen
                         , exposition = Exposition.render (Exposition.withMd model.exposition content)
                       }
-                    , Cmd.none
+                    , convertMarkdown content
                     )
 
                 _ ->
