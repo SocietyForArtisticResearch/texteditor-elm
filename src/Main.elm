@@ -100,7 +100,7 @@ port cmContent : (E.Value -> msg) -> Sub msg
 port getContent : () -> Cmd msg
 
 
-port setContent : () -> Cmd msg
+port setContent : String -> Cmd msg
 
 
 port mediaDialog : (E.Value -> msg) -> Sub msg
@@ -246,9 +246,8 @@ update msg model =
                       }
                     , Cmd.batch
                         [ RCAPI.getMediaList model.research GotMediaList
-                        , setContent ()
+                        , setContent model.exposition.markdownInput
                         ]
-                      --                    , setContent model.exposition.markdownInput ]
                     )
 
                 Err err ->
