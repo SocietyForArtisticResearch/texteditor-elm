@@ -13519,6 +13519,622 @@ var author$project$Main$viewUpload = function (status) {
 				]));
 	}
 };
+var rundis$elm_bootstrap$Bootstrap$Table$THead = function (a) {
+	return {$: 'THead', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Table$thead = F2(
+	function (options, rows) {
+		return rundis$elm_bootstrap$Bootstrap$Table$THead(
+			{options: options, rows: rows});
+	});
+var rundis$elm_bootstrap$Bootstrap$Table$Row = function (a) {
+	return {$: 'Row', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Table$tr = F2(
+	function (options, cells) {
+		return rundis$elm_bootstrap$Bootstrap$Table$Row(
+			{cells: cells, options: options});
+	});
+var rundis$elm_bootstrap$Bootstrap$Table$simpleThead = function (cells) {
+	return A2(
+		rundis$elm_bootstrap$Bootstrap$Table$thead,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(rundis$elm_bootstrap$Bootstrap$Table$tr, _List_Nil, cells)
+			]));
+};
+var elm$html$Html$table = _VirtualDom_node('table');
+var rundis$elm_bootstrap$Bootstrap$Table$Inversed = {$: 'Inversed'};
+var rundis$elm_bootstrap$Bootstrap$Table$isResponsive = function (option) {
+	if (option.$ === 'Responsive') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Table$KeyedTBody = function (a) {
+	return {$: 'KeyedTBody', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Table$TBody = function (a) {
+	return {$: 'TBody', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Table$InversedRow = function (a) {
+	return {$: 'InversedRow', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Table$KeyedRow = function (a) {
+	return {$: 'KeyedRow', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Table$InversedCell = function (a) {
+	return {$: 'InversedCell', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Table$Td = function (a) {
+	return {$: 'Td', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Table$Th = function (a) {
+	return {$: 'Th', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Table$mapInversedCell = function (cell) {
+	var inverseOptions = function (options) {
+		return A2(
+			elm$core$List$map,
+			function (opt) {
+				if (opt.$ === 'RoledCell') {
+					var role = opt.a;
+					return rundis$elm_bootstrap$Bootstrap$Table$InversedCell(role);
+				} else {
+					return opt;
+				}
+			},
+			options);
+	};
+	if (cell.$ === 'Th') {
+		var cellCfg = cell.a;
+		return rundis$elm_bootstrap$Bootstrap$Table$Th(
+			_Utils_update(
+				cellCfg,
+				{
+					options: inverseOptions(cellCfg.options)
+				}));
+	} else {
+		var cellCfg = cell.a;
+		return rundis$elm_bootstrap$Bootstrap$Table$Td(
+			_Utils_update(
+				cellCfg,
+				{
+					options: inverseOptions(cellCfg.options)
+				}));
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Table$mapInversedRow = function (row) {
+	var inversedOptions = function (options) {
+		return A2(
+			elm$core$List$map,
+			function (opt) {
+				if (opt.$ === 'RoledRow') {
+					var role = opt.a;
+					return rundis$elm_bootstrap$Bootstrap$Table$InversedRow(role);
+				} else {
+					return opt;
+				}
+			},
+			options);
+	};
+	if (row.$ === 'Row') {
+		var options = row.a.options;
+		var cells = row.a.cells;
+		return rundis$elm_bootstrap$Bootstrap$Table$Row(
+			{
+				cells: A2(elm$core$List$map, rundis$elm_bootstrap$Bootstrap$Table$mapInversedCell, cells),
+				options: inversedOptions(options)
+			});
+	} else {
+		var options = row.a.options;
+		var cells = row.a.cells;
+		return rundis$elm_bootstrap$Bootstrap$Table$KeyedRow(
+			{
+				cells: A2(
+					elm$core$List$map,
+					function (_n1) {
+						var key = _n1.a;
+						var cell = _n1.b;
+						return _Utils_Tuple2(
+							key,
+							rundis$elm_bootstrap$Bootstrap$Table$mapInversedCell(cell));
+					},
+					cells),
+				options: inversedOptions(options)
+			});
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Table$maybeMapInversedTBody = F2(
+	function (isTableInversed, tbody_) {
+		var _n0 = _Utils_Tuple2(isTableInversed, tbody_);
+		if (!_n0.a) {
+			return tbody_;
+		} else {
+			if (_n0.b.$ === 'TBody') {
+				var body = _n0.b.a;
+				return rundis$elm_bootstrap$Bootstrap$Table$TBody(
+					_Utils_update(
+						body,
+						{
+							rows: A2(elm$core$List$map, rundis$elm_bootstrap$Bootstrap$Table$mapInversedRow, body.rows)
+						}));
+			} else {
+				var keyedBody = _n0.b.a;
+				return rundis$elm_bootstrap$Bootstrap$Table$KeyedTBody(
+					_Utils_update(
+						keyedBody,
+						{
+							rows: A2(
+								elm$core$List$map,
+								function (_n1) {
+									var key = _n1.a;
+									var row = _n1.b;
+									return _Utils_Tuple2(
+										key,
+										rundis$elm_bootstrap$Bootstrap$Table$mapInversedRow(row));
+								},
+								keyedBody.rows)
+						}));
+			}
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Table$InversedHead = {$: 'InversedHead'};
+var rundis$elm_bootstrap$Bootstrap$Table$maybeMapInversedTHead = F2(
+	function (isTableInversed, _n0) {
+		var thead_ = _n0.a;
+		var isHeadInversed = A2(
+			elm$core$List$any,
+			function (opt) {
+				return _Utils_eq(opt, rundis$elm_bootstrap$Bootstrap$Table$InversedHead);
+			},
+			thead_.options);
+		return rundis$elm_bootstrap$Bootstrap$Table$THead(
+			(isTableInversed || isHeadInversed) ? _Utils_update(
+				thead_,
+				{
+					rows: A2(elm$core$List$map, rundis$elm_bootstrap$Bootstrap$Table$mapInversedRow, thead_.rows)
+				}) : thead_);
+	});
+var rundis$elm_bootstrap$Bootstrap$Table$maybeWrapResponsive = F2(
+	function (options, table_) {
+		var responsiveClass = elm$html$Html$Attributes$class(
+			'table-responsive' + A2(
+				elm$core$Maybe$withDefault,
+				'',
+				A2(
+					elm$core$Maybe$map,
+					function (v) {
+						return '-' + v;
+					},
+					A2(
+						elm$core$Maybe$andThen,
+						rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption,
+						A2(
+							elm$core$Maybe$andThen,
+							function (opt) {
+								if (opt.$ === 'Responsive') {
+									var val = opt.a;
+									return val;
+								} else {
+									return elm$core$Maybe$Nothing;
+								}
+							},
+							elm$core$List$head(
+								A2(elm$core$List$filter, rundis$elm_bootstrap$Bootstrap$Table$isResponsive, options)))))));
+		return A2(elm$core$List$any, rundis$elm_bootstrap$Bootstrap$Table$isResponsive, options) ? A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[responsiveClass]),
+			_List_fromArray(
+				[table_])) : table_;
+	});
+var elm$html$Html$tbody = _VirtualDom_node('tbody');
+var elm$virtual_dom$VirtualDom$keyedNode = function (tag) {
+	return _VirtualDom_keyedNode(
+		_VirtualDom_noScript(tag));
+};
+var elm$html$Html$Keyed$node = elm$virtual_dom$VirtualDom$keyedNode;
+var elm$html$Html$Attributes$scope = elm$html$Html$Attributes$stringProperty('scope');
+var rundis$elm_bootstrap$Bootstrap$Table$CellAttr = function (a) {
+	return {$: 'CellAttr', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Table$cellAttr = function (attr_) {
+	return rundis$elm_bootstrap$Bootstrap$Table$CellAttr(attr_);
+};
+var rundis$elm_bootstrap$Bootstrap$Table$addScopeIfTh = function (cell) {
+	if (cell.$ === 'Th') {
+		var cellConfig = cell.a;
+		return rundis$elm_bootstrap$Bootstrap$Table$Th(
+			_Utils_update(
+				cellConfig,
+				{
+					options: A2(
+						elm$core$List$cons,
+						rundis$elm_bootstrap$Bootstrap$Table$cellAttr(
+							elm$html$Html$Attributes$scope('row')),
+						cellConfig.options)
+				}));
+	} else {
+		return cell;
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Table$maybeAddScopeToFirstCell = function (row) {
+	if (row.$ === 'Row') {
+		var options = row.a.options;
+		var cells = row.a.cells;
+		if (!cells.b) {
+			return row;
+		} else {
+			var first = cells.a;
+			var rest = cells.b;
+			return rundis$elm_bootstrap$Bootstrap$Table$Row(
+				{
+					cells: A2(
+						elm$core$List$cons,
+						rundis$elm_bootstrap$Bootstrap$Table$addScopeIfTh(first),
+						rest),
+					options: options
+				});
+		}
+	} else {
+		var options = row.a.options;
+		var cells = row.a.cells;
+		if (!cells.b) {
+			return row;
+		} else {
+			var _n3 = cells.a;
+			var firstKey = _n3.a;
+			var first = _n3.b;
+			var rest = cells.b;
+			return rundis$elm_bootstrap$Bootstrap$Table$KeyedRow(
+				{
+					cells: A2(
+						elm$core$List$cons,
+						_Utils_Tuple2(
+							firstKey,
+							rundis$elm_bootstrap$Bootstrap$Table$addScopeIfTh(first)),
+						rest),
+					options: options
+				});
+		}
+	}
+};
+var elm$html$Html$tr = _VirtualDom_node('tr');
+var elm$html$Html$td = _VirtualDom_node('td');
+var elm$html$Html$th = _VirtualDom_node('th');
+var rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass = F2(
+	function (prefix, role) {
+		return elm$html$Html$Attributes$class(
+			prefix + ('-' + function () {
+				switch (role.$) {
+					case 'Primary':
+						return 'primary';
+					case 'Secondary':
+						return 'secondary';
+					case 'Success':
+						return 'success';
+					case 'Info':
+						return 'info';
+					case 'Warning':
+						return 'warning';
+					case 'Danger':
+						return 'danger';
+					case 'Light':
+						return 'light';
+					default:
+						return 'dark';
+				}
+			}()));
+	});
+var rundis$elm_bootstrap$Bootstrap$Table$cellAttribute = function (option) {
+	switch (option.$) {
+		case 'RoledCell':
+			if (option.a.$ === 'Roled') {
+				var role = option.a.a;
+				return A2(rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass, 'table', role);
+			} else {
+				var _n1 = option.a;
+				return elm$html$Html$Attributes$class('table-active');
+			}
+		case 'InversedCell':
+			if (option.a.$ === 'Roled') {
+				var role = option.a.a;
+				return A2(rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass, 'bg-', role);
+			} else {
+				var _n2 = option.a;
+				return elm$html$Html$Attributes$class('bg-active');
+			}
+		default:
+			var attr_ = option.a;
+			return attr_;
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Table$cellAttributes = function (options) {
+	return A2(elm$core$List$map, rundis$elm_bootstrap$Bootstrap$Table$cellAttribute, options);
+};
+var rundis$elm_bootstrap$Bootstrap$Table$renderCell = function (cell) {
+	if (cell.$ === 'Td') {
+		var options = cell.a.options;
+		var children = cell.a.children;
+		return A2(
+			elm$html$Html$td,
+			rundis$elm_bootstrap$Bootstrap$Table$cellAttributes(options),
+			children);
+	} else {
+		var options = cell.a.options;
+		var children = cell.a.children;
+		return A2(
+			elm$html$Html$th,
+			rundis$elm_bootstrap$Bootstrap$Table$cellAttributes(options),
+			children);
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Table$rowClass = function (option) {
+	switch (option.$) {
+		case 'RoledRow':
+			if (option.a.$ === 'Roled') {
+				var role_ = option.a.a;
+				return A2(rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass, 'table', role_);
+			} else {
+				var _n1 = option.a;
+				return elm$html$Html$Attributes$class('table-active');
+			}
+		case 'InversedRow':
+			if (option.a.$ === 'Roled') {
+				var role_ = option.a.a;
+				return A2(rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass, 'bg', role_);
+			} else {
+				var _n2 = option.a;
+				return elm$html$Html$Attributes$class('bg-active');
+			}
+		default:
+			var attr_ = option.a;
+			return attr_;
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Table$rowAttributes = function (options) {
+	return A2(elm$core$List$map, rundis$elm_bootstrap$Bootstrap$Table$rowClass, options);
+};
+var rundis$elm_bootstrap$Bootstrap$Table$renderRow = function (row) {
+	if (row.$ === 'Row') {
+		var options = row.a.options;
+		var cells = row.a.cells;
+		return A2(
+			elm$html$Html$tr,
+			rundis$elm_bootstrap$Bootstrap$Table$rowAttributes(options),
+			A2(elm$core$List$map, rundis$elm_bootstrap$Bootstrap$Table$renderCell, cells));
+	} else {
+		var options = row.a.options;
+		var cells = row.a.cells;
+		return A3(
+			elm$html$Html$Keyed$node,
+			'tr',
+			rundis$elm_bootstrap$Bootstrap$Table$rowAttributes(options),
+			A2(
+				elm$core$List$map,
+				function (_n1) {
+					var key = _n1.a;
+					var cell = _n1.b;
+					return _Utils_Tuple2(
+						key,
+						rundis$elm_bootstrap$Bootstrap$Table$renderCell(cell));
+				},
+				cells));
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Table$renderTBody = function (body) {
+	if (body.$ === 'TBody') {
+		var attributes = body.a.attributes;
+		var rows = body.a.rows;
+		return A2(
+			elm$html$Html$tbody,
+			attributes,
+			A2(
+				elm$core$List$map,
+				function (row) {
+					return rundis$elm_bootstrap$Bootstrap$Table$renderRow(
+						rundis$elm_bootstrap$Bootstrap$Table$maybeAddScopeToFirstCell(row));
+				},
+				rows));
+	} else {
+		var attributes = body.a.attributes;
+		var rows = body.a.rows;
+		return A3(
+			elm$html$Html$Keyed$node,
+			'tbody',
+			attributes,
+			A2(
+				elm$core$List$map,
+				function (_n1) {
+					var key = _n1.a;
+					var row = _n1.b;
+					return _Utils_Tuple2(
+						key,
+						rundis$elm_bootstrap$Bootstrap$Table$renderRow(
+							rundis$elm_bootstrap$Bootstrap$Table$maybeAddScopeToFirstCell(row)));
+				},
+				rows));
+	}
+};
+var elm$html$Html$thead = _VirtualDom_node('thead');
+var rundis$elm_bootstrap$Bootstrap$Table$theadAttribute = function (option) {
+	switch (option.$) {
+		case 'InversedHead':
+			return elm$html$Html$Attributes$class('thead-dark');
+		case 'DefaultHead':
+			return elm$html$Html$Attributes$class('thead-default');
+		default:
+			var attr_ = option.a;
+			return attr_;
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Table$theadAttributes = function (options) {
+	return A2(elm$core$List$map, rundis$elm_bootstrap$Bootstrap$Table$theadAttribute, options);
+};
+var rundis$elm_bootstrap$Bootstrap$Table$renderTHead = function (_n0) {
+	var options = _n0.a.options;
+	var rows = _n0.a.rows;
+	return A2(
+		elm$html$Html$thead,
+		rundis$elm_bootstrap$Bootstrap$Table$theadAttributes(options),
+		A2(elm$core$List$map, rundis$elm_bootstrap$Bootstrap$Table$renderRow, rows));
+};
+var rundis$elm_bootstrap$Bootstrap$Table$tableClass = function (option) {
+	switch (option.$) {
+		case 'Inversed':
+			return elm$core$Maybe$Just(
+				elm$html$Html$Attributes$class('table-dark'));
+		case 'Striped':
+			return elm$core$Maybe$Just(
+				elm$html$Html$Attributes$class('table-striped'));
+		case 'Bordered':
+			return elm$core$Maybe$Just(
+				elm$html$Html$Attributes$class('table-bordered'));
+		case 'Hover':
+			return elm$core$Maybe$Just(
+				elm$html$Html$Attributes$class('table-hover'));
+		case 'Small':
+			return elm$core$Maybe$Just(
+				elm$html$Html$Attributes$class('table-sm'));
+		case 'Responsive':
+			return elm$core$Maybe$Nothing;
+		case 'Reflow':
+			return elm$core$Maybe$Just(
+				elm$html$Html$Attributes$class('table-reflow'));
+		default:
+			var attr_ = option.a;
+			return elm$core$Maybe$Just(attr_);
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Table$tableAttributes = function (options) {
+	return A2(
+		elm$core$List$cons,
+		elm$html$Html$Attributes$class('table'),
+		A2(
+			elm$core$List$filterMap,
+			elm$core$Basics$identity,
+			A2(elm$core$List$map, rundis$elm_bootstrap$Bootstrap$Table$tableClass, options)));
+};
+var rundis$elm_bootstrap$Bootstrap$Table$table = function (rec) {
+	var isInversed = A2(
+		elm$core$List$any,
+		function (opt) {
+			return _Utils_eq(opt, rundis$elm_bootstrap$Bootstrap$Table$Inversed);
+		},
+		rec.options);
+	var classOptions = A2(
+		elm$core$List$filter,
+		function (opt) {
+			return !rundis$elm_bootstrap$Bootstrap$Table$isResponsive(opt);
+		},
+		rec.options);
+	return A2(
+		rundis$elm_bootstrap$Bootstrap$Table$maybeWrapResponsive,
+		rec.options,
+		A2(
+			elm$html$Html$table,
+			rundis$elm_bootstrap$Bootstrap$Table$tableAttributes(classOptions),
+			_List_fromArray(
+				[
+					rundis$elm_bootstrap$Bootstrap$Table$renderTHead(
+					A2(rundis$elm_bootstrap$Bootstrap$Table$maybeMapInversedTHead, isInversed, rec.thead)),
+					rundis$elm_bootstrap$Bootstrap$Table$renderTBody(
+					A2(rundis$elm_bootstrap$Bootstrap$Table$maybeMapInversedTBody, isInversed, rec.tbody))
+				])));
+};
+var rundis$elm_bootstrap$Bootstrap$Table$tbody = F2(
+	function (attributes, rows) {
+		return rundis$elm_bootstrap$Bootstrap$Table$TBody(
+			{attributes: attributes, rows: rows});
+	});
+var rundis$elm_bootstrap$Bootstrap$Table$td = F2(
+	function (options, children) {
+		return rundis$elm_bootstrap$Bootstrap$Table$Td(
+			{children: children, options: options});
+	});
+var rundis$elm_bootstrap$Bootstrap$Table$th = F2(
+	function (options, children) {
+		return rundis$elm_bootstrap$Bootstrap$Table$Th(
+			{children: children, options: options});
+	});
+var author$project$RCMediaList$view = function (objectList) {
+	if (!objectList.b) {
+		return A2(
+			elm$html$Html$span,
+			_List_Nil,
+			_List_fromArray(
+				[
+					elm$html$Html$text('no objects')
+				]));
+	} else {
+		var rowFromRCObject = function (object) {
+			var info = 'file url?';
+			return A2(
+				rundis$elm_bootstrap$Bootstrap$Table$tr,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Table$td,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text(
+								elm$core$String$fromInt(object.id))
+							])),
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Table$td,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text(object.name)
+							])),
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Table$td,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text(info)
+							]))
+					]));
+		};
+		var rows = A2(elm$core$List$map, rowFromRCObject, objectList);
+		var head = rundis$elm_bootstrap$Bootstrap$Table$simpleThead(
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Table$th,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text('id')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Table$th,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text('name')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Table$th,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text('info')
+						]))
+				]));
+		return rundis$elm_bootstrap$Bootstrap$Table$table(
+			{
+				options: _List_Nil,
+				tbody: A2(rundis$elm_bootstrap$Bootstrap$Table$tbody, _List_Nil, rows),
+				thead: head
+			});
+	}
+};
 var author$project$Main$view = function (model) {
 	var saveButtonText = model.saved ? 'Saved' : 'Not Saved';
 	var saveButton = A2(
@@ -13553,6 +14169,7 @@ var author$project$Main$view = function (model) {
 				model.exposition.renderedHtml,
 				mediaDialogHtml,
 				author$project$Main$viewUpload(model.uploadStatus),
+				author$project$RCMediaList$view(model.exposition.media),
 				saveButton
 			]));
 };

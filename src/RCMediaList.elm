@@ -1,7 +1,7 @@
 module RCMediaList exposing (view)
 
 import Bootstrap.Table as Table
-import Html exposing (span)
+import Html exposing (span, Html, text)
 import Exposition exposing (RCMediaObject)
 
 
@@ -9,7 +9,7 @@ view : List RCMediaObject -> Html msg
 view objectList =
     case objectList of
         [] ->
-            span [] [ "no objects" ]
+            span [] [ text "no objects" ]
 
         _ ->
             let
@@ -27,9 +27,9 @@ view objectList =
                             "file url?"
                     in
                     Table.tr []
-                        [ Table.td [] [ object.id ]
-                        , Table.td [] [ object.name ]
-                        , Table.td [] [ info ]
+                        [ Table.td [] [ text <| String.fromInt object.id ]
+                        , Table.td [] [ text object.name ]
+                        , Table.td [] [ text info ]
                         ]
 
                 rows =
