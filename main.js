@@ -11338,11 +11338,22 @@ var author$project$RCAPI$getMediaList = F2(
 				url: '/text-editor/simple-media-list?research=' + elm$core$String$fromInt(id)
 			});
 	});
-var elm$http$Http$expectString = function (toMsg) {
+var elm$http$Http$expectBytesResponse = F2(
+	function (toMsg, toResult) {
+		return A3(
+			_Http_expect,
+			'arraybuffer',
+			_Http_toDataView,
+			A2(elm$core$Basics$composeR, toResult, toMsg));
+	});
+var elm$http$Http$expectWhatever = function (toMsg) {
 	return A2(
-		elm$http$Http$expectStringResponse,
+		elm$http$Http$expectBytesResponse,
 		toMsg,
-		elm$http$Http$resolve(elm$core$Result$Ok));
+		elm$http$Http$resolve(
+			function (_n0) {
+				return elm$core$Result$Ok(_Utils_Tuple0);
+			}));
 };
 var elm$http$Http$multipartBody = function (parts) {
 	return A2(
@@ -11377,6 +11388,7 @@ var elm$json$Json$Encode$object = function (pairs) {
 var author$project$RCAPI$saveExposition = F2(
 	function (exposition, expect) {
 		var url = 'text-editor/save' + ('?research=' + (elm$core$String$fromInt(exposition.id) + ('&weave=' + elm$core$String$fromInt(exposition.currentWeave))));
+		var _n0 = A2(elm$core$Debug$log, 'about to save markdown: ', exposition.markdownInput);
 		return elm$http$Http$request(
 			{
 				body: elm$http$Http$multipartBody(
@@ -11431,7 +11443,7 @@ var author$project$RCAPI$saveExposition = F2(
 								0,
 								elm$json$Json$Encode$object(_List_Nil)))
 						])),
-				expect: elm$http$Http$expectString(expect),
+				expect: elm$http$Http$expectWhatever(expect),
 				headers: _List_Nil,
 				method: 'POST',
 				timeout: elm$core$Maybe$Nothing,
@@ -11721,23 +11733,6 @@ var elm$file$File$Select$file = F2(
 			toMsg,
 			_File_uploadOne(mimes));
 	});
-var elm$http$Http$expectBytesResponse = F2(
-	function (toMsg, toResult) {
-		return A3(
-			_Http_expect,
-			'arraybuffer',
-			_Http_toDataView,
-			A2(elm$core$Basics$composeR, toResult, toMsg));
-	});
-var elm$http$Http$expectWhatever = function (toMsg) {
-	return A2(
-		elm$http$Http$expectBytesResponse,
-		toMsg,
-		elm$http$Http$resolve(
-			function (_n0) {
-				return elm$core$Result$Ok(_Utils_Tuple0);
-			}));
-};
 var elm$core$Basics$clamp = F3(
 	function (low, high, number) {
 		return (_Utils_cmp(number, low) < 0) ? low : ((_Utils_cmp(number, high) > 0) ? high : number);
@@ -11853,6 +11848,7 @@ var author$project$Main$update = F2(
 				var exp = msg.a;
 				if (exp.$ === 'Ok') {
 					var e = exp.a;
+					var _n10 = A2(elm$core$Debug$log, 'got expo ', exp);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -11868,7 +11864,7 @@ var author$project$Main$update = F2(
 								])));
 				} else {
 					var err = exp.a;
-					var _n10 = A2(elm$core$Debug$log, 'could not load exposition: ', err);
+					var _n11 = A2(elm$core$Debug$log, 'could not load exposition: ', err);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 			case 'SaveExposition':
@@ -11878,8 +11874,6 @@ var author$project$Main$update = F2(
 			case 'SavedExposition':
 				var result = msg.a;
 				if (result.$ === 'Ok') {
-					var s = result.a;
-					var _n12 = A2(elm$core$Debug$log, 'result of save: ', s);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
