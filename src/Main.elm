@@ -16,6 +16,7 @@ import Json.Encode as E
 import Problems
 import RCAPI
 import RCMediaEdit
+import RCMediaList
 import Regex
 import String.Extra as Str
 
@@ -465,5 +466,6 @@ view model =
         [ model.exposition.renderedHtml
         , mediaDialogHtml
         , viewUpload model.uploadStatus
+        , RCMediaList.view model.exposition.media
         , saveButton
         ]
