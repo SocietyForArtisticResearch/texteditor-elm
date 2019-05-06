@@ -73,8 +73,8 @@
  });
 
 
- app.ports.setValue.subscribe(function(content) {
-     cm.setValue(content);
+ app.ports.setContent.subscribe(function() {
+     cm.setValue("hi");
  });
 
  

@@ -446,8 +446,3 @@ toc exp =
             }
         )
         (RCMD.toc exp.markdownInput)
-
-
-
--- integrateMediaList
--- integrateSerializedMediaInfo
