@@ -11848,7 +11848,8 @@ var author$project$Main$update = F2(
 				var exp = msg.a;
 				if (exp.$ === 'Ok') {
 					var e = exp.a;
-					var _n10 = A2(elm$core$Debug$log, 'got expo ', exp);
+					var newExposition = A3(author$project$RCAPI$toRCExposition, e, model.research, model.weave);
+					var _n10 = A2(elm$core$Debug$log, 'got expo ', e);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -11860,7 +11861,7 @@ var author$project$Main$update = F2(
 							_List_fromArray(
 								[
 									A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList),
-									author$project$Main$setContent(model.exposition.markdownInput)
+									author$project$Main$setContent(newExposition.markdownInput)
 								])));
 				} else {
 					var err = exp.a;

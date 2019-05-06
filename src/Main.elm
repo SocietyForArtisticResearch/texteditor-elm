@@ -276,7 +276,10 @@ update msg model =
                 Ok e ->
                     let
                         _ =
-                            Debug.log "got expo " exp
+                            Debug.log "got expo " e
+
+                        newExposition =
+                            RCAPI.toRCExposition e model.research model.weave
                     in
                     ( { model
                         | exposition = RCAPI.toRCExposition e model.research model.weave
@@ -284,7 +287,7 @@ update msg model =
                       }
                     , Cmd.batch
                         [ RCAPI.getMediaList model.research GotMediaList
-                        , setContent model.exposition.markdownInput
+                        , setContent newExposition.markdownInput
                         ]
                     )
 
