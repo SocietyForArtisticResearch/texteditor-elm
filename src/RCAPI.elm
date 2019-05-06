@@ -1,4 +1,4 @@
-module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, getExposition, getMediaList, toMediaClassesDict, toRCExposition, toRCMediaObject, uploadMedia)
+module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, getExposition, getMediaList, saveExposition, toMediaClassesDict, toRCExposition, toRCMediaObject, uploadMedia)
 
 import Dict
 import Exposition exposing (OptionalDimensions, RCExposition, RCMediaObject, RCMediaType(..), defaultPlayerSettings)
@@ -6,6 +6,7 @@ import File exposing (File)
 import Html exposing (Html, span)
 import Http
 import Json.Decode exposing (..)
+import Json.Encode as E
 import Problems exposing (..)
 import Settings
 
@@ -25,7 +26,6 @@ eitherString =
 
 
 type alias APIExpositionMetadata =
-    -- spelled "editorversion" in json
     { editorVersion : String, contentVersion : Int }
 
 
@@ -49,6 +49,10 @@ type alias APIMediaEntry =
 
 type alias APIMedia =
     { mediaType : String, status : String, width : Int, height : Int }
+
+
+
+-- DECODERS
 
 
 apiExposition : Decoder APIExposition
@@ -76,7 +80,7 @@ apiExpositionMetadata : Decoder APIExpositionMetadata
 apiExpositionMetadata =
     map2
         APIExpositionMetadata
-        (field "editorversion" string)
+        (oneOf [ field "editorversion" string, field "editorVersion" string ])
         (field "contentVersion" int)
 
 
@@ -139,43 +143,55 @@ uploadMedia researchId file expect =
         }
 
 
+saveExposition exposition expect =
+    let
+        url =
+            "text-editor/save"
+                ++ "?research="
+                ++ String.fromInt exposition.id
+                ++ "&weave="
+                ++ String.fromInt exposition.currentWeave
+    in
+    Http.request
+        { method = "POST"
+        , url = url
+        , headers = []
+        , body =
+            Http.multipartBody
+                [ Http.stringPart "html" exposition.renderedHtmlString
+                , Http.stringPart "markdown" exposition.markdownInput
+                , Http.stringPart "style" exposition.css
+                , Http.stringPart "title" exposition.title
+                , Http.stringPart "media"
+                    (E.encode 0
+                        (E.list
+                            (\m ->
+                                E.object
+                                    [ ( "id", E.int m.id )
+                                    , ( "userClass", E.string m.userClass )
+                                    ]
+                            )
+                            exposition.media
+                        )
+                    )
+                , Http.stringPart "metadata"
+                    (E.encode
+                        0
+                        (E.object
+                            [ ( "editorVersion", E.string exposition.editorVersion )
+                            , ( "contentVersion", E.int exposition.contentVersion )
+                            ]
+                        )
+                    )
+                , Http.stringPart "toc" (E.encode 0 (E.object [])) -- TODO add actual toc
+                ]
+        , expect = Http.expectWhatever expect
+        , timeout = Nothing
+        , tracker = Nothing
+        }
 
--- saveExposition : RCExposition msg -> Http.Expect msg -> Cmd msg
--- saveExposition exposition expect =
---     let url = "text-editor/save" ++ "?research=" ++
---               String.fromInt exposition.id ++ "&weave=" ++
---                   String.fromInt exposition.currentWeave
---     in
---     Http.request
---         { method = "POST"
---         , url = url
---         , headers = []
---         , body =
---             Http.multipartBody
---                 [ Http.stringPart "html" exposition.renderedHtml
---                 , Http.stringPart "name" "tmpName"
---                 , Http.stringPart "copyrightholder" "copyrightholder"
---                 , Http.stringPart "description" "description"
---                 , Http.filePart "media" file
---                 , Http.stringPart "thumb" ""
---                 ]
---         , expect = expect
---         , timeout = Nothing
---         , tracker = Nothing
---         }
---                 fd.append("html", this.exposition.renderedHTML);
---                 fd.append("markdown", this.exposition.markdownInput);
---                 fd.append("media", this.exposition.serializeMedia()); // TODO send media list/see if necessary
---                 fd.append("style", this.exposition.style);
---                 fd.append("title", this.exposition.title);
---                 fd.append("metadata", JSON.stringify({
---                     "editorversion": this.editorVersion,
---                     "contentVersion": upcomingVersion
---                 }));
---                 // console.log(fd);
---                 try {
---                     fd.append("toc", JSON.stringify(this.exposition.getTOC()));
---                 }
+
+
 -- POST PROCESS API RETURN VALUES
 -- needs to be done because older api encodes field as string
 
@@ -243,7 +259,8 @@ toRCExposition apiExpo id weave =
     , authors = []
     , id = id
     , currentWeave = weave
-    , renderedHtml = span [] [] -- we don't actually use the html in the saved object
+    , renderedHtml = span [] []
+    , renderedHtmlString = apiExpo.html
     , markdownInput = apiExpo.markdown
     , media = []
     , editorVersion = (getMetadata exp).editorVersion

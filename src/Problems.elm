@@ -4,11 +4,10 @@ module Problems exposing (Problem(..), splitResultList)
 
 
 type Problem
-    = CannotFindServer
-    | WrongExpositionUrl
+    = WrongExpositionUrl
     | CannotLoadMedia String
-    | CannotLoadExposition
     | NoMediaWithNameOrId
+    | CannotSave
 
 
 splitResultList : List (Result Problem a) -> ( List Problem, List a )

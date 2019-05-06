@@ -29,6 +29,7 @@ type alias Model msg =
     , uploadStatus : UploadStatus
     , problems : List Problems.Problem
     , mediaClassesDict : Dict.Dict Int String -- stores userclasses for media to be added to media list
+    , saved : Bool
     }
 
 
@@ -56,6 +57,7 @@ emptyModel research weave =
     , uploadStatus = Ready
     , problems = []
     , mediaClassesDict = Dict.empty
+    , saved = True
     }
 
 
@@ -147,6 +149,8 @@ type Msg
     | UploadMediaFileSelected File
     | GotUploadProgress Http.Progress
     | Uploaded (Result Http.Error ())
+    | SaveExposition
+    | SavedExposition (Result Http.Error ())
 
 
 
@@ -186,7 +190,9 @@ update msg model =
                 _ =
                     Debug.log "recevied html from marked" html
             in
-            ( model, Cmd.none )
+            ( { model | exposition = Exposition.withRenderedHtmlString model.exposition html }
+            , Cmd.none
+            )
 
         EditGeneration val ->
             case D.decodeValue D.int val of
@@ -195,6 +201,7 @@ update msg model =
                         ( { model
                             | editGeneration = gen
                             , exposition = incContentVersion model.exposition
+                            , saved = False
                           }
                         , getContent ()
                         )
@@ -281,15 +288,29 @@ update msg model =
                     in
                     ( model, Cmd.none )
 
+        SaveExposition ->
+            ( model, RCAPI.saveExposition model.exposition SavedExposition )
+
+        SavedExposition result ->
+            case result of
+                Ok _ ->
+                    ( { model | saved = True }, Cmd.none )
+
+                Err s ->
+                    ( addProblem model Problems.CannotSave, Cmd.none )
+
         GotMediaList mediaResult ->
             case mediaResult of
                 Err _ ->
-                    ( addProblem model (Problems.CannotLoadMedia "http request failed"), Cmd.none )
+                    ( addProblem model (Problems.CannotLoadMedia "http request failed")
+                    , Cmd.none
+                    )
 
                 Ok media ->
                     let
                         ( problems, mediaEntries ) =
-                            Problems.splitResultList (List.map (RCAPI.toRCMediaObject model.research) media)
+                            Problems.splitResultList
+                                (List.map (RCAPI.toRCMediaObject model.research) media)
 
                         modelWithProblems =
                             addProblems model problems
@@ -300,7 +321,11 @@ update msg model =
                         _ =
                             Debug.log "loaded exposition with media: " expositionWithMedia
                     in
-                    ( { modelWithProblems | exposition = addMediaUserClasses expositionWithMedia model.mediaClassesDict }, Cmd.none )
+                    ( { modelWithProblems
+                        | exposition = addMediaUserClasses expositionWithMedia model.mediaClassesDict
+                      }
+                    , Cmd.none
+                    )
 
         MediaEdit objFromDialog ->
             -- TODO: store in backend
@@ -322,7 +347,9 @@ update msg model =
                     in
                     case Exposition.isValid viewObjectState.validation of
                         False ->
-                            ( { model | mediaDialog = ( viewStatus, Just objFromDialog, Just viewObjectState ) }
+                            ( { model
+                                | mediaDialog = ( viewStatus, Just objFromDialog, Just viewObjectState )
+                              }
                             , Cmd.none
                             )
 
@@ -415,9 +442,20 @@ view model =
 
                 _ ->
                     div [] []
+
+        saveButtonText =
+            if model.saved then
+                "Saved"
+
+            else
+                "Not Saved"
+
+        saveButton =
+            button [ onClick SaveExposition ] [ text saveButtonText ]
     in
     div []
         [ model.exposition.renderedHtml
         , mediaDialogHtml
         , viewUpload model.uploadStatus
+        , saveButton
         ]

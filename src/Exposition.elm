@@ -1,4 +1,4 @@
-module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, isValid, mediaUrl, objectByNameOrId, render, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withMd)
+module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, isValid, mediaUrl, objectByNameOrId, render, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withMd, withRenderedHtmlString)
 
 import Dict
 import Html as Html
@@ -15,6 +15,7 @@ type alias RCExposition msg =
     , id : Int
     , currentWeave : Int
     , renderedHtml : Html.Html msg
+    , renderedHtmlString : String
     , markdownInput : String
     , media : List RCMediaObject
     , editorVersion : String
@@ -30,6 +31,7 @@ empty =
     , id = 0
     , currentWeave = 0
     , renderedHtml = Html.div [] []
+    , renderedHtmlString = ""
     , markdownInput = ""
     , media = []
     , editorVersion = Settings.editorVersion
@@ -399,6 +401,11 @@ htmlForMediaString expo mediaString =
 render : RCExposition msg -> RCExposition msg
 render exp =
     { exp | renderedHtml = RCMD.rcToHtml (htmlForMediaString exp) exp.markdownInput }
+
+
+withRenderedHtmlString : RCExposition msg -> String -> RCExposition msg
+withRenderedHtmlString exp htmlString =
+    { exp | renderedHtmlString = htmlString }
 
 
 replaceToolsWithImages : RCExposition msg -> Maybe String -> String

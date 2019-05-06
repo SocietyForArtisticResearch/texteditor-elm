@@ -5345,6 +5345,7 @@ var author$project$Exposition$empty = {
 	markdownInput: '',
 	media: _List_Nil,
 	renderedHtml: A2(elm$html$Html$div, _List_Nil, _List_Nil),
+	renderedHtmlString: '',
 	title: ''
 };
 var author$project$Main$Ready = {$: 'Ready'};
@@ -5364,6 +5365,7 @@ var author$project$Main$emptyModel = F2(
 			mediaDialog: _Utils_Tuple3(rundis$elm_bootstrap$Bootstrap$Modal$hidden, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing),
 			problems: _List_Nil,
 			research: research,
+			saved: true,
 			uploadStatus: author$project$Main$Ready,
 			weave: weave
 		};
@@ -11223,8 +11225,17 @@ var author$project$Exposition$withMd = F2(
 			exp,
 			{markdownInput: content});
 	});
+var author$project$Exposition$withRenderedHtmlString = F2(
+	function (exp, htmlString) {
+		return _Utils_update(
+			exp,
+			{renderedHtmlString: htmlString});
+	});
 var author$project$Main$GotMediaList = function (a) {
 	return {$: 'GotMediaList', a: a};
+};
+var author$project$Main$SavedExposition = function (a) {
+	return {$: 'SavedExposition', a: a};
 };
 var author$project$Main$UploadMediaFileSelected = function (a) {
 	return {$: 'UploadMediaFileSelected', a: a};
@@ -11254,6 +11265,7 @@ var author$project$Main$setContent = _Platform_outgoingPort('setContent', elm$js
 var author$project$Problems$CannotLoadMedia = function (a) {
 	return {$: 'CannotLoadMedia', a: a};
 };
+var author$project$Problems$CannotSave = {$: 'CannotSave'};
 var author$project$Problems$NoMediaWithNameOrId = {$: 'NoMediaWithNameOrId'};
 var author$project$Problems$splitResultListAcc = F3(
 	function (results, problems, oks) {
@@ -11326,6 +11338,118 @@ var author$project$RCAPI$getMediaList = F2(
 				url: '/text-editor/simple-media-list?research=' + elm$core$String$fromInt(id)
 			});
 	});
+var elm$http$Http$expectBytesResponse = F2(
+	function (toMsg, toResult) {
+		return A3(
+			_Http_expect,
+			'arraybuffer',
+			_Http_toDataView,
+			A2(elm$core$Basics$composeR, toResult, toMsg));
+	});
+var elm$http$Http$expectWhatever = function (toMsg) {
+	return A2(
+		elm$http$Http$expectBytesResponse,
+		toMsg,
+		elm$http$Http$resolve(
+			function (_n0) {
+				return elm$core$Result$Ok(_Utils_Tuple0);
+			}));
+};
+var elm$http$Http$multipartBody = function (parts) {
+	return A2(
+		_Http_pair,
+		'',
+		_Http_toFormData(parts));
+};
+var elm$http$Http$stringPart = _Http_pair;
+var elm$json$Json$Encode$int = _Json_wrap;
+var elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(_Utils_Tuple0),
+				entries));
+	});
+var elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			elm$core$List$foldl,
+			F2(
+				function (_n0, obj) {
+					var k = _n0.a;
+					var v = _n0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(_Utils_Tuple0),
+			pairs));
+};
+var author$project$RCAPI$saveExposition = F2(
+	function (exposition, expect) {
+		var url = 'text-editor/save' + ('?research=' + (elm$core$String$fromInt(exposition.id) + ('&weave=' + elm$core$String$fromInt(exposition.currentWeave))));
+		return elm$http$Http$request(
+			{
+				body: elm$http$Http$multipartBody(
+					_List_fromArray(
+						[
+							A2(elm$http$Http$stringPart, 'html', exposition.renderedHtmlString),
+							A2(elm$http$Http$stringPart, 'markdown', exposition.markdownInput),
+							A2(elm$http$Http$stringPart, 'style', exposition.css),
+							A2(elm$http$Http$stringPart, 'title', exposition.title),
+							A2(
+							elm$http$Http$stringPart,
+							'media',
+							A2(
+								elm$json$Json$Encode$encode,
+								0,
+								A2(
+									elm$json$Json$Encode$list,
+									function (m) {
+										return elm$json$Json$Encode$object(
+											_List_fromArray(
+												[
+													_Utils_Tuple2(
+													'id',
+													elm$json$Json$Encode$int(m.id)),
+													_Utils_Tuple2(
+													'userClass',
+													elm$json$Json$Encode$string(m.userClass))
+												]));
+									},
+									exposition.media))),
+							A2(
+							elm$http$Http$stringPart,
+							'metadata',
+							A2(
+								elm$json$Json$Encode$encode,
+								0,
+								elm$json$Json$Encode$object(
+									_List_fromArray(
+										[
+											_Utils_Tuple2(
+											'editorVersion',
+											elm$json$Json$Encode$string(exposition.editorVersion)),
+											_Utils_Tuple2(
+											'contentVersion',
+											elm$json$Json$Encode$int(exposition.contentVersion))
+										])))),
+							A2(
+							elm$http$Http$stringPart,
+							'toc',
+							A2(
+								elm$json$Json$Encode$encode,
+								0,
+								elm$json$Json$Encode$object(_List_Nil)))
+						])),
+				expect: elm$http$Http$expectWhatever(expect),
+				headers: _List_Nil,
+				method: 'POST',
+				timeout: elm$core$Maybe$Nothing,
+				tracker: elm$core$Maybe$Nothing,
+				url: url
+			});
+	});
 var author$project$RCAPI$Right = function (a) {
 	return {$: 'Right', a: a};
 };
@@ -11381,7 +11505,12 @@ var author$project$RCAPI$APIExpositionMetadata = F2(
 var author$project$RCAPI$apiExpositionMetadata = A3(
 	elm$json$Json$Decode$map2,
 	author$project$RCAPI$APIExpositionMetadata,
-	A2(elm$json$Json$Decode$field, 'editorversion', elm$json$Json$Decode$string),
+	elm$json$Json$Decode$oneOf(
+		_List_fromArray(
+			[
+				A2(elm$json$Json$Decode$field, 'editorversion', elm$json$Json$Decode$string),
+				A2(elm$json$Json$Decode$field, 'editorVersion', elm$json$Json$Decode$string)
+			])),
 	A2(elm$json$Json$Decode$field, 'contentVersion', elm$json$Json$Decode$int));
 var author$project$RCAPI$decodeMetadata = function (exp) {
 	var metadataField = function () {
@@ -11454,6 +11583,7 @@ var author$project$RCAPI$toRCExposition = F3(
 			markdownInput: apiExpo.markdown,
 			media: _List_Nil,
 			renderedHtml: A2(elm$html$Html$span, _List_Nil, _List_Nil),
+			renderedHtmlString: apiExpo.html,
 			title: apiExpo.title
 		};
 	});
@@ -11515,13 +11645,6 @@ var author$project$RCAPI$toRCMediaObject = F2(
 		}
 	});
 var elm$http$Http$filePart = _Http_pair;
-var elm$http$Http$multipartBody = function (parts) {
-	return A2(
-		_Http_pair,
-		'',
-		_Http_toFormData(parts));
-};
-var elm$http$Http$stringPart = _Http_pair;
 var author$project$RCAPI$uploadMedia = F3(
 	function (researchId, file, expect) {
 		return elm$http$Http$request(
@@ -11609,23 +11732,6 @@ var elm$file$File$Select$file = F2(
 			toMsg,
 			_File_uploadOne(mimes));
 	});
-var elm$http$Http$expectBytesResponse = F2(
-	function (toMsg, toResult) {
-		return A3(
-			_Http_expect,
-			'arraybuffer',
-			_Http_toDataView,
-			A2(elm$core$Basics$composeR, toResult, toMsg));
-	});
-var elm$http$Http$expectWhatever = function (toMsg) {
-	return A2(
-		elm$http$Http$expectBytesResponse,
-		toMsg,
-		elm$http$Http$resolve(
-			function (_n0) {
-				return elm$core$Result$Ok(_Utils_Tuple0);
-			}));
-};
 var elm$core$Basics$clamp = F3(
 	function (low, high, number) {
 		return (_Utils_cmp(number, low) < 0) ? low : ((_Utils_cmp(number, high) > 0) ? high : number);
@@ -11641,7 +11747,13 @@ var author$project$Main$update = F2(
 			case 'GotConvertedHtml':
 				var html = msg.a;
 				var _n1 = A2(elm$core$Debug$log, 'recevied html from marked', html);
-				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							exposition: A2(author$project$Exposition$withRenderedHtmlString, model.exposition, html)
+						}),
+					elm$core$Platform$Cmd$none);
 			case 'EditGeneration':
 				var val = msg.a;
 				var _n2 = A2(elm$json$Json$Decode$decodeValue, elm$json$Json$Decode$int, val);
@@ -11652,7 +11764,8 @@ var author$project$Main$update = F2(
 							model,
 							{
 								editGeneration: gen,
-								exposition: author$project$Exposition$incContentVersion(model.exposition)
+								exposition: author$project$Exposition$incContentVersion(model.exposition),
+								saved: false
 							}),
 						author$project$Main$getContent(_Utils_Tuple0)) : _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				} else {
@@ -11752,6 +11865,24 @@ var author$project$Main$update = F2(
 					var _n10 = A2(elm$core$Debug$log, 'could not load exposition: ', err);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
+			case 'SaveExposition':
+				return _Utils_Tuple2(
+					model,
+					A2(author$project$RCAPI$saveExposition, model.exposition, author$project$Main$SavedExposition));
+			case 'SavedExposition':
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{saved: true}),
+						elm$core$Platform$Cmd$none);
+				} else {
+					var s = result.a;
+					return _Utils_Tuple2(
+						A2(author$project$Main$addProblem, model, author$project$Problems$CannotSave),
+						elm$core$Platform$Cmd$none);
+				}
 			case 'GotMediaList':
 				var mediaResult = msg.a;
 				if (mediaResult.$ === 'Err') {
@@ -11763,16 +11894,16 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				} else {
 					var media = mediaResult.a;
-					var _n12 = author$project$Problems$splitResultList(
+					var _n13 = author$project$Problems$splitResultList(
 						A2(
 							elm$core$List$map,
 							author$project$RCAPI$toRCMediaObject(model.research),
 							media));
-					var problems = _n12.a;
-					var mediaEntries = _n12.b;
+					var problems = _n13.a;
+					var mediaEntries = _n13.b;
 					var modelWithProblems = A2(author$project$Main$addProblems, model, problems);
 					var expositionWithMedia = A3(elm$core$List$foldr, author$project$Exposition$addOrReplaceObject, modelWithProblems.exposition, mediaEntries);
-					var _n13 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithMedia);
+					var _n14 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithMedia);
 					return _Utils_Tuple2(
 						_Utils_update(
 							modelWithProblems,
@@ -11783,18 +11914,18 @@ var author$project$Main$update = F2(
 				}
 			case 'MediaEdit':
 				var objFromDialog = msg.a;
-				var _n14 = A2(author$project$Exposition$objectByNameOrId, objFromDialog.name, model.exposition);
-				if (_n14.$ === 'Nothing') {
+				var _n15 = A2(author$project$Exposition$objectByNameOrId, objFromDialog.name, model.exposition);
+				if (_n15.$ === 'Nothing') {
 					var modelWithProblem = A2(author$project$Main$addProblem, model, author$project$Problems$NoMediaWithNameOrId);
 					return _Utils_Tuple2(modelWithProblem, elm$core$Platform$Cmd$none);
 				} else {
-					var objInModel = _n14.a;
+					var objInModel = _n15.a;
 					var viewObjectState = A3(author$project$Exposition$validateMediaObject, model.exposition, objInModel, objFromDialog);
-					var _n15 = model.mediaDialog;
-					var viewStatus = _n15.a;
-					var objInEdit = _n15.b;
-					var _n16 = author$project$Exposition$isValid(viewObjectState.validation);
-					if (!_n16) {
+					var _n16 = model.mediaDialog;
+					var viewStatus = _n16.a;
+					var objInEdit = _n16.b;
+					var _n17 = author$project$Exposition$isValid(viewObjectState.validation);
+					if (!_n17) {
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -11867,11 +11998,12 @@ var author$project$Main$update = F2(
 						A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 				} else {
 					var e = result.a;
-					var _n19 = A2(elm$core$Debug$log, 'error uploading: ', e);
+					var _n20 = A2(elm$core$Debug$log, 'error uploading: ', e);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 		}
 	});
+var author$project$Main$SaveExposition = {$: 'SaveExposition'};
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
 var author$project$Main$InsertTool = function (a) {
 	return {$: 'InsertTool', a: a};
@@ -13388,6 +13520,17 @@ var author$project$Main$viewUpload = function (status) {
 	}
 };
 var author$project$Main$view = function (model) {
+	var saveButtonText = model.saved ? 'Saved' : 'Not Saved';
+	var saveButton = A2(
+		elm$html$Html$button,
+		_List_fromArray(
+			[
+				elm$html$Html$Events$onClick(author$project$Main$SaveExposition)
+			]),
+		_List_fromArray(
+			[
+				elm$html$Html$text(saveButtonText)
+			]));
 	var mediaDialogHtml = function () {
 		var _n0 = model.mediaDialog;
 		if ((_n0.b.$ === 'Just') && (_n0.c.$ === 'Just')) {
@@ -13409,7 +13552,8 @@ var author$project$Main$view = function (model) {
 			[
 				model.exposition.renderedHtml,
 				mediaDialogHtml,
-				author$project$Main$viewUpload(model.uploadStatus)
+				author$project$Main$viewUpload(model.uploadStatus),
+				saveButton
 			]));
 };
 var elm$browser$Browser$External = function (a) {
