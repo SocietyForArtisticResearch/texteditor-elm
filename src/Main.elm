@@ -151,7 +151,7 @@ type Msg
     | GotUploadProgress Http.Progress
     | Uploaded (Result Http.Error ())
     | SaveExposition
-    | SavedExposition (Result Http.Error String)
+    | SavedExposition (Result Http.Error ())
 
 
 
@@ -222,7 +222,9 @@ update msg model =
                 ( Ok gen, Ok content ) ->
                     ( { model
                         | editGeneration = gen
-                        , exposition = Exposition.render (Exposition.withMd model.exposition content)
+                        , exposition =
+                            Exposition.render
+                                (Exposition.withMd model.exposition content)
                       }
                     , convertMarkdown content
                     )
@@ -272,6 +274,10 @@ update msg model =
         GotExposition exp ->
             case exp of
                 Ok e ->
+                    let
+                        _ =
+                            Debug.log "got expo " exp
+                    in
                     ( { model
                         | exposition = RCAPI.toRCExposition e model.research model.weave
                         , mediaClassesDict = RCAPI.toMediaClassesDict e
@@ -294,11 +300,7 @@ update msg model =
 
         SavedExposition result ->
             case result of
-                Ok s ->
-                    let
-                        _ =
-                            Debug.log "result of save: " s
-                    in
+                Ok _ ->
                     ( { model | saved = True }, Cmd.none )
 
                 Err s ->

@@ -151,6 +151,9 @@ saveExposition exposition expect =
                 ++ String.fromInt exposition.id
                 ++ "&weave="
                 ++ String.fromInt exposition.currentWeave
+
+        _ =
+            Debug.log "about to save markdown: " exposition.markdownInput
     in
     Http.request
         { method = "POST"
@@ -185,7 +188,7 @@ saveExposition exposition expect =
                     )
                 , Http.stringPart "toc" (E.encode 0 (E.object [])) -- TODO add actual toc
                 ]
-        , expect = Http.expectString expect
+        , expect = Http.expectWhatever expect
         , timeout = Nothing
         , tracker = Nothing
         }
