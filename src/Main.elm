@@ -275,9 +275,6 @@ update msg model =
             case exp of
                 Ok e ->
                     let
-                        _ =
-                            Debug.log "got expo " e
-
                         newExposition =
                             RCAPI.toRCExposition e model.research model.weave
                     in

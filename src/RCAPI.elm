@@ -352,4 +352,4 @@ toRCMediaObject researchId mediaEntry =
 
 
 -- TODO
--- saving
+-- loading of correct json for metadata and additional media metadata
