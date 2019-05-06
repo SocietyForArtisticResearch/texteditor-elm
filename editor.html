@@ -80,7 +80,7 @@
 
 
  app.ports.convertMarkdown.subscribe(function(md) {
-    app.ports.getHtml.send(marked(md)):
+    app.ports.getHtml.send(marked(md));
  });
 
  
