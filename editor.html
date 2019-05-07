@@ -90,8 +90,7 @@
 
 
  app.ports.setPreviewContent.subscribe(function(content) {
-     var preview = document.getElementById("preview");
-     morphdom(preview, content);
+     morphdom(document.getElementById("preview"), content);
  });
 
  

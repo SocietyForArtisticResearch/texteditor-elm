@@ -6403,8 +6403,8 @@ var author$project$Exposition$addDimensions = F2(
 			return attributes;
 		} else {
 			var _n1 = dims.a;
-			var h = _n1.a;
-			var w = _n1.b;
+			var w = _n1.a;
+			var h = _n1.b;
 			return _Utils_ap(
 				attributes,
 				_List_fromArray(
