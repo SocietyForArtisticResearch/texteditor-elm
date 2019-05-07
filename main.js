@@ -9154,15 +9154,7 @@ var author$project$RCMediaEdit$view = F2(
 						]))
 				]));
 	});
-<<<<<<< HEAD
 var elm$html$Html$p = _VirtualDom_node('p');
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
-	return {$: 'Outlined', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
-=======
->>>>>>> e7ed58b7ddbded740994044adb9adef3b47ed782
 var rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {
 	return {$: 'Body', a: a};
 };
@@ -9192,25 +9184,7 @@ var rundis$elm_bootstrap$Bootstrap$Modal$config = function (closeMsg) {
 			withAnimation: elm$core$Maybe$Nothing
 		});
 };
-<<<<<<< HEAD
-var rundis$elm_bootstrap$Bootstrap$Modal$Footer = function (a) {
-	return {$: 'Footer', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Modal$footer = F3(
-	function (attributes, children, _n0) {
-		var conf = _n0.a;
-		return rundis$elm_bootstrap$Bootstrap$Modal$Config(
-			_Utils_update(
-				conf,
-				{
-					footer: elm$core$Maybe$Just(
-						rundis$elm_bootstrap$Bootstrap$Modal$Footer(
-							{attributes: attributes, children: children}))
-				}));
-	});
 var elm$html$Html$h5 = _VirtualDom_node('h5');
-=======
->>>>>>> e7ed58b7ddbded740994044adb9adef3b47ed782
 var rundis$elm_bootstrap$Bootstrap$Modal$Header = function (a) {
 	return {$: 'Header', a: a};
 };
