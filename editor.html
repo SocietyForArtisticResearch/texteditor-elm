@@ -89,16 +89,15 @@
  });
 
 
- setTimeout(function() {
-     app.ports.setPreviewContent.subscribe(function(content) {
-	 var preview = document.getElementById("preview")
-	 //     var preview = document.createElement('div');
-	 var newPreview = document.createElement('div');
-	 newPreview.innerHTML = content;
-	 morphdom(preview, newPreview);
-	 //preview.innerHTML = content;
-     });
- }, 200);
+ app.ports.setPreviewContent.subscribe(function(content) {
+     var preview = document.getElementById("preview")
+     console.log(preview);
+     //     var preview = document.createElement('div');
+     var newPreview = document.createElement('div');
+     newPreview.innerHTML = content;
+     morphdom(preview, newPreview);
+     //preview.innerHTML = content;
+ });
  
 </script>
 </html>
