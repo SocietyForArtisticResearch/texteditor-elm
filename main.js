@@ -7321,6 +7321,7 @@ var author$project$Main$getContent = _Platform_outgoingPort(
 	function ($) {
 		return elm$json$Json$Encode$null;
 	});
+var author$project$Main$setContent = _Platform_outgoingPort('setContent', elm$json$Json$Encode$string);
 var author$project$Main$setPreviewContent = _Platform_outgoingPort('setPreviewContent', elm$json$Json$Encode$string);
 var author$project$Problems$CannotLoadMedia = function (a) {
 	return {$: 'CannotLoadMedia', a: a};
@@ -7955,14 +7956,14 @@ var author$project$Main$update = F2(
 						_Utils_update(
 							model,
 							{
-								exposition: A3(author$project$RCAPI$toRCExposition, e, model.research, model.weave),
+								exposition: newExposition,
 								mediaClassesDict: author$project$RCAPI$toMediaClassesDict(e)
 							}),
 						elm$core$Platform$Cmd$batch(
 							_List_fromArray(
 								[
 									A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList),
-									author$project$Main$setPreviewContent(newExposition.renderedHtml)
+									author$project$Main$setContent(newExposition.markdownInput)
 								])));
 				} else {
 					var err = exp.a;
@@ -8008,14 +8009,13 @@ var author$project$Main$update = F2(
 					var mediaEntries = _n16.b;
 					var modelWithProblems = A2(author$project$Main$addProblems, model, problems);
 					var expositionWithMedia = A3(elm$core$List$foldr, author$project$Exposition$addOrReplaceObject, modelWithProblems.exposition, mediaEntries);
+					var expositionWithClasses = A2(author$project$Exposition$addMediaUserClasses, expositionWithMedia, model.mediaClassesDict);
 					var _n17 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithMedia);
 					return _Utils_Tuple2(
 						_Utils_update(
 							modelWithProblems,
-							{
-								exposition: A2(author$project$Exposition$addMediaUserClasses, expositionWithMedia, model.mediaClassesDict)
-							}),
-						elm$core$Platform$Cmd$none);
+							{exposition: expositionWithClasses}),
+						author$project$Main$setPreviewContent(expositionWithClasses.renderedHtml));
 				}
 			case 'MediaEdit':
 				var objFromDialog = msg.a;

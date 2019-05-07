@@ -325,14 +325,12 @@ update msg model =
                             Debug.log "loaded html" newExposition.renderedHtml
                     in
                     ( { model
-                        | exposition = RCAPI.toRCExposition e model.research model.weave
+                        | exposition = newExposition
                         , mediaClassesDict = RCAPI.toMediaClassesDict e
                       }
                     , Cmd.batch
                         [ RCAPI.getMediaList model.research GotMediaList
-                        , setPreviewContent newExposition.renderedHtml
-
-                        --                        , setContent newExposition.markdownInput
+                        , setContent newExposition.markdownInput
                         ]
                     )
 
@@ -377,13 +375,16 @@ update msg model =
                         expositionWithMedia =
                             List.foldr Exposition.addOrReplaceObject modelWithProblems.exposition mediaEntries
 
+                        expositionWithClasses =
+                            addMediaUserClasses expositionWithMedia model.mediaClassesDict
+
                         _ =
                             Debug.log "loaded exposition with media: " expositionWithMedia
                     in
                     ( { modelWithProblems
-                        | exposition = addMediaUserClasses expositionWithMedia model.mediaClassesDict
+                        | exposition = expositionWithClasses
                       }
-                    , Cmd.none
+                    , setPreviewContent expositionWithClasses.renderedHtml
                     )
 
         MediaEdit objFromDialog ->
