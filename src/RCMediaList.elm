@@ -1,13 +1,19 @@
 module RCMediaList exposing (view)
 
-import Bootstrap.Table as Table
 import Bootstrap.Button as Button
-import Html exposing (span, Html, text)
-import Html.Events exposing (onClick)
+import Bootstrap.Table as Table
 import Exposition exposing (RCMediaObject)
+import Html exposing (Html, span, text)
+import Html.Events exposing (onClick)
+
 
 type alias TableMessages msg =
-   { editTool : Int -> msg } -- integer is object ID
+    { editTool : Int -> msg }
+
+
+
+-- integer is object ID
+
 
 view : List RCMediaObject -> TableMessages msg -> Html msg
 view objectList messages =
@@ -21,22 +27,18 @@ view objectList messages =
                     Table.simpleThead
                         [ Table.th [] [ text "id" ]
                         , Table.th [] [ text "name" ]
-                        , Table.th [] [ text "info" ]
+                        , Table.th [] [ text "edit" ]
                         ]
 
                 rowFromRCObject : RCMediaObject -> Table.Row msg
                 rowFromRCObject object =
                     let
-                        info =
-                            "file url?"
-
                         editButton =
                             Button.button
-                                 [Button.outlinePrimary
-                                 ,Button.attrs [onClick <| messages.editTool object.id]
-                                 ]
-                                 [text "edit"]
-                                
+                                [ Button.info
+                                , Button.attrs [ onClick <| messages.editTool object.id ]
+                                ]
+                                [ text "edit" ]
                     in
                     Table.tr []
                         [ Table.td [] [ text <| String.fromInt object.id ]
@@ -48,7 +50,7 @@ view objectList messages =
                     List.map rowFromRCObject objectList
             in
             Table.table
-                { options = [Table.hover, Table.striped, Table.small]
+                { options = [ Table.hover, Table.striped, Table.small ]
                 , thead = head
                 , tbody =
                     Table.tbody [] rows

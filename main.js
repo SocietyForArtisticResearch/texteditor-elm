@@ -13553,6 +13553,9 @@ var author$project$Main$viewUpload = function (status) {
 				]));
 	}
 };
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Info = {$: 'Info'};
+var rundis$elm_bootstrap$Bootstrap$Button$info = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Info));
 var rundis$elm_bootstrap$Bootstrap$Table$Hover = {$: 'Hover'};
 var rundis$elm_bootstrap$Bootstrap$Table$hover = rundis$elm_bootstrap$Bootstrap$Table$Hover;
 var rundis$elm_bootstrap$Bootstrap$Table$THead = function (a) {
@@ -14112,12 +14115,11 @@ var author$project$RCMediaList$view = F2(
 					]));
 		} else {
 			var rowFromRCObject = function (object) {
-				var info = 'file url?';
 				var editButton = A2(
 					rundis$elm_bootstrap$Bootstrap$Button$button,
 					_List_fromArray(
 						[
-							rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary,
+							rundis$elm_bootstrap$Bootstrap$Button$info,
 							rundis$elm_bootstrap$Bootstrap$Button$attrs(
 							_List_fromArray(
 								[
@@ -14179,7 +14181,7 @@ var author$project$RCMediaList$view = F2(
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('info')
+								elm$html$Html$text('edit')
 							]))
 					]));
 			return rundis$elm_bootstrap$Bootstrap$Table$table(
