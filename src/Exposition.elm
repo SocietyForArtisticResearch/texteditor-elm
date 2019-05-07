@@ -1,21 +1,19 @@
-module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, isValid, mediaUrl, objectByNameOrId, render, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withMd, withRenderedHtmlString)
+module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, objectByNameOrId, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withHtml, withMd)
 
 import Dict
-import Html as Html
-import Html.Attributes as Attr
-import RCMD
+import Html.String as Html
+import Html.String.Attributes as Attr
 import Regex
 import Settings
 
 
-type alias RCExposition msg =
+type alias RCExposition =
     { css : String
     , title : String
     , authors : List String
     , id : Int
     , currentWeave : Int
-    , renderedHtml : Html.Html msg
-    , renderedHtmlString : String
+    , renderedHtml : String
     , markdownInput : String
     , media : List RCMediaObject
     , editorVersion : String
@@ -23,15 +21,14 @@ type alias RCExposition msg =
     }
 
 
-empty : RCExposition msg
+empty : RCExposition
 empty =
     { css = ""
     , title = ""
     , authors = []
     , id = 0
     , currentWeave = 0
-    , renderedHtml = Html.div [] []
-    , renderedHtmlString = ""
+    , renderedHtml = ""
     , markdownInput = ""
     , media = []
     , editorVersion = Settings.editorVersion
@@ -39,12 +36,12 @@ empty =
     }
 
 
-incContentVersion : RCExposition msg -> RCExposition msg
+incContentVersion : RCExposition -> RCExposition
 incContentVersion exp =
     { exp | contentVersion = exp.contentVersion + 1 }
 
 
-addMediaUserClasses : RCExposition msg -> Dict.Dict Int String -> RCExposition msg
+addMediaUserClasses : RCExposition -> Dict.Dict Int String -> RCExposition
 addMediaUserClasses expo classesDict =
     let
         mediaWithClasses =
@@ -62,9 +59,14 @@ addMediaUserClasses expo classesDict =
     { expo | media = mediaWithClasses }
 
 
-withMd : RCExposition msg -> String -> RCExposition msg
+withMd : RCExposition -> String -> RCExposition
 withMd exp content =
     { exp | markdownInput = content }
+
+
+withHtml : RCExposition -> String -> RCExposition
+withHtml exp content =
+    { exp | renderedHtml = content }
 
 
 type alias OptionalDimensions =
@@ -136,7 +138,7 @@ preloadToString p =
             "none"
 
 
-objectByNameOrId : String -> RCExposition msg -> Maybe RCMediaObject
+objectByNameOrId : String -> RCExposition -> Maybe RCMediaObject
 objectByNameOrId nameOrId exp =
     case String.toInt nameOrId of
         Just id ->
@@ -154,12 +156,12 @@ objectByNameOrId nameOrId exp =
             List.head nameLst
 
 
-removeObjectWithID : Int -> RCExposition msg -> RCExposition msg
+removeObjectWithID : Int -> RCExposition -> RCExposition
 removeObjectWithID id exp =
     { exp | media = List.filter (\m -> m.id /= id) exp.media }
 
 
-replaceObject : RCMediaObject -> RCExposition msg -> RCExposition msg
+replaceObject : RCMediaObject -> RCExposition -> RCExposition
 replaceObject obj exp =
     { exp
         | media =
@@ -175,12 +177,12 @@ replaceObject obj exp =
     }
 
 
-addObject : RCMediaObject -> RCExposition msg -> RCExposition msg
+addObject : RCMediaObject -> RCExposition -> RCExposition
 addObject obj exp =
     { exp | media = obj :: exp.media }
 
 
-addOrReplaceObject : RCMediaObject -> RCExposition msg -> RCExposition msg
+addOrReplaceObject : RCMediaObject -> RCExposition -> RCExposition
 addOrReplaceObject obj exp =
     if List.any (\m -> m.id == obj.id) exp.media then
         replaceObject obj exp
@@ -235,7 +237,7 @@ addDimensions dims attributes =
 -- VALIDATION
 
 
-validateName : RCExposition msg -> RCMediaObject -> String -> Result String String
+validateName : RCExposition -> RCMediaObject -> String -> Result String String
 validateName exp obj newName =
     if String.length newName < 4 then
         Err "Name is too short"
@@ -270,7 +272,7 @@ type alias RCMediaObjectViewState =
     }
 
 
-validateMediaObject : RCExposition msg -> RCMediaObject -> RCMediaObject -> RCMediaObjectViewState
+validateMediaObject : RCExposition -> RCMediaObject -> RCMediaObject -> RCMediaObjectViewState
 validateMediaObject exp objInModel objInEdit =
     let
         validation =
@@ -388,7 +390,7 @@ asHtml media =
                     ]
 
 
-htmlForMediaString : RCExposition msg -> String -> Html.Html msg
+htmlForMediaString : RCExposition -> String -> Html.Html msg
 htmlForMediaString expo mediaString =
     case objectByNameOrId mediaString expo of
         Nothing ->
@@ -398,17 +400,44 @@ htmlForMediaString expo mediaString =
             asHtml o
 
 
-render : RCExposition msg -> RCExposition msg
-render exp =
-    { exp | renderedHtml = RCMD.rcToHtml (htmlForMediaString exp) exp.markdownInput }
+
+-- render : RCExposition msg -> RCExposition msg
+-- render exp =
+--     { exp | renderedHtml = RCMD.rcToHtml (htmlForMediaString exp) exp.markdownInput }
+-- withRenderedHtmlString : RCExposition msg -> String -> RCExposition msg
+-- withRenderedHtmlString exp htmlString =
+--     { exp | renderedHtmlString = htmlString }
 
 
-withRenderedHtmlString : RCExposition msg -> String -> RCExposition msg
-withRenderedHtmlString exp htmlString =
-    { exp | renderedHtmlString = htmlString }
+insertToolHtml : String -> RCExposition -> String
+insertToolHtml md exp =
+    let
+        r =
+            Regex.fromString "!{([^}]*)}"
+    in
+    case r of
+        Nothing ->
+            md
+
+        Just reg ->
+            Regex.replace reg
+                (\m ->
+                    case m.submatches of
+                        (Just sub) :: _ ->
+                            Maybe.withDefault "" <|
+                                Maybe.map
+                                    (\o ->
+                                        Html.toString 0 (asHtml o)
+                                    )
+                                    (objectByNameOrId sub exp)
+
+                        _ ->
+                            ""
+                )
+                md
 
 
-replaceToolsWithImages : RCExposition msg -> Maybe String -> String
+replaceToolsWithImages : RCExposition -> Maybe String -> String
 replaceToolsWithImages exp urlPrefix =
     let
         md =
@@ -443,13 +472,16 @@ replaceToolsWithImages exp urlPrefix =
                 md
 
 
-toc : RCExposition msg -> List TOCEntry
-toc exp =
-    List.map
-        (\( level, title, id ) ->
-            { level = level
-            , title = title
-            , id = id
-            }
-        )
-        (RCMD.toc exp.markdownInput)
+
+-- toc : RCExposition -> List TOCEntry
+-- toc exp =
+--     List.map
+--         (\( level, title, id ) ->
+--             { level = level
+--             , title = title
+--             , id = id
+--             }
+--         )
+--         (RCMD.toc exp.markdownInput)
+-- TODO
+-- toc

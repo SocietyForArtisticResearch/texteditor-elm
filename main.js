@@ -2314,6 +2314,497 @@ function _Platform_mergeExportsDebug(moduleName, obj, exports)
 
 
 
+// SEND REQUEST
+
+var _Http_toTask = F3(function(router, toTask, request)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		function done(response) {
+			callback(toTask(request.expect.a(response)));
+		}
+
+		var xhr = new XMLHttpRequest();
+		xhr.addEventListener('error', function() { done(elm$http$Http$NetworkError_); });
+		xhr.addEventListener('timeout', function() { done(elm$http$Http$Timeout_); });
+		xhr.addEventListener('load', function() { done(_Http_toResponse(request.expect.b, xhr)); });
+		elm$core$Maybe$isJust(request.tracker) && _Http_track(router, xhr, request.tracker.a);
+
+		try {
+			xhr.open(request.method, request.url, true);
+		} catch (e) {
+			return done(elm$http$Http$BadUrl_(request.url));
+		}
+
+		_Http_configureRequest(xhr, request);
+
+		request.body.a && xhr.setRequestHeader('Content-Type', request.body.a);
+		xhr.send(request.body.b);
+
+		return function() { xhr.c = true; xhr.abort(); };
+	});
+});
+
+
+// CONFIGURE
+
+function _Http_configureRequest(xhr, request)
+{
+	for (var headers = request.headers; headers.b; headers = headers.b) // WHILE_CONS
+	{
+		xhr.setRequestHeader(headers.a.a, headers.a.b);
+	}
+	xhr.timeout = request.timeout.a || 0;
+	xhr.responseType = request.expect.d;
+	xhr.withCredentials = request.allowCookiesFromOtherDomains;
+}
+
+
+// RESPONSES
+
+function _Http_toResponse(toBody, xhr)
+{
+	return A2(
+		200 <= xhr.status && xhr.status < 300 ? elm$http$Http$GoodStatus_ : elm$http$Http$BadStatus_,
+		_Http_toMetadata(xhr),
+		toBody(xhr.response)
+	);
+}
+
+
+// METADATA
+
+function _Http_toMetadata(xhr)
+{
+	return {
+		url: xhr.responseURL,
+		statusCode: xhr.status,
+		statusText: xhr.statusText,
+		headers: _Http_parseHeaders(xhr.getAllResponseHeaders())
+	};
+}
+
+
+// HEADERS
+
+function _Http_parseHeaders(rawHeaders)
+{
+	if (!rawHeaders)
+	{
+		return elm$core$Dict$empty;
+	}
+
+	var headers = elm$core$Dict$empty;
+	var headerPairs = rawHeaders.split('\r\n');
+	for (var i = headerPairs.length; i--; )
+	{
+		var headerPair = headerPairs[i];
+		var index = headerPair.indexOf(': ');
+		if (index > 0)
+		{
+			var key = headerPair.substring(0, index);
+			var value = headerPair.substring(index + 2);
+
+			headers = A3(elm$core$Dict$update, key, function(oldValue) {
+				return elm$core$Maybe$Just(elm$core$Maybe$isJust(oldValue)
+					? value + ', ' + oldValue.a
+					: value
+				);
+			}, headers);
+		}
+	}
+	return headers;
+}
+
+
+// EXPECT
+
+var _Http_expect = F3(function(type, toBody, toValue)
+{
+	return {
+		$: 0,
+		d: type,
+		b: toBody,
+		a: toValue
+	};
+});
+
+var _Http_mapExpect = F2(function(func, expect)
+{
+	return {
+		$: 0,
+		d: expect.d,
+		b: expect.b,
+		a: function(x) { return func(expect.a(x)); }
+	};
+});
+
+function _Http_toDataView(arrayBuffer)
+{
+	return new DataView(arrayBuffer);
+}
+
+
+// BODY and PARTS
+
+var _Http_emptyBody = { $: 0 };
+var _Http_pair = F2(function(a, b) { return { $: 0, a: a, b: b }; });
+
+function _Http_toFormData(parts)
+{
+	for (var formData = new FormData(); parts.b; parts = parts.b) // WHILE_CONS
+	{
+		var part = parts.a;
+		formData.append(part.a, part.b);
+	}
+	return formData;
+}
+
+var _Http_bytesToBlob = F2(function(mime, bytes)
+{
+	return new Blob([bytes], { type: mime });
+});
+
+
+// PROGRESS
+
+function _Http_track(router, xhr, tracker)
+{
+	// TODO check out lengthComputable on loadstart event
+
+	xhr.upload.addEventListener('progress', function(event) {
+		if (xhr.c) { return; }
+		_Scheduler_rawSpawn(A2(elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, elm$http$Http$Sending({
+			sent: event.loaded,
+			size: event.total
+		}))));
+	});
+	xhr.addEventListener('progress', function(event) {
+		if (xhr.c) { return; }
+		_Scheduler_rawSpawn(A2(elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, elm$http$Http$Receiving({
+			received: event.loaded,
+			size: event.lengthComputable ? elm$core$Maybe$Just(event.total) : elm$core$Maybe$Nothing
+		}))));
+	});
+}
+
+// CREATE
+
+var _Regex_never = /.^/;
+
+var _Regex_fromStringWith = F2(function(options, string)
+{
+	var flags = 'g';
+	if (options.multiline) { flags += 'm'; }
+	if (options.caseInsensitive) { flags += 'i'; }
+
+	try
+	{
+		return elm$core$Maybe$Just(new RegExp(string, flags));
+	}
+	catch(error)
+	{
+		return elm$core$Maybe$Nothing;
+	}
+});
+
+
+// USE
+
+var _Regex_contains = F2(function(re, string)
+{
+	return string.match(re) !== null;
+});
+
+
+var _Regex_findAtMost = F3(function(n, re, str)
+{
+	var out = [];
+	var number = 0;
+	var string = str;
+	var lastIndex = re.lastIndex;
+	var prevLastIndex = -1;
+	var result;
+	while (number++ < n && (result = re.exec(string)))
+	{
+		if (prevLastIndex == re.lastIndex) break;
+		var i = result.length - 1;
+		var subs = new Array(i);
+		while (i > 0)
+		{
+			var submatch = result[i];
+			subs[--i] = submatch
+				? elm$core$Maybe$Just(submatch)
+				: elm$core$Maybe$Nothing;
+		}
+		out.push(A4(elm$regex$Regex$Match, result[0], result.index, number, _List_fromArray(subs)));
+		prevLastIndex = re.lastIndex;
+	}
+	re.lastIndex = lastIndex;
+	return _List_fromArray(out);
+});
+
+
+var _Regex_replaceAtMost = F4(function(n, re, replacer, string)
+{
+	var count = 0;
+	function jsReplacer(match)
+	{
+		if (count++ >= n)
+		{
+			return match;
+		}
+		var i = arguments.length - 3;
+		var submatches = new Array(i);
+		while (i > 0)
+		{
+			var submatch = arguments[i];
+			submatches[--i] = submatch
+				? elm$core$Maybe$Just(submatch)
+				: elm$core$Maybe$Nothing;
+		}
+		return replacer(A4(elm$regex$Regex$Match, match, arguments[arguments.length - 2], count, _List_fromArray(submatches)));
+	}
+	return string.replace(re, jsReplacer);
+});
+
+var _Regex_splitAtMost = F3(function(n, re, str)
+{
+	var string = str;
+	var out = [];
+	var start = re.lastIndex;
+	var restoreLastIndex = re.lastIndex;
+	while (n--)
+	{
+		var result = re.exec(string);
+		if (!result) break;
+		out.push(string.slice(start, result.index));
+		start = re.lastIndex;
+	}
+	out.push(string.slice(start));
+	re.lastIndex = restoreLastIndex;
+	return _List_fromArray(out);
+});
+
+var _Regex_infinity = Infinity;
+
+
+
+var _Bitwise_and = F2(function(a, b)
+{
+	return a & b;
+});
+
+var _Bitwise_or = F2(function(a, b)
+{
+	return a | b;
+});
+
+var _Bitwise_xor = F2(function(a, b)
+{
+	return a ^ b;
+});
+
+function _Bitwise_complement(a)
+{
+	return ~a;
+};
+
+var _Bitwise_shiftLeftBy = F2(function(offset, a)
+{
+	return a << offset;
+});
+
+var _Bitwise_shiftRightBy = F2(function(offset, a)
+{
+	return a >> offset;
+});
+
+var _Bitwise_shiftRightZfBy = F2(function(offset, a)
+{
+	return a >>> offset;
+});
+
+
+
+// DECODER
+
+var _File_decoder = _Json_decodePrim(function(value) {
+	// NOTE: checks if `File` exists in case this is run on node
+	return (typeof File !== 'undefined' && value instanceof File)
+		? elm$core$Result$Ok(value)
+		: _Json_expecting('a FILE', value);
+});
+
+
+// METADATA
+
+function _File_name(file) { return file.name; }
+function _File_mime(file) { return file.type; }
+function _File_size(file) { return file.size; }
+
+function _File_lastModified(file)
+{
+	return elm$time$Time$millisToPosix(file.lastModified);
+}
+
+
+// DOWNLOAD
+
+var _File_downloadNode;
+
+function _File_getDownloadNode()
+{
+	return _File_downloadNode || (_File_downloadNode = document.createElement('a'));
+}
+
+var _File_download = F3(function(name, mime, content)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var blob = new Blob([content], {type: mime});
+
+		// for IE10+
+		if (navigator.msSaveOrOpenBlob)
+		{
+			navigator.msSaveOrOpenBlob(blob, name);
+			return;
+		}
+
+		// for HTML5
+		var node = _File_getDownloadNode();
+		var objectUrl = URL.createObjectURL(blob);
+		node.href = objectUrl;
+		node.download = name;
+		_File_click(node);
+		URL.revokeObjectURL(objectUrl);
+	});
+});
+
+function _File_downloadUrl(href)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var node = _File_getDownloadNode();
+		node.href = href;
+		node.download = '';
+		node.origin === location.origin || (node.target = '_blank');
+		_File_click(node);
+	});
+}
+
+
+// IE COMPATIBILITY
+
+function _File_makeBytesSafeForInternetExplorer(bytes)
+{
+	// only needed by IE10 and IE11 to fix https://github.com/elm/file/issues/10
+	// all other browsers can just run `new Blob([bytes])` directly with no problem
+	//
+	return new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+}
+
+function _File_click(node)
+{
+	// only needed by IE10 and IE11 to fix https://github.com/elm/file/issues/11
+	// all other browsers have MouseEvent and do not need this conditional stuff
+	//
+	if (typeof MouseEvent === 'function')
+	{
+		node.dispatchEvent(new MouseEvent('click'));
+	}
+	else
+	{
+		var event = document.createEvent('MouseEvents');
+		event.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+		document.body.appendChild(node);
+		node.dispatchEvent(event);
+		document.body.removeChild(node);
+	}
+}
+
+
+// UPLOAD
+
+var _File_node;
+
+function _File_uploadOne(mimes)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		_File_node = document.createElement('input');
+		_File_node.type = 'file';
+		_File_node.accept = A2(elm$core$String$join, ',', mimes);
+		_File_node.addEventListener('change', function(event)
+		{
+			callback(_Scheduler_succeed(event.target.files[0]));
+		});
+		_File_click(_File_node);
+	});
+}
+
+function _File_uploadOneOrMore(mimes)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		_File_node = document.createElement('input');
+		_File_node.type = 'file';
+		_File_node.multiple = true;
+		_File_node.accept = A2(elm$core$String$join, ',', mimes);
+		_File_node.addEventListener('change', function(event)
+		{
+			var elmFiles = _List_fromArray(event.target.files);
+			callback(_Scheduler_succeed(_Utils_Tuple2(elmFiles.a, elmFiles.b)));
+		});
+		_File_click(_File_node);
+	});
+}
+
+
+// CONTENT
+
+function _File_toString(blob)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var reader = new FileReader();
+		reader.addEventListener('loadend', function() {
+			callback(_Scheduler_succeed(reader.result));
+		});
+		reader.readAsText(blob);
+		return function() { reader.abort(); };
+	});
+}
+
+function _File_toBytes(blob)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var reader = new FileReader();
+		reader.addEventListener('loadend', function() {
+			callback(_Scheduler_succeed(new DataView(reader.result)));
+		});
+		reader.readAsArrayBuffer(blob);
+		return function() { reader.abort(); };
+	});
+}
+
+function _File_toUrl(blob)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var reader = new FileReader();
+		reader.addEventListener('loadend', function() {
+			callback(_Scheduler_succeed(reader.result));
+		});
+		reader.readAsDataURL(blob);
+		return function() { reader.abort(); };
+	});
+}
+
+
+
+
 
 // HELPERS
 
@@ -3872,514 +4363,6 @@ function _VirtualDom_dekey(keyedNode)
 
 
 
-// SEND REQUEST
-
-var _Http_toTask = F3(function(router, toTask, request)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		function done(response) {
-			callback(toTask(request.expect.a(response)));
-		}
-
-		var xhr = new XMLHttpRequest();
-		xhr.addEventListener('error', function() { done(elm$http$Http$NetworkError_); });
-		xhr.addEventListener('timeout', function() { done(elm$http$Http$Timeout_); });
-		xhr.addEventListener('load', function() { done(_Http_toResponse(request.expect.b, xhr)); });
-		elm$core$Maybe$isJust(request.tracker) && _Http_track(router, xhr, request.tracker.a);
-
-		try {
-			xhr.open(request.method, request.url, true);
-		} catch (e) {
-			return done(elm$http$Http$BadUrl_(request.url));
-		}
-
-		_Http_configureRequest(xhr, request);
-
-		request.body.a && xhr.setRequestHeader('Content-Type', request.body.a);
-		xhr.send(request.body.b);
-
-		return function() { xhr.c = true; xhr.abort(); };
-	});
-});
-
-
-// CONFIGURE
-
-function _Http_configureRequest(xhr, request)
-{
-	for (var headers = request.headers; headers.b; headers = headers.b) // WHILE_CONS
-	{
-		xhr.setRequestHeader(headers.a.a, headers.a.b);
-	}
-	xhr.timeout = request.timeout.a || 0;
-	xhr.responseType = request.expect.d;
-	xhr.withCredentials = request.allowCookiesFromOtherDomains;
-}
-
-
-// RESPONSES
-
-function _Http_toResponse(toBody, xhr)
-{
-	return A2(
-		200 <= xhr.status && xhr.status < 300 ? elm$http$Http$GoodStatus_ : elm$http$Http$BadStatus_,
-		_Http_toMetadata(xhr),
-		toBody(xhr.response)
-	);
-}
-
-
-// METADATA
-
-function _Http_toMetadata(xhr)
-{
-	return {
-		url: xhr.responseURL,
-		statusCode: xhr.status,
-		statusText: xhr.statusText,
-		headers: _Http_parseHeaders(xhr.getAllResponseHeaders())
-	};
-}
-
-
-// HEADERS
-
-function _Http_parseHeaders(rawHeaders)
-{
-	if (!rawHeaders)
-	{
-		return elm$core$Dict$empty;
-	}
-
-	var headers = elm$core$Dict$empty;
-	var headerPairs = rawHeaders.split('\r\n');
-	for (var i = headerPairs.length; i--; )
-	{
-		var headerPair = headerPairs[i];
-		var index = headerPair.indexOf(': ');
-		if (index > 0)
-		{
-			var key = headerPair.substring(0, index);
-			var value = headerPair.substring(index + 2);
-
-			headers = A3(elm$core$Dict$update, key, function(oldValue) {
-				return elm$core$Maybe$Just(elm$core$Maybe$isJust(oldValue)
-					? value + ', ' + oldValue.a
-					: value
-				);
-			}, headers);
-		}
-	}
-	return headers;
-}
-
-
-// EXPECT
-
-var _Http_expect = F3(function(type, toBody, toValue)
-{
-	return {
-		$: 0,
-		d: type,
-		b: toBody,
-		a: toValue
-	};
-});
-
-var _Http_mapExpect = F2(function(func, expect)
-{
-	return {
-		$: 0,
-		d: expect.d,
-		b: expect.b,
-		a: function(x) { return func(expect.a(x)); }
-	};
-});
-
-function _Http_toDataView(arrayBuffer)
-{
-	return new DataView(arrayBuffer);
-}
-
-
-// BODY and PARTS
-
-var _Http_emptyBody = { $: 0 };
-var _Http_pair = F2(function(a, b) { return { $: 0, a: a, b: b }; });
-
-function _Http_toFormData(parts)
-{
-	for (var formData = new FormData(); parts.b; parts = parts.b) // WHILE_CONS
-	{
-		var part = parts.a;
-		formData.append(part.a, part.b);
-	}
-	return formData;
-}
-
-var _Http_bytesToBlob = F2(function(mime, bytes)
-{
-	return new Blob([bytes], { type: mime });
-});
-
-
-// PROGRESS
-
-function _Http_track(router, xhr, tracker)
-{
-	// TODO check out lengthComputable on loadstart event
-
-	xhr.upload.addEventListener('progress', function(event) {
-		if (xhr.c) { return; }
-		_Scheduler_rawSpawn(A2(elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, elm$http$Http$Sending({
-			sent: event.loaded,
-			size: event.total
-		}))));
-	});
-	xhr.addEventListener('progress', function(event) {
-		if (xhr.c) { return; }
-		_Scheduler_rawSpawn(A2(elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, elm$http$Http$Receiving({
-			received: event.loaded,
-			size: event.lengthComputable ? elm$core$Maybe$Just(event.total) : elm$core$Maybe$Nothing
-		}))));
-	});
-}
-
-// CREATE
-
-var _Regex_never = /.^/;
-
-var _Regex_fromStringWith = F2(function(options, string)
-{
-	var flags = 'g';
-	if (options.multiline) { flags += 'm'; }
-	if (options.caseInsensitive) { flags += 'i'; }
-
-	try
-	{
-		return elm$core$Maybe$Just(new RegExp(string, flags));
-	}
-	catch(error)
-	{
-		return elm$core$Maybe$Nothing;
-	}
-});
-
-
-// USE
-
-var _Regex_contains = F2(function(re, string)
-{
-	return string.match(re) !== null;
-});
-
-
-var _Regex_findAtMost = F3(function(n, re, str)
-{
-	var out = [];
-	var number = 0;
-	var string = str;
-	var lastIndex = re.lastIndex;
-	var prevLastIndex = -1;
-	var result;
-	while (number++ < n && (result = re.exec(string)))
-	{
-		if (prevLastIndex == re.lastIndex) break;
-		var i = result.length - 1;
-		var subs = new Array(i);
-		while (i > 0)
-		{
-			var submatch = result[i];
-			subs[--i] = submatch
-				? elm$core$Maybe$Just(submatch)
-				: elm$core$Maybe$Nothing;
-		}
-		out.push(A4(elm$regex$Regex$Match, result[0], result.index, number, _List_fromArray(subs)));
-		prevLastIndex = re.lastIndex;
-	}
-	re.lastIndex = lastIndex;
-	return _List_fromArray(out);
-});
-
-
-var _Regex_replaceAtMost = F4(function(n, re, replacer, string)
-{
-	var count = 0;
-	function jsReplacer(match)
-	{
-		if (count++ >= n)
-		{
-			return match;
-		}
-		var i = arguments.length - 3;
-		var submatches = new Array(i);
-		while (i > 0)
-		{
-			var submatch = arguments[i];
-			submatches[--i] = submatch
-				? elm$core$Maybe$Just(submatch)
-				: elm$core$Maybe$Nothing;
-		}
-		return replacer(A4(elm$regex$Regex$Match, match, arguments[arguments.length - 2], count, _List_fromArray(submatches)));
-	}
-	return string.replace(re, jsReplacer);
-});
-
-var _Regex_splitAtMost = F3(function(n, re, str)
-{
-	var string = str;
-	var out = [];
-	var start = re.lastIndex;
-	var restoreLastIndex = re.lastIndex;
-	while (n--)
-	{
-		var result = re.exec(string);
-		if (!result) break;
-		out.push(string.slice(start, result.index));
-		start = re.lastIndex;
-	}
-	out.push(string.slice(start));
-	re.lastIndex = restoreLastIndex;
-	return _List_fromArray(out);
-});
-
-var _Regex_infinity = Infinity;
-
-
-
-var _Bitwise_and = F2(function(a, b)
-{
-	return a & b;
-});
-
-var _Bitwise_or = F2(function(a, b)
-{
-	return a | b;
-});
-
-var _Bitwise_xor = F2(function(a, b)
-{
-	return a ^ b;
-});
-
-function _Bitwise_complement(a)
-{
-	return ~a;
-};
-
-var _Bitwise_shiftLeftBy = F2(function(offset, a)
-{
-	return a << offset;
-});
-
-var _Bitwise_shiftRightBy = F2(function(offset, a)
-{
-	return a >> offset;
-});
-
-var _Bitwise_shiftRightZfBy = F2(function(offset, a)
-{
-	return a >>> offset;
-});
-
-
-function _Url_percentEncode(string)
-{
-	return encodeURIComponent(string);
-}
-
-function _Url_percentDecode(string)
-{
-	try
-	{
-		return elm$core$Maybe$Just(decodeURIComponent(string));
-	}
-	catch (e)
-	{
-		return elm$core$Maybe$Nothing;
-	}
-}
-
-
-// DECODER
-
-var _File_decoder = _Json_decodePrim(function(value) {
-	// NOTE: checks if `File` exists in case this is run on node
-	return (typeof File !== 'undefined' && value instanceof File)
-		? elm$core$Result$Ok(value)
-		: _Json_expecting('a FILE', value);
-});
-
-
-// METADATA
-
-function _File_name(file) { return file.name; }
-function _File_mime(file) { return file.type; }
-function _File_size(file) { return file.size; }
-
-function _File_lastModified(file)
-{
-	return elm$time$Time$millisToPosix(file.lastModified);
-}
-
-
-// DOWNLOAD
-
-var _File_downloadNode;
-
-function _File_getDownloadNode()
-{
-	return _File_downloadNode || (_File_downloadNode = document.createElement('a'));
-}
-
-var _File_download = F3(function(name, mime, content)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		var blob = new Blob([content], {type: mime});
-
-		// for IE10+
-		if (navigator.msSaveOrOpenBlob)
-		{
-			navigator.msSaveOrOpenBlob(blob, name);
-			return;
-		}
-
-		// for HTML5
-		var node = _File_getDownloadNode();
-		var objectUrl = URL.createObjectURL(blob);
-		node.href = objectUrl;
-		node.download = name;
-		_File_click(node);
-		URL.revokeObjectURL(objectUrl);
-	});
-});
-
-function _File_downloadUrl(href)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		var node = _File_getDownloadNode();
-		node.href = href;
-		node.download = '';
-		node.origin === location.origin || (node.target = '_blank');
-		_File_click(node);
-	});
-}
-
-
-// IE COMPATIBILITY
-
-function _File_makeBytesSafeForInternetExplorer(bytes)
-{
-	// only needed by IE10 and IE11 to fix https://github.com/elm/file/issues/10
-	// all other browsers can just run `new Blob([bytes])` directly with no problem
-	//
-	return new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-}
-
-function _File_click(node)
-{
-	// only needed by IE10 and IE11 to fix https://github.com/elm/file/issues/11
-	// all other browsers have MouseEvent and do not need this conditional stuff
-	//
-	if (typeof MouseEvent === 'function')
-	{
-		node.dispatchEvent(new MouseEvent('click'));
-	}
-	else
-	{
-		var event = document.createEvent('MouseEvents');
-		event.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-		document.body.appendChild(node);
-		node.dispatchEvent(event);
-		document.body.removeChild(node);
-	}
-}
-
-
-// UPLOAD
-
-var _File_node;
-
-function _File_uploadOne(mimes)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		_File_node = document.createElement('input');
-		_File_node.type = 'file';
-		_File_node.accept = A2(elm$core$String$join, ',', mimes);
-		_File_node.addEventListener('change', function(event)
-		{
-			callback(_Scheduler_succeed(event.target.files[0]));
-		});
-		_File_click(_File_node);
-	});
-}
-
-function _File_uploadOneOrMore(mimes)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		_File_node = document.createElement('input');
-		_File_node.type = 'file';
-		_File_node.multiple = true;
-		_File_node.accept = A2(elm$core$String$join, ',', mimes);
-		_File_node.addEventListener('change', function(event)
-		{
-			var elmFiles = _List_fromArray(event.target.files);
-			callback(_Scheduler_succeed(_Utils_Tuple2(elmFiles.a, elmFiles.b)));
-		});
-		_File_click(_File_node);
-	});
-}
-
-
-// CONTENT
-
-function _File_toString(blob)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		var reader = new FileReader();
-		reader.addEventListener('loadend', function() {
-			callback(_Scheduler_succeed(reader.result));
-		});
-		reader.readAsText(blob);
-		return function() { reader.abort(); };
-	});
-}
-
-function _File_toBytes(blob)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		var reader = new FileReader();
-		reader.addEventListener('loadend', function() {
-			callback(_Scheduler_succeed(new DataView(reader.result)));
-		});
-		reader.readAsArrayBuffer(blob);
-		return function() { reader.abort(); };
-	});
-}
-
-function _File_toUrl(blob)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		var reader = new FileReader();
-		reader.addEventListener('loadend', function() {
-			callback(_Scheduler_succeed(reader.result));
-		});
-		reader.readAsDataURL(blob);
-		return function() { reader.abort(); };
-	});
-}
-
-
-
-
 
 // ELEMENT
 
@@ -5317,37 +5300,7 @@ var author$project$Main$decodeFlags = A3(
 	A2(elm$json$Json$Decode$field, 'weave', elm$json$Json$Decode$int),
 	A2(elm$json$Json$Decode$field, 'research', elm$json$Json$Decode$int));
 var author$project$Settings$editorVersion = '2.0.0';
-var elm$core$Basics$identity = function (x) {
-	return x;
-};
-var elm$json$Json$Decode$map = _Json_map1;
-var elm$json$Json$Decode$succeed = _Json_succeed;
-var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
-	switch (handler.$) {
-		case 'Normal':
-			return 0;
-		case 'MayStopPropagation':
-			return 1;
-		case 'MayPreventDefault':
-			return 2;
-		default:
-			return 3;
-	}
-};
-var elm$html$Html$div = _VirtualDom_node('div');
-var author$project$Exposition$empty = {
-	authors: _List_Nil,
-	contentVersion: 0,
-	css: '',
-	currentWeave: 0,
-	editorVersion: author$project$Settings$editorVersion,
-	id: 0,
-	markdownInput: '',
-	media: _List_Nil,
-	renderedHtml: A2(elm$html$Html$div, _List_Nil, _List_Nil),
-	renderedHtmlString: '',
-	title: ''
-};
+var author$project$Exposition$empty = {authors: _List_Nil, contentVersion: 0, css: '', currentWeave: 0, editorVersion: author$project$Settings$editorVersion, id: 0, markdownInput: '', media: _List_Nil, renderedHtml: '', title: ''};
 var author$project$Main$Ready = {$: 'Ready'};
 var elm$core$Basics$negate = function (n) {
 	return -n;
@@ -5378,6 +5331,7 @@ var author$project$RCAPI$APIExposition = F6(
 var author$project$RCAPI$Left = function (a) {
 	return {$: 'Left', a: a};
 };
+var elm$json$Json$Decode$map = _Json_map1;
 var elm$json$Json$Decode$string = _Json_decodeString;
 var author$project$RCAPI$eitherString = A2(elm$json$Json$Decode$map, author$project$RCAPI$Left, elm$json$Json$Decode$string);
 var elm$json$Json$Decode$map6 = _Json_map6;
@@ -5406,6 +5360,9 @@ var elm$core$Basics$composeR = F3(
 		return g(
 			f(x));
 	});
+var elm$core$Basics$identity = function (x) {
+	return x;
+};
 var elm$core$Basics$compare = _Utils_compare;
 var elm$core$Dict$get = F2(
 	function (targetKey, dict) {
@@ -6423,18 +6380,60 @@ var author$project$Exposition$incContentVersion = function (exp) {
 		exp,
 		{contentVersion: exp.contentVersion + 1});
 };
-var author$project$Exposition$isValid = function (st) {
-	var _n0 = _Utils_Tuple2(
-		_Utils_Tuple2(st.name, st.description),
-		_Utils_Tuple2(st.copyright, st.userClass));
-	if ((((_n0.a.a.$ === 'Ok') && (_n0.a.b.$ === 'Ok')) && (_n0.b.a.$ === 'Ok')) && (_n0.b.b.$ === 'Ok')) {
-		var _n1 = _n0.a;
-		var _n2 = _n0.b;
-		return true;
-	} else {
-		return false;
-	}
+var zwilias$elm_html_string$Html$Types$Attribute = F2(
+	function (a, b) {
+		return {$: 'Attribute', a: a, b: b};
+	});
+var zwilias$elm_html_string$Html$String$Attributes$attribute = zwilias$elm_html_string$Html$Types$Attribute;
+var zwilias$elm_html_string$Html$String$Attributes$height = function (val) {
+	return A2(
+		zwilias$elm_html_string$Html$String$Attributes$attribute,
+		'height',
+		elm$core$String$fromInt(val));
 };
+var zwilias$elm_html_string$Html$String$Attributes$width = function (val) {
+	return A2(
+		zwilias$elm_html_string$Html$String$Attributes$attribute,
+		'width',
+		elm$core$String$fromInt(val));
+};
+var author$project$Exposition$addDimensions = F2(
+	function (dims, attributes) {
+		if (dims.$ === 'Nothing') {
+			return attributes;
+		} else {
+			var _n1 = dims.a;
+			var h = _n1.a;
+			var w = _n1.b;
+			return _Utils_ap(
+				attributes,
+				_List_fromArray(
+					[
+						zwilias$elm_html_string$Html$String$Attributes$height(h),
+						zwilias$elm_html_string$Html$String$Attributes$width(w)
+					]));
+		}
+	});
+var author$project$Exposition$mediaUrl = function (data) {
+	return '/text-editor/simple-media-resource?research=' + (elm$core$String$fromInt(data.expositionId) + ('&simple-media=' + elm$core$String$fromInt(data.id)));
+};
+var elm$core$Basics$neq = _Utils_notEqual;
+var zwilias$elm_html_string$Html$Types$Node = F3(
+	function (a, b, c) {
+		return {$: 'Node', a: a, b: b, c: c};
+	});
+var zwilias$elm_html_string$Html$Types$Regular = function (a) {
+	return {$: 'Regular', a: a};
+};
+var zwilias$elm_html_string$Html$String$node = F3(
+	function (tag, attributes, children) {
+		return A3(
+			zwilias$elm_html_string$Html$Types$Node,
+			tag,
+			attributes,
+			zwilias$elm_html_string$Html$Types$Regular(children));
+	});
+var zwilias$elm_html_string$Html$String$div = zwilias$elm_html_string$Html$String$node('div');
 var elm$core$List$filter = F2(
 	function (isGood, list) {
 		return A3(
@@ -6446,6 +6445,289 @@ var elm$core$List$filter = F2(
 			_List_Nil,
 			list);
 	});
+var elm$core$Tuple$second = function (_n0) {
+	var y = _n0.b;
+	return y;
+};
+var zwilias$elm_html_string$Html$Types$StringProperty = F2(
+	function (a, b) {
+		return {$: 'StringProperty', a: a, b: b};
+	});
+var zwilias$elm_html_string$Html$String$Attributes$stringProperty = zwilias$elm_html_string$Html$Types$StringProperty;
+var zwilias$elm_html_string$Html$String$Attributes$class = function (className) {
+	return A2(zwilias$elm_html_string$Html$String$Attributes$stringProperty, 'className', className);
+};
+var zwilias$elm_html_string$Html$String$Attributes$classList = function (conditionalClasses) {
+	return zwilias$elm_html_string$Html$String$Attributes$class(
+		A2(
+			elm$core$String$join,
+			' ',
+			A2(
+				elm$core$List$map,
+				elm$core$Tuple$first,
+				A2(elm$core$List$filter, elm$core$Tuple$second, conditionalClasses))));
+};
+var zwilias$elm_html_string$Html$String$Attributes$id = function (val) {
+	return A2(zwilias$elm_html_string$Html$String$Attributes$stringProperty, 'id', val);
+};
+var author$project$Exposition$objectDiv = F2(
+	function (obj, child) {
+		return A2(
+			zwilias$elm_html_string$Html$String$div,
+			_List_fromArray(
+				[
+					zwilias$elm_html_string$Html$String$Attributes$id(
+					elm$core$String$fromInt(obj.id)),
+					zwilias$elm_html_string$Html$String$Attributes$classList(
+					_List_fromArray(
+						[
+							_Utils_Tuple2('rcobject', true),
+							_Utils_Tuple2(obj.userClass, obj.userClass !== '')
+						]))
+				]),
+			_List_fromArray(
+				[child]));
+	});
+var author$project$Exposition$preloadToString = function (p) {
+	switch (p.$) {
+		case 'Auto':
+			return 'auto';
+		case 'Metadata':
+			return 'metadata';
+		default:
+			return 'none';
+	}
+};
+var zwilias$elm_html_string$Html$String$audio = zwilias$elm_html_string$Html$String$node('audio');
+var zwilias$elm_html_string$Html$String$figcaption = zwilias$elm_html_string$Html$String$node('figcaption');
+var zwilias$elm_html_string$Html$String$figure = zwilias$elm_html_string$Html$String$node('figure');
+var zwilias$elm_html_string$Html$Types$NoChildren = {$: 'NoChildren'};
+var zwilias$elm_html_string$Html$String$nodeWithoutChildren = F3(
+	function (tag, attrs, _n0) {
+		return A3(zwilias$elm_html_string$Html$Types$Node, tag, attrs, zwilias$elm_html_string$Html$Types$NoChildren);
+	});
+var zwilias$elm_html_string$Html$String$img = zwilias$elm_html_string$Html$String$nodeWithoutChildren('img');
+var zwilias$elm_html_string$Html$String$object = zwilias$elm_html_string$Html$String$node('object');
+var zwilias$elm_html_string$Html$String$source = zwilias$elm_html_string$Html$String$nodeWithoutChildren('source');
+var zwilias$elm_html_string$Html$Types$TextNode = function (a) {
+	return {$: 'TextNode', a: a};
+};
+var zwilias$elm_html_string$Html$String$text = zwilias$elm_html_string$Html$Types$TextNode;
+var zwilias$elm_html_string$Html$String$video = zwilias$elm_html_string$Html$String$node('video');
+var zwilias$elm_html_string$Html$String$Attributes$alt = function (val) {
+	return A2(zwilias$elm_html_string$Html$String$Attributes$stringProperty, 'alt', val);
+};
+var zwilias$elm_html_string$Html$Types$BoolProperty = F2(
+	function (a, b) {
+		return {$: 'BoolProperty', a: a, b: b};
+	});
+var zwilias$elm_html_string$Html$String$Attributes$boolProperty = zwilias$elm_html_string$Html$Types$BoolProperty;
+var zwilias$elm_html_string$Html$String$Attributes$autoplay = function (bool) {
+	return A2(zwilias$elm_html_string$Html$String$Attributes$boolProperty, 'autoplay', bool);
+};
+var zwilias$elm_html_string$Html$String$Attributes$controls = function (bool) {
+	return A2(zwilias$elm_html_string$Html$String$Attributes$boolProperty, 'controls', bool);
+};
+var zwilias$elm_html_string$Html$String$Attributes$loop = function (bool) {
+	return A2(zwilias$elm_html_string$Html$String$Attributes$boolProperty, 'loop', bool);
+};
+var zwilias$elm_html_string$Html$String$Attributes$preload = function (val) {
+	return A2(zwilias$elm_html_string$Html$String$Attributes$stringProperty, 'preload', val);
+};
+var zwilias$elm_html_string$Html$String$Attributes$src = function (val) {
+	return A2(zwilias$elm_html_string$Html$String$Attributes$stringProperty, 'src', val);
+};
+var author$project$Exposition$asHtml = function (media) {
+	var _n0 = _Utils_Tuple2(media.mediaType, media);
+	switch (_n0.a.$) {
+		case 'RCImage':
+			var _n1 = _n0.a;
+			var data = _n0.b;
+			return A2(
+				author$project$Exposition$objectDiv,
+				data,
+				A2(
+					zwilias$elm_html_string$Html$String$figure,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							zwilias$elm_html_string$Html$String$img,
+							A2(
+								author$project$Exposition$addDimensions,
+								data.dimensions,
+								_List_fromArray(
+									[
+										zwilias$elm_html_string$Html$String$Attributes$src(
+										author$project$Exposition$mediaUrl(data)),
+										zwilias$elm_html_string$Html$String$Attributes$alt(data.name)
+									])),
+							_List_Nil),
+							A2(
+							zwilias$elm_html_string$Html$String$figcaption,
+							_List_Nil,
+							_List_fromArray(
+								[
+									zwilias$elm_html_string$Html$String$text(data.caption)
+								]))
+						])));
+		case 'RCPdf':
+			var _n2 = _n0.a;
+			var data = _n0.b;
+			return A2(
+				author$project$Exposition$objectDiv,
+				data,
+				A2(
+					zwilias$elm_html_string$Html$String$figure,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							zwilias$elm_html_string$Html$String$object,
+							A2(
+								author$project$Exposition$addDimensions,
+								data.dimensions,
+								_List_fromArray(
+									[
+										A2(
+										zwilias$elm_html_string$Html$String$Attributes$attribute,
+										'data',
+										author$project$Exposition$mediaUrl(data)),
+										A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'type', 'application/pdf'),
+										A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'title', data.name)
+									])),
+							_List_Nil),
+							A2(
+							zwilias$elm_html_string$Html$String$figcaption,
+							_List_Nil,
+							_List_fromArray(
+								[
+									zwilias$elm_html_string$Html$String$text(data.caption)
+								]))
+						])));
+		case 'RCSvg':
+			var _n3 = _n0.a;
+			var data = _n0.b;
+			return A2(
+				author$project$Exposition$objectDiv,
+				data,
+				A2(
+					zwilias$elm_html_string$Html$String$figure,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							zwilias$elm_html_string$Html$String$object,
+							A2(
+								author$project$Exposition$addDimensions,
+								data.dimensions,
+								_List_fromArray(
+									[
+										A2(
+										zwilias$elm_html_string$Html$String$Attributes$attribute,
+										'data',
+										author$project$Exposition$mediaUrl(data)),
+										A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'type', 'application/svg+xml'),
+										A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'title', data.name)
+									])),
+							_List_Nil),
+							A2(
+							zwilias$elm_html_string$Html$String$figcaption,
+							_List_Nil,
+							_List_fromArray(
+								[
+									zwilias$elm_html_string$Html$String$text(data.caption)
+								]))
+						])));
+		case 'RCAudio':
+			var playerData = _n0.a.a;
+			var data = _n0.b;
+			return A2(
+				author$project$Exposition$objectDiv,
+				data,
+				A2(
+					zwilias$elm_html_string$Html$String$figure,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							zwilias$elm_html_string$Html$String$audio,
+							A2(
+								author$project$Exposition$addDimensions,
+								data.dimensions,
+								_List_fromArray(
+									[
+										zwilias$elm_html_string$Html$String$Attributes$controls(true),
+										zwilias$elm_html_string$Html$String$Attributes$preload(
+										author$project$Exposition$preloadToString(playerData.preload)),
+										zwilias$elm_html_string$Html$String$Attributes$autoplay(playerData.autoplay),
+										zwilias$elm_html_string$Html$String$Attributes$loop(playerData.loop)
+									])),
+							_List_fromArray(
+								[
+									A2(
+									zwilias$elm_html_string$Html$String$source,
+									_List_fromArray(
+										[
+											zwilias$elm_html_string$Html$String$Attributes$src(
+											author$project$Exposition$mediaUrl(data))
+										]),
+									_List_Nil)
+								])),
+							A2(
+							zwilias$elm_html_string$Html$String$figcaption,
+							_List_Nil,
+							_List_fromArray(
+								[
+									zwilias$elm_html_string$Html$String$text(data.caption)
+								]))
+						])));
+		default:
+			var playerData = _n0.a.a;
+			var data = _n0.b;
+			return A2(
+				author$project$Exposition$objectDiv,
+				data,
+				A2(
+					zwilias$elm_html_string$Html$String$figure,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							zwilias$elm_html_string$Html$String$video,
+							A2(
+								author$project$Exposition$addDimensions,
+								data.dimensions,
+								_List_fromArray(
+									[
+										zwilias$elm_html_string$Html$String$Attributes$controls(true),
+										zwilias$elm_html_string$Html$String$Attributes$preload(
+										author$project$Exposition$preloadToString(playerData.preload)),
+										zwilias$elm_html_string$Html$String$Attributes$autoplay(playerData.autoplay),
+										zwilias$elm_html_string$Html$String$Attributes$loop(playerData.loop)
+									])),
+							_List_fromArray(
+								[
+									A2(
+									zwilias$elm_html_string$Html$String$source,
+									_List_fromArray(
+										[
+											zwilias$elm_html_string$Html$String$Attributes$src(
+											author$project$Exposition$mediaUrl(data)),
+											A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'type', 'video/mp4')
+										]),
+									_List_Nil)
+								])),
+							A2(
+							zwilias$elm_html_string$Html$String$figcaption,
+							_List_Nil,
+							_List_fromArray(
+								[
+									zwilias$elm_html_string$Html$String$text(data.caption)
+								]))
+						])));
+	}
+};
 var elm$core$List$head = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -6478,326 +6760,14 @@ var author$project$Exposition$objectByNameOrId = F2(
 			return elm$core$List$head(nameLst);
 		}
 	});
-var elm$html$Html$Attributes$height = function (n) {
-	return A2(
-		_VirtualDom_attribute,
-		'height',
-		elm$core$String$fromInt(n));
-};
-var elm$html$Html$Attributes$width = function (n) {
-	return A2(
-		_VirtualDom_attribute,
-		'width',
-		elm$core$String$fromInt(n));
-};
-var author$project$Exposition$addDimensions = F2(
-	function (dims, attributes) {
-		if (dims.$ === 'Nothing') {
-			return attributes;
+var elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return elm$core$Maybe$Just(
+				f(value));
 		} else {
-			var _n1 = dims.a;
-			var h = _n1.a;
-			var w = _n1.b;
-			return _Utils_ap(
-				attributes,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$height(h),
-						elm$html$Html$Attributes$width(w)
-					]));
-		}
-	});
-var author$project$Exposition$mediaUrl = function (data) {
-	return '/text-editor/simple-media-resource?research=' + (elm$core$String$fromInt(data.expositionId) + ('&simple-media=' + elm$core$String$fromInt(data.id)));
-};
-var elm$core$Basics$neq = _Utils_notEqual;
-var elm$core$Tuple$second = function (_n0) {
-	var y = _n0.b;
-	return y;
-};
-var elm$json$Json$Encode$string = _Json_wrap;
-var elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$string(string));
-	});
-var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
-var elm$html$Html$Attributes$classList = function (classes) {
-	return elm$html$Html$Attributes$class(
-		A2(
-			elm$core$String$join,
-			' ',
-			A2(
-				elm$core$List$map,
-				elm$core$Tuple$first,
-				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
-};
-var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
-var author$project$Exposition$objectDiv = F2(
-	function (obj, child) {
-		return A2(
-			elm$html$Html$div,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$id(
-					elm$core$String$fromInt(obj.id)),
-					elm$html$Html$Attributes$classList(
-					_List_fromArray(
-						[
-							_Utils_Tuple2('rcobject', true),
-							_Utils_Tuple2(obj.userClass, obj.userClass !== '')
-						]))
-				]),
-			_List_fromArray(
-				[child]));
-	});
-var author$project$Exposition$preloadToString = function (p) {
-	switch (p.$) {
-		case 'Auto':
-			return 'auto';
-		case 'Metadata':
-			return 'metadata';
-		default:
-			return 'none';
-	}
-};
-var elm$html$Html$audio = _VirtualDom_node('audio');
-var elm$html$Html$figcaption = _VirtualDom_node('figcaption');
-var elm$html$Html$figure = _VirtualDom_node('figure');
-var elm$html$Html$img = _VirtualDom_node('img');
-var elm$html$Html$object = _VirtualDom_node('object');
-var elm$html$Html$source = _VirtualDom_node('source');
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var elm$html$Html$video = _VirtualDom_node('video');
-var elm$html$Html$Attributes$alt = elm$html$Html$Attributes$stringProperty('alt');
-var elm$virtual_dom$VirtualDom$attribute = F2(
-	function (key, value) {
-		return A2(
-			_VirtualDom_attribute,
-			_VirtualDom_noOnOrFormAction(key),
-			_VirtualDom_noJavaScriptOrHtmlUri(value));
-	});
-var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
-var elm$json$Json$Encode$bool = _Json_wrap;
-var elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$bool(bool));
-	});
-var elm$html$Html$Attributes$autoplay = elm$html$Html$Attributes$boolProperty('autoplay');
-var elm$html$Html$Attributes$controls = elm$html$Html$Attributes$boolProperty('controls');
-var elm$html$Html$Attributes$loop = elm$html$Html$Attributes$boolProperty('loop');
-var elm$html$Html$Attributes$preload = elm$html$Html$Attributes$stringProperty('preload');
-var elm$html$Html$Attributes$src = function (url) {
-	return A2(
-		elm$html$Html$Attributes$stringProperty,
-		'src',
-		_VirtualDom_noJavaScriptOrHtmlUri(url));
-};
-var author$project$Exposition$asHtml = function (media) {
-	var _n0 = _Utils_Tuple2(media.mediaType, media);
-	switch (_n0.a.$) {
-		case 'RCImage':
-			var _n1 = _n0.a;
-			var data = _n0.b;
-			return A2(
-				author$project$Exposition$objectDiv,
-				data,
-				A2(
-					elm$html$Html$figure,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$img,
-							A2(
-								author$project$Exposition$addDimensions,
-								data.dimensions,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$src(
-										author$project$Exposition$mediaUrl(data)),
-										elm$html$Html$Attributes$alt(data.name)
-									])),
-							_List_Nil),
-							A2(
-							elm$html$Html$figcaption,
-							_List_Nil,
-							_List_fromArray(
-								[
-									elm$html$Html$text(data.caption)
-								]))
-						])));
-		case 'RCPdf':
-			var _n2 = _n0.a;
-			var data = _n0.b;
-			return A2(
-				author$project$Exposition$objectDiv,
-				data,
-				A2(
-					elm$html$Html$figure,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$object,
-							A2(
-								author$project$Exposition$addDimensions,
-								data.dimensions,
-								_List_fromArray(
-									[
-										A2(
-										elm$html$Html$Attributes$attribute,
-										'data',
-										author$project$Exposition$mediaUrl(data)),
-										A2(elm$html$Html$Attributes$attribute, 'type', 'application/pdf'),
-										A2(elm$html$Html$Attributes$attribute, 'title', data.name)
-									])),
-							_List_Nil),
-							A2(
-							elm$html$Html$figcaption,
-							_List_Nil,
-							_List_fromArray(
-								[
-									elm$html$Html$text(data.caption)
-								]))
-						])));
-		case 'RCSvg':
-			var _n3 = _n0.a;
-			var data = _n0.b;
-			return A2(
-				author$project$Exposition$objectDiv,
-				data,
-				A2(
-					elm$html$Html$figure,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$object,
-							A2(
-								author$project$Exposition$addDimensions,
-								data.dimensions,
-								_List_fromArray(
-									[
-										A2(
-										elm$html$Html$Attributes$attribute,
-										'data',
-										author$project$Exposition$mediaUrl(data)),
-										A2(elm$html$Html$Attributes$attribute, 'type', 'application/svg+xml'),
-										A2(elm$html$Html$Attributes$attribute, 'title', data.name)
-									])),
-							_List_Nil),
-							A2(
-							elm$html$Html$figcaption,
-							_List_Nil,
-							_List_fromArray(
-								[
-									elm$html$Html$text(data.caption)
-								]))
-						])));
-		case 'RCAudio':
-			var playerData = _n0.a.a;
-			var data = _n0.b;
-			return A2(
-				author$project$Exposition$objectDiv,
-				data,
-				A2(
-					elm$html$Html$figure,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$audio,
-							A2(
-								author$project$Exposition$addDimensions,
-								data.dimensions,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$controls(true),
-										elm$html$Html$Attributes$preload(
-										author$project$Exposition$preloadToString(playerData.preload)),
-										elm$html$Html$Attributes$autoplay(playerData.autoplay),
-										elm$html$Html$Attributes$loop(playerData.loop)
-									])),
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$source,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$src(
-											author$project$Exposition$mediaUrl(data))
-										]),
-									_List_Nil)
-								])),
-							A2(
-							elm$html$Html$figcaption,
-							_List_Nil,
-							_List_fromArray(
-								[
-									elm$html$Html$text(data.caption)
-								]))
-						])));
-		default:
-			var playerData = _n0.a.a;
-			var data = _n0.b;
-			return A2(
-				author$project$Exposition$objectDiv,
-				data,
-				A2(
-					elm$html$Html$figure,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$video,
-							A2(
-								author$project$Exposition$addDimensions,
-								data.dimensions,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$controls(true),
-										elm$html$Html$Attributes$preload(
-										author$project$Exposition$preloadToString(playerData.preload)),
-										elm$html$Html$Attributes$autoplay(playerData.autoplay),
-										elm$html$Html$Attributes$loop(playerData.loop)
-									])),
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$source,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$src(
-											author$project$Exposition$mediaUrl(data)),
-											A2(elm$html$Html$Attributes$attribute, 'type', 'video/mp4')
-										]),
-									_List_Nil)
-								])),
-							A2(
-							elm$html$Html$figcaption,
-							_List_Nil,
-							_List_fromArray(
-								[
-									elm$html$Html$text(data.caption)
-								]))
-						])));
-	}
-};
-var author$project$Exposition$htmlForMediaString = F2(
-	function (expo, mediaString) {
-		var _n0 = A2(author$project$Exposition$objectByNameOrId, mediaString, expo);
-		if (_n0.$ === 'Nothing') {
-			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
-		} else {
-			var o = _n0.a;
-			return author$project$Exposition$asHtml(o);
+			return elm$core$Maybe$Nothing;
 		}
 	});
 var elm$core$Maybe$withDefault = F2(
@@ -6809,220 +6779,10 @@ var elm$core$Maybe$withDefault = F2(
 			return _default;
 		}
 	});
-var elm$html$Html$a = _VirtualDom_node('a');
-var elm$html$Html$br = _VirtualDom_node('br');
-var elm$html$Html$code = _VirtualDom_node('code');
-var elm$html$Html$em = _VirtualDom_node('em');
-var elm$virtual_dom$VirtualDom$node = function (tag) {
-	return _VirtualDom_node(
-		_VirtualDom_noScript(tag));
-};
-var elm$html$Html$node = elm$virtual_dom$VirtualDom$node;
-var elm$html$Html$strong = _VirtualDom_node('strong');
-var elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
-};
-var elm$html$Html$Attributes$title = elm$html$Html$Attributes$stringProperty('title');
-var pablohirafuji$elm_markdown$Markdown$Inline$Emphasis = F2(
-	function (a, b) {
-		return {$: 'Emphasis', a: a, b: b};
-	});
-var pablohirafuji$elm_markdown$Markdown$Inline$attributeToAttribute = function (_n0) {
-	var name = _n0.a;
-	var maybeValue = _n0.b;
-	return A2(
-		elm$html$Html$Attributes$attribute,
-		name,
-		A2(elm$core$Maybe$withDefault, name, maybeValue));
-};
-var pablohirafuji$elm_markdown$Markdown$Inline$attributesToHtmlAttributes = elm$core$List$map(pablohirafuji$elm_markdown$Markdown$Inline$attributeToAttribute);
-var pablohirafuji$elm_markdown$Markdown$Inline$extractText = function (inlines) {
-	return A3(elm$core$List$foldl, pablohirafuji$elm_markdown$Markdown$Inline$extractTextHelp, '', inlines);
-};
-var pablohirafuji$elm_markdown$Markdown$Inline$extractTextHelp = F2(
-	function (inline, text) {
-		switch (inline.$) {
-			case 'Text':
-				var str = inline.a;
-				return _Utils_ap(text, str);
-			case 'HardLineBreak':
-				return text + ' ';
-			case 'CodeInline':
-				var str = inline.a;
-				return _Utils_ap(text, str);
-			case 'Link':
-				var inlines = inline.c;
-				return _Utils_ap(
-					text,
-					pablohirafuji$elm_markdown$Markdown$Inline$extractText(inlines));
-			case 'Image':
-				var inlines = inline.c;
-				return _Utils_ap(
-					text,
-					pablohirafuji$elm_markdown$Markdown$Inline$extractText(inlines));
-			case 'HtmlInline':
-				var inlines = inline.c;
-				return _Utils_ap(
-					text,
-					pablohirafuji$elm_markdown$Markdown$Inline$extractText(inlines));
-			case 'Emphasis':
-				var inlines = inline.b;
-				return _Utils_ap(
-					text,
-					pablohirafuji$elm_markdown$Markdown$Inline$extractText(inlines));
-			default:
-				var inlines = inline.b;
-				return _Utils_ap(
-					text,
-					pablohirafuji$elm_markdown$Markdown$Inline$extractText(inlines));
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$Inline$defaultHtml = F2(
-	function (customTransformer, inline) {
-		var transformer = A2(
-			elm$core$Maybe$withDefault,
-			pablohirafuji$elm_markdown$Markdown$Inline$defaultHtml(elm$core$Maybe$Nothing),
-			customTransformer);
-		switch (inline.$) {
-			case 'Text':
-				var str = inline.a;
-				return elm$html$Html$text(str);
-			case 'HardLineBreak':
-				return A2(elm$html$Html$br, _List_Nil, _List_Nil);
-			case 'CodeInline':
-				var codeStr = inline.a;
-				return A2(
-					elm$html$Html$code,
-					_List_Nil,
-					_List_fromArray(
-						[
-							elm$html$Html$text(codeStr)
-						]));
-			case 'Link':
-				var url = inline.a;
-				var maybeTitle = inline.b;
-				var inlines = inline.c;
-				if (maybeTitle.$ === 'Just') {
-					var title_ = maybeTitle.a;
-					return A2(
-						elm$html$Html$a,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$href(url),
-								elm$html$Html$Attributes$title(title_)
-							]),
-						A2(elm$core$List$map, transformer, inlines));
-				} else {
-					return A2(
-						elm$html$Html$a,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$href(url)
-							]),
-						A2(elm$core$List$map, transformer, inlines));
-				}
-			case 'Image':
-				var url = inline.a;
-				var maybeTitle = inline.b;
-				var inlines = inline.c;
-				if (maybeTitle.$ === 'Just') {
-					var title_ = maybeTitle.a;
-					return A2(
-						elm$html$Html$img,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$alt(
-								pablohirafuji$elm_markdown$Markdown$Inline$extractText(inlines)),
-								elm$html$Html$Attributes$src(url),
-								elm$html$Html$Attributes$title(title_)
-							]),
-						_List_Nil);
-				} else {
-					return A2(
-						elm$html$Html$img,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$alt(
-								pablohirafuji$elm_markdown$Markdown$Inline$extractText(inlines)),
-								elm$html$Html$Attributes$src(url)
-							]),
-						_List_Nil);
-				}
-			case 'HtmlInline':
-				var tag = inline.a;
-				var attrs = inline.b;
-				var inlines = inline.c;
-				return A3(
-					elm$html$Html$node,
-					tag,
-					pablohirafuji$elm_markdown$Markdown$Inline$attributesToHtmlAttributes(attrs),
-					A2(elm$core$List$map, transformer, inlines));
-			case 'Emphasis':
-				var length = inline.a;
-				var inlines = inline.b;
-				switch (length) {
-					case 1:
-						return A2(
-							elm$html$Html$em,
-							_List_Nil,
-							A2(elm$core$List$map, transformer, inlines));
-					case 2:
-						return A2(
-							elm$html$Html$strong,
-							_List_Nil,
-							A2(elm$core$List$map, transformer, inlines));
-					default:
-						return ((length - 2) > 0) ? A2(
-							elm$html$Html$strong,
-							_List_Nil,
-							function (a) {
-								return A2(elm$core$List$cons, a, _List_Nil);
-							}(
-								transformer(
-									A2(pablohirafuji$elm_markdown$Markdown$Inline$Emphasis, length - 2, inlines)))) : A2(
-							elm$html$Html$em,
-							_List_Nil,
-							A2(elm$core$List$map, transformer, inlines));
-				}
-			default:
-				var inlines = inline.b;
-				return elm$html$Html$text('');
-		}
-	});
-var author$project$RCMD$rcInlineView = F2(
-	function (htmlFun, inline) {
-		if (inline.$ === 'Custom') {
-			var str = inline.a.a;
-			return htmlFun(str);
-		} else {
-			return A2(
-				pablohirafuji$elm_markdown$Markdown$Inline$defaultHtml,
-				elm$core$Maybe$Just(
-					author$project$RCMD$rcInlineView(htmlFun)),
-				inline);
-		}
-	});
-var elm$html$Html$h1 = _VirtualDom_node('h1');
-var elm$html$Html$h2 = _VirtualDom_node('h2');
-var elm$html$Html$h3 = _VirtualDom_node('h3');
-var elm$html$Html$h4 = _VirtualDom_node('h4');
-var elm$html$Html$h5 = _VirtualDom_node('h5');
-var elm$html$Html$h6 = _VirtualDom_node('h6');
-var elm$core$Basics$always = F2(
-	function (a, _n0) {
-		return a;
-	});
-var elm$core$String$append = _String_append;
-var elm$core$String$toLower = _String_toLower;
-var elm$core$String$trim = _String_trim;
 var elm$regex$Regex$Match = F4(
 	function (match, index, number, submatches) {
 		return {index: index, match: match, number: number, submatches: submatches};
 	});
-var elm$regex$Regex$replace = _Regex_replaceAtMost(_Regex_infinity);
 var elm$regex$Regex$fromStringWith = _Regex_fromStringWith;
 var elm$regex$Regex$fromString = function (string) {
 	return A2(
@@ -7030,1161 +6790,11 @@ var elm$regex$Regex$fromString = function (string) {
 		{caseInsensitive: false, multiline: false},
 		string);
 };
-var elm$regex$Regex$never = _Regex_never;
-var elm_community$string_extra$String$Extra$regexFromString = A2(
-	elm$core$Basics$composeR,
-	elm$regex$Regex$fromString,
-	elm$core$Maybe$withDefault(elm$regex$Regex$never));
-var elm_community$string_extra$String$Extra$dasherize = function (string) {
-	return elm$core$String$toLower(
-		A3(
-			elm$regex$Regex$replace,
-			elm_community$string_extra$String$Extra$regexFromString('[_-\\s]+'),
-			elm$core$Basics$always('-'),
-			A3(
-				elm$regex$Regex$replace,
-				elm_community$string_extra$String$Extra$regexFromString('([A-Z])'),
-				A2(
-					elm$core$Basics$composeR,
-					function ($) {
-						return $.match;
-					},
-					elm$core$String$append('-')),
-				elm$core$String$trim(string))));
-};
-var elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
-		}
+var elm$regex$Regex$replace = _Regex_replaceAtMost(_Regex_infinity);
+var elm$core$Basics$always = F2(
+	function (a, _n0) {
+		return a;
 	});
-var elm$core$List$concat = function (lists) {
-	return A3(elm$core$List$foldr, elm$core$List$append, _List_Nil, lists);
-};
-var elm$html$Html$blockquote = _VirtualDom_node('blockquote');
-var elm$html$Html$hr = _VirtualDom_node('hr');
-var elm$html$Html$li = _VirtualDom_node('li');
-var elm$html$Html$ol = _VirtualDom_node('ol');
-var elm$html$Html$p = _VirtualDom_node('p');
-var elm$html$Html$pre = _VirtualDom_node('pre');
-var elm$html$Html$ul = _VirtualDom_node('ul');
-var elm$html$Html$Attributes$start = function (n) {
-	return A2(
-		elm$html$Html$Attributes$stringProperty,
-		'start',
-		elm$core$String$fromInt(n));
-};
-var pablohirafuji$elm_markdown$Markdown$Inline$toHtml = pablohirafuji$elm_markdown$Markdown$Inline$defaultHtml(elm$core$Maybe$Nothing);
-var pablohirafuji$elm_markdown$Markdown$Block$defaultHtml = F3(
-	function (customHtml, customInlineHtml, block) {
-		var inlineToHtml = A2(elm$core$Maybe$withDefault, pablohirafuji$elm_markdown$Markdown$Inline$toHtml, customInlineHtml);
-		var blockToHtml = A2(
-			elm$core$Maybe$withDefault,
-			A2(pablohirafuji$elm_markdown$Markdown$Block$defaultHtml, elm$core$Maybe$Nothing, customInlineHtml),
-			customHtml);
-		switch (block.$) {
-			case 'BlankLine':
-				return _List_Nil;
-			case 'Heading':
-				var level = block.b;
-				var inlines = block.c;
-				var hElement = function () {
-					switch (level) {
-						case 1:
-							return elm$html$Html$h1(_List_Nil);
-						case 2:
-							return elm$html$Html$h2(_List_Nil);
-						case 3:
-							return elm$html$Html$h3(_List_Nil);
-						case 4:
-							return elm$html$Html$h4(_List_Nil);
-						case 5:
-							return elm$html$Html$h5(_List_Nil);
-						default:
-							return elm$html$Html$h6(_List_Nil);
-					}
-				}();
-				return _List_fromArray(
-					[
-						hElement(
-						A2(elm$core$List$map, inlineToHtml, inlines))
-					]);
-			case 'ThematicBreak':
-				return _List_fromArray(
-					[
-						A2(elm$html$Html$hr, _List_Nil, _List_Nil)
-					]);
-			case 'Paragraph':
-				var inlines = block.b;
-				return _List_fromArray(
-					[
-						A2(
-						elm$html$Html$p,
-						_List_Nil,
-						A2(elm$core$List$map, inlineToHtml, inlines))
-					]);
-			case 'CodeBlock':
-				if (block.a.$ === 'Fenced') {
-					var _n2 = block.a;
-					var model = _n2.b;
-					var codeStr = block.b;
-					var basicView = function (attrs) {
-						return _List_fromArray(
-							[
-								A2(
-								elm$html$Html$pre,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2(
-										elm$html$Html$code,
-										attrs,
-										_List_fromArray(
-											[
-												elm$html$Html$text(codeStr)
-											]))
-									]))
-							]);
-					};
-					var _n3 = model.language;
-					if (_n3.$ === 'Just') {
-						var language = _n3.a;
-						return basicView(
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$class('language-' + language)
-								]));
-					} else {
-						return basicView(_List_Nil);
-					}
-				} else {
-					var _n4 = block.a;
-					var codeStr = block.b;
-					return _List_fromArray(
-						[
-							A2(
-							elm$html$Html$pre,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$code,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text(codeStr)
-										]))
-								]))
-						]);
-				}
-			case 'BlockQuote':
-				var blocks = block.a;
-				return function (a) {
-					return A2(elm$core$List$cons, a, _List_Nil);
-				}(
-					A2(
-						elm$html$Html$blockquote,
-						_List_Nil,
-						elm$core$List$concat(
-							A2(elm$core$List$map, blockToHtml, blocks))));
-			case 'List':
-				var model = block.a;
-				var items = block.b;
-				return function (a) {
-					return A2(elm$core$List$cons, a, _List_Nil);
-				}(
-					function () {
-						var _n5 = model.type_;
-						if (_n5.$ === 'Ordered') {
-							var startInt = _n5.a;
-							return (startInt === 1) ? elm$html$Html$ol(_List_Nil) : elm$html$Html$ol(
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$start(startInt)
-									]));
-						} else {
-							return elm$html$Html$ul(_List_Nil);
-						}
-					}()(
-						A2(
-							elm$core$List$map,
-							A2(
-								elm$core$Basics$composeR,
-								elm$core$List$map(blockToHtml),
-								A2(
-									elm$core$Basics$composeR,
-									elm$core$List$concat,
-									elm$html$Html$li(_List_Nil))),
-							items)));
-			case 'PlainInlines':
-				var inlines = block.a;
-				return A2(elm$core$List$map, inlineToHtml, inlines);
-			default:
-				var customBlock = block.a;
-				var blocks = block.b;
-				return function (a) {
-					return A2(elm$core$List$cons, a, _List_Nil);
-				}(
-					A2(
-						elm$html$Html$div,
-						_List_Nil,
-						A2(
-							elm$core$List$cons,
-							elm$html$Html$text('Unhandled custom block.'),
-							elm$core$List$concat(
-								A2(elm$core$List$map, blockToHtml, blocks)))));
-		}
-	});
-var author$project$RCMD$headingsWithIds = F2(
-	function (htmlFun, block) {
-		if (block.$ === 'Heading') {
-			var level = block.b;
-			var inlines = block.c;
-			var hElement = function () {
-				var attrId = elm$html$Html$Attributes$id(
-					elm_community$string_extra$String$Extra$dasherize(
-						pablohirafuji$elm_markdown$Markdown$Inline$extractText(inlines)));
-				switch (level) {
-					case 1:
-						return elm$html$Html$h1(
-							_List_fromArray(
-								[attrId]));
-					case 2:
-						return elm$html$Html$h2(
-							_List_fromArray(
-								[attrId]));
-					case 3:
-						return elm$html$Html$h3(
-							_List_fromArray(
-								[attrId]));
-					case 4:
-						return elm$html$Html$h4(
-							_List_fromArray(
-								[attrId]));
-					case 5:
-						return elm$html$Html$h5(
-							_List_fromArray(
-								[attrId]));
-					default:
-						return elm$html$Html$h6(
-							_List_fromArray(
-								[attrId]));
-				}
-			}();
-			return _List_fromArray(
-				[
-					hElement(
-					A2(
-						elm$core$List$map,
-						pablohirafuji$elm_markdown$Markdown$Inline$defaultHtml(elm$core$Maybe$Nothing),
-						inlines))
-				]);
-		} else {
-			return A3(
-				pablohirafuji$elm_markdown$Markdown$Block$defaultHtml,
-				elm$core$Maybe$Just(
-					author$project$RCMD$headingsWithIds(htmlFun)),
-				elm$core$Maybe$Just(
-					author$project$RCMD$rcInlineView(htmlFun)),
-				block);
-		}
-	});
-var author$project$RCMD$rcBlockView = F2(
-	function (htmlFun, block) {
-		return A3(
-			pablohirafuji$elm_markdown$Markdown$Block$defaultHtml,
-			elm$core$Maybe$Just(
-				author$project$RCMD$headingsWithIds(htmlFun)),
-			elm$core$Maybe$Just(
-				author$project$RCMD$rcInlineView(htmlFun)),
-			block);
-	});
-var author$project$RCMD$RCMedia = function (a) {
-	return {$: 'RCMedia', a: a};
-};
-var elm$regex$Regex$find = _Regex_findAtMost(_Regex_infinity);
-var author$project$RCMD$matchRCMedia = function (str) {
-	var r = elm$regex$Regex$fromString('!{([^}]*)}');
-	if (r.$ === 'Nothing') {
-		return elm$core$Maybe$Nothing;
-	} else {
-		var regexp = r.a;
-		var matches = A2(elm$regex$Regex$find, regexp, str);
-		if (!matches.b) {
-			return elm$core$Maybe$Nothing;
-		} else {
-			var m = matches.a;
-			var _n2 = m.submatches;
-			if (_n2.b && (_n2.a.$ === 'Just')) {
-				var name = _n2.a.a;
-				return elm$core$Maybe$Just(name);
-			} else {
-				return elm$core$Maybe$Nothing;
-			}
-		}
-	}
-};
-var pablohirafuji$elm_markdown$Markdown$Inline$Custom = F2(
-	function (a, b) {
-		return {$: 'Custom', a: a, b: b};
-	});
-var pablohirafuji$elm_markdown$Markdown$Inline$Text = function (a) {
-	return {$: 'Text', a: a};
-};
-var author$project$RCMD$rcMediaText = function (inline) {
-	if (inline.$ === 'Text') {
-		var str = inline.a;
-		var _n1 = author$project$RCMD$matchRCMedia(str);
-		if (_n1.$ === 'Nothing') {
-			return pablohirafuji$elm_markdown$Markdown$Inline$Text(str);
-		} else {
-			var media = _n1.a;
-			return A2(
-				pablohirafuji$elm_markdown$Markdown$Inline$Custom,
-				author$project$RCMD$RCMedia(media),
-				_List_Nil);
-		}
-	} else {
-		return inline;
-	}
-};
-var elm$core$List$concatMap = F2(
-	function (f, list) {
-		return elm$core$List$concat(
-			A2(elm$core$List$map, f, list));
-	});
-var elm$core$String$lines = _String_lines;
-var elm$core$Basics$ge = _Utils_ge;
-var elm$core$Basics$composeL = F3(
-	function (g, f, x) {
-		return g(
-			f(x));
-	});
-var elm$core$Basics$not = _Basics_not;
-var elm$core$List$all = F2(
-	function (isOkay, list) {
-		return !A2(
-			elm$core$List$any,
-			A2(elm$core$Basics$composeL, elm$core$Basics$not, isOkay),
-			list);
-	});
-var elm$core$Maybe$map = F2(
-	function (f, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return elm$core$Maybe$Just(
-				f(value));
-		} else {
-			return elm$core$Maybe$Nothing;
-		}
-	});
-var elm$core$Result$fromMaybe = F2(
-	function (err, maybe) {
-		if (maybe.$ === 'Just') {
-			var v = maybe.a;
-			return elm$core$Result$Ok(v);
-		} else {
-			return elm$core$Result$Err(err);
-		}
-	});
-var elm$core$Result$withDefault = F2(
-	function (def, result) {
-		if (result.$ === 'Ok') {
-			var a = result.a;
-			return a;
-		} else {
-			return def;
-		}
-	});
-var elm$regex$Regex$findAtMost = _Regex_findAtMost;
-var pablohirafuji$elm_markdown$Markdown$Block$BlockQuote = function (a) {
-	return {$: 'BlockQuote', a: a};
-};
-var pablohirafuji$elm_markdown$Markdown$Block$List = F2(
-	function (a, b) {
-		return {$: 'List', a: a, b: b};
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$Paragraph = F2(
-	function (a, b) {
-		return {$: 'Paragraph', a: a, b: b};
-	});
-var elm$core$String$length = _String_length;
-var elm$core$String$slice = _String_slice;
-var elm$core$String$right = F2(
-	function (n, string) {
-		return (n < 1) ? '' : A3(
-			elm$core$String$slice,
-			-n,
-			elm$core$String$length(string),
-			string);
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$formatParagraphLine = function (rawParagraph) {
-	return (A2(elm$core$String$right, 2, rawParagraph) === '  ') ? (elm$core$String$trim(rawParagraph) + '  ') : elm$core$String$trim(rawParagraph);
-};
-var pablohirafuji$elm_markdown$Markdown$Block$addToParagraph = F2(
-	function (paragraph, rawLine) {
-		return A2(
-			pablohirafuji$elm_markdown$Markdown$Block$Paragraph,
-			paragraph + ('\n' + pablohirafuji$elm_markdown$Markdown$Block$formatParagraphLine(rawLine)),
-			_List_Nil);
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$blockQuoteLineRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('^ {0,3}(?:>[ ]?)(.*)$'));
-var elm$regex$Regex$contains = _Regex_contains;
-var pablohirafuji$elm_markdown$Markdown$Block$blankLineRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('^\\s*$'));
-var pablohirafuji$elm_markdown$Markdown$Block$calcListIndentLength = function (_n0) {
-	var listBlock = _n0.a;
-	var indentSpace = _n0.b;
-	var rawLine = _n0.c;
-	var indentSpaceLength = elm$core$String$length(indentSpace);
-	var isIndentedCode = indentSpaceLength >= 4;
-	var updtRawLine = isIndentedCode ? _Utils_ap(indentSpace, rawLine) : rawLine;
-	var indentLength = (isIndentedCode || A2(elm$regex$Regex$contains, pablohirafuji$elm_markdown$Markdown$Block$blankLineRegex, rawLine)) ? (listBlock.indentLength - indentSpaceLength) : listBlock.indentLength;
-	return _Utils_Tuple2(
-		_Utils_update(
-			listBlock,
-			{indentLength: indentLength}),
-		updtRawLine);
-};
-var elm$core$Maybe$andThen = F2(
-	function (callback, maybeValue) {
-		if (maybeValue.$ === 'Just') {
-			var value = maybeValue.a;
-			return callback(value);
-		} else {
-			return elm$core$Maybe$Nothing;
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$atxHeadingLineRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('^ {0,3}(#{1,6})' + ('(?:[ \\t]+[ \\t#]+$|[ \\t]+|$)' + '(.*?)(?:\\s+[ \\t#]*)?$')));
-var pablohirafuji$elm_markdown$Markdown$Block$Heading = F3(
-	function (a, b, c) {
-		return {$: 'Heading', a: a, b: b, c: c};
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$extractATXHeadingRM = function (match) {
-	var _n0 = match.submatches;
-	if ((_n0.b && (_n0.a.$ === 'Just')) && _n0.b.b) {
-		var lvl = _n0.a.a;
-		var _n1 = _n0.b;
-		var maybeHeading = _n1.a;
-		return elm$core$Maybe$Just(
-			A3(
-				pablohirafuji$elm_markdown$Markdown$Block$Heading,
-				A2(elm$core$Maybe$withDefault, '', maybeHeading),
-				elm$core$String$length(lvl),
-				_List_Nil));
-	} else {
-		return elm$core$Maybe$Nothing;
-	}
-};
-var pablohirafuji$elm_markdown$Markdown$Block$checkATXHeadingLine = function (_n0) {
-	var rawLine = _n0.a;
-	var ast = _n0.b;
-	return A2(
-		elm$core$Result$fromMaybe,
-		_Utils_Tuple2(rawLine, ast),
-		A2(
-			elm$core$Maybe$map,
-			function (a) {
-				return A2(elm$core$List$cons, a, ast);
-			},
-			A2(
-				elm$core$Maybe$andThen,
-				pablohirafuji$elm_markdown$Markdown$Block$extractATXHeadingRM,
-				elm$core$List$head(
-					A3(elm$regex$Regex$findAtMost, 1, pablohirafuji$elm_markdown$Markdown$Block$atxHeadingLineRegex, rawLine)))));
-};
-var pablohirafuji$elm_markdown$Markdown$Block$BlankLine = function (a) {
-	return {$: 'BlankLine', a: a};
-};
-var pablohirafuji$elm_markdown$Markdown$Block$CodeBlock = F2(
-	function (a, b) {
-		return {$: 'CodeBlock', a: a, b: b};
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$Fenced = F2(
-	function (a, b) {
-		return {$: 'Fenced', a: a, b: b};
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$addBlankLineToListBlock = F2(
-	function (match, asts) {
-		if (!asts.b) {
-			return _List_fromArray(
-				[
-					_List_fromArray(
-					[
-						pablohirafuji$elm_markdown$Markdown$Block$BlankLine(match.match)
-					])
-				]);
-		} else {
-			var ast = asts.a;
-			var astsTail = asts.b;
-			return A2(
-				elm$core$List$cons,
-				A2(pablohirafuji$elm_markdown$Markdown$Block$parseBlankLine, ast, match),
-				astsTail);
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$parseBlankLine = F2(
-	function (ast, match) {
-		_n0$2:
-		while (true) {
-			if (ast.b) {
-				switch (ast.a.$) {
-					case 'CodeBlock':
-						if ((ast.a.a.$ === 'Fenced') && ast.a.a.a) {
-							var _n1 = ast.a;
-							var _n2 = _n1.a;
-							var fence = _n2.b;
-							var code = _n1.b;
-							var astTail = ast.b;
-							return function (a) {
-								return A2(elm$core$List$cons, a, astTail);
-							}(
-								A2(
-									pablohirafuji$elm_markdown$Markdown$Block$CodeBlock,
-									A2(pablohirafuji$elm_markdown$Markdown$Block$Fenced, true, fence),
-									code + '\n'));
-						} else {
-							break _n0$2;
-						}
-					case 'List':
-						var _n3 = ast.a;
-						var model = _n3.a;
-						var items = _n3.b;
-						var astTail = ast.b;
-						return A2(
-							elm$core$List$cons,
-							A2(
-								pablohirafuji$elm_markdown$Markdown$Block$List,
-								model,
-								A2(pablohirafuji$elm_markdown$Markdown$Block$addBlankLineToListBlock, match, items)),
-							astTail);
-					default:
-						break _n0$2;
-				}
-			} else {
-				break _n0$2;
-			}
-		}
-		return A2(
-			elm$core$List$cons,
-			pablohirafuji$elm_markdown$Markdown$Block$BlankLine(match.match),
-			ast);
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$checkBlankLine = function (_n0) {
-	var rawLine = _n0.a;
-	var ast = _n0.b;
-	return A2(
-		elm$core$Result$fromMaybe,
-		_Utils_Tuple2(rawLine, ast),
-		A2(
-			elm$core$Maybe$map,
-			pablohirafuji$elm_markdown$Markdown$Block$parseBlankLine(ast),
-			elm$core$List$head(
-				A3(elm$regex$Regex$findAtMost, 1, pablohirafuji$elm_markdown$Markdown$Block$blankLineRegex, rawLine))));
-};
-var pablohirafuji$elm_markdown$Markdown$Block$indentedCodeLineRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('^(?: {4,4}| {0,3}\\t)(.*)$'));
-var pablohirafuji$elm_markdown$Markdown$Block$Indented = {$: 'Indented'};
-var pablohirafuji$elm_markdown$Markdown$Block$blocksAfterBlankLines = F2(
-	function (ast, blankLines) {
-		blocksAfterBlankLines:
-		while (true) {
-			if (ast.b && (ast.a.$ === 'BlankLine')) {
-				var blankStr = ast.a.a;
-				var astTail = ast.b;
-				var $temp$ast = astTail,
-					$temp$blankLines = A2(elm$core$List$cons, blankStr, blankLines);
-				ast = $temp$ast;
-				blankLines = $temp$blankLines;
-				continue blocksAfterBlankLines;
-			} else {
-				return _Utils_Tuple2(ast, blankLines);
-			}
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$maybeContinueParagraph = F2(
-	function (rawLine, ast) {
-		_n0$3:
-		while (true) {
-			if (ast.b) {
-				switch (ast.a.$) {
-					case 'Paragraph':
-						var _n1 = ast.a;
-						var paragraph = _n1.a;
-						var astTail = ast.b;
-						return elm$core$Maybe$Just(
-							A2(
-								elm$core$List$cons,
-								A2(pablohirafuji$elm_markdown$Markdown$Block$addToParagraph, paragraph, rawLine),
-								astTail));
-					case 'BlockQuote':
-						var bqAST = ast.a.a;
-						var astTail = ast.b;
-						return A2(
-							elm$core$Maybe$map,
-							function (updtBqAST) {
-								return A2(
-									elm$core$List$cons,
-									pablohirafuji$elm_markdown$Markdown$Block$BlockQuote(updtBqAST),
-									astTail);
-							},
-							A2(pablohirafuji$elm_markdown$Markdown$Block$maybeContinueParagraph, rawLine, bqAST));
-					case 'List':
-						var _n2 = ast.a;
-						var model = _n2.a;
-						var items = _n2.b;
-						var astTail = ast.b;
-						if (items.b) {
-							var itemAST = items.a;
-							var itemASTTail = items.b;
-							return A2(
-								elm$core$Maybe$map,
-								A2(
-									elm$core$Basics$composeR,
-									function (a) {
-										return A2(elm$core$List$cons, a, itemASTTail);
-									},
-									A2(
-										elm$core$Basics$composeR,
-										pablohirafuji$elm_markdown$Markdown$Block$List(model),
-										function (a) {
-											return A2(elm$core$List$cons, a, astTail);
-										})),
-								A2(pablohirafuji$elm_markdown$Markdown$Block$maybeContinueParagraph, rawLine, itemAST));
-						} else {
-							return elm$core$Maybe$Nothing;
-						}
-					default:
-						break _n0$3;
-				}
-			} else {
-				break _n0$3;
-			}
-		}
-		return elm$core$Maybe$Nothing;
-	});
-var elm$core$String$concat = function (strings) {
-	return A2(elm$core$String$join, '', strings);
-};
-var elm$regex$Regex$replaceAtMost = _Regex_replaceAtMost;
-var pablohirafuji$elm_markdown$Markdown$Helpers$tabRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('\\t'));
-var pablohirafuji$elm_markdown$Markdown$Helpers$indentLine = function (indentLength_) {
-	return A2(
-		elm$core$Basics$composeR,
-		A2(
-			elm$regex$Regex$replace,
-			pablohirafuji$elm_markdown$Markdown$Helpers$tabRegex,
-			function (_n0) {
-				return '    ';
-			}),
-		A3(
-			elm$regex$Regex$replaceAtMost,
-			1,
-			A2(
-				elm$core$Maybe$withDefault,
-				elm$regex$Regex$never,
-				elm$regex$Regex$fromString(
-					'^ {0,' + (elm$core$String$fromInt(indentLength_) + '}'))),
-			function (_n1) {
-				return '';
-			}));
-};
-var pablohirafuji$elm_markdown$Markdown$Block$resumeIndentedCodeBlock = F2(
-	function (codeLine, _n0) {
-		var remainBlocks = _n0.a;
-		var blankLines = _n0.b;
-		if ((remainBlocks.b && (remainBlocks.a.$ === 'CodeBlock')) && (remainBlocks.a.a.$ === 'Indented')) {
-			var _n2 = remainBlocks.a;
-			var _n3 = _n2.a;
-			var codeStr = _n2.b;
-			var remainBlocksTail = remainBlocks.b;
-			return elm$core$Maybe$Just(
-				function (a) {
-					return A2(elm$core$List$cons, a, remainBlocksTail);
-				}(
-					A2(
-						pablohirafuji$elm_markdown$Markdown$Block$CodeBlock,
-						pablohirafuji$elm_markdown$Markdown$Block$Indented,
-						function (a) {
-							return a + (codeLine + '\n');
-						}(
-							_Utils_ap(
-								codeStr,
-								elm$core$String$concat(
-									A2(
-										elm$core$List$map,
-										function (bl) {
-											return A2(pablohirafuji$elm_markdown$Markdown$Helpers$indentLine, 4, bl) + '\n';
-										},
-										blankLines)))))));
-		} else {
-			return elm$core$Maybe$Nothing;
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$parseIndentedCodeLine = F2(
-	function (ast, codeLine) {
-		_n0$2:
-		while (true) {
-			if (ast.b) {
-				switch (ast.a.$) {
-					case 'CodeBlock':
-						if (ast.a.a.$ === 'Indented') {
-							var _n1 = ast.a;
-							var _n2 = _n1.a;
-							var codeStr = _n1.b;
-							var astTail = ast.b;
-							return function (a) {
-								return A2(elm$core$List$cons, a, astTail);
-							}(
-								A2(pablohirafuji$elm_markdown$Markdown$Block$CodeBlock, pablohirafuji$elm_markdown$Markdown$Block$Indented, codeStr + (codeLine + '\n')));
-						} else {
-							break _n0$2;
-						}
-					case 'BlankLine':
-						var blankStr = ast.a.a;
-						var astTail = ast.b;
-						return A2(
-							elm$core$Maybe$withDefault,
-							function (a) {
-								return A2(elm$core$List$cons, a, ast);
-							}(
-								A2(pablohirafuji$elm_markdown$Markdown$Block$CodeBlock, pablohirafuji$elm_markdown$Markdown$Block$Indented, codeLine + '\n')),
-							A2(
-								pablohirafuji$elm_markdown$Markdown$Block$resumeIndentedCodeBlock,
-								codeLine,
-								A2(
-									pablohirafuji$elm_markdown$Markdown$Block$blocksAfterBlankLines,
-									astTail,
-									_List_fromArray(
-										[blankStr]))));
-					default:
-						break _n0$2;
-				}
-			} else {
-				break _n0$2;
-			}
-		}
-		return A2(
-			elm$core$Maybe$withDefault,
-			function (a) {
-				return A2(elm$core$List$cons, a, ast);
-			}(
-				A2(pablohirafuji$elm_markdown$Markdown$Block$CodeBlock, pablohirafuji$elm_markdown$Markdown$Block$Indented, codeLine + '\n')),
-			A2(pablohirafuji$elm_markdown$Markdown$Block$maybeContinueParagraph, codeLine, ast));
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$checkIndentedCode = function (_n0) {
-	var rawLine = _n0.a;
-	var ast = _n0.b;
-	return A2(
-		elm$core$Result$fromMaybe,
-		_Utils_Tuple2(rawLine, ast),
-		A2(
-			elm$core$Maybe$map,
-			pablohirafuji$elm_markdown$Markdown$Block$parseIndentedCodeLine(ast),
-			A2(
-				elm$core$Maybe$withDefault,
-				elm$core$Maybe$Nothing,
-				A2(
-					elm$core$Maybe$withDefault,
-					elm$core$Maybe$Nothing,
-					A2(
-						elm$core$Maybe$map,
-						A2(
-							elm$core$Basics$composeR,
-							function ($) {
-								return $.submatches;
-							},
-							elm$core$List$head),
-						elm$core$List$head(
-							A3(elm$regex$Regex$findAtMost, 1, pablohirafuji$elm_markdown$Markdown$Block$indentedCodeLineRegex, rawLine)))))));
-};
-var elm$core$String$left = F2(
-	function (n, string) {
-		return (n < 1) ? '' : A3(elm$core$String$slice, 0, n, string);
-	});
-var elm$core$String$words = _String_words;
-var pablohirafuji$elm_markdown$Markdown$Entity$decimalRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('&#([0-9]{1,8});'));
-var elm$core$Char$fromCode = _Char_fromCode;
-var elm$core$String$cons = _String_cons;
-var elm$core$String$fromChar = function (_char) {
-	return A2(elm$core$String$cons, _char, '');
-};
-var elm$core$Basics$modBy = _Basics_modBy;
-var pablohirafuji$elm_markdown$Markdown$Entity$isBadEndUnicode = function (_int) {
-	var remain_ = A2(elm$core$Basics$modBy, 16, _int);
-	var remain = A2(elm$core$Basics$modBy, 131070, _int);
-	return (_int >= 131070) && ((((0 <= remain) && (remain <= 15)) || ((65536 <= remain) && (remain <= 65551))) && ((remain_ === 14) || (remain_ === 15)));
-};
-var pablohirafuji$elm_markdown$Markdown$Entity$isValidUnicode = function (_int) {
-	return (_int === 9) || ((_int === 10) || ((_int === 13) || ((_int === 133) || (((32 <= _int) && (_int <= 126)) || (((160 <= _int) && (_int <= 55295)) || (((57344 <= _int) && (_int <= 64975)) || (((65008 <= _int) && (_int <= 65533)) || ((65536 <= _int) && (_int <= 1114109)))))))));
-};
-var pablohirafuji$elm_markdown$Markdown$Entity$validUnicode = function (_int) {
-	return (pablohirafuji$elm_markdown$Markdown$Entity$isValidUnicode(_int) && (!pablohirafuji$elm_markdown$Markdown$Entity$isBadEndUnicode(_int))) ? elm$core$String$fromChar(
-		elm$core$Char$fromCode(_int)) : elm$core$String$fromChar(
-		elm$core$Char$fromCode(65533));
-};
-var pablohirafuji$elm_markdown$Markdown$Entity$replaceDecimal = function (match) {
-	return A2(
-		elm$core$Maybe$withDefault,
-		match.match,
-		A2(
-			elm$core$Maybe$map,
-			pablohirafuji$elm_markdown$Markdown$Entity$validUnicode,
-			A2(
-				elm$core$Maybe$andThen,
-				elm$core$String$toInt,
-				A2(
-					elm$core$Maybe$withDefault,
-					elm$core$Maybe$Nothing,
-					elm$core$List$head(match.submatches)))));
-};
-var pablohirafuji$elm_markdown$Markdown$Entity$replaceDecimals = A2(elm$regex$Regex$replace, pablohirafuji$elm_markdown$Markdown$Entity$decimalRegex, pablohirafuji$elm_markdown$Markdown$Entity$replaceDecimal);
-var pablohirafuji$elm_markdown$Markdown$Entity$entitiesRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('&([0-9a-zA-Z]+);'));
-var elm$core$Dict$fromList = function (assocs) {
-	return A3(
-		elm$core$List$foldl,
-		F2(
-			function (_n0, dict) {
-				var key = _n0.a;
-				var value = _n0.b;
-				return A3(elm$core$Dict$insert, key, value, dict);
-			}),
-		elm$core$Dict$empty,
-		assocs);
-};
-var pablohirafuji$elm_markdown$Markdown$Entity$entities = elm$core$Dict$fromList(
-	_List_fromArray(
-		[
-			_Utils_Tuple2('quot', 34),
-			_Utils_Tuple2('amp', 38),
-			_Utils_Tuple2('apos', 39),
-			_Utils_Tuple2('lt', 60),
-			_Utils_Tuple2('gt', 62),
-			_Utils_Tuple2('nbsp', 160),
-			_Utils_Tuple2('iexcl', 161),
-			_Utils_Tuple2('cent', 162),
-			_Utils_Tuple2('pound', 163),
-			_Utils_Tuple2('curren', 164),
-			_Utils_Tuple2('yen', 165),
-			_Utils_Tuple2('brvbar', 166),
-			_Utils_Tuple2('sect', 167),
-			_Utils_Tuple2('uml', 168),
-			_Utils_Tuple2('copy', 169),
-			_Utils_Tuple2('ordf', 170),
-			_Utils_Tuple2('laquo', 171),
-			_Utils_Tuple2('not', 172),
-			_Utils_Tuple2('shy', 173),
-			_Utils_Tuple2('reg', 174),
-			_Utils_Tuple2('macr', 175),
-			_Utils_Tuple2('deg', 176),
-			_Utils_Tuple2('plusmn', 177),
-			_Utils_Tuple2('sup2', 178),
-			_Utils_Tuple2('sup3', 179),
-			_Utils_Tuple2('acute', 180),
-			_Utils_Tuple2('micro', 181),
-			_Utils_Tuple2('para', 182),
-			_Utils_Tuple2('middot', 183),
-			_Utils_Tuple2('cedil', 184),
-			_Utils_Tuple2('sup1', 185),
-			_Utils_Tuple2('ordm', 186),
-			_Utils_Tuple2('raquo', 187),
-			_Utils_Tuple2('frac14', 188),
-			_Utils_Tuple2('frac12', 189),
-			_Utils_Tuple2('frac34', 190),
-			_Utils_Tuple2('iquest', 191),
-			_Utils_Tuple2('Agrave', 192),
-			_Utils_Tuple2('Aacute', 193),
-			_Utils_Tuple2('Acirc', 194),
-			_Utils_Tuple2('Atilde', 195),
-			_Utils_Tuple2('Auml', 196),
-			_Utils_Tuple2('Aring', 197),
-			_Utils_Tuple2('AElig', 198),
-			_Utils_Tuple2('Ccedil', 199),
-			_Utils_Tuple2('Egrave', 200),
-			_Utils_Tuple2('Eacute', 201),
-			_Utils_Tuple2('Ecirc', 202),
-			_Utils_Tuple2('Euml', 203),
-			_Utils_Tuple2('Igrave', 204),
-			_Utils_Tuple2('Iacute', 205),
-			_Utils_Tuple2('Icirc', 206),
-			_Utils_Tuple2('Iuml', 207),
-			_Utils_Tuple2('ETH', 208),
-			_Utils_Tuple2('Ntilde', 209),
-			_Utils_Tuple2('Ograve', 210),
-			_Utils_Tuple2('Oacute', 211),
-			_Utils_Tuple2('Ocirc', 212),
-			_Utils_Tuple2('Otilde', 213),
-			_Utils_Tuple2('Ouml', 214),
-			_Utils_Tuple2('times', 215),
-			_Utils_Tuple2('Oslash', 216),
-			_Utils_Tuple2('Ugrave', 217),
-			_Utils_Tuple2('Uacute', 218),
-			_Utils_Tuple2('Ucirc', 219),
-			_Utils_Tuple2('Uuml', 220),
-			_Utils_Tuple2('Yacute', 221),
-			_Utils_Tuple2('THORN', 222),
-			_Utils_Tuple2('szlig', 223),
-			_Utils_Tuple2('agrave', 224),
-			_Utils_Tuple2('aacute', 225),
-			_Utils_Tuple2('acirc', 226),
-			_Utils_Tuple2('atilde', 227),
-			_Utils_Tuple2('auml', 228),
-			_Utils_Tuple2('aring', 229),
-			_Utils_Tuple2('aelig', 230),
-			_Utils_Tuple2('ccedil', 231),
-			_Utils_Tuple2('egrave', 232),
-			_Utils_Tuple2('eacute', 233),
-			_Utils_Tuple2('ecirc', 234),
-			_Utils_Tuple2('euml', 235),
-			_Utils_Tuple2('igrave', 236),
-			_Utils_Tuple2('iacute', 237),
-			_Utils_Tuple2('icirc', 238),
-			_Utils_Tuple2('iuml', 239),
-			_Utils_Tuple2('eth', 240),
-			_Utils_Tuple2('ntilde', 241),
-			_Utils_Tuple2('ograve', 242),
-			_Utils_Tuple2('oacute', 243),
-			_Utils_Tuple2('ocirc', 244),
-			_Utils_Tuple2('otilde', 245),
-			_Utils_Tuple2('ouml', 246),
-			_Utils_Tuple2('divide', 247),
-			_Utils_Tuple2('oslash', 248),
-			_Utils_Tuple2('ugrave', 249),
-			_Utils_Tuple2('uacute', 250),
-			_Utils_Tuple2('ucirc', 251),
-			_Utils_Tuple2('uuml', 252),
-			_Utils_Tuple2('yacute', 253),
-			_Utils_Tuple2('thorn', 254),
-			_Utils_Tuple2('yuml', 255),
-			_Utils_Tuple2('OElig', 338),
-			_Utils_Tuple2('oelig', 339),
-			_Utils_Tuple2('Scaron', 352),
-			_Utils_Tuple2('scaron', 353),
-			_Utils_Tuple2('Yuml', 376),
-			_Utils_Tuple2('fnof', 402),
-			_Utils_Tuple2('circ', 710),
-			_Utils_Tuple2('tilde', 732),
-			_Utils_Tuple2('Alpha', 913),
-			_Utils_Tuple2('Beta', 914),
-			_Utils_Tuple2('Gamma', 915),
-			_Utils_Tuple2('Delta', 916),
-			_Utils_Tuple2('Epsilon', 917),
-			_Utils_Tuple2('Zeta', 918),
-			_Utils_Tuple2('Eta', 919),
-			_Utils_Tuple2('Theta', 920),
-			_Utils_Tuple2('Iota', 921),
-			_Utils_Tuple2('Kappa', 922),
-			_Utils_Tuple2('Lambda', 923),
-			_Utils_Tuple2('Mu', 924),
-			_Utils_Tuple2('Nu', 925),
-			_Utils_Tuple2('Xi', 926),
-			_Utils_Tuple2('Omicron', 927),
-			_Utils_Tuple2('Pi', 928),
-			_Utils_Tuple2('Rho', 929),
-			_Utils_Tuple2('Sigma', 931),
-			_Utils_Tuple2('Tau', 932),
-			_Utils_Tuple2('Upsilon', 933),
-			_Utils_Tuple2('Phi', 934),
-			_Utils_Tuple2('Chi', 935),
-			_Utils_Tuple2('Psi', 936),
-			_Utils_Tuple2('Omega', 937),
-			_Utils_Tuple2('alpha', 945),
-			_Utils_Tuple2('beta', 946),
-			_Utils_Tuple2('gamma', 947),
-			_Utils_Tuple2('delta', 948),
-			_Utils_Tuple2('epsilon', 949),
-			_Utils_Tuple2('zeta', 950),
-			_Utils_Tuple2('eta', 951),
-			_Utils_Tuple2('theta', 952),
-			_Utils_Tuple2('iota', 953),
-			_Utils_Tuple2('kappa', 954),
-			_Utils_Tuple2('lambda', 955),
-			_Utils_Tuple2('mu', 956),
-			_Utils_Tuple2('nu', 957),
-			_Utils_Tuple2('xi', 958),
-			_Utils_Tuple2('omicron', 959),
-			_Utils_Tuple2('pi', 960),
-			_Utils_Tuple2('rho', 961),
-			_Utils_Tuple2('sigmaf', 962),
-			_Utils_Tuple2('sigma', 963),
-			_Utils_Tuple2('tau', 964),
-			_Utils_Tuple2('upsilon', 965),
-			_Utils_Tuple2('phi', 966),
-			_Utils_Tuple2('chi', 967),
-			_Utils_Tuple2('psi', 968),
-			_Utils_Tuple2('omega', 969),
-			_Utils_Tuple2('thetasym', 977),
-			_Utils_Tuple2('upsih', 978),
-			_Utils_Tuple2('piv', 982),
-			_Utils_Tuple2('ensp', 8194),
-			_Utils_Tuple2('emsp', 8195),
-			_Utils_Tuple2('thinsp', 8201),
-			_Utils_Tuple2('zwnj', 8204),
-			_Utils_Tuple2('zwj', 8205),
-			_Utils_Tuple2('lrm', 8206),
-			_Utils_Tuple2('rlm', 8207),
-			_Utils_Tuple2('ndash', 8211),
-			_Utils_Tuple2('mdash', 8212),
-			_Utils_Tuple2('lsquo', 8216),
-			_Utils_Tuple2('rsquo', 8217),
-			_Utils_Tuple2('sbquo', 8218),
-			_Utils_Tuple2('ldquo', 8220),
-			_Utils_Tuple2('rdquo', 8221),
-			_Utils_Tuple2('bdquo', 8222),
-			_Utils_Tuple2('dagger', 8224),
-			_Utils_Tuple2('Dagger', 8225),
-			_Utils_Tuple2('bull', 8226),
-			_Utils_Tuple2('hellip', 8230),
-			_Utils_Tuple2('permil', 8240),
-			_Utils_Tuple2('prime', 8242),
-			_Utils_Tuple2('Prime', 8243),
-			_Utils_Tuple2('lsaquo', 8249),
-			_Utils_Tuple2('rsaquo', 8250),
-			_Utils_Tuple2('oline', 8254),
-			_Utils_Tuple2('frasl', 8260),
-			_Utils_Tuple2('euro', 8364),
-			_Utils_Tuple2('image', 8465),
-			_Utils_Tuple2('weierp', 8472),
-			_Utils_Tuple2('real', 8476),
-			_Utils_Tuple2('trade', 8482),
-			_Utils_Tuple2('alefsym', 8501),
-			_Utils_Tuple2('larr', 8592),
-			_Utils_Tuple2('uarr', 8593),
-			_Utils_Tuple2('rarr', 8594),
-			_Utils_Tuple2('darr', 8595),
-			_Utils_Tuple2('harr', 8596),
-			_Utils_Tuple2('crarr', 8629),
-			_Utils_Tuple2('lArr', 8656),
-			_Utils_Tuple2('uArr', 8657),
-			_Utils_Tuple2('rArr', 8658),
-			_Utils_Tuple2('dArr', 8659),
-			_Utils_Tuple2('hArr', 8660),
-			_Utils_Tuple2('forall', 8704),
-			_Utils_Tuple2('part', 8706),
-			_Utils_Tuple2('exist', 8707),
-			_Utils_Tuple2('empty', 8709),
-			_Utils_Tuple2('nabla', 8711),
-			_Utils_Tuple2('isin', 8712),
-			_Utils_Tuple2('notin', 8713),
-			_Utils_Tuple2('ni', 8715),
-			_Utils_Tuple2('prod', 8719),
-			_Utils_Tuple2('sum', 8721),
-			_Utils_Tuple2('minus', 8722),
-			_Utils_Tuple2('lowast', 8727),
-			_Utils_Tuple2('radic', 8730),
-			_Utils_Tuple2('prop', 8733),
-			_Utils_Tuple2('infin', 8734),
-			_Utils_Tuple2('ang', 8736),
-			_Utils_Tuple2('and', 8743),
-			_Utils_Tuple2('or', 8744),
-			_Utils_Tuple2('cap', 8745),
-			_Utils_Tuple2('cup', 8746),
-			_Utils_Tuple2('int', 8747),
-			_Utils_Tuple2('there4', 8756),
-			_Utils_Tuple2('sim', 8764),
-			_Utils_Tuple2('cong', 8773),
-			_Utils_Tuple2('asymp', 8776),
-			_Utils_Tuple2('ne', 8800),
-			_Utils_Tuple2('equiv', 8801),
-			_Utils_Tuple2('le', 8804),
-			_Utils_Tuple2('ge', 8805),
-			_Utils_Tuple2('sub', 8834),
-			_Utils_Tuple2('sup', 8835),
-			_Utils_Tuple2('nsub', 8836),
-			_Utils_Tuple2('sube', 8838),
-			_Utils_Tuple2('supe', 8839),
-			_Utils_Tuple2('oplus', 8853),
-			_Utils_Tuple2('otimes', 8855),
-			_Utils_Tuple2('perp', 8869),
-			_Utils_Tuple2('sdot', 8901),
-			_Utils_Tuple2('lceil', 8968),
-			_Utils_Tuple2('rceil', 8969),
-			_Utils_Tuple2('lfloor', 8970),
-			_Utils_Tuple2('rfloor', 8971),
-			_Utils_Tuple2('lang', 9001),
-			_Utils_Tuple2('rang', 9002),
-			_Utils_Tuple2('loz', 9674),
-			_Utils_Tuple2('spades', 9824),
-			_Utils_Tuple2('clubs', 9827),
-			_Utils_Tuple2('hearts', 9829),
-			_Utils_Tuple2('diams', 9830)
-		]));
-var pablohirafuji$elm_markdown$Markdown$Entity$replaceEntity = function (match) {
-	return A2(
-		elm$core$Maybe$withDefault,
-		match.match,
-		A2(
-			elm$core$Maybe$map,
-			A2(elm$core$Basics$composeR, elm$core$Char$fromCode, elm$core$String$fromChar),
-			A2(
-				elm$core$Maybe$andThen,
-				function (a) {
-					return A2(elm$core$Dict$get, a, pablohirafuji$elm_markdown$Markdown$Entity$entities);
-				},
-				A2(
-					elm$core$Maybe$withDefault,
-					elm$core$Maybe$Nothing,
-					elm$core$List$head(match.submatches)))));
-};
-var pablohirafuji$elm_markdown$Markdown$Entity$replaceEntities = A2(elm$regex$Regex$replace, pablohirafuji$elm_markdown$Markdown$Entity$entitiesRegex, pablohirafuji$elm_markdown$Markdown$Entity$replaceEntity);
-var pablohirafuji$elm_markdown$Markdown$Entity$hexadecimalRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('&#[Xx]([0-9a-fA-F]{1,8});'));
-var elm$core$String$foldr = _String_foldr;
-var elm$core$String$toList = function (string) {
-	return A3(elm$core$String$foldr, elm$core$List$cons, _List_Nil, string);
-};
-var pablohirafuji$elm_markdown$Markdown$Entity$hexToInt = A2(
-	elm$core$Basics$composeR,
-	elm$core$String$toLower,
-	A2(
-		elm$core$Basics$composeR,
-		elm$core$String$toList,
-		A2(
-			elm$core$List$foldl,
-			F2(
-				function (hexDigit, _int) {
-					return ((_int * 16) + A2(
-						elm$core$Basics$modBy,
-						39,
-						elm$core$Char$toCode(hexDigit))) - 9;
-				}),
-			0)));
-var pablohirafuji$elm_markdown$Markdown$Entity$replaceHexadecimal = function (match) {
-	return A2(
-		elm$core$Maybe$withDefault,
-		match.match,
-		A2(
-			elm$core$Maybe$map,
-			A2(elm$core$Basics$composeR, pablohirafuji$elm_markdown$Markdown$Entity$hexToInt, pablohirafuji$elm_markdown$Markdown$Entity$validUnicode),
-			A2(
-				elm$core$Maybe$withDefault,
-				elm$core$Maybe$Nothing,
-				elm$core$List$head(match.submatches))));
-};
-var pablohirafuji$elm_markdown$Markdown$Entity$replaceHexadecimals = A2(elm$regex$Regex$replace, pablohirafuji$elm_markdown$Markdown$Entity$hexadecimalRegex, pablohirafuji$elm_markdown$Markdown$Entity$replaceHexadecimal);
 var elm$core$Bitwise$and = _Bitwise_and;
 var elm$core$Bitwise$shiftRightBy = _Bitwise_shiftRightBy;
 var elm$core$String$repeatHelp = F3(
@@ -8199,1734 +6809,436 @@ var elm$core$String$repeat = F2(
 	function (n, chunk) {
 		return A3(elm$core$String$repeatHelp, n, chunk, '');
 	});
-var pablohirafuji$elm_markdown$Markdown$Helpers$escapableRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('(\\\\+)([!\"#$%&\\\'()*+,./:;<=>?@[\\\\\\]^_`{|}~-])'));
-var pablohirafuji$elm_markdown$Markdown$Helpers$replaceEscapable = A2(
-	elm$regex$Regex$replace,
-	pablohirafuji$elm_markdown$Markdown$Helpers$escapableRegex,
-	function (regexMatch) {
-		var _n0 = regexMatch.submatches;
-		if (((_n0.b && (_n0.a.$ === 'Just')) && _n0.b.b) && (_n0.b.a.$ === 'Just')) {
-			var backslashes = _n0.a.a;
-			var _n1 = _n0.b;
-			var escapedStr = _n1.a.a;
-			return _Utils_ap(
-				A2(
-					elm$core$String$repeat,
-					(elm$core$String$length(backslashes) / 2) | 0,
-					'\\'),
-				escapedStr);
-		} else {
-			return regexMatch.match;
-		}
+var zwilias$elm_html_string$Html$Types$indent = F3(
+	function (perLevel, level, x) {
+		return _Utils_ap(
+			A2(elm$core$String$repeat, perLevel * level, ' '),
+			x);
 	});
-var pablohirafuji$elm_markdown$Markdown$Helpers$formatStr = function (str) {
-	return pablohirafuji$elm_markdown$Markdown$Entity$replaceHexadecimals(
-		pablohirafuji$elm_markdown$Markdown$Entity$replaceDecimals(
-			pablohirafuji$elm_markdown$Markdown$Entity$replaceEntities(
-				pablohirafuji$elm_markdown$Markdown$Helpers$replaceEscapable(str))));
-};
-var pablohirafuji$elm_markdown$Markdown$Block$extractOpenCodeFenceRM = function (match) {
-	var _n0 = match.submatches;
-	if (((_n0.b && _n0.b.b) && (_n0.b.a.$ === 'Just')) && _n0.b.b.b) {
-		var maybeIndent = _n0.a;
-		var _n1 = _n0.b;
-		var fence = _n1.a.a;
-		var _n2 = _n1.b;
-		var maybeLanguage = _n2.a;
-		return elm$core$Maybe$Just(
-			A2(
-				pablohirafuji$elm_markdown$Markdown$Block$Fenced,
-				true,
-				{
-					fenceChar: A2(elm$core$String$left, 1, fence),
-					fenceLength: elm$core$String$length(fence),
-					indentLength: A2(
-						elm$core$Maybe$withDefault,
-						0,
-						A2(elm$core$Maybe$map, elm$core$String$length, maybeIndent)),
-					language: A2(
-						elm$core$Maybe$map,
-						pablohirafuji$elm_markdown$Markdown$Helpers$formatStr,
-						A2(
-							elm$core$Maybe$andThen,
-							function (lang) {
-								return (lang === '') ? elm$core$Maybe$Nothing : elm$core$Maybe$Just(lang);
-							},
-							elm$core$List$head(
-								A2(
-									elm$core$Maybe$withDefault,
-									_List_Nil,
-									A2(elm$core$Maybe$map, elm$core$String$words, maybeLanguage)))))
-				}));
-	} else {
-		return elm$core$Maybe$Nothing;
-	}
-};
-var pablohirafuji$elm_markdown$Markdown$Block$openCodeFenceLineRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('^( {0,3})(`{3,}(?!.*`)|~{3,}(?!.*~))(.*)$'));
-var pablohirafuji$elm_markdown$Markdown$Block$checkOpenCodeFenceLine = function (_n0) {
-	var rawLine = _n0.a;
-	var ast = _n0.b;
-	return A2(
-		elm$core$Result$fromMaybe,
-		_Utils_Tuple2(rawLine, ast),
-		A2(
-			elm$core$Maybe$map,
-			function (a) {
-				return A2(elm$core$List$cons, a, ast);
-			},
-			A2(
-				elm$core$Maybe$map,
-				function (f) {
-					return A2(pablohirafuji$elm_markdown$Markdown$Block$CodeBlock, f, '');
-				},
-				A2(
-					elm$core$Maybe$andThen,
-					pablohirafuji$elm_markdown$Markdown$Block$extractOpenCodeFenceRM,
-					elm$core$List$head(
-						A3(elm$regex$Regex$findAtMost, 1, pablohirafuji$elm_markdown$Markdown$Block$openCodeFenceLineRegex, rawLine))))));
-};
-var pablohirafuji$elm_markdown$Markdown$Block$Ordered = function (a) {
-	return {$: 'Ordered', a: a};
-};
-var pablohirafuji$elm_markdown$Markdown$Block$Unordered = {$: 'Unordered'};
-var pablohirafuji$elm_markdown$Markdown$Block$extractOrderedListRM = function (match) {
-	var _n0 = match.submatches;
-	if (((((((_n0.b && (_n0.a.$ === 'Just')) && _n0.b.b) && (_n0.b.a.$ === 'Just')) && _n0.b.b.b) && (_n0.b.b.a.$ === 'Just')) && _n0.b.b.b.b) && _n0.b.b.b.b.b) {
-		var indentString = _n0.a.a;
-		var _n1 = _n0.b;
-		var start = _n1.a.a;
-		var _n2 = _n1.b;
-		var delimiter = _n2.a.a;
-		var _n3 = _n2.b;
-		var maybeIndentSpace = _n3.a;
-		var _n4 = _n3.b;
-		var maybeRawLine = _n4.a;
-		return elm$core$Maybe$Just(
-			_Utils_Tuple3(
-				{
-					delimiter: delimiter,
-					indentLength: elm$core$String$length(indentString) + 1,
-					isLoose: false,
-					type_: A2(
-						elm$core$Maybe$withDefault,
-						pablohirafuji$elm_markdown$Markdown$Block$Unordered,
-						A2(
-							elm$core$Maybe$map,
-							pablohirafuji$elm_markdown$Markdown$Block$Ordered,
-							elm$core$String$toInt(start)))
-				},
-				A2(elm$core$Maybe$withDefault, '', maybeIndentSpace),
-				A2(elm$core$Maybe$withDefault, '', maybeRawLine)));
-	} else {
-		return elm$core$Maybe$Nothing;
-	}
-};
-var pablohirafuji$elm_markdown$Markdown$Block$orderedListLineRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('^( *(\\d{1,9})([.)])( {0,4}))(?:[ \\t](.*))?$'));
-var pablohirafuji$elm_markdown$Markdown$Block$checkOrderedListLine = function (rawLine) {
-	return A2(
-		elm$core$Result$fromMaybe,
-		rawLine,
-		A2(
-			elm$core$Maybe$andThen,
-			pablohirafuji$elm_markdown$Markdown$Block$extractOrderedListRM,
-			elm$core$List$head(
-				A3(elm$regex$Regex$findAtMost, 1, pablohirafuji$elm_markdown$Markdown$Block$orderedListLineRegex, rawLine))));
-};
-var elm$core$String$startsWith = _String_startsWith;
-var pablohirafuji$elm_markdown$Markdown$Block$extractSetextHeadingRM = function (match) {
-	var _n0 = match.submatches;
-	if (_n0.b && (_n0.a.$ === 'Just')) {
-		var delimiter = _n0.a.a;
-		return A2(elm$core$String$startsWith, '=', delimiter) ? elm$core$Maybe$Just(
-			_Utils_Tuple2(1, delimiter)) : elm$core$Maybe$Just(
-			_Utils_Tuple2(2, delimiter));
-	} else {
-		return elm$core$Maybe$Nothing;
-	}
-};
-var pablohirafuji$elm_markdown$Markdown$Block$parseSetextHeadingLine = F3(
-	function (rawLine, ast, _n0) {
-		var lvl = _n0.a;
-		var delimiter = _n0.b;
-		if (ast.b && (ast.a.$ === 'Paragraph')) {
-			var _n2 = ast.a;
-			var rawText = _n2.a;
-			var astTail = ast.b;
-			return elm$core$Maybe$Just(
-				A2(
-					elm$core$List$cons,
-					A3(pablohirafuji$elm_markdown$Markdown$Block$Heading, rawText, lvl, _List_Nil),
-					astTail));
+var zwilias$elm_html_string$Html$Types$join = F2(
+	function (between, list) {
+		if (!list.b) {
+			return '';
 		} else {
-			return elm$core$Maybe$Nothing;
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$setextHeadingLineRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('^ {0,3}(=+|-+)[ \\t]*$'));
-var pablohirafuji$elm_markdown$Markdown$Block$checkSetextHeadingLine = function (_n0) {
-	var rawLine = _n0.a;
-	var ast = _n0.b;
-	return A2(
-		elm$core$Result$fromMaybe,
-		_Utils_Tuple2(rawLine, ast),
-		A2(
-			elm$core$Maybe$andThen,
-			A2(pablohirafuji$elm_markdown$Markdown$Block$parseSetextHeadingLine, rawLine, ast),
-			A2(
-				elm$core$Maybe$andThen,
-				pablohirafuji$elm_markdown$Markdown$Block$extractSetextHeadingRM,
-				elm$core$List$head(
-					A3(elm$regex$Regex$findAtMost, 1, pablohirafuji$elm_markdown$Markdown$Block$setextHeadingLineRegex, rawLine)))));
-};
-var pablohirafuji$elm_markdown$Markdown$Block$ThematicBreak = {$: 'ThematicBreak'};
-var pablohirafuji$elm_markdown$Markdown$Block$thematicBreakLineRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('^ {0,3}(?:' + ('(?:\\*[ \\t]*){3,}' + ('|(?:_[ \\t]*){3,}' + '|(?:-[ \\t]*){3,})[ \\t]*$'))));
-var pablohirafuji$elm_markdown$Markdown$Block$checkThematicBreakLine = function (_n0) {
-	var rawLine = _n0.a;
-	var ast = _n0.b;
-	return A2(
-		elm$core$Result$fromMaybe,
-		_Utils_Tuple2(rawLine, ast),
-		A2(
-			elm$core$Maybe$map,
-			function (_n1) {
-				return A2(elm$core$List$cons, pablohirafuji$elm_markdown$Markdown$Block$ThematicBreak, ast);
-			},
-			elm$core$List$head(
-				A3(elm$regex$Regex$findAtMost, 1, pablohirafuji$elm_markdown$Markdown$Block$thematicBreakLineRegex, rawLine))));
-};
-var pablohirafuji$elm_markdown$Markdown$Block$extractUnorderedListRM = function (match) {
-	var _n0 = match.submatches;
-	if ((((((_n0.b && (_n0.a.$ === 'Just')) && _n0.b.b) && (_n0.b.a.$ === 'Just')) && _n0.b.b.b) && _n0.b.b.b.b) && (!_n0.b.b.b.b.b)) {
-		var indentString = _n0.a.a;
-		var _n1 = _n0.b;
-		var delimiter = _n1.a.a;
-		var _n2 = _n1.b;
-		var maybeIndentSpace = _n2.a;
-		var _n3 = _n2.b;
-		var maybeRawLine = _n3.a;
-		return elm$core$Maybe$Just(
-			_Utils_Tuple3(
-				{
-					delimiter: delimiter,
-					indentLength: elm$core$String$length(indentString) + 1,
-					isLoose: false,
-					type_: pablohirafuji$elm_markdown$Markdown$Block$Unordered
-				},
-				A2(elm$core$Maybe$withDefault, '', maybeIndentSpace),
-				A2(elm$core$Maybe$withDefault, '', maybeRawLine)));
-	} else {
-		return elm$core$Maybe$Nothing;
-	}
-};
-var pablohirafuji$elm_markdown$Markdown$Block$unorderedListLineRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('^( *([\\*\\-\\+])( {0,4}))(?:[ \\t](.*))?$'));
-var pablohirafuji$elm_markdown$Markdown$Block$checkUnorderedListLine = function (rawLine) {
-	return A2(
-		elm$core$Result$fromMaybe,
-		rawLine,
-		A2(
-			elm$core$Maybe$andThen,
-			pablohirafuji$elm_markdown$Markdown$Block$extractUnorderedListRM,
-			elm$core$List$head(
-				A3(elm$regex$Regex$findAtMost, 1, pablohirafuji$elm_markdown$Markdown$Block$unorderedListLineRegex, rawLine))));
-};
-var pablohirafuji$elm_markdown$Markdown$Block$closeCodeFenceLineRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('^ {0,3}(`{3,}|~{3,})\\s*$'));
-var pablohirafuji$elm_markdown$Markdown$Block$isCloseFenceLineHelp = F2(
-	function (fence, match) {
-		var _n0 = match.submatches;
-		if (_n0.b && (_n0.a.$ === 'Just')) {
-			var fenceStr = _n0.a.a;
-			return (_Utils_cmp(
-				elm$core$String$length(fenceStr),
-				fence.fenceLength) > -1) && _Utils_eq(
-				A2(elm$core$String$left, 1, fenceStr),
-				fence.fenceChar);
-		} else {
-			return false;
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$isCloseFenceLine = function (fence) {
-	return A2(
-		elm$core$Basics$composeR,
-		A2(elm$regex$Regex$findAtMost, 1, pablohirafuji$elm_markdown$Markdown$Block$closeCodeFenceLineRegex),
-		A2(
-			elm$core$Basics$composeR,
-			elm$core$List$head,
-			A2(
-				elm$core$Basics$composeR,
-				elm$core$Maybe$map(
-					pablohirafuji$elm_markdown$Markdown$Block$isCloseFenceLineHelp(fence)),
-				elm$core$Maybe$withDefault(false))));
-};
-var pablohirafuji$elm_markdown$Markdown$Block$continueOrCloseCodeFence = F3(
-	function (fence, previousCode, rawLine) {
-		return A2(pablohirafuji$elm_markdown$Markdown$Block$isCloseFenceLine, fence, rawLine) ? A2(
-			pablohirafuji$elm_markdown$Markdown$Block$CodeBlock,
-			A2(pablohirafuji$elm_markdown$Markdown$Block$Fenced, false, fence),
-			previousCode) : A2(
-			pablohirafuji$elm_markdown$Markdown$Block$CodeBlock,
-			A2(pablohirafuji$elm_markdown$Markdown$Block$Fenced, true, fence),
-			previousCode + (A2(pablohirafuji$elm_markdown$Markdown$Helpers$indentLine, fence.indentLength, rawLine) + '\n'));
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$isBlankLineLast = function (items) {
-	isBlankLineLast:
-	while (true) {
-		if (!items.b) {
-			return false;
-		} else {
-			var item = items.a;
-			var itemsTail = items.b;
-			_n1$3:
-			while (true) {
-				if (item.b) {
-					switch (item.a.$) {
-						case 'BlankLine':
-							if (!item.b.b) {
-								return false;
-							} else {
-								return true;
-							}
-						case 'List':
-							var _n2 = item.a;
-							var items_ = _n2.b;
-							var $temp$items = items_;
-							items = $temp$items;
-							continue isBlankLineLast;
-						default:
-							break _n1$3;
-					}
-				} else {
-					break _n1$3;
-				}
+			if (!list.b.b) {
+				var x = list.a;
+				return x;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				return A3(
+					elm$core$List$foldl,
+					F2(
+						function (y, acc) {
+							return _Utils_ap(
+								y,
+								_Utils_ap(between, acc));
+						}),
+					x,
+					xs);
 			}
-			return false;
 		}
-	}
+	});
+var zwilias$elm_html_string$Html$Types$closingTag = function (tagName) {
+	return '</' + (tagName + '>');
 };
-var pablohirafuji$elm_markdown$Markdown$Block$parseTextLine = F2(
-	function (rawLine, ast) {
+var elm$core$String$replace = F3(
+	function (before, after, string) {
 		return A2(
-			elm$core$Maybe$withDefault,
-			A2(
-				elm$core$List$cons,
-				A2(
-					pablohirafuji$elm_markdown$Markdown$Block$Paragraph,
-					pablohirafuji$elm_markdown$Markdown$Block$formatParagraphLine(rawLine),
-					_List_Nil),
-				ast),
-			A2(pablohirafuji$elm_markdown$Markdown$Block$maybeContinueParagraph, rawLine, ast));
+			elm$core$String$join,
+			after,
+			A2(elm$core$String$split, before, string));
 	});
-var pablohirafuji$elm_markdown$Markdown$Helpers$ifError = F2(
-	function (_function, result) {
-		if (result.$ === 'Ok') {
-			return result;
-		} else {
-			var err = result.a;
-			return _function(err);
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$Helpers$initSpacesRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('^ +'));
-var pablohirafuji$elm_markdown$Markdown$Helpers$indentLength = A2(
+var zwilias$elm_html_string$Html$Types$escapeHtmlText = A2(
 	elm$core$Basics$composeR,
-	A2(
-		elm$regex$Regex$replace,
-		pablohirafuji$elm_markdown$Markdown$Helpers$tabRegex,
-		function (_n0) {
-			return '    ';
-		}),
+	A2(elm$core$String$replace, '&', '&amp;'),
 	A2(
 		elm$core$Basics$composeR,
-		A2(elm$regex$Regex$findAtMost, 1, pablohirafuji$elm_markdown$Markdown$Helpers$initSpacesRegex),
-		A2(
-			elm$core$Basics$composeR,
-			elm$core$List$head,
-			A2(
-				elm$core$Basics$composeR,
-				elm$core$Maybe$map(
-					A2(
-						elm$core$Basics$composeR,
-						function ($) {
-							return $.match;
-						},
-						elm$core$String$length)),
-				elm$core$Maybe$withDefault(0)))));
-var pablohirafuji$elm_markdown$Markdown$Block$checkBlockQuote = function (_n16) {
-	var rawLine = _n16.a;
-	var ast = _n16.b;
-	return A2(
-		elm$core$Result$fromMaybe,
-		_Utils_Tuple2(rawLine, ast),
-		A2(
-			elm$core$Maybe$map,
-			pablohirafuji$elm_markdown$Markdown$Block$parseBlockQuoteLine(ast),
-			A2(
-				elm$core$Maybe$map,
-				A2(
-					elm$core$Basics$composeR,
-					function ($) {
-						return $.submatches;
-					},
-					A2(
-						elm$core$Basics$composeR,
-						elm$core$List$head,
-						A2(
-							elm$core$Basics$composeR,
-							elm$core$Maybe$withDefault(elm$core$Maybe$Nothing),
-							elm$core$Maybe$withDefault('')))),
-				elm$core$List$head(
-					A3(elm$regex$Regex$findAtMost, 1, pablohirafuji$elm_markdown$Markdown$Block$blockQuoteLineRegex, rawLine)))));
+		A2(elm$core$String$replace, '<', '&lt;'),
+		A2(elm$core$String$replace, '>', '&gt;')));
+var NoRedInk$elm_string_conversions$String$Conversions$fromValue = function (value) {
+	return A2(elm$json$Json$Encode$encode, 0, value);
 };
-var pablohirafuji$elm_markdown$Markdown$Block$checkListLine = function (_n15) {
-	var rawLine = _n15.a;
-	var ast = _n15.b;
-	return A2(
-		elm$core$Result$mapError,
-		function (e) {
-			return _Utils_Tuple2(e, ast);
-		},
-		A2(
-			elm$core$Result$map,
-			A2(pablohirafuji$elm_markdown$Markdown$Block$parseListLine, rawLine, ast),
-			A2(
-				elm$core$Result$map,
-				pablohirafuji$elm_markdown$Markdown$Block$calcListIndentLength,
-				A2(
-					pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-					pablohirafuji$elm_markdown$Markdown$Block$checkUnorderedListLine,
-					pablohirafuji$elm_markdown$Markdown$Block$checkOrderedListLine(rawLine)))));
+var elm$core$String$foldl = _String_foldl;
+var elm$core$String$cons = _String_cons;
+var elm$core$String$fromChar = function (_char) {
+	return A2(elm$core$String$cons, _char, '');
 };
-var pablohirafuji$elm_markdown$Markdown$Block$incorporateLine = F2(
-	function (rawLine, ast) {
-		_n11$2:
-		while (true) {
-			if (ast.b) {
-				switch (ast.a.$) {
-					case 'CodeBlock':
-						if ((ast.a.a.$ === 'Fenced') && ast.a.a.a) {
-							var _n12 = ast.a;
-							var _n13 = _n12.a;
-							var fence = _n13.b;
-							var code = _n12.b;
-							var astTail = ast.b;
-							return function (a) {
-								return A2(elm$core$List$cons, a, astTail);
-							}(
-								A3(pablohirafuji$elm_markdown$Markdown$Block$continueOrCloseCodeFence, fence, code, rawLine));
-						} else {
-							break _n11$2;
-						}
-					case 'List':
-						var _n14 = ast.a;
-						var model = _n14.a;
-						var items = _n14.b;
-						var astTail = ast.b;
-						return (_Utils_cmp(
-							pablohirafuji$elm_markdown$Markdown$Helpers$indentLength(rawLine),
-							model.indentLength) > -1) ? A5(pablohirafuji$elm_markdown$Markdown$Block$parseIndentedListLine, rawLine, model, items, ast, astTail) : A2(
-							elm$core$Result$withDefault,
-							A2(pablohirafuji$elm_markdown$Markdown$Block$parseTextLine, rawLine, ast),
-							A2(
-								pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-								pablohirafuji$elm_markdown$Markdown$Block$checkBlockQuote,
-								A2(
-									pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-									pablohirafuji$elm_markdown$Markdown$Block$checkATXHeadingLine,
-									A2(
-										pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-										pablohirafuji$elm_markdown$Markdown$Block$checkSetextHeadingLine,
-										A2(
-											pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-											pablohirafuji$elm_markdown$Markdown$Block$checkOpenCodeFenceLine,
-											A2(
-												pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-												pablohirafuji$elm_markdown$Markdown$Block$checkIndentedCode,
-												A2(
-													pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-													pablohirafuji$elm_markdown$Markdown$Block$checkBlankLine,
-													A2(
-														pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-														pablohirafuji$elm_markdown$Markdown$Block$checkListLine,
-														pablohirafuji$elm_markdown$Markdown$Block$checkThematicBreakLine(
-															_Utils_Tuple2(rawLine, ast))))))))));
-					default:
-						break _n11$2;
-				}
-			} else {
-				break _n11$2;
-			}
-		}
-		return A2(pablohirafuji$elm_markdown$Markdown$Block$parseRawLine, rawLine, ast);
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$parseBlockQuoteLine = F2(
-	function (ast, rawLine) {
-		if (ast.b && (ast.a.$ === 'BlockQuote')) {
-			var bqAST = ast.a.a;
-			var astTail = ast.b;
-			return function (a) {
-				return A2(elm$core$List$cons, a, astTail);
-			}(
-				pablohirafuji$elm_markdown$Markdown$Block$BlockQuote(
-					A2(pablohirafuji$elm_markdown$Markdown$Block$incorporateLine, rawLine, bqAST)));
-		} else {
-			return function (a) {
-				return A2(elm$core$List$cons, a, ast);
-			}(
-				pablohirafuji$elm_markdown$Markdown$Block$BlockQuote(
-					A2(pablohirafuji$elm_markdown$Markdown$Block$incorporateLine, rawLine, _List_Nil)));
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$parseIndentedListLine = F5(
-	function (rawLine, model, items, ast, astTail) {
-		if (!items.b) {
-			return function (a) {
-				return A2(elm$core$List$cons, a, astTail);
-			}(
-				A2(
-					pablohirafuji$elm_markdown$Markdown$Block$List,
-					model,
-					function (a) {
-						return A2(elm$core$List$cons, a, _List_Nil);
-					}(
-						function (a) {
-							return A2(pablohirafuji$elm_markdown$Markdown$Block$incorporateLine, a, _List_Nil);
-						}(
-							A2(pablohirafuji$elm_markdown$Markdown$Helpers$indentLine, model.indentLength, rawLine)))));
-		} else {
-			var item = items.a;
-			var itemsTail = items.b;
-			var indentedRawLine = A2(pablohirafuji$elm_markdown$Markdown$Helpers$indentLine, model.indentLength, rawLine);
-			var updateList = function (model_) {
-				return function (a) {
-					return A2(elm$core$List$cons, a, astTail);
-				}(
-					A2(
-						pablohirafuji$elm_markdown$Markdown$Block$List,
-						model_,
-						function (a) {
-							return A2(elm$core$List$cons, a, itemsTail);
-						}(
-							A2(pablohirafuji$elm_markdown$Markdown$Block$incorporateLine, indentedRawLine, item))));
-			};
-			_n7$3:
-			while (true) {
-				if (item.b) {
-					switch (item.a.$) {
-						case 'BlankLine':
-							if (!item.b.b) {
-								return updateList(model);
-							} else {
-								var itemTail = item.b;
-								return A2(
-									elm$core$List$all,
-									function (block) {
-										if (block.$ === 'BlankLine') {
-											return true;
-										} else {
-											return false;
-										}
-									},
-									itemTail) ? A2(pablohirafuji$elm_markdown$Markdown$Block$parseRawLine, rawLine, ast) : updateList(
-									_Utils_update(
-										model,
-										{isLoose: true}));
-							}
-						case 'List':
-							var _n9 = item.a;
-							var model_ = _n9.a;
-							var items_ = _n9.b;
-							var itemTail = item.b;
-							return (_Utils_cmp(
-								pablohirafuji$elm_markdown$Markdown$Helpers$indentLength(indentedRawLine),
-								model_.indentLength) > -1) ? updateList(model) : (pablohirafuji$elm_markdown$Markdown$Block$isBlankLineLast(items_) ? updateList(
-								_Utils_update(
-									model,
-									{isLoose: true})) : updateList(model));
-						default:
-							break _n7$3;
-					}
-				} else {
-					break _n7$3;
-				}
-			}
-			return updateList(model);
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$parseListLine = F3(
-	function (rawLine, ast, _n0) {
-		var listBlock = _n0.a;
-		var listRawLine = _n0.b;
-		var parsedRawLine = A2(pablohirafuji$elm_markdown$Markdown$Block$incorporateLine, listRawLine, _List_Nil);
-		var newList = A2(
-			elm$core$List$cons,
-			A2(
-				pablohirafuji$elm_markdown$Markdown$Block$List,
-				listBlock,
-				_List_fromArray(
-					[parsedRawLine])),
-			ast);
-		_n1$2:
-		while (true) {
-			if (ast.b) {
-				switch (ast.a.$) {
-					case 'List':
-						var _n2 = ast.a;
-						var model = _n2.a;
-						var items = _n2.b;
-						var astTail = ast.b;
-						return _Utils_eq(listBlock.delimiter, model.delimiter) ? function (a) {
-							return A2(elm$core$List$cons, a, astTail);
-						}(
-							A2(
-								pablohirafuji$elm_markdown$Markdown$Block$List,
-								_Utils_update(
-									model,
-									{
-										indentLength: listBlock.indentLength,
-										isLoose: model.isLoose || pablohirafuji$elm_markdown$Markdown$Block$isBlankLineLast(items)
-									}),
-								A2(elm$core$List$cons, parsedRawLine, items))) : newList;
-					case 'Paragraph':
-						var _n3 = ast.a;
-						var rawText = _n3.a;
-						var inlines = _n3.b;
-						var astTail = ast.b;
-						if ((parsedRawLine.b && (parsedRawLine.a.$ === 'BlankLine')) && (!parsedRawLine.b.b)) {
-							return A2(
-								elm$core$List$cons,
-								A2(pablohirafuji$elm_markdown$Markdown$Block$addToParagraph, rawText, rawLine),
-								astTail);
-						} else {
-							var _n5 = listBlock.type_;
-							if (_n5.$ === 'Ordered') {
-								if (_n5.a === 1) {
-									return newList;
-								} else {
-									var _int = _n5.a;
-									return A2(
-										elm$core$List$cons,
-										A2(pablohirafuji$elm_markdown$Markdown$Block$addToParagraph, rawText, rawLine),
-										astTail);
-								}
-							} else {
-								return newList;
-							}
-						}
-					default:
-						break _n1$2;
-				}
-			} else {
-				break _n1$2;
-			}
-		}
-		return newList;
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$parseRawLine = F2(
-	function (rawLine, ast) {
-		return A2(
-			elm$core$Result$withDefault,
-			A2(pablohirafuji$elm_markdown$Markdown$Block$parseTextLine, rawLine, ast),
-			A2(
-				pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-				pablohirafuji$elm_markdown$Markdown$Block$checkListLine,
-				A2(
-					pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-					pablohirafuji$elm_markdown$Markdown$Block$checkThematicBreakLine,
-					A2(
-						pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-						pablohirafuji$elm_markdown$Markdown$Block$checkBlockQuote,
-						A2(
-							pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-							pablohirafuji$elm_markdown$Markdown$Block$checkATXHeadingLine,
-							A2(
-								pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-								pablohirafuji$elm_markdown$Markdown$Block$checkSetextHeadingLine,
-								A2(
-									pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-									pablohirafuji$elm_markdown$Markdown$Block$checkOpenCodeFenceLine,
-									A2(
-										pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-										pablohirafuji$elm_markdown$Markdown$Block$checkIndentedCode,
-										pablohirafuji$elm_markdown$Markdown$Block$checkBlankLine(
-											_Utils_Tuple2(rawLine, ast))))))))));
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$incorporateLines = F2(
-	function (rawLines, ast) {
-		if (!rawLines.b) {
-			return ast;
-		} else {
-			var rawLine = rawLines.a;
-			var rawLinesTail = rawLines.b;
-			return A2(
-				pablohirafuji$elm_markdown$Markdown$Block$incorporateLines,
-				rawLinesTail,
-				A2(pablohirafuji$elm_markdown$Markdown$Block$incorporateLine, rawLine, ast));
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$Custom = F2(
-	function (a, b) {
-		return {$: 'Custom', a: a, b: b};
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$PlainInlines = function (a) {
-	return {$: 'PlainInlines', a: a};
-};
-var pablohirafuji$elm_markdown$Markdown$Config$Sanitize = function (a) {
-	return {$: 'Sanitize', a: a};
-};
-var pablohirafuji$elm_markdown$Markdown$Config$defaultAllowedHtmlAttributes = _List_fromArray(
-	['name', 'class']);
-var pablohirafuji$elm_markdown$Markdown$Config$defaultAllowedHtmlElements = _List_fromArray(
-	['address', 'article', 'aside', 'b', 'blockquote', 'br', 'caption', 'center', 'cite', 'code', 'col', 'colgroup', 'dd', 'details', 'div', 'dl', 'dt', 'figcaption', 'figure', 'footer', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'legend', 'li', 'menu', 'menuitem', 'nav', 'ol', 'optgroup', 'option', 'p', 'pre', 'section', 'strike', 'summary', 'small', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'ul']);
-var pablohirafuji$elm_markdown$Markdown$Config$defaultSanitizeOptions = {allowedHtmlAttributes: pablohirafuji$elm_markdown$Markdown$Config$defaultAllowedHtmlAttributes, allowedHtmlElements: pablohirafuji$elm_markdown$Markdown$Config$defaultAllowedHtmlElements};
-var pablohirafuji$elm_markdown$Markdown$Config$defaultOptions = {
-	rawHtml: pablohirafuji$elm_markdown$Markdown$Config$Sanitize(pablohirafuji$elm_markdown$Markdown$Config$defaultSanitizeOptions),
-	softAsHardLineBreak: false
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$initParser = F3(
-	function (options, refs, rawText) {
-		return {matches: _List_Nil, options: options, rawText: rawText, refs: refs, tokens: _List_Nil};
-	});
-var pablohirafuji$elm_markdown$Markdown$Inline$CodeInline = function (a) {
-	return {$: 'CodeInline', a: a};
-};
-var pablohirafuji$elm_markdown$Markdown$Inline$HardLineBreak = {$: 'HardLineBreak'};
-var pablohirafuji$elm_markdown$Markdown$Inline$HtmlInline = F3(
-	function (a, b, c) {
-		return {$: 'HtmlInline', a: a, b: b, c: c};
-	});
-var pablohirafuji$elm_markdown$Markdown$Inline$Image = F3(
-	function (a, b, c) {
-		return {$: 'Image', a: a, b: b, c: c};
-	});
-var pablohirafuji$elm_markdown$Markdown$Inline$Link = F3(
-	function (a, b, c) {
-		return {$: 'Link', a: a, b: b, c: c};
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$matchToInline = function (_n0) {
-	var match = _n0.a;
-	var _n1 = match.type_;
-	switch (_n1.$) {
-		case 'NormalType':
-			return pablohirafuji$elm_markdown$Markdown$Inline$Text(match.text);
-		case 'HardLineBreakType':
-			return pablohirafuji$elm_markdown$Markdown$Inline$HardLineBreak;
-		case 'CodeType':
-			return pablohirafuji$elm_markdown$Markdown$Inline$CodeInline(match.text);
-		case 'AutolinkType':
-			var _n2 = _n1.a;
-			var text = _n2.a;
-			var url = _n2.b;
-			return A3(
-				pablohirafuji$elm_markdown$Markdown$Inline$Link,
-				url,
-				elm$core$Maybe$Nothing,
-				_List_fromArray(
-					[
-						pablohirafuji$elm_markdown$Markdown$Inline$Text(text)
-					]));
-		case 'LinkType':
-			var _n3 = _n1.a;
-			var url = _n3.a;
-			var maybeTitle = _n3.b;
-			return A3(
-				pablohirafuji$elm_markdown$Markdown$Inline$Link,
-				url,
-				maybeTitle,
-				pablohirafuji$elm_markdown$Markdown$InlineParser$matchesToInlines(match.matches));
-		case 'ImageType':
-			var _n4 = _n1.a;
-			var url = _n4.a;
-			var maybeTitle = _n4.b;
-			return A3(
-				pablohirafuji$elm_markdown$Markdown$Inline$Image,
-				url,
-				maybeTitle,
-				pablohirafuji$elm_markdown$Markdown$InlineParser$matchesToInlines(match.matches));
-		case 'HtmlType':
-			var model = _n1.a;
-			return A3(
-				pablohirafuji$elm_markdown$Markdown$Inline$HtmlInline,
-				model.tag,
-				model.attributes,
-				pablohirafuji$elm_markdown$Markdown$InlineParser$matchesToInlines(match.matches));
-		default:
-			var length = _n1.a;
-			return A2(
-				pablohirafuji$elm_markdown$Markdown$Inline$Emphasis,
-				length,
-				pablohirafuji$elm_markdown$Markdown$InlineParser$matchesToInlines(match.matches));
-	}
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$matchesToInlines = function (matches) {
-	return A2(elm$core$List$map, pablohirafuji$elm_markdown$Markdown$InlineParser$matchToInline, matches);
-};
-var elm$core$List$sortBy = _List_sortBy;
-var pablohirafuji$elm_markdown$Markdown$InlineParser$Match = function (a) {
-	return {$: 'Match', a: a};
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$prepareChildMatch = F2(
-	function (parentMatch, childMatch) {
-		return pablohirafuji$elm_markdown$Markdown$InlineParser$Match(
-			_Utils_update(
-				childMatch,
-				{end: childMatch.end - parentMatch.textStart, start: childMatch.start - parentMatch.textStart, textEnd: childMatch.textEnd - parentMatch.textStart, textStart: childMatch.textStart - parentMatch.textStart}));
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$addChild = F2(
-	function (parentMatch, childMatch) {
-		return pablohirafuji$elm_markdown$Markdown$InlineParser$Match(
-			_Utils_update(
-				parentMatch,
-				{
-					matches: A2(
-						elm$core$List$cons,
-						A2(pablohirafuji$elm_markdown$Markdown$InlineParser$prepareChildMatch, parentMatch, childMatch),
-						parentMatch.matches)
-				}));
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$organizeMatch = F2(
-	function (_n0, matches) {
-		var match = _n0.a;
-		if (!matches.b) {
-			return _List_fromArray(
-				[
-					pablohirafuji$elm_markdown$Markdown$InlineParser$Match(match)
-				]);
-		} else {
-			var prevMatch = matches.a.a;
-			var matchesTail = matches.b;
-			return (_Utils_cmp(prevMatch.end, match.start) < 1) ? A2(
-				elm$core$List$cons,
-				pablohirafuji$elm_markdown$Markdown$InlineParser$Match(match),
-				matches) : (((_Utils_cmp(prevMatch.start, match.start) < 0) && (_Utils_cmp(prevMatch.end, match.end) > 0)) ? A2(
-				elm$core$List$cons,
-				A2(pablohirafuji$elm_markdown$Markdown$InlineParser$addChild, prevMatch, match),
-				matchesTail) : matches);
-		}
-	});
-function pablohirafuji$elm_markdown$Markdown$InlineParser$cyclic$organizeMatches() {
-	return A2(
-		elm$core$Basics$composeR,
-		elm$core$List$sortBy(
-			function (_n0) {
-				var match = _n0.a;
-				return match.start;
-			}),
-		A2(
-			elm$core$Basics$composeR,
-			A2(elm$core$List$foldl, pablohirafuji$elm_markdown$Markdown$InlineParser$organizeMatch, _List_Nil),
-			elm$core$List$map(
-				function (_n1) {
-					var match = _n1.a;
-					return pablohirafuji$elm_markdown$Markdown$InlineParser$Match(
-						_Utils_update(
-							match,
-							{
-								matches: pablohirafuji$elm_markdown$Markdown$InlineParser$cyclic$organizeMatches()(match.matches)
-							}));
-				})));
-}
-try {
-	var pablohirafuji$elm_markdown$Markdown$InlineParser$organizeMatches = pablohirafuji$elm_markdown$Markdown$InlineParser$cyclic$organizeMatches();
-	pablohirafuji$elm_markdown$Markdown$InlineParser$cyclic$organizeMatches = function () {
-		return pablohirafuji$elm_markdown$Markdown$InlineParser$organizeMatches;
-	};
-} catch ($) {
-throw 'Some top-level definitions from `Markdown.InlineParser` are causing infinite recursion:\n\n  ┌─────┐\n  │    organizeMatches\n  └─────┘\n\nThese errors are very tricky, so read https://elm-lang.org/0.19.0/halting-problem to learn how to fix it!';}
-var pablohirafuji$elm_markdown$Markdown$InlineParser$organizeParserMatches = function (model) {
-	return _Utils_update(
-		model,
-		{
-			matches: pablohirafuji$elm_markdown$Markdown$InlineParser$organizeMatches(model.matches)
-		});
-};
-var elm$core$String$dropLeft = F2(
-	function (n, string) {
-		return (n < 1) ? string : A3(
-			elm$core$String$slice,
-			n,
-			elm$core$String$length(string),
-			string);
-	});
-var elm$core$String$isEmpty = function (string) {
-	return string === '';
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$NormalType = {$: 'NormalType'};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$normalMatch = function (text) {
-	return pablohirafuji$elm_markdown$Markdown$InlineParser$Match(
-		{
-			end: 0,
-			matches: _List_Nil,
-			start: 0,
-			text: pablohirafuji$elm_markdown$Markdown$Helpers$formatStr(text),
-			textEnd: 0,
-			textStart: 0,
-			type_: pablohirafuji$elm_markdown$Markdown$InlineParser$NormalType
-		});
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$parseTextMatch = F3(
-	function (rawText, _n2, parsedMatches) {
-		var matchModel = _n2.a;
-		var updtMatch = pablohirafuji$elm_markdown$Markdown$InlineParser$Match(
-			_Utils_update(
-				matchModel,
-				{
-					matches: A3(pablohirafuji$elm_markdown$Markdown$InlineParser$parseTextMatches, matchModel.text, _List_Nil, matchModel.matches)
-				}));
-		if (!parsedMatches.b) {
-			var finalStr = A2(elm$core$String$dropLeft, matchModel.end, rawText);
-			return elm$core$String$isEmpty(finalStr) ? _List_fromArray(
-				[updtMatch]) : _List_fromArray(
-				[
-					updtMatch,
-					pablohirafuji$elm_markdown$Markdown$InlineParser$normalMatch(finalStr)
-				]);
-		} else {
-			var matchHead = parsedMatches.a.a;
-			var matchesTail = parsedMatches.b;
-			return _Utils_eq(matchHead.type_, pablohirafuji$elm_markdown$Markdown$InlineParser$NormalType) ? A2(elm$core$List$cons, updtMatch, parsedMatches) : (_Utils_eq(matchModel.end, matchHead.start) ? A2(elm$core$List$cons, updtMatch, parsedMatches) : ((_Utils_cmp(matchModel.end, matchHead.start) < 0) ? A2(
-				elm$core$List$cons,
-				updtMatch,
-				A2(
-					elm$core$List$cons,
-					pablohirafuji$elm_markdown$Markdown$InlineParser$normalMatch(
-						A3(elm$core$String$slice, matchModel.end, matchHead.start, rawText)),
-					parsedMatches)) : parsedMatches));
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$parseTextMatches = F3(
-	function (rawText, parsedMatches, matches) {
-		parseTextMatches:
-		while (true) {
-			if (!matches.b) {
-				if (!parsedMatches.b) {
-					return elm$core$String$isEmpty(rawText) ? _List_Nil : _List_fromArray(
-						[
-							pablohirafuji$elm_markdown$Markdown$InlineParser$normalMatch(rawText)
-						]);
-				} else {
-					var matchModel = parsedMatches.a.a;
-					return (matchModel.start > 0) ? A2(
-						elm$core$List$cons,
-						pablohirafuji$elm_markdown$Markdown$InlineParser$normalMatch(
-							A2(elm$core$String$left, matchModel.start, rawText)),
-						parsedMatches) : parsedMatches;
-				}
-			} else {
-				var match = matches.a;
-				var matchesTail = matches.b;
-				var $temp$rawText = rawText,
-					$temp$parsedMatches = A3(pablohirafuji$elm_markdown$Markdown$InlineParser$parseTextMatch, rawText, match, parsedMatches),
-					$temp$matches = matchesTail;
-				rawText = $temp$rawText;
-				parsedMatches = $temp$parsedMatches;
-				matches = $temp$matches;
-				continue parseTextMatches;
-			}
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$parseText = function (model) {
-	return _Utils_update(
-		model,
-		{
-			matches: A3(pablohirafuji$elm_markdown$Markdown$InlineParser$parseTextMatches, model.rawText, _List_Nil, model.matches)
-		});
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$angleBracketLTokenRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('(\\\\*)(\\<)'));
-var pablohirafuji$elm_markdown$Markdown$Helpers$isEven = function (_int) {
-	return !A2(elm$core$Basics$modBy, 2, _int);
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$CharToken = function (a) {
-	return {$: 'CharToken', a: a};
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$regMatchToAngleBracketLToken = function (regMatch) {
-	var _n0 = regMatch.submatches;
-	if ((_n0.b && _n0.b.b) && (_n0.b.a.$ === 'Just')) {
-		var maybeBackslashes = _n0.a;
-		var _n1 = _n0.b;
-		var delimiter = _n1.a.a;
-		var backslashesLength = A2(
-			elm$core$Maybe$withDefault,
-			0,
-			A2(elm$core$Maybe$map, elm$core$String$length, maybeBackslashes));
-		return pablohirafuji$elm_markdown$Markdown$Helpers$isEven(backslashesLength) ? elm$core$Maybe$Just(
-			{
-				index: regMatch.index + backslashesLength,
-				length: 1,
-				meaning: pablohirafuji$elm_markdown$Markdown$InlineParser$CharToken(
-					_Utils_chr('<'))
-			}) : elm$core$Maybe$Nothing;
-	} else {
-		return elm$core$Maybe$Nothing;
-	}
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$findAngleBracketLTokens = function (str) {
-	return A2(
-		elm$core$List$filterMap,
-		pablohirafuji$elm_markdown$Markdown$InlineParser$regMatchToAngleBracketLToken,
-		A2(elm$regex$Regex$find, pablohirafuji$elm_markdown$Markdown$InlineParser$angleBracketLTokenRegex, str));
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$angleBracketRTokenRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('(\\\\*)(\\>)'));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$RightAngleBracket = function (a) {
-	return {$: 'RightAngleBracket', a: a};
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$regMatchToAngleBracketRToken = function (regMatch) {
-	var _n0 = regMatch.submatches;
-	if ((_n0.b && _n0.b.b) && (_n0.b.a.$ === 'Just')) {
-		var maybeBackslashes = _n0.a;
-		var _n1 = _n0.b;
-		var backslashesLength = A2(
-			elm$core$Maybe$withDefault,
-			0,
-			A2(elm$core$Maybe$map, elm$core$String$length, maybeBackslashes));
-		return elm$core$Maybe$Just(
-			{
-				index: regMatch.index + backslashesLength,
-				length: 1,
-				meaning: pablohirafuji$elm_markdown$Markdown$InlineParser$RightAngleBracket(
-					!pablohirafuji$elm_markdown$Markdown$Helpers$isEven(backslashesLength))
-			});
-	} else {
-		return elm$core$Maybe$Nothing;
-	}
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$findAngleBracketRTokens = function (str) {
-	return A2(
-		elm$core$List$filterMap,
-		pablohirafuji$elm_markdown$Markdown$InlineParser$regMatchToAngleBracketRToken,
-		A2(elm$regex$Regex$find, pablohirafuji$elm_markdown$Markdown$InlineParser$angleBracketRTokenRegex, str));
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$asteriskEmphasisTokenRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('(\\\\*)([^*])?(\\*+)([^*])?'));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$EmphasisToken = F2(
-	function (a, b) {
-		return {$: 'EmphasisToken', a: a, b: b};
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$punctuationRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('[!-#%-\\*,-/:;\\?@\\[-\\]_\\{\\}]'));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$containPunctuation = elm$regex$Regex$contains(pablohirafuji$elm_markdown$Markdown$InlineParser$punctuationRegex);
-var pablohirafuji$elm_markdown$Markdown$InlineParser$spaceRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('\\s'));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$containSpace = elm$regex$Regex$contains(pablohirafuji$elm_markdown$Markdown$InlineParser$spaceRegex);
-var pablohirafuji$elm_markdown$Markdown$InlineParser$charFringeRank = function (_char) {
-	var string = elm$core$String$fromChar(_char);
-	return pablohirafuji$elm_markdown$Markdown$InlineParser$containSpace(string) ? 0 : (pablohirafuji$elm_markdown$Markdown$InlineParser$containPunctuation(string) ? 1 : 2);
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$maybeCharFringeRank = function (maybeChar) {
-	return A2(
-		elm$core$Maybe$withDefault,
-		0,
-		A2(elm$core$Maybe$map, pablohirafuji$elm_markdown$Markdown$InlineParser$charFringeRank, maybeChar));
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$getFringeRank = A2(
-	elm$core$Basics$composeR,
-	elm$core$Maybe$map(
-		A2(
-			elm$core$Basics$composeR,
-			elm$core$String$uncons,
-			A2(
-				elm$core$Basics$composeR,
-				elm$core$Maybe$map(elm$core$Tuple$first),
-				pablohirafuji$elm_markdown$Markdown$InlineParser$maybeCharFringeRank))),
-	elm$core$Maybe$withDefault(0));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$regMatchToEmphasisToken = F3(
-	function (_char, rawText, regMatch) {
-		var _n0 = regMatch.submatches;
-		if ((((_n0.b && _n0.b.b) && _n0.b.b.b) && (_n0.b.b.a.$ === 'Just')) && _n0.b.b.b.b) {
-			var maybeBackslashes = _n0.a;
-			var _n1 = _n0.b;
-			var maybeLeftFringe = _n1.a;
-			var _n2 = _n1.b;
-			var delimiter = _n2.a.a;
-			var _n3 = _n2.b;
-			var maybeRightFringe = _n3.a;
-			var leftFringeLength = A2(
-				elm$core$Maybe$withDefault,
-				0,
-				A2(elm$core$Maybe$map, elm$core$String$length, maybeLeftFringe));
-			var mLeftFringe = (regMatch.index && (!leftFringeLength)) ? elm$core$Maybe$Just(
-				A3(elm$core$String$slice, regMatch.index - 1, regMatch.index, rawText)) : maybeLeftFringe;
-			var backslashesLength = A2(
-				elm$core$Maybe$withDefault,
-				0,
-				A2(elm$core$Maybe$map, elm$core$String$length, maybeBackslashes));
-			var isEscaped = ((!pablohirafuji$elm_markdown$Markdown$Helpers$isEven(backslashesLength)) && (!leftFringeLength)) || _Utils_eq(
-				mLeftFringe,
-				elm$core$Maybe$Just('\\'));
-			var delimiterLength = isEscaped ? (elm$core$String$length(delimiter) - 1) : elm$core$String$length(delimiter);
-			var fringeRank = _Utils_Tuple2(
-				isEscaped ? 1 : pablohirafuji$elm_markdown$Markdown$InlineParser$getFringeRank(mLeftFringe),
-				pablohirafuji$elm_markdown$Markdown$InlineParser$getFringeRank(maybeRightFringe));
-			var index = ((regMatch.index + backslashesLength) + leftFringeLength) + (isEscaped ? 1 : 0);
-			return ((delimiterLength <= 0) || (_Utils_eq(
+var zwilias$elm_html_string$Html$Types$escape = A2(
+	elm$core$String$foldl,
+	F2(
+		function (_char, acc) {
+			return _Utils_eq(
 				_char,
-				_Utils_chr('_')) && _Utils_eq(
-				fringeRank,
-				_Utils_Tuple2(2, 2)))) ? elm$core$Maybe$Nothing : elm$core$Maybe$Just(
-				{
-					index: index,
-					length: delimiterLength,
-					meaning: A2(pablohirafuji$elm_markdown$Markdown$InlineParser$EmphasisToken, _char, fringeRank)
-				});
-		} else {
-			return elm$core$Maybe$Nothing;
-		}
+				_Utils_chr('\"')) ? (acc + '\\\"') : _Utils_ap(
+				acc,
+				elm$core$String$fromChar(_char));
+		}),
+	'');
+var elm$core$Char$toLower = _Char_toLower;
+var zwilias$elm_html_string$Html$Types$hyphenate = A2(
+	elm$core$String$foldl,
+	F2(
+		function (_char, acc) {
+			return elm$core$Char$isUpper(_char) ? (acc + ('-' + elm$core$String$fromChar(
+				elm$core$Char$toLower(_char)))) : _Utils_ap(
+				acc,
+				elm$core$String$fromChar(_char));
+		}),
+	'');
+var zwilias$elm_html_string$Html$Types$buildProp = F2(
+	function (key, value) {
+		return zwilias$elm_html_string$Html$Types$hyphenate(key) + ('=\"' + (zwilias$elm_html_string$Html$Types$escape(value) + '\"'));
 	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$findAsteriskEmphasisTokens = function (str) {
-	return A2(
-		elm$core$List$filterMap,
-		A2(
-			pablohirafuji$elm_markdown$Markdown$InlineParser$regMatchToEmphasisToken,
-			_Utils_chr('*'),
-			str),
-		A2(elm$regex$Regex$find, pablohirafuji$elm_markdown$Markdown$InlineParser$asteriskEmphasisTokenRegex, str));
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$codeTokenRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('(\\\\*)(\\`+)'));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$CodeToken = function (a) {
-	return {$: 'CodeToken', a: a};
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$regMatchToCodeToken = function (regMatch) {
-	var _n0 = regMatch.submatches;
-	if ((_n0.b && _n0.b.b) && (_n0.b.a.$ === 'Just')) {
-		var maybeBackslashes = _n0.a;
-		var _n1 = _n0.b;
-		var backtick = _n1.a.a;
-		var backslashesLength = A2(
-			elm$core$Maybe$withDefault,
-			0,
-			A2(elm$core$Maybe$map, elm$core$String$length, maybeBackslashes));
-		return elm$core$Maybe$Just(
-			{
-				index: regMatch.index + backslashesLength,
-				length: elm$core$String$length(backtick),
-				meaning: pablohirafuji$elm_markdown$Markdown$InlineParser$CodeToken(
-					!pablohirafuji$elm_markdown$Markdown$Helpers$isEven(backslashesLength))
-			});
-	} else {
-		return elm$core$Maybe$Nothing;
+var zwilias$elm_html_string$Html$Types$propName = function (prop) {
+	switch (prop) {
+		case 'className':
+			return 'class';
+		case 'defaultValue':
+			return 'value';
+		case 'htmlFor':
+			return 'for';
+		default:
+			return prop;
 	}
 };
-var pablohirafuji$elm_markdown$Markdown$InlineParser$findCodeTokens = function (str) {
-	return A2(
-		elm$core$List$filterMap,
-		pablohirafuji$elm_markdown$Markdown$InlineParser$regMatchToCodeToken,
-		A2(elm$regex$Regex$find, pablohirafuji$elm_markdown$Markdown$InlineParser$codeTokenRegex, str));
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$hardBreakTokenRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('(?:(\\\\+)|( {2,}))\\n'));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$HardLineBreakToken = {$: 'HardLineBreakToken'};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$regMatchToHardBreakToken = function (regMatch) {
-	var _n0 = regMatch.submatches;
-	_n0$2:
-	while (true) {
-		if (_n0.b) {
-			if (_n0.a.$ === 'Just') {
-				var backslashes = _n0.a.a;
-				var backslashesLength = elm$core$String$length(backslashes);
-				return (!pablohirafuji$elm_markdown$Markdown$Helpers$isEven(backslashesLength)) ? elm$core$Maybe$Just(
-					{index: (regMatch.index + backslashesLength) - 1, length: 2, meaning: pablohirafuji$elm_markdown$Markdown$InlineParser$HardLineBreakToken}) : elm$core$Maybe$Nothing;
-			} else {
-				if (_n0.b.b && (_n0.b.a.$ === 'Just')) {
-					var _n1 = _n0.b;
-					return elm$core$Maybe$Just(
-						{
-							index: regMatch.index,
-							length: elm$core$String$length(regMatch.match),
-							meaning: pablohirafuji$elm_markdown$Markdown$InlineParser$HardLineBreakToken
-						});
-				} else {
-					break _n0$2;
-				}
-			}
-		} else {
-			break _n0$2;
-		}
-	}
-	return elm$core$Maybe$Nothing;
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$regMatchToSoftHardBreakToken = function (regMatch) {
-	var _n0 = regMatch.submatches;
-	_n0$2:
-	while (true) {
-		if (_n0.b) {
-			if (_n0.a.$ === 'Just') {
-				var backslashes = _n0.a.a;
-				var backslashesLength = elm$core$String$length(backslashes);
-				return pablohirafuji$elm_markdown$Markdown$Helpers$isEven(backslashesLength) ? elm$core$Maybe$Just(
-					{index: regMatch.index + backslashesLength, length: 1, meaning: pablohirafuji$elm_markdown$Markdown$InlineParser$HardLineBreakToken}) : elm$core$Maybe$Just(
-					{index: (regMatch.index + backslashesLength) - 1, length: 2, meaning: pablohirafuji$elm_markdown$Markdown$InlineParser$HardLineBreakToken});
-			} else {
-				if (_n0.b.b) {
-					var _n1 = _n0.b;
-					var maybeSpaces = _n1.a;
-					return elm$core$Maybe$Just(
-						{
-							index: regMatch.index,
-							length: elm$core$String$length(regMatch.match),
-							meaning: pablohirafuji$elm_markdown$Markdown$InlineParser$HardLineBreakToken
-						});
-				} else {
-					break _n0$2;
-				}
-			}
-		} else {
-			break _n0$2;
-		}
-	}
-	return elm$core$Maybe$Nothing;
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$softAsHardLineBreakTokenRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('(?:(\\\\+)|( *))\\n'));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$findHardBreakTokens = F2(
-	function (softAsHardLineBreak, str) {
-		return softAsHardLineBreak ? A2(
-			elm$core$List$filterMap,
-			pablohirafuji$elm_markdown$Markdown$InlineParser$regMatchToSoftHardBreakToken,
-			A2(elm$regex$Regex$find, pablohirafuji$elm_markdown$Markdown$InlineParser$softAsHardLineBreakTokenRegex, str)) : A2(
-			elm$core$List$filterMap,
-			pablohirafuji$elm_markdown$Markdown$InlineParser$regMatchToHardBreakToken,
-			A2(elm$regex$Regex$find, pablohirafuji$elm_markdown$Markdown$InlineParser$hardBreakTokenRegex, str));
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$linkImageCloseTokenRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('(\\\\*)(\\])'));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$regMatchToLinkImageCloseToken = function (regMatch) {
-	var _n0 = regMatch.submatches;
-	if ((_n0.b && _n0.b.b) && (_n0.b.a.$ === 'Just')) {
-		var maybeBackslashes = _n0.a;
-		var _n1 = _n0.b;
-		var delimiter = _n1.a.a;
-		var backslashesLength = A2(
-			elm$core$Maybe$withDefault,
-			0,
-			A2(elm$core$Maybe$map, elm$core$String$length, maybeBackslashes));
-		return pablohirafuji$elm_markdown$Markdown$Helpers$isEven(backslashesLength) ? elm$core$Maybe$Just(
-			{
-				index: regMatch.index + backslashesLength,
-				length: 1,
-				meaning: pablohirafuji$elm_markdown$Markdown$InlineParser$CharToken(
-					_Utils_chr(']'))
-			}) : elm$core$Maybe$Nothing;
-	} else {
-		return elm$core$Maybe$Nothing;
-	}
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$findLinkImageCloseTokens = function (str) {
-	return A2(
-		elm$core$List$filterMap,
-		pablohirafuji$elm_markdown$Markdown$InlineParser$regMatchToLinkImageCloseToken,
-		A2(elm$regex$Regex$find, pablohirafuji$elm_markdown$Markdown$InlineParser$linkImageCloseTokenRegex, str));
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$linkImageOpenTokenRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('(\\\\*)(\\!)?(\\[)'));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$ImageOpenToken = {$: 'ImageOpenToken'};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$LinkOpenToken = function (a) {
-	return {$: 'LinkOpenToken', a: a};
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$regMatchToLinkImageOpenToken = function (regMatch) {
-	var _n0 = regMatch.submatches;
-	if (((_n0.b && _n0.b.b) && _n0.b.b.b) && (_n0.b.b.a.$ === 'Just')) {
-		var maybeBackslashes = _n0.a;
-		var _n1 = _n0.b;
-		var maybeImageOpen = _n1.a;
-		var _n2 = _n1.b;
-		var delimiter = _n2.a.a;
-		var backslashesLength = A2(
-			elm$core$Maybe$withDefault,
-			0,
-			A2(elm$core$Maybe$map, elm$core$String$length, maybeBackslashes));
-		var isEscaped = !pablohirafuji$elm_markdown$Markdown$Helpers$isEven(backslashesLength);
-		var index = (regMatch.index + backslashesLength) + ((isEscaped && _Utils_eq(
-			maybeImageOpen,
-			elm$core$Maybe$Just('!'))) ? 1 : 0);
-		var meaning = isEscaped ? A2(
-			elm$core$Maybe$map,
-			function (_n3) {
-				return pablohirafuji$elm_markdown$Markdown$InlineParser$LinkOpenToken(true);
-			},
-			maybeImageOpen) : elm$core$Maybe$Just(
-			A2(
-				elm$core$Maybe$withDefault,
-				pablohirafuji$elm_markdown$Markdown$InlineParser$LinkOpenToken(true),
-				A2(
-					elm$core$Maybe$map,
-					function (_n4) {
-						return pablohirafuji$elm_markdown$Markdown$InlineParser$ImageOpenToken;
-					},
-					maybeImageOpen)));
-		var length = _Utils_eq(
-			meaning,
-			elm$core$Maybe$Just(pablohirafuji$elm_markdown$Markdown$InlineParser$ImageOpenToken)) ? 2 : 1;
-		var toModel = function (m) {
-			return {index: index, length: length, meaning: m};
-		};
-		return A2(elm$core$Maybe$map, toModel, meaning);
-	} else {
-		return elm$core$Maybe$Nothing;
-	}
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$findLinkImageOpenTokens = function (str) {
-	return A2(
-		elm$core$List$filterMap,
-		pablohirafuji$elm_markdown$Markdown$InlineParser$regMatchToLinkImageOpenToken,
-		A2(elm$regex$Regex$find, pablohirafuji$elm_markdown$Markdown$InlineParser$linkImageOpenTokenRegex, str));
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$underlineEmphasisTokenRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('(\\\\*)([^_])?(\\_+)([^_])?'));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$findUnderlineEmphasisTokens = function (str) {
-	return A2(
-		elm$core$List$filterMap,
-		A2(
-			pablohirafuji$elm_markdown$Markdown$InlineParser$regMatchToEmphasisToken,
-			_Utils_chr('_'),
-			str),
-		A2(elm$regex$Regex$find, pablohirafuji$elm_markdown$Markdown$InlineParser$underlineEmphasisTokenRegex, str));
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$tokenize = function (model) {
-	return _Utils_update(
-		model,
-		{
-			tokens: A2(
-				elm$core$List$sortBy,
-				function ($) {
-					return $.index;
-				},
-				_Utils_ap(
-					pablohirafuji$elm_markdown$Markdown$InlineParser$findAngleBracketRTokens(model.rawText),
-					_Utils_ap(
-						pablohirafuji$elm_markdown$Markdown$InlineParser$findAngleBracketLTokens(model.rawText),
-						_Utils_ap(
-							A2(pablohirafuji$elm_markdown$Markdown$InlineParser$findHardBreakTokens, model.options.softAsHardLineBreak, model.rawText),
-							_Utils_ap(
-								pablohirafuji$elm_markdown$Markdown$InlineParser$findLinkImageCloseTokens(model.rawText),
-								_Utils_ap(
-									pablohirafuji$elm_markdown$Markdown$InlineParser$findLinkImageOpenTokens(model.rawText),
-									_Utils_ap(
-										pablohirafuji$elm_markdown$Markdown$InlineParser$findUnderlineEmphasisTokens(model.rawText),
-										_Utils_ap(
-											pablohirafuji$elm_markdown$Markdown$InlineParser$findAsteriskEmphasisTokens(model.rawText),
-											pablohirafuji$elm_markdown$Markdown$InlineParser$findCodeTokens(model.rawText)))))))))
-		});
-};
-var elm$core$Result$andThen = F2(
-	function (callback, result) {
-		if (result.$ === 'Ok') {
-			var value = result.a;
-			return callback(value);
-		} else {
-			var msg = result.a;
-			return elm$core$Result$Err(msg);
-		}
-	});
-var elm$core$Result$toMaybe = function (result) {
-	if (result.$ === 'Ok') {
-		var v = result.a;
-		return elm$core$Maybe$Just(v);
-	} else {
-		return elm$core$Maybe$Nothing;
-	}
-};
-var pablohirafuji$elm_markdown$Markdown$Helpers$whiteSpaceChars = ' \\t\\f\\v\\r\\n';
-var pablohirafuji$elm_markdown$Markdown$Helpers$whitespacesRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('[' + (pablohirafuji$elm_markdown$Markdown$Helpers$whiteSpaceChars + ']+')));
-var pablohirafuji$elm_markdown$Markdown$Helpers$cleanWhitespaces = A2(
-	elm$core$Basics$composeR,
-	elm$core$String$trim,
-	A2(
-		elm$regex$Regex$replace,
-		pablohirafuji$elm_markdown$Markdown$Helpers$whitespacesRegex,
-		function (_n0) {
-			return ' ';
-		}));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$CodeType = {$: 'CodeType'};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$EmphasisType = function (a) {
-	return {$: 'EmphasisType', a: a};
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$HtmlType = function (a) {
-	return {$: 'HtmlType', a: a};
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$ImageType = function (a) {
-	return {$: 'ImageType', a: a};
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$LinkType = function (a) {
-	return {$: 'LinkType', a: a};
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$addMatch = F2(
-	function (model, match) {
-		return _Utils_update(
-			model,
-			{
-				matches: A2(elm$core$List$cons, match, model.matches)
-			});
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$addToken = F2(
-	function (model, token) {
-		return _Utils_update(
-			model,
-			{
-				tokens: A2(elm$core$List$cons, token, model.tokens)
-			});
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$applyTTM = F2(
-	function (finderFunction, model) {
-		return finderFunction(
-			_Utils_Tuple2(
-				model.tokens,
-				_Utils_update(
-					model,
-					{tokens: _List_Nil})));
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$AutolinkType = function (a) {
-	return {$: 'AutolinkType', a: a};
-};
-var elm$url$Url$percentDecode = _Url_percentDecode;
-var elm$url$Url$percentEncode = _Url_percentEncode;
-var pablohirafuji$elm_markdown$Markdown$InlineParser$decodeUrlRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('%(?:3B|2C|2F|3F|3A|40|26|3D|2B|24|23|25)'));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$encodeUrl = A2(
-	elm$core$Basics$composeR,
-	elm$url$Url$percentEncode,
-	A2(
-		elm$regex$Regex$replace,
-		pablohirafuji$elm_markdown$Markdown$InlineParser$decodeUrlRegex,
-		function (match) {
-			return A2(
-				elm$core$Maybe$withDefault,
-				match.match,
-				elm$url$Url$percentDecode(match.match));
-		}));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$urlRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('^([A-Za-z][A-Za-z0-9.+\\-]{1,31}:[^<>\\x00-\\x20]*)$'));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$autolinkToMatch = function (_n0) {
-	var match = _n0.a;
-	return A2(elm$regex$Regex$contains, pablohirafuji$elm_markdown$Markdown$InlineParser$urlRegex, match.text) ? elm$core$Result$Ok(
-		pablohirafuji$elm_markdown$Markdown$InlineParser$Match(
-			_Utils_update(
-				match,
-				{
-					type_: pablohirafuji$elm_markdown$Markdown$InlineParser$AutolinkType(
-						_Utils_Tuple2(
-							match.text,
-							pablohirafuji$elm_markdown$Markdown$InlineParser$encodeUrl(match.text)))
-				}))) : elm$core$Result$Err(
-		pablohirafuji$elm_markdown$Markdown$InlineParser$Match(match));
-};
-var pablohirafuji$elm_markdown$Markdown$Helpers$titleRegex = '(?:[' + (pablohirafuji$elm_markdown$Markdown$Helpers$whiteSpaceChars + (']+' + ('(?:\'([^\'\\\\]*(?:\\\\.[^\'\\\\]*)*)\'|' + ('\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|' + '\\(([^\\)\\\\]*(?:\\\\.[^\\)\\\\]*)*)\\)))?'))));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$hrefRegex = '(?:<([^<>' + (pablohirafuji$elm_markdown$Markdown$Helpers$whiteSpaceChars + (']*)>|([^' + (pablohirafuji$elm_markdown$Markdown$Helpers$whiteSpaceChars + ('\\(\\)\\\\]*(?:\\\\.[^' + (pablohirafuji$elm_markdown$Markdown$Helpers$whiteSpaceChars + '\\(\\)\\\\]*)*))')))));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$inlineLinkTypeOrImageTypeRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('^\\(\\s*' + (pablohirafuji$elm_markdown$Markdown$InlineParser$hrefRegex + (pablohirafuji$elm_markdown$Markdown$Helpers$titleRegex + '\\s*\\)'))));
-var pablohirafuji$elm_markdown$Markdown$Helpers$returnFirstJust = function (maybes) {
-	var process = F2(
-		function (a, maybeFound) {
-			if (maybeFound.$ === 'Just') {
-				var found = maybeFound.a;
-				return elm$core$Maybe$Just(found);
-			} else {
-				return a;
-			}
-		});
-	return A3(elm$core$List$foldl, process, elm$core$Maybe$Nothing, maybes);
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$prepareUrlAndTitle = function (_n0) {
-	var rawUrl = _n0.a;
-	var maybeTitle = _n0.b;
-	return _Utils_Tuple2(
-		pablohirafuji$elm_markdown$Markdown$InlineParser$encodeUrl(
-			pablohirafuji$elm_markdown$Markdown$Helpers$formatStr(rawUrl)),
-		A2(elm$core$Maybe$map, pablohirafuji$elm_markdown$Markdown$Helpers$formatStr, maybeTitle));
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$inlineLinkTypeOrImageTypeRegexToMatch = F3(
-	function (matchModel, model, regexMatch) {
-		var _n0 = regexMatch.submatches;
-		if ((((_n0.b && _n0.b.b) && _n0.b.b.b) && _n0.b.b.b.b) && _n0.b.b.b.b.b) {
-			var maybeRawUrlAngleBrackets = _n0.a;
-			var _n1 = _n0.b;
-			var maybeRawUrlWithoutBrackets = _n1.a;
-			var _n2 = _n1.b;
-			var maybeTitleSingleQuotes = _n2.a;
-			var _n3 = _n2.b;
-			var maybeTitleDoubleQuotes = _n3.a;
-			var _n4 = _n3.b;
-			var maybeTitleParenthesis = _n4.a;
-			var maybeTitle = pablohirafuji$elm_markdown$Markdown$Helpers$returnFirstJust(
-				_List_fromArray(
-					[maybeTitleSingleQuotes, maybeTitleDoubleQuotes, maybeTitleParenthesis]));
-			var toMatch = function (rawUrl) {
-				return pablohirafuji$elm_markdown$Markdown$InlineParser$Match(
-					_Utils_update(
-						matchModel,
-						{
-							end: matchModel.end + elm$core$String$length(regexMatch.match),
-							type_: function () {
-								var _n5 = matchModel.type_;
-								if (_n5.$ === 'ImageType') {
-									return pablohirafuji$elm_markdown$Markdown$InlineParser$ImageType;
-								} else {
-									return pablohirafuji$elm_markdown$Markdown$InlineParser$LinkType;
-								}
-							}()(
-								pablohirafuji$elm_markdown$Markdown$InlineParser$prepareUrlAndTitle(
-									_Utils_Tuple2(rawUrl, maybeTitle)))
-						}));
-			};
-			var maybeRawUrl = pablohirafuji$elm_markdown$Markdown$Helpers$returnFirstJust(
-				_List_fromArray(
-					[maybeRawUrlAngleBrackets, maybeRawUrlWithoutBrackets]));
-			return elm$core$Maybe$Just(
-				toMatch(
-					A2(elm$core$Maybe$withDefault, '', maybeRawUrl)));
-		} else {
-			return elm$core$Maybe$Nothing;
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$checkForInlineLinkTypeOrImageType = function (_n0) {
-	var remainText = _n0.a;
-	var tempMatch = _n0.b.a;
-	var model = _n0.c;
-	return A2(
-		elm$core$Result$fromMaybe,
-		_Utils_Tuple3(
-			remainText,
-			pablohirafuji$elm_markdown$Markdown$InlineParser$Match(tempMatch),
-			model),
-		A2(
-			elm$core$Maybe$map,
-			pablohirafuji$elm_markdown$Markdown$InlineParser$addMatch(model),
-			A2(
-				elm$core$Maybe$andThen,
-				A2(pablohirafuji$elm_markdown$Markdown$InlineParser$inlineLinkTypeOrImageTypeRegexToMatch, tempMatch, model),
-				elm$core$List$head(
-					A3(elm$regex$Regex$findAtMost, 1, pablohirafuji$elm_markdown$Markdown$InlineParser$inlineLinkTypeOrImageTypeRegex, remainText)))));
-};
-var pablohirafuji$elm_markdown$Markdown$Helpers$insideSquareBracketRegex = '[^\\[\\]\\\\]*(?:\\\\.[^\\[\\]\\\\]*)*';
-var pablohirafuji$elm_markdown$Markdown$InlineParser$refLabelRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('^\\[\\s*(' + (pablohirafuji$elm_markdown$Markdown$Helpers$insideSquareBracketRegex + ')\\s*\\]')));
-var pablohirafuji$elm_markdown$Markdown$Helpers$prepareRefLabel = A2(elm$core$Basics$composeR, pablohirafuji$elm_markdown$Markdown$Helpers$cleanWhitespaces, elm$core$String$toLower);
-var pablohirafuji$elm_markdown$Markdown$InlineParser$refRegexToMatch = F3(
-	function (matchModel, model, maybeRegexMatch) {
-		var regexMatchLength = A2(
-			elm$core$Maybe$withDefault,
-			0,
-			A2(
-				elm$core$Maybe$map,
-				A2(
-					elm$core$Basics$composeR,
-					function ($) {
-						return $.match;
-					},
-					elm$core$String$length),
-				maybeRegexMatch));
-		var toMatch = function (urlTitle) {
-			return pablohirafuji$elm_markdown$Markdown$InlineParser$Match(
-				_Utils_update(
-					matchModel,
-					{
-						end: matchModel.end + regexMatchLength,
-						type_: function () {
-							var _n0 = matchModel.type_;
-							if (_n0.$ === 'ImageType') {
-								return pablohirafuji$elm_markdown$Markdown$InlineParser$ImageType;
-							} else {
-								return pablohirafuji$elm_markdown$Markdown$InlineParser$LinkType;
-							}
-						}()(
-							pablohirafuji$elm_markdown$Markdown$InlineParser$prepareUrlAndTitle(urlTitle))
-					}));
-		};
-		var refLabel = function (str) {
-			return elm$core$String$isEmpty(str) ? matchModel.text : str;
-		}(
-			A2(
-				elm$core$Maybe$withDefault,
-				matchModel.text,
-				A2(
-					elm$core$Maybe$withDefault,
-					elm$core$Maybe$Nothing,
+var zwilias$elm_html_string$Html$Types$addAttribute = F2(
+	function (attribute, acc) {
+		var classes = acc.a;
+		var styles = acc.b;
+		var attrs = acc.c;
+		switch (attribute.$) {
+			case 'Attribute':
+				var key = attribute.a;
+				var value = attribute.b;
+				return _Utils_Tuple3(
+					classes,
+					styles,
 					A2(
-						elm$core$Maybe$withDefault,
-						elm$core$Maybe$Nothing,
+						elm$core$List$cons,
+						A2(zwilias$elm_html_string$Html$Types$buildProp, key, value),
+						attrs));
+			case 'StringProperty':
+				if (attribute.a === 'className') {
+					var value = attribute.b;
+					return _Utils_Tuple3(
+						A2(elm$core$List$cons, value, classes),
+						styles,
+						attrs);
+				} else {
+					var string = attribute.a;
+					var value = attribute.b;
+					return _Utils_Tuple3(
+						classes,
+						styles,
 						A2(
-							elm$core$Maybe$map,
+							elm$core$List$cons,
 							A2(
-								elm$core$Basics$composeR,
-								function ($) {
-									return $.submatches;
-								},
-								elm$core$List$head),
-							maybeRegexMatch)))));
-		var maybeRefItem = A2(
-			elm$core$Dict$get,
-			pablohirafuji$elm_markdown$Markdown$Helpers$prepareRefLabel(refLabel),
-			model.refs);
-		return A2(elm$core$Maybe$map, toMatch, maybeRefItem);
+								zwilias$elm_html_string$Html$Types$buildProp,
+								zwilias$elm_html_string$Html$Types$propName(string),
+								value),
+							attrs));
+				}
+			case 'BoolProperty':
+				var string = attribute.a;
+				var enabled = attribute.b;
+				return enabled ? _Utils_Tuple3(
+					classes,
+					styles,
+					A2(
+						elm$core$List$cons,
+						zwilias$elm_html_string$Html$Types$hyphenate(
+							zwilias$elm_html_string$Html$Types$propName(string)),
+						attrs)) : acc;
+			case 'ValueProperty':
+				var string = attribute.a;
+				var value = attribute.b;
+				return _Utils_Tuple3(
+					classes,
+					styles,
+					A2(
+						elm$core$List$cons,
+						A2(
+							zwilias$elm_html_string$Html$Types$buildProp,
+							zwilias$elm_html_string$Html$Types$propName(string),
+							NoRedInk$elm_string_conversions$String$Conversions$fromValue(value)),
+						attrs));
+			case 'Style':
+				var key = attribute.a;
+				var value = attribute.b;
+				return _Utils_Tuple3(
+					classes,
+					A2(
+						elm$core$List$cons,
+						zwilias$elm_html_string$Html$Types$escape(key) + (': ' + zwilias$elm_html_string$Html$Types$escape(value)),
+						styles),
+					attrs);
+			default:
+				return acc;
+		}
 	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$checkForRefLinkTypeOrImageType = function (_n0) {
-	var remainText = _n0.a;
-	var tempMatch = _n0.b.a;
-	var model = _n0.c;
+var zwilias$elm_html_string$Html$Types$withClasses = F2(
+	function (classes, attrs) {
+		if (!classes.b) {
+			return attrs;
+		} else {
+			return A2(
+				elm$core$List$cons,
+				A2(
+					zwilias$elm_html_string$Html$Types$buildProp,
+					'class',
+					A2(zwilias$elm_html_string$Html$Types$join, ' ', classes)),
+				attrs);
+		}
+	});
+var zwilias$elm_html_string$Html$Types$withStyles = F2(
+	function (styles, attrs) {
+		if (!styles.b) {
+			return attrs;
+		} else {
+			return A2(
+				elm$core$List$cons,
+				A2(
+					zwilias$elm_html_string$Html$Types$buildProp,
+					'style',
+					A2(zwilias$elm_html_string$Html$Types$join, '; ', styles)),
+				attrs);
+		}
+	});
+var zwilias$elm_html_string$Html$Types$attributesToString = function (attrs) {
+	var _n0 = A3(
+		elm$core$List$foldl,
+		zwilias$elm_html_string$Html$Types$addAttribute,
+		_Utils_Tuple3(_List_Nil, _List_Nil, _List_Nil),
+		attrs);
+	var classes = _n0.a;
+	var styles = _n0.b;
+	var regular = _n0.c;
 	return A2(
-		elm$core$Result$fromMaybe,
-		_Utils_Tuple3(
-			remainText,
-			pablohirafuji$elm_markdown$Markdown$InlineParser$Match(tempMatch),
-			model),
-		A2(
-			elm$core$Maybe$map,
-			pablohirafuji$elm_markdown$Markdown$InlineParser$addMatch(model),
-			A3(
-				pablohirafuji$elm_markdown$Markdown$InlineParser$refRegexToMatch,
-				tempMatch,
-				model,
-				elm$core$List$head(
-					A3(elm$regex$Regex$findAtMost, 1, pablohirafuji$elm_markdown$Markdown$InlineParser$refLabelRegex, remainText)))));
+		zwilias$elm_html_string$Html$Types$withStyles,
+		styles,
+		A2(zwilias$elm_html_string$Html$Types$withClasses, classes, regular));
 };
-var elm$core$List$isEmpty = function (xs) {
-	if (!xs.b) {
+var zwilias$elm_html_string$Html$Types$tag = F2(
+	function (tagName, attributes) {
+		return '<' + (A2(
+			elm$core$String$join,
+			' ',
+			A2(
+				elm$core$List$cons,
+				tagName,
+				zwilias$elm_html_string$Html$Types$attributesToString(attributes))) + '>');
+	});
+var zwilias$elm_html_string$Html$Types$toStringHelper = F3(
+	function (indenter, tags, acc) {
+		toStringHelper:
+		while (true) {
+			if (!tags.b) {
+				var _n1 = acc.stack;
+				if (!_n1.b) {
+					return acc;
+				} else {
+					var _n2 = _n1.a;
+					var tagName = _n2.a;
+					var cont = _n2.b;
+					var rest = _n1.b;
+					var $temp$indenter = indenter,
+						$temp$tags = cont,
+						$temp$acc = _Utils_update(
+						acc,
+						{
+							depth: acc.depth - 1,
+							result: A2(
+								elm$core$List$cons,
+								A2(
+									indenter,
+									acc.depth - 1,
+									zwilias$elm_html_string$Html$Types$closingTag(tagName)),
+								acc.result),
+							stack: rest
+						});
+					indenter = $temp$indenter;
+					tags = $temp$tags;
+					acc = $temp$acc;
+					continue toStringHelper;
+				}
+			} else {
+				if (tags.a.$ === 'Node') {
+					var _n3 = tags.a;
+					var tagName = _n3.a;
+					var attributes = _n3.b;
+					var children = _n3.c;
+					var rest = tags.b;
+					switch (children.$) {
+						case 'NoChildren':
+							var $temp$indenter = indenter,
+								$temp$tags = rest,
+								$temp$acc = _Utils_update(
+								acc,
+								{
+									result: A2(
+										elm$core$List$cons,
+										A2(
+											indenter,
+											acc.depth,
+											A2(zwilias$elm_html_string$Html$Types$tag, tagName, attributes)),
+										acc.result)
+								});
+							indenter = $temp$indenter;
+							tags = $temp$tags;
+							acc = $temp$acc;
+							continue toStringHelper;
+						case 'Regular':
+							var childNodes = children.a;
+							var $temp$indenter = indenter,
+								$temp$tags = childNodes,
+								$temp$acc = _Utils_update(
+								acc,
+								{
+									depth: acc.depth + 1,
+									result: A2(
+										elm$core$List$cons,
+										A2(
+											indenter,
+											acc.depth,
+											A2(zwilias$elm_html_string$Html$Types$tag, tagName, attributes)),
+										acc.result),
+									stack: A2(
+										elm$core$List$cons,
+										_Utils_Tuple2(tagName, rest),
+										acc.stack)
+								});
+							indenter = $temp$indenter;
+							tags = $temp$tags;
+							acc = $temp$acc;
+							continue toStringHelper;
+						default:
+							var childNodes = children.a;
+							var $temp$indenter = indenter,
+								$temp$tags = A2(elm$core$List$map, elm$core$Tuple$second, childNodes),
+								$temp$acc = _Utils_update(
+								acc,
+								{
+									depth: acc.depth + 1,
+									result: A2(
+										elm$core$List$cons,
+										A2(
+											indenter,
+											acc.depth,
+											A2(zwilias$elm_html_string$Html$Types$tag, tagName, attributes)),
+										acc.result),
+									stack: A2(
+										elm$core$List$cons,
+										_Utils_Tuple2(tagName, rest),
+										acc.stack)
+								});
+							indenter = $temp$indenter;
+							tags = $temp$tags;
+							acc = $temp$acc;
+							continue toStringHelper;
+					}
+				} else {
+					var string = tags.a.a;
+					var rest = tags.b;
+					var $temp$indenter = indenter,
+						$temp$tags = rest,
+						$temp$acc = _Utils_update(
+						acc,
+						{
+							result: A2(
+								elm$core$List$cons,
+								A2(
+									indenter,
+									acc.depth,
+									zwilias$elm_html_string$Html$Types$escapeHtmlText(string)),
+								acc.result)
+						});
+					indenter = $temp$indenter;
+					tags = $temp$tags;
+					acc = $temp$acc;
+					continue toStringHelper;
+				}
+			}
+		}
+	});
+var zwilias$elm_html_string$Html$Types$toString = F2(
+	function (depth, html) {
+		var joinString = function () {
+			if (!depth) {
+				return '';
+			} else {
+				return '\n';
+			}
+		}();
+		var initialAcc = {depth: 0, result: _List_Nil, stack: _List_Nil};
+		var indenter = function () {
+			if (!depth) {
+				return elm$core$Basics$always(elm$core$Basics$identity);
+			} else {
+				return zwilias$elm_html_string$Html$Types$indent(depth);
+			}
+		}();
+		return A2(
+			zwilias$elm_html_string$Html$Types$join,
+			joinString,
+			A3(
+				zwilias$elm_html_string$Html$Types$toStringHelper,
+				indenter,
+				_List_fromArray(
+					[html]),
+				initialAcc).result);
+	});
+var zwilias$elm_html_string$Html$String$toString = function (indent) {
+	return zwilias$elm_html_string$Html$Types$toString(indent);
+};
+var author$project$Exposition$insertToolHtml = F2(
+	function (md, exp) {
+		var r = elm$regex$Regex$fromString('!{([^}]*)}');
+		if (r.$ === 'Nothing') {
+			return md;
+		} else {
+			var reg = r.a;
+			return A3(
+				elm$regex$Regex$replace,
+				reg,
+				function (m) {
+					var _n1 = m.submatches;
+					if (_n1.b && (_n1.a.$ === 'Just')) {
+						var sub = _n1.a.a;
+						return A2(
+							elm$core$Maybe$withDefault,
+							'',
+							A2(
+								elm$core$Maybe$map,
+								function (o) {
+									return A2(
+										zwilias$elm_html_string$Html$String$toString,
+										0,
+										author$project$Exposition$asHtml(o));
+								},
+								A2(author$project$Exposition$objectByNameOrId, sub, exp)));
+					} else {
+						return '';
+					}
+				},
+				md);
+		}
+	});
+var author$project$Exposition$isValid = function (st) {
+	var _n0 = _Utils_Tuple2(
+		_Utils_Tuple2(st.name, st.description),
+		_Utils_Tuple2(st.copyright, st.userClass));
+	if ((((_n0.a.a.$ === 'Ok') && (_n0.a.b.$ === 'Ok')) && (_n0.b.a.$ === 'Ok')) && (_n0.b.b.$ === 'Ok')) {
+		var _n1 = _n0.a;
+		var _n2 = _n0.b;
 		return true;
 	} else {
 		return false;
 	}
 };
-var pablohirafuji$elm_markdown$Markdown$InlineParser$checkParsedAheadOverlapping = function (parser) {
-	var _n0 = parser.matches;
-	if (!_n0.b) {
-		return elm$core$Result$Err(_Utils_Tuple0);
-	} else {
-		var match = _n0.a.a;
-		var remainMatches = _n0.b;
-		var overlappingMatches = A2(
-			elm$core$List$filter,
-			function (_n1) {
-				var testMatch = _n1.a;
-				return (_Utils_cmp(match.end, testMatch.start) > 0) && (_Utils_cmp(match.end, testMatch.end) < 0);
-			},
-			remainMatches);
-		return (elm$core$List$isEmpty(remainMatches) || elm$core$List$isEmpty(overlappingMatches)) ? elm$core$Result$Ok(parser) : elm$core$Result$Err(_Utils_Tuple0);
-	}
+var author$project$Exposition$thumbUrl = function (data) {
+	return '/text-editor/simple-media-thumb?research=' + (elm$core$String$fromInt(data.expositionId) + ('&simple-media=' + (elm$core$String$fromInt(data.id) + '&width=132&height=132')));
 };
-var pablohirafuji$elm_markdown$Markdown$InlineParser$emailRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('^([a-zA-Z0-9.!#$%&\'*+\\/=?^_`{|}~\\-]+@[a-zA-Z0-9](?:[a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?)*)$'));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$emailAutolinkTypeToMatch = function (_n0) {
-	var match = _n0.a;
-	return A2(elm$regex$Regex$contains, pablohirafuji$elm_markdown$Markdown$InlineParser$emailRegex, match.text) ? elm$core$Result$Ok(
-		pablohirafuji$elm_markdown$Markdown$InlineParser$Match(
-			_Utils_update(
-				match,
-				{
-					type_: pablohirafuji$elm_markdown$Markdown$InlineParser$AutolinkType(
-						_Utils_Tuple2(
-							match.text,
-							'mailto:' + pablohirafuji$elm_markdown$Markdown$InlineParser$encodeUrl(match.text)))
-				}))) : elm$core$Result$Err(
-		pablohirafuji$elm_markdown$Markdown$InlineParser$Match(match));
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$filterTokens = F2(
-	function (filter, model) {
-		return _Utils_update(
-			model,
-			{
-				tokens: A2(elm$core$List$filter, filter, model.tokens)
-			});
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$findToken = F2(
-	function (isToken, tokens) {
-		var search = F2(
-			function (token, _n2) {
-				var maybeToken = _n2.a;
-				var innerTokens = _n2.b;
-				var remainTokens = _n2.c;
-				if (maybeToken.$ === 'Nothing') {
-					return isToken(token) ? _Utils_Tuple3(
-						elm$core$Maybe$Just(token),
-						innerTokens,
-						_List_Nil) : _Utils_Tuple3(
-						elm$core$Maybe$Nothing,
-						A2(elm$core$List$cons, token, innerTokens),
-						_List_Nil);
-				} else {
-					return _Utils_Tuple3(
-						maybeToken,
-						innerTokens,
-						A2(elm$core$List$cons, token, remainTokens));
-				}
-			});
-		var _return = function (_n0) {
-			var maybeToken = _n0.a;
-			var innerTokens = _n0.b;
-			var remainTokens = _n0.c;
-			return A2(
-				elm$core$Maybe$map,
-				function (token) {
-					return _Utils_Tuple3(
-						token,
-						elm$core$List$reverse(innerTokens),
-						elm$core$List$reverse(remainTokens));
-				},
-				maybeToken);
-		};
-		return _return(
-			A3(
-				elm$core$List$foldl,
-				search,
-				_Utils_Tuple3(elm$core$Maybe$Nothing, _List_Nil, _List_Nil),
-				tokens));
-	});
 var elm$core$List$member = F2(
 	function (x, xs) {
 		return A2(
@@ -9936,1260 +7248,7 @@ var elm$core$List$member = F2(
 			},
 			xs);
 	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$HtmlModel = F2(
-	function (tag, attributes) {
-		return {attributes: attributes, tag: tag};
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$HtmlToken = F2(
-	function (a, b) {
-		return {$: 'HtmlToken', a: a, b: b};
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$attributesFromRegex = function (regexMatch) {
-	var _n0 = regexMatch.submatches;
-	_n0$2:
-	while (true) {
-		if (_n0.b && (_n0.a.$ === 'Just')) {
-			if (_n0.a.a === '') {
-				return elm$core$Maybe$Nothing;
-			} else {
-				if ((_n0.b.b && _n0.b.b.b) && _n0.b.b.b.b) {
-					var name = _n0.a.a;
-					var _n1 = _n0.b;
-					var maybeDoubleQuotes = _n1.a;
-					var _n2 = _n1.b;
-					var maybeSingleQuotes = _n2.a;
-					var _n3 = _n2.b;
-					var maybeUnquoted = _n3.a;
-					var maybeValue = pablohirafuji$elm_markdown$Markdown$Helpers$returnFirstJust(
-						_List_fromArray(
-							[maybeDoubleQuotes, maybeSingleQuotes, maybeUnquoted]));
-					return elm$core$Maybe$Just(
-						_Utils_Tuple2(name, maybeValue));
-				} else {
-					break _n0$2;
-				}
-			}
-		} else {
-			break _n0$2;
-		}
-	}
-	return elm$core$Maybe$Nothing;
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$htmlAttributesRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('([a-zA-Z:_][a-zA-Z0-9\\-_.:]*)(?: ?= ?(?:\"([^\"]*)\"|\'([^\']*)\'|([^\\s\"\'=<>`]*)))?'));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$applyAttributesRegex = A2(
-	elm$core$Basics$composeR,
-	elm$regex$Regex$find(pablohirafuji$elm_markdown$Markdown$InlineParser$htmlAttributesRegex),
-	elm$core$List$filterMap(pablohirafuji$elm_markdown$Markdown$InlineParser$attributesFromRegex));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$htmlFromRegex = F3(
-	function (model, match, regexMatch) {
-		var _n0 = regexMatch.submatches;
-		if ((((_n0.b && _n0.b.b) && (_n0.b.a.$ === 'Just')) && _n0.b.b.b) && _n0.b.b.b.b) {
-			var maybeClose = _n0.a;
-			var _n1 = _n0.b;
-			var tag = _n1.a.a;
-			var _n2 = _n1.b;
-			var maybeAttributes = _n2.a;
-			var _n3 = _n2.b;
-			var maybeSelfClosing = _n3.a;
-			var updateModel = function (attrs) {
-				return A2(
-					pablohirafuji$elm_markdown$Markdown$InlineParser$addToken,
-					model,
-					{
-						index: match.start,
-						length: match.end - match.start,
-						meaning: A2(
-							pablohirafuji$elm_markdown$Markdown$InlineParser$HtmlToken,
-							_Utils_eq(maybeClose, elm$core$Maybe$Nothing) && _Utils_eq(maybeSelfClosing, elm$core$Maybe$Nothing),
-							A2(pablohirafuji$elm_markdown$Markdown$InlineParser$HtmlModel, tag, attrs))
-					});
-			};
-			var filterAttributes = F2(
-				function (attrs, allowed) {
-					return A2(
-						elm$core$List$filter,
-						function (attr) {
-							return A2(elm$core$List$member, attr.a, allowed);
-						},
-						attrs);
-				});
-			var attributes = A2(
-				elm$core$Maybe$withDefault,
-				_List_Nil,
-				A2(elm$core$Maybe$map, pablohirafuji$elm_markdown$Markdown$InlineParser$applyAttributesRegex, maybeAttributes));
-			var noAttributesInCloseTag = _Utils_eq(maybeClose, elm$core$Maybe$Nothing) || ((!_Utils_eq(maybeClose, elm$core$Maybe$Nothing)) && _Utils_eq(attributes, _List_Nil));
-			var _n4 = model.options.rawHtml;
-			switch (_n4.$) {
-				case 'ParseUnsafe':
-					return noAttributesInCloseTag ? elm$core$Maybe$Just(
-						updateModel(attributes)) : elm$core$Maybe$Nothing;
-				case 'Sanitize':
-					var allowedHtmlElements = _n4.a.allowedHtmlElements;
-					var allowedHtmlAttributes = _n4.a.allowedHtmlAttributes;
-					return (A2(elm$core$List$member, tag, allowedHtmlElements) && noAttributesInCloseTag) ? elm$core$Maybe$Just(
-						updateModel(
-							A2(filterAttributes, attributes, allowedHtmlAttributes))) : elm$core$Maybe$Nothing;
-				default:
-					return elm$core$Maybe$Nothing;
-			}
-		} else {
-			return elm$core$Maybe$Nothing;
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$htmlRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('^(\\/)?([a-zA-Z][a-zA-Z0-9\\-]*)(?:\\s+([^<>]*?))?(\\/)?$'));
-var pablohirafuji$elm_markdown$Markdown$InlineParser$htmlToToken = F2(
-	function (model, _n0) {
-		var match = _n0.a;
-		var _n1 = model.options.rawHtml;
-		if (_n1.$ === 'DontParse') {
-			return elm$core$Maybe$Nothing;
-		} else {
-			return A2(
-				elm$core$Maybe$andThen,
-				A2(pablohirafuji$elm_markdown$Markdown$InlineParser$htmlFromRegex, model, match),
-				elm$core$List$head(
-					A3(elm$regex$Regex$findAtMost, 1, pablohirafuji$elm_markdown$Markdown$InlineParser$htmlRegex, match.text)));
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$isCloseToken = F2(
-	function (htmlModel, token) {
-		var _n0 = token.meaning;
-		if ((_n0.$ === 'HtmlToken') && (!_n0.a)) {
-			var htmlModel_ = _n0.b;
-			return _Utils_eq(htmlModel.tag, htmlModel_.tag);
-		} else {
-			return false;
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$isCodeTokenPair = F2(
-	function (closeToken, openToken) {
-		var _n0 = openToken.meaning;
-		if (_n0.$ === 'CodeToken') {
-			var isEscaped = _n0.a;
-			return isEscaped ? _Utils_eq(openToken.length - 1, closeToken.length) : _Utils_eq(openToken.length, closeToken.length);
-		} else {
-			return false;
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$isLinkTypeOrImageOpenToken = function (token) {
-	var _n0 = token.meaning;
-	switch (_n0.$) {
-		case 'LinkOpenToken':
-			return true;
-		case 'ImageOpenToken':
-			return true;
-		default:
-			return false;
-	}
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$isOpenEmphasisToken = F2(
-	function (closeToken, openToken) {
-		var _n0 = openToken.meaning;
-		if (_n0.$ === 'EmphasisToken') {
-			var openChar = _n0.a;
-			var _n1 = _n0.b;
-			var openLR = _n1.a;
-			var openRR = _n1.b;
-			var _n2 = closeToken.meaning;
-			if (_n2.$ === 'EmphasisToken') {
-				var closeChar = _n2.a;
-				var _n3 = _n2.b;
-				var closeLR = _n3.a;
-				var closeRR = _n3.b;
-				return _Utils_eq(openChar, closeChar) ? ((_Utils_eq(openLR, openRR) || _Utils_eq(closeLR, closeRR)) ? A2(elm$core$Basics$modBy, 3, closeToken.length + openToken.length) : true) : false;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$voidHtmlTags = _List_fromArray(
-	['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr']);
-var pablohirafuji$elm_markdown$Markdown$InlineParser$isVoidTag = function (htmlModel) {
-	return A2(elm$core$List$member, htmlModel.tag, pablohirafuji$elm_markdown$Markdown$InlineParser$voidHtmlTags);
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$HardLineBreakType = {$: 'HardLineBreakType'};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$SoftLineBreakToken = {$: 'SoftLineBreakToken'};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$reverseTokens = function (model) {
-	return _Utils_update(
-		model,
-		{
-			tokens: elm$core$List$reverse(model.tokens)
-		});
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$tokenToMatch = F2(
-	function (token, type_) {
-		return pablohirafuji$elm_markdown$Markdown$InlineParser$Match(
-			{end: token.index + token.length, matches: _List_Nil, start: token.index, text: '', textEnd: 0, textStart: 0, type_: type_});
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$lineBreakTTM = function (_n0) {
-	lineBreakTTM:
-	while (true) {
-		var tokens = _n0.a;
-		var model = _n0.b;
-		if (!tokens.b) {
-			return pablohirafuji$elm_markdown$Markdown$InlineParser$reverseTokens(model);
-		} else {
-			var token = tokens.a;
-			var tokensTail = tokens.b;
-			if (_Utils_eq(token.meaning, pablohirafuji$elm_markdown$Markdown$InlineParser$HardLineBreakToken) || (_Utils_eq(token.meaning, pablohirafuji$elm_markdown$Markdown$InlineParser$SoftLineBreakToken) && model.options.softAsHardLineBreak)) {
-				return pablohirafuji$elm_markdown$Markdown$InlineParser$lineBreakTTM(
-					function (b) {
-						return _Utils_Tuple2(tokensTail, b);
-					}(
-						_Utils_update(
-							model,
-							{
-								matches: A2(
-									elm$core$List$cons,
-									A2(pablohirafuji$elm_markdown$Markdown$InlineParser$tokenToMatch, token, pablohirafuji$elm_markdown$Markdown$InlineParser$HardLineBreakType),
-									model.matches)
-							})));
-			} else {
-				var $temp$_n0 = _Utils_Tuple2(
-					tokensTail,
-					A2(pablohirafuji$elm_markdown$Markdown$InlineParser$addToken, model, token));
-				_n0 = $temp$_n0;
-				continue lineBreakTTM;
-			}
-		}
-	}
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$removeParsedAheadTokens = F2(
-	function (tokensTail, parser) {
-		var _n0 = parser.matches;
-		if (!_n0.b) {
-			return _Utils_Tuple2(tokensTail, parser);
-		} else {
-			var match = _n0.a.a;
-			return _Utils_Tuple2(
-				A2(
-					elm$core$List$filter,
-					function (token) {
-						return _Utils_cmp(token.index, match.end) > -1;
-					},
-					tokensTail),
-				parser);
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$angleBracketsToMatch = F4(
-	function (closeToken, isEscaped, model, _n24) {
-		var openToken = _n24.a;
-		var remainTokens = _n24.c;
-		return function (result) {
-			if (result.$ === 'Err') {
-				var tempMatch = result.a;
-				return (!isEscaped) ? A2(
-					pablohirafuji$elm_markdown$Markdown$InlineParser$htmlToToken,
-					_Utils_update(
-						model,
-						{tokens: remainTokens}),
-					tempMatch) : elm$core$Result$toMaybe(result);
-			} else {
-				return elm$core$Result$toMaybe(result);
-			}
-		}(
-			A2(
-				elm$core$Result$map,
-				function (newMatch) {
-					return _Utils_update(
-						model,
-						{
-							matches: A2(elm$core$List$cons, newMatch, model.matches),
-							tokens: remainTokens
-						});
-				},
-				A2(
-					pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-					pablohirafuji$elm_markdown$Markdown$InlineParser$emailAutolinkTypeToMatch,
-					pablohirafuji$elm_markdown$Markdown$InlineParser$autolinkToMatch(
-						A6(
-							pablohirafuji$elm_markdown$Markdown$InlineParser$tokenPairToMatch,
-							model,
-							function (s) {
-								return s;
-							},
-							pablohirafuji$elm_markdown$Markdown$InlineParser$CodeType,
-							openToken,
-							closeToken,
-							_List_Nil)))));
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$codeAutolinkTypeHtmlTagTTM = function (_n21) {
-	codeAutolinkTypeHtmlTagTTM:
-	while (true) {
-		var tokens = _n21.a;
-		var model = _n21.b;
-		if (!tokens.b) {
-			return pablohirafuji$elm_markdown$Markdown$InlineParser$reverseTokens(model);
-		} else {
-			var token = tokens.a;
-			var tokensTail = tokens.b;
-			var _n23 = token.meaning;
-			switch (_n23.$) {
-				case 'CodeToken':
-					var isEscaped = _n23.a;
-					return pablohirafuji$elm_markdown$Markdown$InlineParser$codeAutolinkTypeHtmlTagTTM(
-						function (b) {
-							return _Utils_Tuple2(tokensTail, b);
-						}(
-							A2(
-								elm$core$Maybe$withDefault,
-								A2(pablohirafuji$elm_markdown$Markdown$InlineParser$addToken, model, token),
-								A2(
-									elm$core$Maybe$map,
-									A2(pablohirafuji$elm_markdown$Markdown$InlineParser$codeToMatch, token, model),
-									A2(
-										pablohirafuji$elm_markdown$Markdown$InlineParser$findToken,
-										pablohirafuji$elm_markdown$Markdown$InlineParser$isCodeTokenPair(token),
-										model.tokens)))));
-				case 'RightAngleBracket':
-					var isEscaped = _n23.a;
-					return pablohirafuji$elm_markdown$Markdown$InlineParser$codeAutolinkTypeHtmlTagTTM(
-						function (b) {
-							return _Utils_Tuple2(tokensTail, b);
-						}(
-							A2(
-								pablohirafuji$elm_markdown$Markdown$InlineParser$filterTokens,
-								A2(
-									elm$core$Basics$composeR,
-									function ($) {
-										return $.meaning;
-									},
-									elm$core$Basics$neq(
-										pablohirafuji$elm_markdown$Markdown$InlineParser$CharToken(
-											_Utils_chr('<')))),
-								A2(
-									elm$core$Maybe$withDefault,
-									model,
-									A2(
-										elm$core$Maybe$andThen,
-										A3(pablohirafuji$elm_markdown$Markdown$InlineParser$angleBracketsToMatch, token, isEscaped, model),
-										A2(
-											pablohirafuji$elm_markdown$Markdown$InlineParser$findToken,
-											A2(
-												elm$core$Basics$composeR,
-												function ($) {
-													return $.meaning;
-												},
-												elm$core$Basics$eq(
-													pablohirafuji$elm_markdown$Markdown$InlineParser$CharToken(
-														_Utils_chr('<')))),
-											model.tokens))))));
-				default:
-					var $temp$_n21 = _Utils_Tuple2(
-						tokensTail,
-						A2(pablohirafuji$elm_markdown$Markdown$InlineParser$addToken, model, token));
-					_n21 = $temp$_n21;
-					continue codeAutolinkTypeHtmlTagTTM;
-			}
-		}
-	}
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$codeToMatch = F3(
-	function (closeToken, model, _n20) {
-		var openToken = _n20.a;
-		var remainTokens = _n20.c;
-		var updtOpenToken = _Utils_eq(
-			openToken.meaning,
-			pablohirafuji$elm_markdown$Markdown$InlineParser$CodeToken(true)) ? _Utils_update(
-			openToken,
-			{index: openToken.index + 1, length: openToken.length - 1}) : openToken;
-		return _Utils_update(
-			model,
-			{
-				matches: A2(
-					elm$core$List$cons,
-					A6(pablohirafuji$elm_markdown$Markdown$InlineParser$tokenPairToMatch, model, pablohirafuji$elm_markdown$Markdown$Helpers$cleanWhitespaces, pablohirafuji$elm_markdown$Markdown$InlineParser$CodeType, updtOpenToken, closeToken, _List_Nil),
-					model.matches),
-				tokens: remainTokens
-			});
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$emphasisTTM = function (_n16) {
-	emphasisTTM:
-	while (true) {
-		var tokens = _n16.a;
-		var model = _n16.b;
-		if (!tokens.b) {
-			return pablohirafuji$elm_markdown$Markdown$InlineParser$reverseTokens(model);
-		} else {
-			var token = tokens.a;
-			var tokensTail = tokens.b;
-			var _n18 = token.meaning;
-			if (_n18.$ === 'EmphasisToken') {
-				var _char = _n18.a;
-				var _n19 = _n18.b;
-				var leftRank = _n19.a;
-				var rightRank = _n19.b;
-				if (_Utils_eq(leftRank, rightRank)) {
-					if (rightRank && ((!_Utils_eq(
-						_char,
-						_Utils_chr('_'))) || (rightRank === 1))) {
-						return pablohirafuji$elm_markdown$Markdown$InlineParser$emphasisTTM(
-							A2(
-								elm$core$Maybe$withDefault,
-								_Utils_Tuple2(
-									tokensTail,
-									A2(pablohirafuji$elm_markdown$Markdown$InlineParser$addToken, model, token)),
-								A2(
-									elm$core$Maybe$map,
-									A3(pablohirafuji$elm_markdown$Markdown$InlineParser$emphasisToMatch, token, tokensTail, model),
-									A2(
-										pablohirafuji$elm_markdown$Markdown$InlineParser$findToken,
-										pablohirafuji$elm_markdown$Markdown$InlineParser$isOpenEmphasisToken(token),
-										model.tokens))));
-					} else {
-						var $temp$_n16 = _Utils_Tuple2(tokensTail, model);
-						_n16 = $temp$_n16;
-						continue emphasisTTM;
-					}
-				} else {
-					if (_Utils_cmp(leftRank, rightRank) < 0) {
-						var $temp$_n16 = _Utils_Tuple2(
-							tokensTail,
-							A2(pablohirafuji$elm_markdown$Markdown$InlineParser$addToken, model, token));
-						_n16 = $temp$_n16;
-						continue emphasisTTM;
-					} else {
-						return pablohirafuji$elm_markdown$Markdown$InlineParser$emphasisTTM(
-							A2(
-								elm$core$Maybe$withDefault,
-								_Utils_Tuple2(tokensTail, model),
-								A2(
-									elm$core$Maybe$map,
-									A3(pablohirafuji$elm_markdown$Markdown$InlineParser$emphasisToMatch, token, tokensTail, model),
-									A2(
-										pablohirafuji$elm_markdown$Markdown$InlineParser$findToken,
-										pablohirafuji$elm_markdown$Markdown$InlineParser$isOpenEmphasisToken(token),
-										model.tokens))));
-					}
-				}
-			} else {
-				var $temp$_n16 = _Utils_Tuple2(
-					tokensTail,
-					A2(pablohirafuji$elm_markdown$Markdown$InlineParser$addToken, model, token));
-				_n16 = $temp$_n16;
-				continue emphasisTTM;
-			}
-		}
-	}
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$emphasisToMatch = F4(
-	function (closeToken, tokensTail, model, _n15) {
-		var openToken = _n15.a;
-		var innerTokens = _n15.b;
-		var remainTokens = _n15.c;
-		var remainLength = openToken.length - closeToken.length;
-		var updt = (!remainLength) ? {closeToken: closeToken, openToken: openToken, remainTokens: remainTokens, tokensTail: tokensTail} : ((remainLength > 0) ? {
-			closeToken: closeToken,
-			openToken: _Utils_update(
-				openToken,
-				{index: openToken.index + remainLength, length: closeToken.length}),
-			remainTokens: A2(
-				elm$core$List$cons,
-				_Utils_update(
-					openToken,
-					{length: remainLength}),
-				remainTokens),
-			tokensTail: tokensTail
-		} : {
-			closeToken: _Utils_update(
-				closeToken,
-				{length: openToken.length}),
-			openToken: openToken,
-			remainTokens: remainTokens,
-			tokensTail: A2(
-				elm$core$List$cons,
-				_Utils_update(
-					closeToken,
-					{index: closeToken.index + openToken.length, length: -remainLength}),
-				tokensTail)
-		});
-		var match = A6(
-			pablohirafuji$elm_markdown$Markdown$InlineParser$tokenPairToMatch,
-			model,
-			function (s) {
-				return s;
-			},
-			pablohirafuji$elm_markdown$Markdown$InlineParser$EmphasisType(updt.openToken.length),
-			updt.openToken,
-			updt.closeToken,
-			elm$core$List$reverse(innerTokens));
-		return _Utils_Tuple2(
-			updt.tokensTail,
-			_Utils_update(
-				model,
-				{
-					matches: A2(elm$core$List$cons, match, model.matches),
-					tokens: updt.remainTokens
-				}));
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$htmlElementTTM = function (_n12) {
-	htmlElementTTM:
-	while (true) {
-		var tokens = _n12.a;
-		var model = _n12.b;
-		if (!tokens.b) {
-			return pablohirafuji$elm_markdown$Markdown$InlineParser$reverseTokens(model);
-		} else {
-			var token = tokens.a;
-			var tokensTail = tokens.b;
-			var _n14 = token.meaning;
-			if (_n14.$ === 'HtmlToken') {
-				var isOpen = _n14.a;
-				var htmlModel = _n14.b;
-				return (pablohirafuji$elm_markdown$Markdown$InlineParser$isVoidTag(htmlModel) || (!isOpen)) ? pablohirafuji$elm_markdown$Markdown$InlineParser$htmlElementTTM(
-					function (b) {
-						return _Utils_Tuple2(tokensTail, b);
-					}(
-						A2(
-							pablohirafuji$elm_markdown$Markdown$InlineParser$addMatch,
-							model,
-							A2(
-								pablohirafuji$elm_markdown$Markdown$InlineParser$tokenToMatch,
-								token,
-								pablohirafuji$elm_markdown$Markdown$InlineParser$HtmlType(htmlModel))))) : pablohirafuji$elm_markdown$Markdown$InlineParser$htmlElementTTM(
-					A2(
-						elm$core$Maybe$withDefault,
-						function (b) {
-							return _Utils_Tuple2(tokensTail, b);
-						}(
-							A2(
-								pablohirafuji$elm_markdown$Markdown$InlineParser$addMatch,
-								model,
-								A2(
-									pablohirafuji$elm_markdown$Markdown$InlineParser$tokenToMatch,
-									token,
-									pablohirafuji$elm_markdown$Markdown$InlineParser$HtmlType(htmlModel)))),
-						A2(
-							elm$core$Maybe$map,
-							A3(pablohirafuji$elm_markdown$Markdown$InlineParser$htmlElementToMatch, token, model, htmlModel),
-							A2(
-								pablohirafuji$elm_markdown$Markdown$InlineParser$findToken,
-								pablohirafuji$elm_markdown$Markdown$InlineParser$isCloseToken(htmlModel),
-								tokensTail))));
-			} else {
-				var $temp$_n12 = _Utils_Tuple2(
-					tokensTail,
-					A2(pablohirafuji$elm_markdown$Markdown$InlineParser$addToken, model, token));
-				_n12 = $temp$_n12;
-				continue htmlElementTTM;
-			}
-		}
-	}
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$htmlElementToMatch = F4(
-	function (openToken, model, htmlModel, _n11) {
-		var closeToken = _n11.a;
-		var innerTokens = _n11.b;
-		var remainTokens = _n11.c;
-		return _Utils_Tuple2(
-			remainTokens,
-			_Utils_update(
-				model,
-				{
-					matches: A2(
-						elm$core$List$cons,
-						A6(
-							pablohirafuji$elm_markdown$Markdown$InlineParser$tokenPairToMatch,
-							model,
-							function (s) {
-								return s;
-							},
-							pablohirafuji$elm_markdown$Markdown$InlineParser$HtmlType(htmlModel),
-							openToken,
-							closeToken,
-							innerTokens),
-						model.matches)
-				}));
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$linkImageTypeTTM = function (_n8) {
-	linkImageTypeTTM:
-	while (true) {
-		var tokens = _n8.a;
-		var model = _n8.b;
-		if (!tokens.b) {
-			return pablohirafuji$elm_markdown$Markdown$InlineParser$reverseTokens(model);
-		} else {
-			var token = tokens.a;
-			var tokensTail = tokens.b;
-			var _n10 = token.meaning;
-			if ((_n10.$ === 'CharToken') && (']' === _n10.a.valueOf())) {
-				return pablohirafuji$elm_markdown$Markdown$InlineParser$linkImageTypeTTM(
-					A2(
-						elm$core$Maybe$withDefault,
-						_Utils_Tuple2(tokensTail, model),
-						A2(
-							elm$core$Maybe$andThen,
-							A3(pablohirafuji$elm_markdown$Markdown$InlineParser$linkOrImageTypeToMatch, token, tokensTail, model),
-							A2(pablohirafuji$elm_markdown$Markdown$InlineParser$findToken, pablohirafuji$elm_markdown$Markdown$InlineParser$isLinkTypeOrImageOpenToken, model.tokens))));
-			} else {
-				var $temp$_n8 = _Utils_Tuple2(
-					tokensTail,
-					A2(pablohirafuji$elm_markdown$Markdown$InlineParser$addToken, model, token));
-				_n8 = $temp$_n8;
-				continue linkImageTypeTTM;
-			}
-		}
-	}
-};
-var pablohirafuji$elm_markdown$Markdown$InlineParser$linkOrImageTypeToMatch = F4(
-	function (closeToken, tokensTail, model, _n1) {
-		var openToken = _n1.a;
-		var innerTokens = _n1.b;
-		var remainTokens = _n1.c;
-		var tempMatch = function (isLinkType) {
-			return A6(
-				pablohirafuji$elm_markdown$Markdown$InlineParser$tokenPairToMatch,
-				model,
-				function (s) {
-					return s;
-				},
-				isLinkType ? pablohirafuji$elm_markdown$Markdown$InlineParser$LinkType(
-					_Utils_Tuple2('', elm$core$Maybe$Nothing)) : pablohirafuji$elm_markdown$Markdown$InlineParser$ImageType(
-					_Utils_Tuple2('', elm$core$Maybe$Nothing)),
-				openToken,
-				closeToken,
-				elm$core$List$reverse(innerTokens));
-		};
-		var removeOpenToken = _Utils_Tuple2(
-			tokensTail,
-			_Utils_update(
-				model,
-				{
-					tokens: _Utils_ap(innerTokens, remainTokens)
-				}));
-		var remainText = A2(elm$core$String$dropLeft, closeToken.index + 1, model.rawText);
-		var linkOpenTokenToInactive = function (model_) {
-			var process = function (token) {
-				var _n7 = token.meaning;
-				if (_n7.$ === 'LinkOpenToken') {
-					return _Utils_update(
-						token,
-						{
-							meaning: pablohirafuji$elm_markdown$Markdown$InlineParser$LinkOpenToken(false)
-						});
-				} else {
-					return token;
-				}
-			};
-			return _Utils_update(
-				model_,
-				{
-					tokens: A2(elm$core$List$map, process, model_.tokens)
-				});
-		};
-		var args = function (isLinkType) {
-			return _Utils_Tuple3(
-				remainText,
-				tempMatch(isLinkType),
-				_Utils_update(
-					model,
-					{tokens: remainTokens}));
-		};
-		var _n2 = openToken.meaning;
-		switch (_n2.$) {
-			case 'ImageOpenToken':
-				return elm$core$Result$toMaybe(
-					A2(
-						pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-						function (_n4) {
-							return elm$core$Result$Ok(removeOpenToken);
-						},
-						A2(
-							elm$core$Result$map,
-							pablohirafuji$elm_markdown$Markdown$InlineParser$removeParsedAheadTokens(tokensTail),
-							A2(
-								elm$core$Result$andThen,
-								pablohirafuji$elm_markdown$Markdown$InlineParser$checkParsedAheadOverlapping,
-								A2(
-									elm$core$Result$mapError,
-									function (_n3) {
-										return _Utils_Tuple0;
-									},
-									A2(
-										pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-										pablohirafuji$elm_markdown$Markdown$InlineParser$checkForRefLinkTypeOrImageType,
-										pablohirafuji$elm_markdown$Markdown$InlineParser$checkForInlineLinkTypeOrImageType(
-											args(false))))))));
-			case 'LinkOpenToken':
-				if (_n2.a) {
-					return elm$core$Result$toMaybe(
-						A2(
-							pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-							function (_n6) {
-								return elm$core$Result$Ok(removeOpenToken);
-							},
-							A2(
-								elm$core$Result$map,
-								pablohirafuji$elm_markdown$Markdown$InlineParser$removeParsedAheadTokens(tokensTail),
-								A2(
-									elm$core$Result$map,
-									linkOpenTokenToInactive,
-									A2(
-										elm$core$Result$andThen,
-										pablohirafuji$elm_markdown$Markdown$InlineParser$checkParsedAheadOverlapping,
-										A2(
-											elm$core$Result$mapError,
-											function (_n5) {
-												return _Utils_Tuple0;
-											},
-											A2(
-												pablohirafuji$elm_markdown$Markdown$Helpers$ifError,
-												pablohirafuji$elm_markdown$Markdown$InlineParser$checkForRefLinkTypeOrImageType,
-												pablohirafuji$elm_markdown$Markdown$InlineParser$checkForInlineLinkTypeOrImageType(
-													args(true)))))))));
-				} else {
-					return elm$core$Maybe$Just(removeOpenToken);
-				}
-			default:
-				return elm$core$Maybe$Nothing;
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$tokenPairToMatch = F6(
-	function (model, processText, type_, openToken, closeToken, innerTokens) {
-		var textStart = openToken.index + openToken.length;
-		var textEnd = closeToken.index;
-		var start = openToken.index;
-		var end = closeToken.index + closeToken.length;
-		var match = {
-			end: end,
-			matches: _List_Nil,
-			start: start,
-			text: processText(
-				A3(elm$core$String$slice, textStart, textEnd, model.rawText)),
-			textEnd: textEnd,
-			textStart: textStart,
-			type_: type_
-		};
-		var matches = A2(
-			elm$core$List$map,
-			function (_n0) {
-				var matchModel = _n0.a;
-				return A2(pablohirafuji$elm_markdown$Markdown$InlineParser$prepareChildMatch, match, matchModel);
-			},
-			pablohirafuji$elm_markdown$Markdown$InlineParser$cyclic$tokensToMatches()(
-				_Utils_update(
-					model,
-					{matches: _List_Nil, tokens: innerTokens})).matches);
-		return pablohirafuji$elm_markdown$Markdown$InlineParser$Match(
-			_Utils_update(
-				match,
-				{matches: matches}));
-	});
-function pablohirafuji$elm_markdown$Markdown$InlineParser$cyclic$tokensToMatches() {
-	return A2(
-		elm$core$Basics$composeR,
-		pablohirafuji$elm_markdown$Markdown$InlineParser$applyTTM(pablohirafuji$elm_markdown$Markdown$InlineParser$codeAutolinkTypeHtmlTagTTM),
-		A2(
-			elm$core$Basics$composeR,
-			pablohirafuji$elm_markdown$Markdown$InlineParser$applyTTM(pablohirafuji$elm_markdown$Markdown$InlineParser$htmlElementTTM),
-			A2(
-				elm$core$Basics$composeR,
-				pablohirafuji$elm_markdown$Markdown$InlineParser$applyTTM(pablohirafuji$elm_markdown$Markdown$InlineParser$linkImageTypeTTM),
-				A2(
-					elm$core$Basics$composeR,
-					pablohirafuji$elm_markdown$Markdown$InlineParser$applyTTM(pablohirafuji$elm_markdown$Markdown$InlineParser$emphasisTTM),
-					pablohirafuji$elm_markdown$Markdown$InlineParser$applyTTM(pablohirafuji$elm_markdown$Markdown$InlineParser$lineBreakTTM)))));
-}
-try {
-	var pablohirafuji$elm_markdown$Markdown$InlineParser$tokensToMatches = pablohirafuji$elm_markdown$Markdown$InlineParser$cyclic$tokensToMatches();
-	pablohirafuji$elm_markdown$Markdown$InlineParser$cyclic$tokensToMatches = function () {
-		return pablohirafuji$elm_markdown$Markdown$InlineParser$tokensToMatches;
-	};
-} catch ($) {
-throw 'Some top-level definitions from `Markdown.InlineParser` are causing infinite recursion:\n\n  ┌─────┐\n  │    angleBracketsToMatch\n  │     ↓\n  │    tokensToMatches\n  │     ↓\n  │    codeAutolinkTypeHtmlTagTTM\n  │     ↓\n  │    codeToMatch\n  │     ↓\n  │    emphasisTTM\n  │     ↓\n  │    emphasisToMatch\n  │     ↓\n  │    htmlElementTTM\n  │     ↓\n  │    htmlElementToMatch\n  │     ↓\n  │    linkImageTypeTTM\n  │     ↓\n  │    linkOrImageTypeToMatch\n  │     ↓\n  │    tokenPairToMatch\n  └─────┘\n\nThese errors are very tricky, so read https://elm-lang.org/0.19.0/halting-problem to learn how to fix it!';}
-var pablohirafuji$elm_markdown$Markdown$InlineParser$parse = F3(
-	function (options, refs, rawText) {
-		return pablohirafuji$elm_markdown$Markdown$InlineParser$matchesToInlines(
-			pablohirafuji$elm_markdown$Markdown$InlineParser$parseText(
-				pablohirafuji$elm_markdown$Markdown$InlineParser$organizeParserMatches(
-					pablohirafuji$elm_markdown$Markdown$InlineParser$tokensToMatches(
-						pablohirafuji$elm_markdown$Markdown$InlineParser$tokenize(
-							A3(
-								pablohirafuji$elm_markdown$Markdown$InlineParser$initParser,
-								options,
-								refs,
-								elm$core$String$trim(rawText)))))).matches);
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$parseInline = F4(
-	function (maybeOptions, textAsParagraph, refs, block) {
-		var options = A2(elm$core$Maybe$withDefault, pablohirafuji$elm_markdown$Markdown$Config$defaultOptions, maybeOptions);
-		switch (block.$) {
-			case 'Heading':
-				var rawText = block.a;
-				var lvl = block.b;
-				return A3(
-					pablohirafuji$elm_markdown$Markdown$Block$Heading,
-					rawText,
-					lvl,
-					A3(pablohirafuji$elm_markdown$Markdown$InlineParser$parse, options, refs, rawText));
-			case 'Paragraph':
-				var rawText = block.a;
-				var inlines = A3(pablohirafuji$elm_markdown$Markdown$InlineParser$parse, options, refs, rawText);
-				if ((inlines.b && (inlines.a.$ === 'HtmlInline')) && (!inlines.b.b)) {
-					var _n3 = inlines.a;
-					return pablohirafuji$elm_markdown$Markdown$Block$PlainInlines(inlines);
-				} else {
-					return textAsParagraph ? A2(pablohirafuji$elm_markdown$Markdown$Block$Paragraph, rawText, inlines) : pablohirafuji$elm_markdown$Markdown$Block$PlainInlines(inlines);
-				}
-			case 'BlockQuote':
-				var blocks = block.a;
-				return pablohirafuji$elm_markdown$Markdown$Block$BlockQuote(
-					A3(
-						pablohirafuji$elm_markdown$Markdown$Block$parseInlines,
-						maybeOptions,
-						true,
-						_Utils_Tuple2(refs, blocks)));
-			case 'List':
-				var model = block.a;
-				var items = block.b;
-				return A2(
-					pablohirafuji$elm_markdown$Markdown$Block$List,
-					model,
-					function (a) {
-						return A2(elm$core$List$map, a, items);
-					}(
-						A2(
-							elm$core$Basics$composeL,
-							A2(pablohirafuji$elm_markdown$Markdown$Block$parseInlines, maybeOptions, model.isLoose),
-							function (b) {
-								return _Utils_Tuple2(refs, b);
-							})));
-			case 'Custom':
-				var customBlock = block.a;
-				var blocks = block.b;
-				return A2(
-					pablohirafuji$elm_markdown$Markdown$Block$Custom,
-					customBlock,
-					A3(
-						pablohirafuji$elm_markdown$Markdown$Block$parseInlines,
-						maybeOptions,
-						true,
-						_Utils_Tuple2(refs, blocks)));
-			default:
-				return block;
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$parseInlines = F3(
-	function (maybeOptions, textAsParagraph, _n0) {
-		var refs = _n0.a;
-		var blocks = _n0.b;
-		return A2(
-			elm$core$List$map,
-			A3(pablohirafuji$elm_markdown$Markdown$Block$parseInline, maybeOptions, textAsParagraph, refs),
-			blocks);
-	});
-var elm$core$Dict$foldl = F3(
-	function (func, acc, dict) {
-		foldl:
-		while (true) {
-			if (dict.$ === 'RBEmpty_elm_builtin') {
-				return acc;
-			} else {
-				var key = dict.b;
-				var value = dict.c;
-				var left = dict.d;
-				var right = dict.e;
-				var $temp$func = func,
-					$temp$acc = A3(
-					func,
-					key,
-					value,
-					A3(elm$core$Dict$foldl, func, acc, left)),
-					$temp$dict = right;
-				func = $temp$func;
-				acc = $temp$acc;
-				dict = $temp$dict;
-				continue foldl;
-			}
-		}
-	});
-var elm$core$Dict$union = F2(
-	function (t1, t2) {
-		return A3(elm$core$Dict$foldl, elm$core$Dict$insert, t2, t1);
-	});
-var elm$core$Tuple$mapSecond = F2(
-	function (func, _n0) {
-		var x = _n0.a;
-		var y = _n0.b;
-		return _Utils_Tuple2(
-			x,
-			func(y));
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$dropRefString = F2(
-	function (rawText, inlineMatch) {
-		var strippedText = A2(elm$core$String$dropLeft, inlineMatch.matchLength, rawText);
-		return A2(elm$regex$Regex$contains, pablohirafuji$elm_markdown$Markdown$Block$blankLineRegex, strippedText) ? elm$core$Maybe$Nothing : elm$core$Maybe$Just(strippedText);
-	});
-var elm$core$Dict$member = F2(
-	function (key, dict) {
-		var _n0 = A2(elm$core$Dict$get, key, dict);
-		if (_n0.$ === 'Just') {
-			return true;
-		} else {
-			return false;
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$insertLinkMatch = F2(
-	function (refs, linkMatch) {
-		return A2(elm$core$Dict$member, linkMatch.inside, refs) ? refs : A3(
-			elm$core$Dict$insert,
-			linkMatch.inside,
-			_Utils_Tuple2(linkMatch.url, linkMatch.maybeTitle),
-			refs);
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$extractUrlTitleRegex = function (regexMatch) {
-	var _n0 = regexMatch.submatches;
-	if ((((((_n0.b && (_n0.a.$ === 'Just')) && _n0.b.b) && _n0.b.b.b) && _n0.b.b.b.b) && _n0.b.b.b.b.b) && _n0.b.b.b.b.b.b) {
-		var rawText = _n0.a.a;
-		var _n1 = _n0.b;
-		var maybeRawUrlAngleBrackets = _n1.a;
-		var _n2 = _n1.b;
-		var maybeRawUrlWithoutBrackets = _n2.a;
-		var _n3 = _n2.b;
-		var maybeTitleSingleQuotes = _n3.a;
-		var _n4 = _n3.b;
-		var maybeTitleDoubleQuotes = _n4.a;
-		var _n5 = _n4.b;
-		var maybeTitleParenthesis = _n5.a;
-		var toReturn = function (rawUrl) {
-			return {
-				inside: rawText,
-				matchLength: elm$core$String$length(regexMatch.match),
-				maybeTitle: pablohirafuji$elm_markdown$Markdown$Helpers$returnFirstJust(
-					_List_fromArray(
-						[maybeTitleSingleQuotes, maybeTitleDoubleQuotes, maybeTitleParenthesis])),
-				url: rawUrl
-			};
-		};
-		var maybeRawUrl = pablohirafuji$elm_markdown$Markdown$Helpers$returnFirstJust(
-			_List_fromArray(
-				[maybeRawUrlAngleBrackets, maybeRawUrlWithoutBrackets]));
-		return A2(elm$core$Maybe$map, toReturn, maybeRawUrl);
-	} else {
-		return elm$core$Maybe$Nothing;
-	}
-};
-var pablohirafuji$elm_markdown$Markdown$Block$hrefRegex = '\\s*(?:<([^<>\\s]*)>|([^\\s]*))';
-var pablohirafuji$elm_markdown$Markdown$Block$refRegex = A2(
-	elm$core$Maybe$withDefault,
-	elm$regex$Regex$never,
-	elm$regex$Regex$fromString('^\\s*\\[(' + (pablohirafuji$elm_markdown$Markdown$Helpers$insideSquareBracketRegex + (')\\]:' + (pablohirafuji$elm_markdown$Markdown$Block$hrefRegex + (pablohirafuji$elm_markdown$Markdown$Helpers$titleRegex + '\\s*(?![^\\n])'))))));
-var pablohirafuji$elm_markdown$Markdown$Block$maybeLinkMatch = function (rawText) {
-	return A2(
-		elm$core$Maybe$andThen,
-		function (linkMatch) {
-			return ((linkMatch.url === '') || (linkMatch.inside === '')) ? elm$core$Maybe$Nothing : elm$core$Maybe$Just(linkMatch);
-		},
-		A2(
-			elm$core$Maybe$map,
-			function (linkMatch) {
-				return _Utils_update(
-					linkMatch,
-					{
-						inside: pablohirafuji$elm_markdown$Markdown$Helpers$prepareRefLabel(linkMatch.inside)
-					});
-			},
-			A2(
-				elm$core$Maybe$andThen,
-				pablohirafuji$elm_markdown$Markdown$Block$extractUrlTitleRegex,
-				elm$core$List$head(
-					A3(elm$regex$Regex$findAtMost, 1, pablohirafuji$elm_markdown$Markdown$Block$refRegex, rawText)))));
-};
-var pablohirafuji$elm_markdown$Markdown$Block$parseReference = F2(
-	function (refs, rawText) {
-		parseReference:
-		while (true) {
-			var _n0 = pablohirafuji$elm_markdown$Markdown$Block$maybeLinkMatch(rawText);
-			if (_n0.$ === 'Just') {
-				var linkMatch = _n0.a;
-				var updtRefs = A2(pablohirafuji$elm_markdown$Markdown$Block$insertLinkMatch, refs, linkMatch);
-				var maybeStrippedText = A2(pablohirafuji$elm_markdown$Markdown$Block$dropRefString, rawText, linkMatch);
-				if (maybeStrippedText.$ === 'Just') {
-					var strippedText = maybeStrippedText.a;
-					var $temp$refs = updtRefs,
-						$temp$rawText = strippedText;
-					refs = $temp$refs;
-					rawText = $temp$rawText;
-					continue parseReference;
-				} else {
-					return _Utils_Tuple2(updtRefs, elm$core$Maybe$Nothing);
-				}
-			} else {
-				return _Utils_Tuple2(
-					refs,
-					elm$core$Maybe$Just(rawText));
-			}
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$parseReferences = function (refs) {
-	return A2(
-		elm$core$List$foldl,
-		pablohirafuji$elm_markdown$Markdown$Block$parseReferencesHelp,
-		_Utils_Tuple2(refs, _List_Nil));
-};
-var pablohirafuji$elm_markdown$Markdown$Block$parseReferencesHelp = F2(
-	function (block, _n0) {
-		var refs = _n0.a;
-		var parsedAST = _n0.b;
-		switch (block.$) {
-			case 'Paragraph':
-				var rawText = block.a;
-				var _n2 = A2(pablohirafuji$elm_markdown$Markdown$Block$parseReference, elm$core$Dict$empty, rawText);
-				var paragraphRefs = _n2.a;
-				var maybeUpdtText = _n2.b;
-				var updtRefs = A2(elm$core$Dict$union, paragraphRefs, refs);
-				if (maybeUpdtText.$ === 'Just') {
-					var updtText = maybeUpdtText.a;
-					return _Utils_Tuple2(
-						updtRefs,
-						A2(
-							elm$core$List$cons,
-							A2(pablohirafuji$elm_markdown$Markdown$Block$Paragraph, updtText, _List_Nil),
-							parsedAST));
-				} else {
-					return _Utils_Tuple2(updtRefs, parsedAST);
-				}
-			case 'List':
-				var model = block.a;
-				var items = block.b;
-				var _n4 = A3(
-					elm$core$List$foldl,
-					F2(
-						function (item, _n5) {
-							var refs__ = _n5.a;
-							var parsedItems = _n5.b;
-							return A2(
-								elm$core$Tuple$mapSecond,
-								function (a) {
-									return A2(elm$core$List$cons, a, parsedItems);
-								},
-								A2(pablohirafuji$elm_markdown$Markdown$Block$parseReferences, refs__, item));
-						}),
-					_Utils_Tuple2(refs, _List_Nil),
-					items);
-				var updtRefs = _n4.a;
-				var updtItems = _n4.b;
-				return _Utils_Tuple2(
-					updtRefs,
-					A2(
-						elm$core$List$cons,
-						A2(pablohirafuji$elm_markdown$Markdown$Block$List, model, updtItems),
-						parsedAST));
-			case 'BlockQuote':
-				var blocks = block.a;
-				return A2(
-					elm$core$Tuple$mapSecond,
-					function (a) {
-						return A2(elm$core$List$cons, a, parsedAST);
-					},
-					A2(
-						elm$core$Tuple$mapSecond,
-						pablohirafuji$elm_markdown$Markdown$Block$BlockQuote,
-						A2(pablohirafuji$elm_markdown$Markdown$Block$parseReferences, refs, blocks)));
-			case 'Custom':
-				var customBlock = block.a;
-				var blocks = block.b;
-				return A2(
-					elm$core$Tuple$mapSecond,
-					function (a) {
-						return A2(elm$core$List$cons, a, parsedAST);
-					},
-					A2(
-						elm$core$Tuple$mapSecond,
-						pablohirafuji$elm_markdown$Markdown$Block$Custom(customBlock),
-						A2(pablohirafuji$elm_markdown$Markdown$Block$parseReferences, refs, blocks)));
-			default:
-				return _Utils_Tuple2(
-					refs,
-					A2(elm$core$List$cons, block, parsedAST));
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$parse = function (maybeOptions) {
-	return A2(
-		elm$core$Basics$composeR,
-		elm$core$String$lines,
-		A2(
-			elm$core$Basics$composeR,
-			function (a) {
-				return A2(pablohirafuji$elm_markdown$Markdown$Block$incorporateLines, a, _List_Nil);
-			},
-			A2(
-				elm$core$Basics$composeR,
-				pablohirafuji$elm_markdown$Markdown$Block$parseReferences(elm$core$Dict$empty),
-				A2(pablohirafuji$elm_markdown$Markdown$Block$parseInlines, maybeOptions, true))));
-};
-var pablohirafuji$elm_markdown$Markdown$Block$walk = F2(
-	function (_function, block) {
-		switch (block.$) {
-			case 'BlockQuote':
-				var blocks = block.a;
-				return _function(
-					pablohirafuji$elm_markdown$Markdown$Block$BlockQuote(
-						A2(
-							elm$core$List$map,
-							pablohirafuji$elm_markdown$Markdown$Block$walk(_function),
-							blocks)));
-			case 'List':
-				var listBlock = block.a;
-				var items = block.b;
-				return _function(
-					A2(
-						pablohirafuji$elm_markdown$Markdown$Block$List,
-						listBlock,
-						A2(
-							elm$core$List$map,
-							elm$core$List$map(
-								pablohirafuji$elm_markdown$Markdown$Block$walk(_function)),
-							items)));
-			case 'Custom':
-				var customBlock = block.a;
-				var blocks = block.b;
-				return _function(
-					A2(
-						pablohirafuji$elm_markdown$Markdown$Block$Custom,
-						customBlock,
-						A2(
-							elm$core$List$map,
-							pablohirafuji$elm_markdown$Markdown$Block$walk(_function),
-							blocks)));
-			default:
-				return _function(block);
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$InlineParser$walk = F2(
-	function (_function, inline) {
-		switch (inline.$) {
-			case 'Link':
-				var url = inline.a;
-				var maybeTitle = inline.b;
-				var inlines = inline.c;
-				return _function(
-					A3(
-						pablohirafuji$elm_markdown$Markdown$Inline$Link,
-						url,
-						maybeTitle,
-						A2(
-							elm$core$List$map,
-							pablohirafuji$elm_markdown$Markdown$InlineParser$walk(_function),
-							inlines)));
-			case 'Image':
-				var url = inline.a;
-				var maybeTitle = inline.b;
-				var inlines = inline.c;
-				return _function(
-					A3(
-						pablohirafuji$elm_markdown$Markdown$Inline$Image,
-						url,
-						maybeTitle,
-						A2(
-							elm$core$List$map,
-							pablohirafuji$elm_markdown$Markdown$InlineParser$walk(_function),
-							inlines)));
-			case 'HtmlInline':
-				var tag = inline.a;
-				var attrs = inline.b;
-				var inlines = inline.c;
-				return _function(
-					A3(
-						pablohirafuji$elm_markdown$Markdown$Inline$HtmlInline,
-						tag,
-						attrs,
-						A2(
-							elm$core$List$map,
-							pablohirafuji$elm_markdown$Markdown$InlineParser$walk(_function),
-							inlines)));
-			case 'Emphasis':
-				var length = inline.a;
-				var inlines = inline.b;
-				return _function(
-					A2(
-						pablohirafuji$elm_markdown$Markdown$Inline$Emphasis,
-						length,
-						A2(
-							elm$core$List$map,
-							pablohirafuji$elm_markdown$Markdown$InlineParser$walk(_function),
-							inlines)));
-			default:
-				return _function(inline);
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$walkInlinesHelp = F2(
-	function (_function, block) {
-		switch (block.$) {
-			case 'Paragraph':
-				var rawText = block.a;
-				var inlines = block.b;
-				return A2(
-					pablohirafuji$elm_markdown$Markdown$Block$Paragraph,
-					rawText,
-					A2(
-						elm$core$List$map,
-						pablohirafuji$elm_markdown$Markdown$InlineParser$walk(_function),
-						inlines));
-			case 'Heading':
-				var rawText = block.a;
-				var level = block.b;
-				var inlines = block.c;
-				return A3(
-					pablohirafuji$elm_markdown$Markdown$Block$Heading,
-					rawText,
-					level,
-					A2(
-						elm$core$List$map,
-						pablohirafuji$elm_markdown$Markdown$InlineParser$walk(_function),
-						inlines));
-			case 'PlainInlines':
-				var inlines = block.a;
-				return pablohirafuji$elm_markdown$Markdown$Block$PlainInlines(
-					A2(
-						elm$core$List$map,
-						pablohirafuji$elm_markdown$Markdown$InlineParser$walk(_function),
-						inlines));
-			default:
-				return block;
-		}
-	});
-var pablohirafuji$elm_markdown$Markdown$Block$walkInlines = F2(
-	function (_function, block) {
-		return A2(
-			pablohirafuji$elm_markdown$Markdown$Block$walk,
-			pablohirafuji$elm_markdown$Markdown$Block$walkInlinesHelp(_function),
-			block);
-	});
-var author$project$RCMD$rcToHtml = F2(
-	function (htmlFun, str) {
-		return A2(
-			elm$html$Html$div,
-			_List_Nil,
-			A2(
-				elm$core$List$concatMap,
-				author$project$RCMD$rcBlockView(htmlFun),
-				A2(
-					elm$core$List$map,
-					pablohirafuji$elm_markdown$Markdown$Block$walkInlines(author$project$RCMD$rcMediaText),
-					A2(pablohirafuji$elm_markdown$Markdown$Block$parse, elm$core$Maybe$Nothing, str))));
-	});
-var author$project$Exposition$render = function (exp) {
-	return _Utils_update(
-		exp,
-		{
-			renderedHtml: A2(
-				author$project$RCMD$rcToHtml,
-				author$project$Exposition$htmlForMediaString(exp),
-				exp.markdownInput)
-		});
-};
-var author$project$Exposition$thumbUrl = function (data) {
-	return '/text-editor/simple-media-thumb?research=' + (elm$core$String$fromInt(data.expositionId) + ('&simple-media=' + (elm$core$String$fromInt(data.id) + '&width=132&height=132')));
-};
+var elm$core$String$length = _String_length;
 var author$project$Exposition$validateName = F3(
 	function (exp, obj, newName) {
 		if (elm$core$String$length(newName) < 4) {
@@ -11219,17 +7278,11 @@ var author$project$Exposition$validateMediaObject = F3(
 			validation: validation
 		};
 	});
-var author$project$Exposition$withMd = F2(
+var author$project$Exposition$withHtml = F2(
 	function (exp, content) {
 		return _Utils_update(
 			exp,
-			{markdownInput: content});
-	});
-var author$project$Exposition$withRenderedHtmlString = F2(
-	function (exp, htmlString) {
-		return _Utils_update(
-			exp,
-			{renderedHtmlString: htmlString});
+			{renderedHtml: content});
 	});
 var author$project$Main$GotMediaList = function (a) {
 	return {$: 'GotMediaList', a: a};
@@ -11254,6 +7307,7 @@ var author$project$Main$addProblems = F2(
 				problems: _Utils_ap(problems, model.problems)
 			});
 	});
+var elm$json$Json$Encode$string = _Json_wrap;
 var author$project$Main$convertMarkdown = _Platform_outgoingPort('convertMarkdown', elm$json$Json$Encode$string);
 var elm$json$Json$Encode$null = _Json_encodeNull;
 var author$project$Main$getContent = _Platform_outgoingPort(
@@ -11262,6 +7316,7 @@ var author$project$Main$getContent = _Platform_outgoingPort(
 		return elm$json$Json$Encode$null;
 	});
 var author$project$Main$setContent = _Platform_outgoingPort('setContent', elm$json$Json$Encode$string);
+var author$project$Main$setPreviewContent = _Platform_outgoingPort('setPreviewContent', elm$json$Json$Encode$string);
 var author$project$Problems$CannotLoadMedia = function (a) {
 	return {$: 'CannotLoadMedia', a: a};
 };
@@ -11394,7 +7449,7 @@ var author$project$RCAPI$saveExposition = F2(
 				body: elm$http$Http$multipartBody(
 					_List_fromArray(
 						[
-							A2(elm$http$Http$stringPart, 'html', exposition.renderedHtmlString),
+							A2(elm$http$Http$stringPart, 'html', exposition.renderedHtml),
 							A2(elm$http$Http$stringPart, 'markdown', exposition.markdownInput),
 							A2(elm$http$Http$stringPart, 'style', exposition.css),
 							A2(elm$http$Http$stringPart, 'title', exposition.title),
@@ -11460,6 +7515,7 @@ var author$project$RCAPI$APIAdditionalMediaMetadata = F3(
 	});
 var elm$json$Json$Decode$map3 = _Json_map3;
 var elm$json$Json$Decode$oneOf = _Json_oneOf;
+var elm$json$Json$Decode$succeed = _Json_succeed;
 var elm$json$Json$Decode$maybe = function (decoder) {
 	return elm$json$Json$Decode$oneOf(
 		_List_fromArray(
@@ -11534,6 +7590,18 @@ var author$project$RCAPI$decodeMetadata = function (exp) {
 		exp,
 		{metadata: metadataField});
 };
+var elm$core$Dict$fromList = function (assocs) {
+	return A3(
+		elm$core$List$foldl,
+		F2(
+			function (_n0, dict) {
+				var key = _n0.a;
+				var value = _n0.b;
+				return A3(elm$core$Dict$insert, key, value, dict);
+			}),
+		elm$core$Dict$empty,
+		assocs);
+};
 var author$project$RCAPI$toMediaClassesDict = function (apiExpo) {
 	var exp = author$project$RCAPI$decodeMetadata(
 		author$project$RCAPI$decodeMedia(apiExpo));
@@ -11569,7 +7637,6 @@ var author$project$RCAPI$getMetadata = function (exp) {
 		return d;
 	}
 };
-var elm$html$Html$span = _VirtualDom_node('span');
 var author$project$RCAPI$toRCExposition = F3(
 	function (apiExpo, id, weave) {
 		var exp = author$project$RCAPI$decodeMetadata(
@@ -11583,8 +7650,7 @@ var author$project$RCAPI$toRCExposition = F3(
 			id: id,
 			markdownInput: apiExpo.markdown,
 			media: _List_Nil,
-			renderedHtml: A2(elm$html$Html$span, _List_Nil, _List_Nil),
-			renderedHtmlString: apiExpo.html,
+			renderedHtml: apiExpo.html,
 			title: apiExpo.title
 		};
 	});
@@ -11752,9 +7818,9 @@ var author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{
-							exposition: A2(author$project$Exposition$withRenderedHtmlString, model.exposition, html)
+							exposition: A2(author$project$Exposition$withHtml, model.exposition, html)
 						}),
-					elm$core$Platform$Cmd$none);
+					author$project$Main$setPreviewContent(html));
 			case 'EditGeneration':
 				var val = msg.a;
 				var _n2 = A2(elm$json$Json$Decode$decodeValue, elm$json$Json$Decode$int, val);
@@ -11789,12 +7855,9 @@ var author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{
-								editGeneration: gen,
-								exposition: author$project$Exposition$render(
-									A2(author$project$Exposition$withMd, model.exposition, content))
-							}),
-						author$project$Main$convertMarkdown(content));
+							{editGeneration: gen}),
+						author$project$Main$convertMarkdown(
+							A2(author$project$Exposition$insertToolHtml, content, model.exposition)));
 				} else {
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
@@ -12107,7 +8170,36 @@ var author$project$RCMediaEdit$fromValidation = function (result) {
 		return 'error!' + error;
 	}
 };
+var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
+	switch (handler.$) {
+		case 'Normal':
+			return 0;
+		case 'MayStopPropagation':
+			return 1;
+		case 'MayPreventDefault':
+			return 2;
+		default:
+			return 3;
+	}
+};
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$json$Json$Encode$bool = _Json_wrap;
+var elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$bool(bool));
+	});
 var elm$html$Html$Attributes$selected = elm$html$Html$Attributes$boolProperty('selected');
+var elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$string(string));
+	});
 var elm$html$Html$Attributes$value = elm$html$Html$Attributes$stringProperty('value');
 var elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
@@ -12171,7 +8263,29 @@ var rundis$elm_bootstrap$Bootstrap$Form$Select$create = F2(
 			{items: items, options: options});
 	});
 var elm$html$Html$select = _VirtualDom_node('select');
+var elm$core$Basics$not = _Basics_not;
+var elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (maybeValue.$ === 'Just') {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return elm$core$Maybe$Nothing;
+		}
+	});
+var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
+var elm$html$Html$Attributes$classList = function (classes) {
+	return elm$html$Html$Attributes$class(
+		A2(
+			elm$core$String$join,
+			' ',
+			A2(
+				elm$core$List$map,
+				elm$core$Tuple$first,
+				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
+};
 var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
+var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var rundis$elm_bootstrap$Bootstrap$Form$Select$applyModifier = F2(
 	function (modifier, options) {
 		switch (modifier.$) {
@@ -12353,6 +8467,7 @@ var author$project$RCMediaEdit$viewClassesPicker = F4(
 	});
 var elm$html$Html$Attributes$for = elm$html$Html$Attributes$stringProperty('htmlFor');
 var elm$html$Html$Attributes$placeholder = elm$html$Html$Attributes$stringProperty('placeholder');
+var elm$html$Html$div = _VirtualDom_node('div');
 var rundis$elm_bootstrap$Bootstrap$Form$applyModifier = F2(
 	function (modifier, options) {
 		var value = modifier.a;
@@ -12640,6 +8755,11 @@ var rundis$elm_bootstrap$Bootstrap$Form$Textarea$Rows = function (a) {
 var rundis$elm_bootstrap$Bootstrap$Form$Textarea$rows = function (rows_) {
 	return rundis$elm_bootstrap$Bootstrap$Form$Textarea$Rows(rows_);
 };
+var elm$core$Basics$composeL = F3(
+	function (g, f, x) {
+		return g(
+			f(x));
+	});
 var rundis$elm_bootstrap$Bootstrap$Form$Textarea$Textarea = function (a) {
 	return {$: 'Textarea', a: a};
 };
@@ -13034,6 +9154,7 @@ var author$project$RCMediaEdit$view = F2(
 						]))
 				]));
 	});
+var elm$html$Html$p = _VirtualDom_node('p');
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
 	return {$: 'Outlined', a: a};
 };
@@ -13083,6 +9204,7 @@ var rundis$elm_bootstrap$Bootstrap$Modal$footer = F3(
 							{attributes: attributes, children: children}))
 				}));
 	});
+var elm$html$Html$h5 = _VirtualDom_node('h5');
 var rundis$elm_bootstrap$Bootstrap$Modal$Header = function (a) {
 	return {$: 'Header', a: a};
 };
@@ -13142,6 +9264,14 @@ var rundis$elm_bootstrap$Bootstrap$Modal$small = function (_n0) {
 					})
 			}));
 };
+var elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
 var elm$html$Html$Attributes$tabindex = function (n) {
 	return A2(
 		_VirtualDom_attribute,
@@ -13556,6 +9686,7 @@ var author$project$Main$viewUpload = function (status) {
 				]));
 	}
 };
+var elm$html$Html$span = _VirtualDom_node('span');
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Info = {$: 'Info'};
 var rundis$elm_bootstrap$Bootstrap$Button$info = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Info));
@@ -14227,7 +10358,6 @@ var author$project$Main$view = function (model) {
 		_List_Nil,
 		_List_fromArray(
 			[
-				model.exposition.renderedHtml,
 				mediaDialogHtml,
 				author$project$Main$viewUpload(model.uploadStatus),
 				A2(
@@ -14255,9 +10385,26 @@ var elm$core$Basics$never = function (_n0) {
 		continue never;
 	}
 };
+var elm$core$String$slice = _String_slice;
+var elm$core$String$dropLeft = F2(
+	function (n, string) {
+		return (n < 1) ? string : A3(
+			elm$core$String$slice,
+			n,
+			elm$core$String$length(string),
+			string);
+	});
+var elm$core$String$startsWith = _String_startsWith;
 var elm$url$Url$Http = {$: 'Http'};
 var elm$url$Url$Https = {$: 'Https'};
 var elm$core$String$indexes = _String_indexes;
+var elm$core$String$isEmpty = function (string) {
+	return string === '';
+};
+var elm$core$String$left = F2(
+	function (n, string) {
+		return (n < 1) ? '' : A3(elm$core$String$slice, 0, n, string);
+	});
 var elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
 		return {fragment: fragment, host: host, path: path, port_: port_, protocol: protocol, query: query};

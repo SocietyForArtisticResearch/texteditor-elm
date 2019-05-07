@@ -161,7 +161,7 @@ saveExposition exposition expect =
         , headers = []
         , body =
             Http.multipartBody
-                [ Http.stringPart "html" exposition.renderedHtmlString
+                [ Http.stringPart "html" exposition.renderedHtml
                 , Http.stringPart "markdown" exposition.markdownInput
                 , Http.stringPart "style" exposition.css
                 , Http.stringPart "title" exposition.title
@@ -251,7 +251,7 @@ getMetadata exp =
             d
 
 
-toRCExposition : APIExposition -> Int -> Int -> RCExposition msg
+toRCExposition : APIExposition -> Int -> Int -> RCExposition
 toRCExposition apiExpo id weave =
     let
         exp =
@@ -262,8 +262,7 @@ toRCExposition apiExpo id weave =
     , authors = []
     , id = id
     , currentWeave = weave
-    , renderedHtml = span [] []
-    , renderedHtmlString = apiExpo.html
+    , renderedHtml = apiExpo.html
     , markdownInput = apiExpo.markdown
     , media = []
     , editorVersion = (getMetadata exp).editorVersion

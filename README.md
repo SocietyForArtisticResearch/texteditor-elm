@@ -38,7 +38,7 @@ Luc:
 - Transcoding status type
 - Load corrected (new) version of json of additional media metadata list and expo metadata
 - Import/Export (Pandoc calls)
-
+- TOC
 
 ## DONE
 - Get userclass and metadata

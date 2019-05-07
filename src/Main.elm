@@ -21,8 +21,8 @@ import Regex
 import String.Extra as Str
 
 
-type alias Model msg =
-    { exposition : RCExposition msg
+type alias Model =
+    { exposition : RCExposition
     , editGeneration : Int
     , mediaDialog : ( Modal.Visibility, Maybe RCMediaObject, Maybe RCMediaObjectViewState )
     , weave : Int
@@ -48,7 +48,7 @@ decodeFlags =
     D.map2 Flags (D.field "weave" D.int) (D.field "research" D.int)
 
 
-emptyModel : Int -> Int -> Model msg
+emptyModel : Int -> Int -> Model
 emptyModel research weave =
     { editGeneration = -1
     , exposition = Exposition.empty
@@ -62,7 +62,7 @@ emptyModel research weave =
     }
 
 
-init : D.Value -> ( Model msg, Cmd Msg )
+init : D.Value -> ( Model, Cmd Msg )
 init flags =
     case D.decodeValue decodeFlags flags of
         Ok fl ->
@@ -80,12 +80,12 @@ init flags =
             )
 
 
-addProblem : Model msg -> Problems.Problem -> Model msg
+addProblem : Model -> Problems.Problem -> Model
 addProblem model problem =
     { model | problems = problem :: model.problems }
 
 
-addProblems : Model msg -> List Problems.Problem -> Model msg
+addProblems : Model -> List Problems.Problem -> Model
 addProblems model problems =
     { model | problems = problems ++ model.problems }
 
@@ -124,7 +124,10 @@ port convertMarkdown : String -> Cmd msg
 port getHtml : (String -> msg) -> Sub msg
 
 
-subscriptions : Model msg -> Sub Msg
+port setPreviewContent : String -> Cmd msg
+
+
+subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
         [ currentGeneration EditGeneration
@@ -133,6 +136,10 @@ subscriptions model =
         , mediaDialog MediaDialog
         , Http.track "upload" GotUploadProgress
         ]
+
+
+
+-- MESSAGES
 
 
 type Msg
@@ -184,7 +191,11 @@ makeMediaEditMsgs obj =
     }
 
 
-update : Msg -> Model msg -> ( Model msg, Cmd Msg )
+
+-- UPDATE
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         GotConvertedHtml html ->
@@ -192,8 +203,8 @@ update msg model =
                 _ =
                     Debug.log "recevied html from marked" html
             in
-            ( { model | exposition = Exposition.withRenderedHtmlString model.exposition html }
-            , Cmd.none
+            ( { model | exposition = Exposition.withHtml model.exposition html }
+            , setPreviewContent html
             )
 
         EditGeneration val ->
@@ -223,11 +234,8 @@ update msg model =
                 ( Ok gen, Ok content ) ->
                     ( { model
                         | editGeneration = gen
-                        , exposition =
-                            Exposition.render
-                                (Exposition.withMd model.exposition content)
                       }
-                    , convertMarkdown content
+                    , convertMarkdown (Exposition.insertToolHtml content model.exposition)
                     )
 
                 _ ->
@@ -298,9 +306,6 @@ update msg model =
                       }
                     , Cmd.none
                     )
-
-               
-               
 
         CloseMediaDialog ->
             ( { model | mediaDialog = ( Modal.hidden, Nothing, Nothing ) }, Cmd.none )
@@ -446,7 +451,7 @@ update msg model =
                     ( model, Cmd.none )
 
 
-viewMediaDialog : RCExposition Msg -> ( Modal.Visibility, RCMediaObject, RCMediaObjectViewState ) -> Html Msg
+viewMediaDialog : RCExposition -> ( Modal.Visibility, RCMediaObject, RCMediaObjectViewState ) -> Html Msg
 viewMediaDialog exposition ( visibility, object, viewObjectState ) =
     let
         mediaEditView =
@@ -477,7 +482,7 @@ viewUpload status =
             div [] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
 
 
-view : Model Msg -> Html Msg
+view : Model -> Html Msg
 view model =
     let
         mediaDialogHtml =
@@ -499,8 +504,7 @@ view model =
             button [ onClick SaveExposition ] [ text saveButtonText ]
     in
     div []
-        [ model.exposition.renderedHtml
-        , mediaDialogHtml
+        [ mediaDialogHtml
         , viewUpload model.uploadStatus
         , RCMediaList.view model.exposition.media { editTool = TableMediaDialog }
         , saveButton

@@ -18,6 +18,10 @@
 
     <div id="elm">
     </div>
+
+    <div id="preview">
+    </div>
+
 </body>
 <script>
 
@@ -80,7 +84,12 @@
 
 
  app.ports.convertMarkdown.subscribe(function(md) {
-    app.ports.getHtml.send(marked(md));
+     app.ports.getHtml.send(marked(md));
+ });
+
+
+ app.ports.setPreviewContent.subscribe(function(content) {
+     document.getElementById("preview").innerHTML = content;
  });
 
  
