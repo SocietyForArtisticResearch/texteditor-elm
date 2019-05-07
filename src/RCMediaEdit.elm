@@ -7,7 +7,7 @@ import Bootstrap.Form.Input as Input
 import Bootstrap.Form.Select as Select
 import Bootstrap.Form.Textarea as Textarea
 import Bootstrap.Grid as Grid
-import Bootstrap.Utilities.Spacing as Spacing 
+import Bootstrap.Utilities.Spacing as Spacing
 import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -58,8 +58,8 @@ cssClasses =
 
 -- Note to self, Select requires some ugly beast to parse the values, unless we do not support IE:
 -- https://stackoverflow.com/questions/39371105/how-to-use-select-dropdown-tag-in-elm-lang
-
 -- For custom classes, we could also use "dropdown with addon", see http://elm-bootstrap.info/inputgroup
+
 
 viewClassesPicker : String -> List CssClass -> String -> (String -> msg) -> Html msg
 viewClassesPicker id classList currentSelection editMessage =
@@ -103,7 +103,8 @@ viewInputWithLabel props =
     Form.group []
         [ Form.label [ for props.nodeId ] [ text props.labeltext ]
         , Input.text
-            [ Input.attrs
+            [ Input.small
+            , Input.attrs
                 [ placeholder props.placeholder
                 , value props.value
                 , Events.onInput props.onInput
@@ -161,7 +162,7 @@ view objectState messages =
             , placeholder = ""
             , value = fromValidation objectState.validation.name
             , onInput = messages.editTool Name
-            , help = helpFromValidation objectState.validation.name
+            , help = "" --helpFromValidation objectState.validation.name
             }
 
         descriptionProps =
@@ -170,7 +171,7 @@ view objectState messages =
             , placeholder = "optional"
             , value = fromValidation objectState.validation.description
             , onInput = messages.editTool Description
-            , help = helpFromValidation objectState.validation.description
+            , help = "" --helpFromValidation objectState.validation.description
             }
 
         copyrightProps =
@@ -179,7 +180,7 @@ view objectState messages =
             , placeholder = ""
             , value = fromValidation objectState.validation.copyright
             , onInput = messages.editTool Copyright
-            , help = helpFromValidation objectState.validation.copyright
+            , help = "" --helpFromValidation objectState.validation.copyright
             }
 
         currentClass =
@@ -194,7 +195,7 @@ view objectState messages =
         [ Form.form []
             [ viewInputWithLabel nameProps
             , Form.group []
-                [ Form.label [ for "classPicker" ] [ text "How should the media be displayed" ]
+                [ Form.label [ for "classPicker" ] [ text "Display size and location" ]
                 , viewClassesPicker "classPicker" cssClasses currentClass (messages.editTool UserClass)
                 ]
             , viewTextAreaWithLabel descriptionProps
@@ -202,12 +203,14 @@ view objectState messages =
             , Form.group []
                 [ Button.button
                     [ Button.primary
+                    , Button.small
                     , Button.attrs [ Events.onClick messages.insertTool ]
                     ]
                     [ text "Insert" ]
                 , Button.button
-                    [ Button.danger
-                    , Button.attrs [ Events.onClick messages.deleteTool, Spacing.ml1  ]
+                    [ Button.small
+                    , Button.danger
+                    , Button.attrs [ Events.onClick messages.deleteTool, Spacing.ml1 ]
                     ]
                     [ text "Remove" ]
                 ]

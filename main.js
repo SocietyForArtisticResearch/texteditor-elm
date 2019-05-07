@@ -12107,14 +12107,6 @@ var author$project$RCMediaEdit$fromValidation = function (result) {
 		return 'error!' + error;
 	}
 };
-var author$project$RCMediaEdit$helpFromValidation = function (result) {
-	if (result.$ === 'Ok') {
-		return 'ok';
-	} else {
-		var err = result.a;
-		return 'error: ' + err;
-	}
-};
 var elm$html$Html$Attributes$selected = elm$html$Html$Attributes$boolProperty('selected');
 var elm$html$Html$Attributes$value = elm$html$Html$Attributes$stringProperty('value');
 var elm$html$Html$Events$alwaysStop = function (x) {
@@ -12415,6 +12407,11 @@ var rundis$elm_bootstrap$Bootstrap$Form$Input$Attrs = function (a) {
 var rundis$elm_bootstrap$Bootstrap$Form$Input$attrs = function (attrs_) {
 	return rundis$elm_bootstrap$Bootstrap$Form$Input$Attrs(attrs_);
 };
+var rundis$elm_bootstrap$Bootstrap$Form$Input$Size = function (a) {
+	return {$: 'Size', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$General$Internal$SM = {$: 'SM'};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$small = rundis$elm_bootstrap$Bootstrap$Form$Input$Size(rundis$elm_bootstrap$Bootstrap$General$Internal$SM);
 var rundis$elm_bootstrap$Bootstrap$Form$Input$Text = {$: 'Text'};
 var rundis$elm_bootstrap$Bootstrap$Form$Input$Input = function (a) {
 	return {$: 'Input', a: a};
@@ -12607,6 +12604,7 @@ var author$project$RCMediaEdit$viewInputWithLabel = function (props) {
 				rundis$elm_bootstrap$Bootstrap$Form$Input$text(
 				_List_fromArray(
 					[
+						rundis$elm_bootstrap$Bootstrap$Form$Input$small,
 						rundis$elm_bootstrap$Bootstrap$Form$Input$attrs(
 						_List_fromArray(
 							[
@@ -12914,6 +12912,10 @@ var rundis$elm_bootstrap$Bootstrap$Button$danger = rundis$elm_bootstrap$Bootstra
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
 var rundis$elm_bootstrap$Bootstrap$Button$primary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Size = function (a) {
+	return {$: 'Size', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Button$small = rundis$elm_bootstrap$Bootstrap$Internal$Button$Size(rundis$elm_bootstrap$Bootstrap$General$Internal$SM);
 var elm$html$Html$form = _VirtualDom_node('form');
 var rundis$elm_bootstrap$Bootstrap$Form$form = F2(
 	function (attributes, children) {
@@ -12923,7 +12925,7 @@ var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1 = elm$html$Html$Attribu
 var author$project$RCMediaEdit$view = F2(
 	function (objectState, messages) {
 		var nameProps = {
-			help: author$project$RCMediaEdit$helpFromValidation(objectState.validation.name),
+			help: '',
 			labeltext: 'name',
 			nodeId: 'name',
 			onInput: messages.editTool(author$project$RCMediaEdit$Name),
@@ -12931,7 +12933,7 @@ var author$project$RCMediaEdit$view = F2(
 			value: author$project$RCMediaEdit$fromValidation(objectState.validation.name)
 		};
 		var descriptionProps = {
-			help: author$project$RCMediaEdit$helpFromValidation(objectState.validation.description),
+			help: '',
 			labeltext: 'description',
 			nodeId: 'description',
 			onInput: messages.editTool(author$project$RCMediaEdit$Description),
@@ -12948,7 +12950,7 @@ var author$project$RCMediaEdit$view = F2(
 			}
 		}();
 		var copyrightProps = {
-			help: author$project$RCMediaEdit$helpFromValidation(objectState.validation.copyright),
+			help: '',
 			labeltext: 'copyright',
 			nodeId: 'copyright',
 			onInput: messages.editTool(author$project$RCMediaEdit$Copyright),
@@ -12979,7 +12981,7 @@ var author$project$RCMediaEdit$view = F2(
 										]),
 									_List_fromArray(
 										[
-											elm$html$Html$text('How should the media be displayed')
+											elm$html$Html$text('Display size and location')
 										])),
 									A4(
 									author$project$RCMediaEdit$viewClassesPicker,
@@ -13000,6 +13002,7 @@ var author$project$RCMediaEdit$view = F2(
 									_List_fromArray(
 										[
 											rundis$elm_bootstrap$Bootstrap$Button$primary,
+											rundis$elm_bootstrap$Bootstrap$Button$small,
 											rundis$elm_bootstrap$Bootstrap$Button$attrs(
 											_List_fromArray(
 												[
@@ -13014,6 +13017,7 @@ var author$project$RCMediaEdit$view = F2(
 									rundis$elm_bootstrap$Bootstrap$Button$button,
 									_List_fromArray(
 										[
+											rundis$elm_bootstrap$Bootstrap$Button$small,
 											rundis$elm_bootstrap$Bootstrap$Button$danger,
 											rundis$elm_bootstrap$Bootstrap$Button$attrs(
 											_List_fromArray(
@@ -13124,7 +13128,6 @@ var rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick = F2(
 						{hideOnBackdropClick: hide})
 				}));
 	});
-var rundis$elm_bootstrap$Bootstrap$General$Internal$SM = {$: 'SM'};
 var rundis$elm_bootstrap$Bootstrap$Modal$small = function (_n0) {
 	var conf = _n0.a;
 	var options = conf.options;
