@@ -462,13 +462,6 @@ viewMediaDialog exposition ( visibility, object, viewObjectState ) =
         |> Modal.hideOnBackdropClick True
         |> Modal.h5 [] [ text <| "Edit object " ++ object.name ]
         |> Modal.body [] [ p [] [ mediaEditView ] ]
-        |> Modal.footer []
-            [ Button.button
-                [ Button.outlinePrimary
-                , Button.attrs [ onClick CloseMediaDialog ]
-                ]
-                [ text "Close" ]
-            ]
         |> Modal.view visibility
 
 
