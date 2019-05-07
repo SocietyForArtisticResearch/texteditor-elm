@@ -7449,7 +7449,7 @@ var elm$json$Json$Encode$object = function (pairs) {
 var author$project$RCAPI$saveExposition = F2(
 	function (exposition, expect) {
 		var url = 'text-editor/save' + ('?research=' + (elm$core$String$fromInt(exposition.id) + ('&weave=' + elm$core$String$fromInt(exposition.currentWeave))));
-		var _n0 = A2(elm$core$Debug$log, 'about to save markdown: ', exposition.markdownInput);
+		var _n0 = A2(elm$core$Debug$log, 'about to save html: ', exposition.renderedHtml);
 		return elm$http$Http$request(
 			{
 				body: elm$http$Http$multipartBody(

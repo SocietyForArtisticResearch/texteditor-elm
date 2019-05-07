@@ -153,7 +153,7 @@ saveExposition exposition expect =
                 ++ String.fromInt exposition.currentWeave
 
         _ =
-            Debug.log "about to save markdown: " exposition.markdownInput
+            Debug.log "about to save html: " exposition.renderedHtml
     in
     Http.request
         { method = "POST"
