@@ -90,11 +90,10 @@
 
 
  app.ports.setPreviewContent.subscribe(function(content) {
-     //     var preview = document.getElementById("preview")
-
+     var preview = document.getElementById("preview")
      var newPreview = document.createElement('div');
      newPreview.innerHtml = content;
-     morphdom("preview", newPreview);
+     morphdom(preview, newPreview);
  });
 
  
