@@ -229,7 +229,7 @@ addDimensions dims attributes =
         Nothing ->
             attributes
 
-        Just ( h, w ) ->
+        Just ( w, h ) ->
             attributes ++ [ Attr.height h, Attr.width w ]
 
 

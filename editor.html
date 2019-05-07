@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="elm-editor/lib/codemirror.css">
     <script src="elm-editor/lib/markdown.js"></script>
     <script src="elm-editor/lib/marked.min.js"></script>
+    <script src="elm-editor/lib/morphdom-umd.min.js"></script>
     <script src="elm-editor/main.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
@@ -89,7 +90,8 @@
 
 
  app.ports.setPreviewContent.subscribe(function(content) {
-     document.getElementById("preview").innerHTML = content;
+     var preview = document.getElementById("preview");
+     morphdom(preview, content);
  });
 
  
