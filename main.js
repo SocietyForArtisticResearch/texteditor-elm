@@ -7951,6 +7951,7 @@ var author$project$Main$update = F2(
 				if (exp.$ === 'Ok') {
 					var e = exp.a;
 					var newExposition = A3(author$project$RCAPI$toRCExposition, e, model.research, model.weave);
+					var _n11 = A2(elm$core$Debug$log, 'loaded html', newExposition.renderedHtml);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -7962,12 +7963,12 @@ var author$project$Main$update = F2(
 							_List_fromArray(
 								[
 									A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList),
-									author$project$Main$setContent(newExposition.markdownInput),
-									author$project$Main$setPreviewContent(newExposition.renderedHtml)
+									author$project$Main$setPreviewContent(newExposition.renderedHtml),
+									author$project$Main$setContent(newExposition.markdownInput)
 								])));
 				} else {
 					var err = exp.a;
-					var _n11 = A2(elm$core$Debug$log, 'could not load exposition: ', err);
+					var _n12 = A2(elm$core$Debug$log, 'could not load exposition: ', err);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 			case 'SaveExposition':
@@ -7984,7 +7985,7 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				} else {
 					var s = result.a;
-					var _n13 = A2(elm$core$Debug$log, 'save error: ', s);
+					var _n14 = A2(elm$core$Debug$log, 'save error: ', s);
 					return _Utils_Tuple2(
 						A2(author$project$Main$addProblem, model, author$project$Problems$CannotSave),
 						elm$core$Platform$Cmd$none);
@@ -8000,16 +8001,16 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				} else {
 					var media = mediaResult.a;
-					var _n15 = author$project$Problems$splitResultList(
+					var _n16 = author$project$Problems$splitResultList(
 						A2(
 							elm$core$List$map,
 							author$project$RCAPI$toRCMediaObject(model.research),
 							media));
-					var problems = _n15.a;
-					var mediaEntries = _n15.b;
+					var problems = _n16.a;
+					var mediaEntries = _n16.b;
 					var modelWithProblems = A2(author$project$Main$addProblems, model, problems);
 					var expositionWithMedia = A3(elm$core$List$foldr, author$project$Exposition$addOrReplaceObject, modelWithProblems.exposition, mediaEntries);
-					var _n16 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithMedia);
+					var _n17 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithMedia);
 					return _Utils_Tuple2(
 						_Utils_update(
 							modelWithProblems,
@@ -8020,18 +8021,18 @@ var author$project$Main$update = F2(
 				}
 			case 'MediaEdit':
 				var objFromDialog = msg.a;
-				var _n17 = A2(author$project$Exposition$objectByNameOrId, objFromDialog.name, model.exposition);
-				if (_n17.$ === 'Nothing') {
+				var _n18 = A2(author$project$Exposition$objectByNameOrId, objFromDialog.name, model.exposition);
+				if (_n18.$ === 'Nothing') {
 					var modelWithProblem = A2(author$project$Main$addProblem, model, author$project$Problems$NoMediaWithNameOrId);
 					return _Utils_Tuple2(modelWithProblem, elm$core$Platform$Cmd$none);
 				} else {
-					var objInModel = _n17.a;
+					var objInModel = _n18.a;
 					var viewObjectState = A3(author$project$Exposition$validateMediaObject, model.exposition, objInModel, objFromDialog);
-					var _n18 = model.mediaDialog;
-					var viewStatus = _n18.a;
-					var objInEdit = _n18.b;
-					var _n19 = author$project$Exposition$isValid(viewObjectState.validation);
-					if (!_n19) {
+					var _n19 = model.mediaDialog;
+					var viewStatus = _n19.a;
+					var objInEdit = _n19.b;
+					var _n20 = author$project$Exposition$isValid(viewObjectState.validation);
+					if (!_n20) {
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -8104,7 +8105,7 @@ var author$project$Main$update = F2(
 						A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 				} else {
 					var e = result.a;
-					var _n22 = A2(elm$core$Debug$log, 'error uploading: ', e);
+					var _n23 = A2(elm$core$Debug$log, 'error uploading: ', e);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 		}
