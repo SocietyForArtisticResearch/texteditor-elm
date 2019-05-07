@@ -7813,7 +7813,6 @@ var author$project$Main$update = F2(
 		switch (msg.$) {
 			case 'GotConvertedHtml':
 				var html = msg.a;
-				var _n1 = A2(elm$core$Debug$log, 'recevied html from marked', html);
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -7823,9 +7822,9 @@ var author$project$Main$update = F2(
 					author$project$Main$setPreviewContent(html));
 			case 'EditGeneration':
 				var val = msg.a;
-				var _n2 = A2(elm$json$Json$Decode$decodeValue, elm$json$Json$Decode$int, val);
-				if (_n2.$ === 'Ok') {
-					var gen = _n2.a;
+				var _n1 = A2(elm$json$Json$Decode$decodeValue, elm$json$Json$Decode$int, val);
+				if (_n1.$ === 'Ok') {
+					var gen = _n1.a;
 					return (!_Utils_eq(gen, model.editGeneration)) ? _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -7840,7 +7839,7 @@ var author$project$Main$update = F2(
 				}
 			case 'MdContent':
 				var val = msg.a;
-				var _n3 = _Utils_Tuple2(
+				var _n2 = _Utils_Tuple2(
 					A2(
 						elm$json$Json$Decode$decodeValue,
 						A2(elm$json$Json$Decode$field, 'generation', elm$json$Json$Decode$int),
@@ -7849,9 +7848,9 @@ var author$project$Main$update = F2(
 						elm$json$Json$Decode$decodeValue,
 						A2(elm$json$Json$Decode$field, 'content', elm$json$Json$Decode$string),
 						val));
-				if ((_n3.a.$ === 'Ok') && (_n3.b.$ === 'Ok')) {
-					var gen = _n3.a.a;
-					var content = _n3.b.a;
+				if ((_n2.a.$ === 'Ok') && (_n2.b.$ === 'Ok')) {
+					var gen = _n2.a.a;
+					var content = _n2.b.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -7863,17 +7862,17 @@ var author$project$Main$update = F2(
 				}
 			case 'MediaDialog':
 				var val = msg.a;
-				var _n4 = A2(
+				var _n3 = A2(
 					elm$json$Json$Decode$decodeValue,
 					A2(elm$json$Json$Decode$field, 'media', elm$json$Json$Decode$string),
 					val);
-				if (_n4.$ === 'Ok') {
-					var mediaNameOrId = _n4.a;
-					var _n5 = A2(author$project$Exposition$objectByNameOrId, mediaNameOrId, model.exposition);
-					if (_n5.$ === 'Just') {
-						var obj = _n5.a;
+				if (_n3.$ === 'Ok') {
+					var mediaNameOrId = _n3.a;
+					var _n4 = A2(author$project$Exposition$objectByNameOrId, mediaNameOrId, model.exposition);
+					if (_n4.$ === 'Just') {
+						var obj = _n4.a;
 						var viewObjectState = A3(author$project$Exposition$validateMediaObject, model.exposition, obj, obj);
-						var _n6 = A2(elm$core$Debug$log, 'some success', obj);
+						var _n5 = A2(elm$core$Debug$log, 'some success', obj);
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -7886,7 +7885,7 @@ var author$project$Main$update = F2(
 							elm$core$Platform$Cmd$none);
 					} else {
 						var modelWithProblem = A2(author$project$Main$addProblem, model, author$project$Problems$NoMediaWithNameOrId);
-						var _n7 = A2(elm$core$Debug$log, 'no object', model);
+						var _n6 = A2(elm$core$Debug$log, 'no object', model);
 						return _Utils_Tuple2(
 							_Utils_update(
 								modelWithProblem,
@@ -7896,15 +7895,15 @@ var author$project$Main$update = F2(
 							elm$core$Platform$Cmd$none);
 					}
 				} else {
-					var _n8 = A2(elm$core$Debug$log, 'no mediaName or ID', val);
+					var _n7 = A2(elm$core$Debug$log, 'no mediaName or ID', val);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 			case 'TableMediaDialog':
 				var id = msg.a;
 				var idString = elm$core$String$fromInt(id);
-				var _n9 = A2(author$project$Exposition$objectByNameOrId, idString, model.exposition);
-				if (_n9.$ === 'Just') {
-					var obj = _n9.a;
+				var _n8 = A2(author$project$Exposition$objectByNameOrId, idString, model.exposition);
+				if (_n8.$ === 'Just') {
+					var obj = _n8.a;
 					var viewObjectState = A3(author$project$Exposition$validateMediaObject, model.exposition, obj, obj);
 					return _Utils_Tuple2(
 						_Utils_update(
@@ -7918,7 +7917,7 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				} else {
 					var modelWithProblem = A2(author$project$Main$addProblem, model, author$project$Problems$NoMediaWithNameOrId);
-					var _n10 = A2(elm$core$Debug$log, 'no object', model);
+					var _n9 = A2(elm$core$Debug$log, 'no object', model);
 					return _Utils_Tuple2(
 						_Utils_update(
 							modelWithProblem,
@@ -7951,11 +7950,12 @@ var author$project$Main$update = F2(
 							_List_fromArray(
 								[
 									A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList),
-									author$project$Main$setContent(newExposition.markdownInput)
+									author$project$Main$setContent(newExposition.markdownInput),
+									author$project$Main$setPreviewContent(newExposition.renderedHtml)
 								])));
 				} else {
 					var err = exp.a;
-					var _n12 = A2(elm$core$Debug$log, 'could not load exposition: ', err);
+					var _n11 = A2(elm$core$Debug$log, 'could not load exposition: ', err);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 			case 'SaveExposition':
@@ -7972,7 +7972,7 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				} else {
 					var s = result.a;
-					var _n14 = A2(elm$core$Debug$log, 'save error: ', s);
+					var _n13 = A2(elm$core$Debug$log, 'save error: ', s);
 					return _Utils_Tuple2(
 						A2(author$project$Main$addProblem, model, author$project$Problems$CannotSave),
 						elm$core$Platform$Cmd$none);
@@ -7988,16 +7988,16 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				} else {
 					var media = mediaResult.a;
-					var _n16 = author$project$Problems$splitResultList(
+					var _n15 = author$project$Problems$splitResultList(
 						A2(
 							elm$core$List$map,
 							author$project$RCAPI$toRCMediaObject(model.research),
 							media));
-					var problems = _n16.a;
-					var mediaEntries = _n16.b;
+					var problems = _n15.a;
+					var mediaEntries = _n15.b;
 					var modelWithProblems = A2(author$project$Main$addProblems, model, problems);
 					var expositionWithMedia = A3(elm$core$List$foldr, author$project$Exposition$addOrReplaceObject, modelWithProblems.exposition, mediaEntries);
-					var _n17 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithMedia);
+					var _n16 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithMedia);
 					return _Utils_Tuple2(
 						_Utils_update(
 							modelWithProblems,
@@ -8008,18 +8008,18 @@ var author$project$Main$update = F2(
 				}
 			case 'MediaEdit':
 				var objFromDialog = msg.a;
-				var _n18 = A2(author$project$Exposition$objectByNameOrId, objFromDialog.name, model.exposition);
-				if (_n18.$ === 'Nothing') {
+				var _n17 = A2(author$project$Exposition$objectByNameOrId, objFromDialog.name, model.exposition);
+				if (_n17.$ === 'Nothing') {
 					var modelWithProblem = A2(author$project$Main$addProblem, model, author$project$Problems$NoMediaWithNameOrId);
 					return _Utils_Tuple2(modelWithProblem, elm$core$Platform$Cmd$none);
 				} else {
-					var objInModel = _n18.a;
+					var objInModel = _n17.a;
 					var viewObjectState = A3(author$project$Exposition$validateMediaObject, model.exposition, objInModel, objFromDialog);
-					var _n19 = model.mediaDialog;
-					var viewStatus = _n19.a;
-					var objInEdit = _n19.b;
-					var _n20 = author$project$Exposition$isValid(viewObjectState.validation);
-					if (!_n20) {
+					var _n18 = model.mediaDialog;
+					var viewStatus = _n18.a;
+					var objInEdit = _n18.b;
+					var _n19 = author$project$Exposition$isValid(viewObjectState.validation);
+					if (!_n19) {
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -8092,7 +8092,7 @@ var author$project$Main$update = F2(
 						A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 				} else {
 					var e = result.a;
-					var _n23 = A2(elm$core$Debug$log, 'error uploading: ', e);
+					var _n22 = A2(elm$core$Debug$log, 'error uploading: ', e);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 		}

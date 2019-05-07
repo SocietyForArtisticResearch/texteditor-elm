@@ -199,10 +199,6 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         GotConvertedHtml html ->
-            let
-                _ =
-                    Debug.log "recevied html from marked" html
-            in
             ( { model | exposition = Exposition.withHtml model.exposition html }
             , setPreviewContent html
             )
@@ -324,6 +320,7 @@ update msg model =
                     , Cmd.batch
                         [ RCAPI.getMediaList model.research GotMediaList
                         , setContent newExposition.markdownInput
+                        , setPreviewContent newExposition.renderedHtml
                         ]
                     )
 
