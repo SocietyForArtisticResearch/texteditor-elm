@@ -228,10 +228,18 @@ update msg model =
                 )
             of
                 ( Ok gen, Ok content ) ->
+                    let
+                        newHtml =
+                            Exposition.insertToolHtml content model.exposition
+                    in
                     ( { model
                         | editGeneration = gen
+                        , exposition =
+                            Exposition.withHtml
+                                (Exposition.withMd model.exposition content)
+                                newHtml
                       }
-                    , convertMarkdown (Exposition.insertToolHtml content model.exposition)
+                    , convertMarkdown newHtml
                     )
 
                 _ ->
