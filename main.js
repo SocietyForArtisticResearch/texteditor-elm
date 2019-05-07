@@ -7284,6 +7284,12 @@ var author$project$Exposition$withHtml = F2(
 			exp,
 			{renderedHtml: content});
 	});
+var author$project$Exposition$withMd = F2(
+	function (exp, content) {
+		return _Utils_update(
+			exp,
+			{markdownInput: content});
+	});
 var author$project$Main$GotMediaList = function (a) {
 	return {$: 'GotMediaList', a: a};
 };
@@ -7851,12 +7857,18 @@ var author$project$Main$update = F2(
 				if ((_n2.a.$ === 'Ok') && (_n2.b.$ === 'Ok')) {
 					var gen = _n2.a.a;
 					var content = _n2.b.a;
+					var newHtml = A2(author$project$Exposition$insertToolHtml, content, model.exposition);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{editGeneration: gen}),
-						author$project$Main$convertMarkdown(
-							A2(author$project$Exposition$insertToolHtml, content, model.exposition)));
+							{
+								editGeneration: gen,
+								exposition: A2(
+									author$project$Exposition$withHtml,
+									A2(author$project$Exposition$withMd, model.exposition, content),
+									newHtml)
+							}),
+						author$project$Main$convertMarkdown(newHtml));
 				} else {
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
