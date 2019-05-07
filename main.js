@@ -7321,7 +7321,6 @@ var author$project$Main$getContent = _Platform_outgoingPort(
 	function ($) {
 		return elm$json$Json$Encode$null;
 	});
-var author$project$Main$setContent = _Platform_outgoingPort('setContent', elm$json$Json$Encode$string);
 var author$project$Main$setPreviewContent = _Platform_outgoingPort('setPreviewContent', elm$json$Json$Encode$string);
 var author$project$Problems$CannotLoadMedia = function (a) {
 	return {$: 'CannotLoadMedia', a: a};
@@ -7963,8 +7962,7 @@ var author$project$Main$update = F2(
 							_List_fromArray(
 								[
 									A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList),
-									author$project$Main$setPreviewContent(newExposition.renderedHtml),
-									author$project$Main$setContent(newExposition.markdownInput)
+									author$project$Main$setPreviewContent(newExposition.renderedHtml)
 								])));
 				} else {
 					var err = exp.a;

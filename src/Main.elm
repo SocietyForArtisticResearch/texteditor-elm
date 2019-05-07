@@ -331,7 +331,8 @@ update msg model =
                     , Cmd.batch
                         [ RCAPI.getMediaList model.research GotMediaList
                         , setPreviewContent newExposition.renderedHtml
-                        , setContent newExposition.markdownInput
+
+                        --                        , setContent newExposition.markdownInput
                         ]
                     )
 
