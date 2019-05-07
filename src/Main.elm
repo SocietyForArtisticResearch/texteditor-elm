@@ -320,6 +320,9 @@ update msg model =
                     let
                         newExposition =
                             RCAPI.toRCExposition e model.research model.weave
+
+                        _ =
+                            Debug.log "loaded html" newExposition.renderedHtml
                     in
                     ( { model
                         | exposition = RCAPI.toRCExposition e model.research model.weave
@@ -327,8 +330,8 @@ update msg model =
                       }
                     , Cmd.batch
                         [ RCAPI.getMediaList model.research GotMediaList
-                        , setContent newExposition.markdownInput
                         , setPreviewContent newExposition.renderedHtml
+                        , setContent newExposition.markdownInput
                         ]
                     )
 
