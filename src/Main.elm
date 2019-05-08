@@ -175,7 +175,7 @@ type Msg
     | SaveExposition
     | SavedExposition (Result Http.Error ())
     | SaveMediaEdit Exposition.RCMediaObject
-    | SavedMediaEdit (Result Http.Error ())
+    | SavedMediaEdit (Result Http.Error String)
 
 
 
@@ -421,12 +421,16 @@ update msg model =
 
         SaveMediaEdit obj ->
             ( model
-            , RCAPI.updateMedia obj (Http.expectWhatever SavedMediaEdit)
+            , RCAPI.updateMedia obj (Http.expectString SavedMediaEdit)
             )
 
         SavedMediaEdit result ->
             case result of
-                Ok _ ->
+                Ok s ->
+                    let
+                        _ =
+                            Debug.log "update media result: " s
+                    in
                     ( model, Cmd.none )
 
                 Err s ->

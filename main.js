@@ -7908,6 +7908,12 @@ var elm$file$File$Select$file = F2(
 			toMsg,
 			_File_uploadOne(mimes));
 	});
+var elm$http$Http$expectString = function (toMsg) {
+	return A2(
+		elm$http$Http$expectStringResponse,
+		toMsg,
+		elm$http$Http$resolve(elm$core$Result$Ok));
+};
 var elm$core$Basics$clamp = F3(
 	function (low, high, number) {
 		return (_Utils_cmp(number, low) < 0) ? low : ((_Utils_cmp(number, high) > 0) ? high : number);
@@ -8155,14 +8161,16 @@ var author$project$Main$update = F2(
 						A2(
 							author$project$RCAPI$updateMedia,
 							obj,
-							elm$http$Http$expectWhatever(author$project$Main$SavedMediaEdit)));
+							elm$http$Http$expectString(author$project$Main$SavedMediaEdit)));
 				case 'SavedMediaEdit':
 					var result = msg.a;
 					if (result.$ === 'Ok') {
+						var s = result.a;
+						var _n20 = A2(elm$core$Debug$log, 'update media result: ', s);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					} else {
 						var s = result.a;
-						var _n20 = A2(elm$core$Debug$log, 'update media error: ', s);
+						var _n21 = A2(elm$core$Debug$log, 'update media error: ', s);
 						return _Utils_Tuple2(
 							A2(author$project$Main$addProblem, model, author$project$Problems$CannotUpdateMedia),
 							elm$core$Platform$Cmd$none);
@@ -8244,7 +8252,7 @@ var author$project$Main$update = F2(
 							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 					} else {
 						var e = result.a;
-						var _n24 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n25 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
 				default:
@@ -8264,7 +8272,7 @@ var author$project$Main$update = F2(
 							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 					} else {
 						var e = result.a;
-						var _n26 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n27 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
 			}
