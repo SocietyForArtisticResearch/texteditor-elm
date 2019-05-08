@@ -8,6 +8,7 @@ type Problem
     | CannotLoadMedia String
     | NoMediaWithNameOrId
     | CannotSave
+    | CannotFindMediaFieldInJson
 
 
 splitResultList : List (Result Problem a) -> ( List Problem, List a )

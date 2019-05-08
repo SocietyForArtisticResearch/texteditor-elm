@@ -24,7 +24,7 @@ import String.Extra as Str
 type alias Model =
     { exposition : RCExposition
     , editGeneration : Int
-    , mediaDialog : ( Modal.Visibility, Maybe RCMediaObject, Maybe RCMediaObjectViewState )
+    , mediaDialog : ( Modal.Visibility, Maybe ( RCMediaObject, Int ), Maybe RCMediaObjectViewState )
     , weave : Int
     , research : Int
     , mediaUploadStatus : UploadStatus
@@ -142,7 +142,7 @@ subscriptions model =
         [ currentGeneration EditGeneration
         , cmContent MdContent
         , getHtml GotConvertedHtml
-        , mediaDialog MediaDialog
+        , mediaDialog CMOpenMediaDialog
         , Http.track "uploadMedia" GotMediaUploadProgress
         , Http.track "uploadImport" GotImportUploadProgress
         ]
@@ -155,8 +155,9 @@ subscriptions model =
 type Msg
     = EditGeneration E.Value
     | MdContent E.Value
-    | MediaDialog E.Value
-    | TableMediaDialog Int -- opened from table
+    | MediaDialog String
+    | CMOpenMediaDialog E.Value
+      --    | TableMediaDialog Int -- opened from table
     | GotConvertedHtml String
     | MediaEdit ( String, Exposition.RCMediaObject )
     | MediaDelete Exposition.RCMediaObject
@@ -181,26 +182,26 @@ type Msg
 -- not yet validated, only update request
 
 
-makeMediaEditFun : Exposition.RCMediaObject -> RCMediaEdit.Field -> String -> Msg
-makeMediaEditFun obj field input =
+makeMediaEditFun : Exposition.RCMediaObject -> Int -> RCMediaEdit.Field -> String -> Msg
+makeMediaEditFun obj objId field input =
     case field of
         RCMediaEdit.Name ->
-            MediaEdit ( obj.name, { obj | name = input } )
+            MediaEdit ( String.fromInt objId, { obj | name = input } )
 
         RCMediaEdit.Description ->
-            MediaEdit ( obj.name, { obj | description = input } )
+            MediaEdit ( String.fromInt objId, { obj | description = input } )
 
         RCMediaEdit.UserClass ->
-            MediaEdit ( obj.name, { obj | userClass = input } )
+            MediaEdit ( String.fromInt objId, { obj | userClass = input } )
 
         RCMediaEdit.Copyright ->
-            MediaEdit ( obj.name, { obj | copyright = input } )
+            MediaEdit ( String.fromInt objId, { obj | copyright = input } )
 
 
-makeMediaEditMsgs : RCMediaObject -> RCMediaEdit.MediaEditMessages Msg
-makeMediaEditMsgs obj =
+makeMediaEditMsgs : RCMediaObject -> Int -> RCMediaEdit.MediaEditMessages Msg
+makeMediaEditMsgs obj objId =
     { insertTool = InsertTool obj
-    , editTool = makeMediaEditFun obj
+    , editTool = makeMediaEditFun obj objId
     , deleteTool = MediaDelete obj
     }
 
@@ -259,53 +260,34 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        MediaDialog val ->
+        CMOpenMediaDialog val ->
             case D.decodeValue (D.field "media" D.string) val of
                 Ok mediaNameOrId ->
-                    case Exposition.objectByNameOrId mediaNameOrId model.exposition of
-                        Just obj ->
-                            let
-                                viewObjectState =
-                                    Exposition.validateMediaObject model.exposition obj obj
-                            in
-                            ( { model | mediaDialog = ( Modal.shown, Just obj, Just viewObjectState ) }, Cmd.none )
+                    update (MediaDialog mediaNameOrId) model
 
-                        Nothing ->
-                            let
-                                modelWithProblem =
-                                    addProblem model Problems.NoMediaWithNameOrId
-                            in
-                            let
-                                _ =
-                                    Debug.log "no object" model
-                            in
-                            ( { modelWithProblem
-                                | mediaDialog = ( Modal.hidden, Nothing, Nothing )
-                              }
-                            , Cmd.none
-                            )
-
-                _ ->
+                Err _ ->
                     let
                         _ =
                             Debug.log "no mediaName or ID" val
                     in
-                    ( model, Cmd.none )
+                    ( addProblem model Problems.CannotFindMediaFieldInJson, Cmd.none )
 
-        TableMediaDialog id ->
-            let
-                idString =
-                    String.fromInt id
-            in
-            case Exposition.objectByNameOrId idString model.exposition of
+        MediaDialog mediaNameOrId ->
+            case Exposition.objectByNameOrId mediaNameOrId model.exposition of
                 Just obj ->
                     let
-                        --                       _ =
-                        --                         Debug.log "some success" obj
                         viewObjectState =
                             Exposition.validateMediaObject model.exposition obj obj
                     in
-                    ( { model | mediaDialog = ( Modal.shown, Just obj, Just viewObjectState ) }, Cmd.none )
+                    ( { model
+                        | mediaDialog =
+                            ( Modal.shown
+                            , Just ( obj, obj.id )
+                            , Just viewObjectState
+                            )
+                      }
+                    , Cmd.none
+                    )
 
                 Nothing ->
                     let
@@ -419,14 +401,14 @@ update msg model =
                     case Exposition.isValid viewObjectState.validation of
                         False ->
                             ( { model
-                                | mediaDialog = ( viewStatus, Just objFromDialog, Just viewObjectState )
+                                | mediaDialog = ( viewStatus, Just ( objFromDialog, objInModel.id ), Just viewObjectState )
                               }
                             , Cmd.none
                             )
 
                         True ->
                             ( { model
-                                | mediaDialog = ( viewStatus, Just objFromDialog, Just viewObjectState )
+                                | mediaDialog = ( viewStatus, Just ( objFromDialog, objInModel.id ), Just viewObjectState )
                                 , exposition =
                                     Exposition.replaceObject objFromDialog model.exposition
                               }
@@ -521,11 +503,11 @@ update msg model =
                     ( model, Cmd.none )
 
 
-viewMediaDialog : RCExposition -> ( Modal.Visibility, RCMediaObject, RCMediaObjectViewState ) -> Html Msg
-viewMediaDialog exposition ( visibility, object, viewObjectState ) =
+viewMediaDialog : RCExposition -> ( Modal.Visibility, ( RCMediaObject, Int ), RCMediaObjectViewState ) -> Html Msg
+viewMediaDialog exposition ( visibility, ( object, objId ), viewObjectState ) =
     let
         mediaEditView =
-            RCMediaEdit.view viewObjectState (makeMediaEditMsgs object) object
+            RCMediaEdit.view viewObjectState (makeMediaEditMsgs object objId) object
     in
     Modal.config CloseMediaDialog
         |> Modal.small
@@ -550,8 +532,8 @@ view model =
     let
         mediaDialogHtml =
             case model.mediaDialog of
-                ( vis, Just obj, Just valid ) ->
-                    viewMediaDialog model.exposition ( vis, obj, valid )
+                ( vis, Just ( obj, objId ), Just valid ) ->
+                    viewMediaDialog model.exposition ( vis, ( obj, objId ), valid )
 
                 _ ->
                     div [] []
@@ -570,6 +552,6 @@ view model =
         [ mediaDialogHtml
         , viewUpload UploadMediaFileSelect "Upload Media" model.mediaUploadStatus
         , viewUpload UploadImportFileSelect "Import Document" model.importUploadStatus
-        , RCMediaList.view model.exposition.media { editTool = TableMediaDialog }
+        , RCMediaList.view model.exposition.media MediaDialog
         , saveButton
         ]

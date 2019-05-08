@@ -8,7 +8,7 @@ import Html.Events exposing (onClick)
 
 
 type alias TableMessages msg =
-    { editTool : Int -> msg }
+    String -> msg
 
 
 
@@ -16,7 +16,7 @@ type alias TableMessages msg =
 
 
 view : List RCMediaObject -> TableMessages msg -> Html msg
-view objectList messages =
+view objectList message =
     case objectList of
         [] ->
             span [] [ text "no objects" ]
@@ -36,7 +36,7 @@ view objectList messages =
                         editButton =
                             Button.button
                                 [ Button.info
-                                , Button.attrs [ onClick <| messages.editTool object.id ]
+                                , Button.attrs [ onClick <| message (String.fromInt object.id) ]
                                 ]
                                 [ text "edit" ]
                     in
