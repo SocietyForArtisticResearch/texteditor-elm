@@ -1,4 +1,4 @@
-module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, apiAdditionalMediaMetadata, getExposition, getMediaList, saveExposition, toMediaClassesDict, toRCExposition, toRCMediaObject, uploadMedia)
+module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, APIPandocImport, getExposition, getMediaList, saveExposition, toMediaClassesDict, toRCExposition, toRCMediaObject, uploadImport, uploadMedia)
 
 import Dict
 import Exposition exposing (OptionalDimensions, RCExposition, RCMediaObject, RCMediaType(..), defaultPlayerSettings)
@@ -56,6 +56,10 @@ type alias APIMedia =
     { mediaType : String, status : String, width : Int, height : Int }
 
 
+type alias APIPandocImport =
+    { media : List Int, markdown : String }
+
+
 
 -- DECODERS
 
@@ -108,6 +112,13 @@ apiMedia =
         (field "height" int)
 
 
+apiPandocImport : Decoder APIPandocImport
+apiPandocImport =
+    map2 APIPandocImport
+        (field "media" (list int))
+        (field "markdown" string)
+
+
 
 -- HTTP REQUESTS
 
@@ -144,7 +155,23 @@ uploadMedia researchId file expect =
                 ]
         , expect = expect
         , timeout = Nothing
-        , tracker = Just "upload"
+        , tracker = Just "uploadMedia"
+        }
+
+
+uploadImport : Int -> File -> (Result Http.Error APIPandocImport -> msg) -> Cmd msg
+uploadImport researchId file expectMsg =
+    Http.request
+        { method = "POST"
+        , url = "text-editor/import" ++ "?research=" ++ String.fromInt researchId
+        , headers = []
+        , body =
+            Http.multipartBody
+                [ Http.filePart "convertFile" file
+                ]
+        , expect = Http.expectJson expectMsg apiPandocImport
+        , timeout = Nothing
+        , tracker = Just "uploadImport"
         }
 
 
@@ -356,4 +383,4 @@ toRCMediaObject researchId mediaEntry =
 
 
 -- TODO
--- loading of correct json for metadata and additional media metadata
+-- pandoc import/export

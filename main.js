@@ -5314,12 +5314,13 @@ var author$project$Main$emptyModel = F2(
 		return {
 			editGeneration: -1,
 			exposition: author$project$Exposition$empty,
+			importUploadStatus: author$project$Main$Ready,
 			mediaClassesDict: elm$core$Dict$empty,
 			mediaDialog: _Utils_Tuple3(rundis$elm_bootstrap$Bootstrap$Modal$hidden, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing),
+			mediaUploadStatus: author$project$Main$Ready,
 			problems: _List_Nil,
 			research: research,
 			saved: true,
-			uploadStatus: author$project$Main$Ready,
 			weave: weave
 		};
 	});
@@ -6320,8 +6321,11 @@ var author$project$Main$EditGeneration = function (a) {
 var author$project$Main$GotConvertedHtml = function (a) {
 	return {$: 'GotConvertedHtml', a: a};
 };
-var author$project$Main$GotUploadProgress = function (a) {
-	return {$: 'GotUploadProgress', a: a};
+var author$project$Main$GotImportUploadProgress = function (a) {
+	return {$: 'GotImportUploadProgress', a: a};
+};
+var author$project$Main$GotMediaUploadProgress = function (a) {
+	return {$: 'GotMediaUploadProgress', a: a};
 };
 var author$project$Main$MdContent = function (a) {
 	return {$: 'MdContent', a: a};
@@ -6348,7 +6352,8 @@ var author$project$Main$subscriptions = function (model) {
 				author$project$Main$cmContent(author$project$Main$MdContent),
 				author$project$Main$getHtml(author$project$Main$GotConvertedHtml),
 				author$project$Main$mediaDialog(author$project$Main$MediaDialog),
-				A2(elm$http$Http$track, 'upload', author$project$Main$GotUploadProgress)
+				A2(elm$http$Http$track, 'uploadMedia', author$project$Main$GotMediaUploadProgress),
+				A2(elm$http$Http$track, 'uploadImport', author$project$Main$GotImportUploadProgress)
 			]));
 };
 var elm$core$List$map = F2(
@@ -7357,11 +7362,17 @@ var author$project$Main$GotMediaList = function (a) {
 var author$project$Main$SavedExposition = function (a) {
 	return {$: 'SavedExposition', a: a};
 };
+var author$project$Main$UploadImportFileSelected = function (a) {
+	return {$: 'UploadImportFileSelected', a: a};
+};
 var author$project$Main$UploadMediaFileSelected = function (a) {
 	return {$: 'UploadMediaFileSelected', a: a};
 };
 var author$project$Main$Uploaded = function (a) {
 	return {$: 'Uploaded', a: a};
+};
+var author$project$Main$UploadedImport = function (a) {
+	return {$: 'UploadedImport', a: a};
 };
 var author$project$Main$Uploading = function (a) {
 	return {$: 'Uploading', a: a};
@@ -7738,7 +7749,36 @@ var author$project$RCAPI$toRCMediaObject = F2(
 				author$project$Problems$CannotLoadMedia(s));
 		}
 	});
+var author$project$RCAPI$APIPandocImport = F2(
+	function (media, markdown) {
+		return {markdown: markdown, media: media};
+	});
+var author$project$RCAPI$apiPandocImport = A3(
+	elm$json$Json$Decode$map2,
+	author$project$RCAPI$APIPandocImport,
+	A2(
+		elm$json$Json$Decode$field,
+		'media',
+		elm$json$Json$Decode$list(elm$json$Json$Decode$int)),
+	A2(elm$json$Json$Decode$field, 'markdown', elm$json$Json$Decode$string));
 var elm$http$Http$filePart = _Http_pair;
+var author$project$RCAPI$uploadImport = F3(
+	function (researchId, file, expectMsg) {
+		return elm$http$Http$request(
+			{
+				body: elm$http$Http$multipartBody(
+					_List_fromArray(
+						[
+							A2(elm$http$Http$filePart, 'convertFile', file)
+						])),
+				expect: A2(elm$http$Http$expectJson, expectMsg, author$project$RCAPI$apiPandocImport),
+				headers: _List_Nil,
+				method: 'POST',
+				timeout: elm$core$Maybe$Nothing,
+				tracker: elm$core$Maybe$Just('uploadImport'),
+				url: 'text-editor/import' + ('?research=' + elm$core$String$fromInt(researchId))
+			});
+	});
 var author$project$RCAPI$uploadMedia = F3(
 	function (researchId, file, expect) {
 		return elm$http$Http$request(
@@ -7757,7 +7797,7 @@ var author$project$RCAPI$uploadMedia = F3(
 				headers: _List_Nil,
 				method: 'POST',
 				timeout: elm$core$Maybe$Nothing,
-				tracker: elm$core$Maybe$Just('upload'),
+				tracker: elm$core$Maybe$Just('uploadMedia'),
 				url: 'text-editor/simple-media-add' + ('?research=' + elm$core$String$fromInt(researchId))
 			});
 	});
@@ -8099,7 +8139,20 @@ var author$project$Main$update = F2(
 						model.research,
 						file,
 						elm$http$Http$expectWhatever(author$project$Main$Uploaded)));
-			case 'GotUploadProgress':
+			case 'UploadImportFileSelect':
+				return _Utils_Tuple2(
+					model,
+					A2(
+						elm$file$File$Select$file,
+						_List_fromArray(
+							['application/vnd.oasis.opendocument.text', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/x-tex', 'text/plain', 'text/html', 'application/xhtml+xml', 'text/markdown', 'text/x-markdown', 'text/x-org']),
+						author$project$Main$UploadImportFileSelected));
+			case 'UploadImportFileSelected':
+				var file = msg.a;
+				return _Utils_Tuple2(
+					model,
+					A3(author$project$RCAPI$uploadImport, model.research, file, author$project$Main$UploadedImport));
+			case 'GotMediaUploadProgress':
 				var progress = msg.a;
 				if (progress.$ === 'Sending') {
 					var p = progress.a;
@@ -8107,24 +8160,59 @@ var author$project$Main$update = F2(
 						_Utils_update(
 							model,
 							{
-								uploadStatus: author$project$Main$Uploading(
+								mediaUploadStatus: author$project$Main$Uploading(
 									elm$http$Http$fractionSent(p))
 							}),
 						elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
-			default:
+			case 'GotImportUploadProgress':
+				var progress = msg.a;
+				if (progress.$ === 'Sending') {
+					var p = progress.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								importUploadStatus: author$project$Main$Uploading(
+									elm$http$Http$fractionSent(p))
+							}),
+						elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				}
+			case 'Uploaded':
 				var result = msg.a;
 				if (result.$ === 'Ok') {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{uploadStatus: author$project$Main$Ready}),
+							{mediaUploadStatus: author$project$Main$Ready}),
 						A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 				} else {
 					var e = result.a;
-					var _n23 = A2(elm$core$Debug$log, 'error uploading: ', e);
+					var _n24 = A2(elm$core$Debug$log, 'error uploading: ', e);
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				}
+			default:
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					var importResult = result.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								exposition: A2(
+									author$project$Exposition$withMd,
+									model.exposition,
+									_Utils_ap(model.exposition.markdownInput, importResult.markdown)),
+								importUploadStatus: author$project$Main$Ready
+							}),
+						A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
+				} else {
+					var e = result.a;
+					var _n26 = A2(elm$core$Debug$log, 'error uploading: ', e);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 		}
@@ -8133,6 +8221,8 @@ var author$project$Main$SaveExposition = {$: 'SaveExposition'};
 var author$project$Main$TableMediaDialog = function (a) {
 	return {$: 'TableMediaDialog', a: a};
 };
+var author$project$Main$UploadImportFileSelect = {$: 'UploadImportFileSelect'};
+var author$project$Main$UploadMediaFileSelect = {$: 'UploadMediaFileSelect'};
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
 var author$project$Main$InsertTool = function (a) {
 	return {$: 'InsertTool', a: a};
@@ -9650,33 +9740,33 @@ var author$project$Main$viewMediaDialog = F2(
 						rundis$elm_bootstrap$Bootstrap$Modal$small(
 							rundis$elm_bootstrap$Bootstrap$Modal$config(author$project$Main$CloseMediaDialog))))));
 	});
-var author$project$Main$UploadMediaFileSelect = {$: 'UploadMediaFileSelect'};
 var elm$core$Basics$round = _Basics_round;
-var author$project$Main$viewUpload = function (status) {
-	if (status.$ === 'Ready') {
-		return A2(
-			elm$html$Html$button,
-			_List_fromArray(
-				[
-					elm$html$Html$Events$onClick(author$project$Main$UploadMediaFileSelect)
-				]),
-			_List_fromArray(
-				[
-					elm$html$Html$text('Upload Media')
-				]));
-	} else {
-		var fraction = status.a;
-		return A2(
-			elm$html$Html$div,
-			_List_Nil,
-			_List_fromArray(
-				[
-					elm$html$Html$text(
-					elm$core$String$fromInt(
-						elm$core$Basics$round(100 * fraction)) + '%')
-				]));
-	}
-};
+var author$project$Main$viewUpload = F3(
+	function (onClickMsg, buttonText, status) {
+		if (status.$ === 'Ready') {
+			return A2(
+				elm$html$Html$button,
+				_List_fromArray(
+					[
+						elm$html$Html$Events$onClick(onClickMsg)
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text(buttonText)
+					]));
+		} else {
+			var fraction = status.a;
+			return A2(
+				elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$text(
+						elm$core$String$fromInt(
+							elm$core$Basics$round(100 * fraction)) + '%')
+					]));
+		}
+	});
 var elm$html$Html$span = _VirtualDom_node('span');
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Info = {$: 'Info'};
 var rundis$elm_bootstrap$Bootstrap$Button$info = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
@@ -10350,7 +10440,8 @@ var author$project$Main$view = function (model) {
 		_List_fromArray(
 			[
 				mediaDialogHtml,
-				author$project$Main$viewUpload(model.uploadStatus),
+				A3(author$project$Main$viewUpload, author$project$Main$UploadMediaFileSelect, 'Upload Media', model.mediaUploadStatus),
+				A3(author$project$Main$viewUpload, author$project$Main$UploadImportFileSelect, 'Import Document', model.importUploadStatus),
 				A2(
 				author$project$RCMediaList$view,
 				model.exposition.media,
