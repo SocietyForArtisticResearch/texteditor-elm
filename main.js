@@ -7769,7 +7769,7 @@ var author$project$RCAPI$uploadImport = F3(
 				body: elm$http$Http$multipartBody(
 					_List_fromArray(
 						[
-							A2(elm$http$Http$filePart, 'convertFile', file)
+							A2(elm$http$Http$filePart, 'file', file)
 						])),
 				expect: A2(elm$http$Http$expectJson, expectMsg, author$project$RCAPI$apiPandocImport),
 				headers: _List_Nil,

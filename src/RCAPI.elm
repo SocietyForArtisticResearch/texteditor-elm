@@ -167,7 +167,7 @@ uploadImport researchId file expectMsg =
         , headers = []
         , body =
             Http.multipartBody
-                [ Http.filePart "convertFile" file
+                [ Http.filePart "file" file
                 ]
         , expect = Http.expectJson expectMsg apiPandocImport
         , timeout = Nothing
