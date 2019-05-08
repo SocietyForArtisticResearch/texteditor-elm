@@ -178,8 +178,8 @@ updateMedia mediaObject expect =
                 , Http.stringPart "description" mediaObject.description
 
                 --                , Http.bytesPart "media" "text/plain" (Bytes.Encode.encode (Bytes.Encode.string ""))
-                , Http.stringPart "media" "a"
-                , Http.stringPart "thumb" ""
+                --      , Http.stringPart "media" ""
+                --                , Http.stringPart "thumb" ""
                 ]
         , expect = expect
         , timeout = Nothing

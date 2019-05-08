@@ -7776,9 +7776,7 @@ var author$project$RCAPI$updateMedia = F2(
 						[
 							A2(elm$http$Http$stringPart, 'name', mediaObject.name),
 							A2(elm$http$Http$stringPart, 'copyrightholder', mediaObject.copyright),
-							A2(elm$http$Http$stringPart, 'description', mediaObject.description),
-							A2(elm$http$Http$stringPart, 'media', 'a'),
-							A2(elm$http$Http$stringPart, 'thumb', '')
+							A2(elm$http$Http$stringPart, 'description', mediaObject.description)
 						])),
 				expect: expect,
 				headers: _List_Nil,
