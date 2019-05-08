@@ -8142,7 +8142,7 @@ var author$project$Main$update = F2(
 										elm$core$Maybe$Just(viewObjectState))
 								});
 							var $temp$msg = author$project$Main$SaveMediaEdit(objFromDialog),
-								$temp$model = model;
+								$temp$model = newModel;
 							msg = $temp$msg;
 							model = $temp$model;
 							continue update;

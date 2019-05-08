@@ -417,7 +417,7 @@ update msg model =
                                             Exposition.replaceObject objFromDialog model.exposition
                                     }
                             in
-                            update (SaveMediaEdit objFromDialog) model
+                            update (SaveMediaEdit objFromDialog) newModel
 
         SaveMediaEdit obj ->
             ( model
