@@ -27,7 +27,8 @@ type alias Model =
     , mediaDialog : ( Modal.Visibility, Maybe RCMediaObject, Maybe RCMediaObjectViewState )
     , weave : Int
     , research : Int
-    , uploadStatus : UploadStatus
+    , mediaUploadStatus : UploadStatus
+    , importUploadStatus : UploadStatus
     , problems : List Problems.Problem
     , mediaClassesDict : Dict.Dict Int String -- stores userclasses for media to be added to media list
     , saved : Bool
@@ -55,7 +56,8 @@ emptyModel research weave =
     , mediaDialog = ( Modal.hidden, Nothing, Nothing )
     , research = research
     , weave = weave
-    , uploadStatus = Ready
+    , mediaUploadStatus = Ready
+    , importUploadStatus = Ready
     , problems = []
     , mediaClassesDict = Dict.empty
     , saved = True
@@ -134,7 +136,8 @@ subscriptions model =
         , cmContent MdContent
         , getHtml GotConvertedHtml
         , mediaDialog MediaDialog
-        , Http.track "upload" GotUploadProgress
+        , Http.track "uploadMedia" GotMediaUploadProgress
+        , Http.track "uploadImport" GotImportUploadProgress
         ]
 
 
@@ -156,8 +159,12 @@ type Msg
     | GotMediaList (Result Http.Error (List RCAPI.APIMediaEntry))
     | UploadMediaFileSelect
     | UploadMediaFileSelected File
-    | GotUploadProgress Http.Progress
+    | UploadImportFileSelect
+    | UploadImportFileSelected File
+    | GotMediaUploadProgress Http.Progress
+    | GotImportUploadProgress Http.Progress
     | Uploaded (Result Http.Error ())
+    | UploadedImport (Result Http.Error RCAPI.APIPandocImport)
     | SaveExposition
     | SavedExposition (Result Http.Error ())
 
@@ -440,10 +447,39 @@ update msg model =
             , RCAPI.uploadMedia model.research file (Http.expectWhatever Uploaded)
             )
 
-        GotUploadProgress progress ->
+        UploadImportFileSelect ->
+            ( model
+            , Select.file
+                [ "application/vnd.oasis.opendocument.text"
+                , "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                , "application/x-tex"
+                , "text/plain"
+                , "text/html"
+                , "application/xhtml+xml"
+                , "text/markdown"
+                , "text/x-markdown"
+                , "text/x-org"
+                ]
+                UploadImportFileSelected
+            )
+
+        UploadImportFileSelected file ->
+            ( model
+            , RCAPI.uploadImport model.research file UploadedImport
+            )
+
+        GotMediaUploadProgress progress ->
             case progress of
                 Http.Sending p ->
-                    ( { model | uploadStatus = Uploading (Http.fractionSent p) }, Cmd.none )
+                    ( { model | mediaUploadStatus = Uploading (Http.fractionSent p) }, Cmd.none )
+
+                Http.Receiving _ ->
+                    ( model, Cmd.none )
+
+        GotImportUploadProgress progress ->
+            case progress of
+                Http.Sending p ->
+                    ( { model | importUploadStatus = Uploading (Http.fractionSent p) }, Cmd.none )
 
                 Http.Receiving _ ->
                     ( model, Cmd.none )
@@ -451,9 +487,29 @@ update msg model =
         Uploaded result ->
             case result of
                 Ok _ ->
-                    ( { model | uploadStatus = Ready }, RCAPI.getMediaList model.research GotMediaList )
+                    ( { model | mediaUploadStatus = Ready }, RCAPI.getMediaList model.research GotMediaList )
 
                 Err e ->
+                    -- TODO: add problem
+                    let
+                        _ =
+                            Debug.log "error uploading: " e
+                    in
+                    ( model, Cmd.none )
+
+        UploadedImport result ->
+            case result of
+                Ok importResult ->
+                    -- TODO: convert images to tools in markdown!
+                    ( { model
+                        | importUploadStatus = Ready
+                        , exposition = Exposition.withMd model.exposition (model.exposition.markdownInput ++ importResult.markdown)
+                      }
+                    , RCAPI.getMediaList model.research GotMediaList
+                    )
+
+                Err e ->
+                    -- TODO: add problem
                     let
                         _ =
                             Debug.log "error uploading: " e
@@ -475,11 +531,11 @@ viewMediaDialog exposition ( visibility, object, viewObjectState ) =
         |> Modal.view visibility
 
 
-viewUpload : UploadStatus -> Html Msg
-viewUpload status =
+viewUpload : Msg -> String -> UploadStatus -> Html Msg
+viewUpload onClickMsg buttonText status =
     case status of
         Ready ->
-            button [ onClick UploadMediaFileSelect ] [ text "Upload Media" ]
+            button [ onClick onClickMsg ] [ text buttonText ]
 
         Uploading fraction ->
             div [] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
@@ -508,7 +564,8 @@ view model =
     in
     div []
         [ mediaDialogHtml
-        , viewUpload model.uploadStatus
+        , viewUpload UploadMediaFileSelect "Upload Media" model.mediaUploadStatus
+        , viewUpload UploadImportFileSelect "Import Document" model.importUploadStatus
         , RCMediaList.view model.exposition.media { editTool = TableMediaDialog }
         , saveButton
         ]

@@ -18,6 +18,13 @@ sh build.sh
 Open `editor.html`.
 
 
+# Important note on DOM in editor.html
+
+The "preview"-div is not a node transformed/created/known by elm. This
+is because we set its content using morphdom and elm should not
+interfere. General page styling/layout of preview etc.  thus needs to
+be made outside of elm.
+
 # Todo
 
 Casper:
@@ -36,7 +43,6 @@ Casper:
 Luc:
 - Check rendered html
 - Transcoding status type
-- Load corrected (new) version of json of additional media metadata list and expo metadata
 - Import/Export (Pandoc calls)
 - TOC
 
@@ -61,3 +67,4 @@ Luc:
 - Switch completely to marked markdown rendering
 - Insert media html into markdown before passing it to marked
 - Set innerhtml of preview via port
+- Load corrected (new) version of json of additional media metadata list and expo metadata
