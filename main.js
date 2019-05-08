@@ -5349,7 +5349,8 @@ var author$project$RCAPI$apiAdditionalMediaMetadata = A4(
 	elm$json$Json$Decode$map3,
 	author$project$RCAPI$APIAdditionalMediaMetadata,
 	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string)),
 	elm$json$Json$Decode$maybe(
 		A2(elm$json$Json$Decode$field, 'userClass', elm$json$Json$Decode$string)));
 var author$project$RCAPI$APIExpositionMetadata = F2(
