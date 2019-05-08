@@ -148,8 +148,8 @@ uploadMedia researchId mediaCounter file expect =
             Http.multipartBody
                 [ Http.stringPart "mediatype" "image"
                 , Http.stringPart "name" ("image" ++ String.fromInt mediaCounter)
-                , Http.stringPart "copyrightholder" ""
-                , Http.stringPart "description" ""
+                , Http.stringPart "copyrightholder" "copyright holder"
+                , Http.stringPart "description" "description"
                 , Http.filePart "media" file
                 , Http.stringPart "thumb" ""
                 ]
