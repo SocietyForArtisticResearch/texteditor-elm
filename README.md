@@ -21,6 +21,8 @@ Open `editor.html`.
 # Todo
 
 Casper:
+- Migrate Insert and Remove actions to the table
+- close button at bottom of dialog (loose the x).
 - Medialist display/Media browser
 - Layout issues
 - Validation display
