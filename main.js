@@ -7649,7 +7649,7 @@ var author$project$RCAPI$toMediaClassesDict = function (apiExpo) {
 				},
 				lst));
 	} else {
-		var _n2 = A2(elm$core$Debug$log, 'error decoding user classes media list: ', _Utils_Tuple0);
+		var _n2 = A2(elm$core$Debug$log, 'error decoding user classes media list: ', exp.media);
 		return elm$core$Dict$empty;
 	}
 };

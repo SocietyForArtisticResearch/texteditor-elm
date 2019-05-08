@@ -299,7 +299,7 @@ toMediaClassesDict apiExpo =
         Left _ ->
             let
                 _ =
-                    Debug.log "error decoding user classes media list: " ()
+                    Debug.log "error decoding user classes media list: " exp.media
             in
             Dict.empty
 
