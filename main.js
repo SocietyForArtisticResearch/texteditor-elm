@@ -8099,7 +8099,7 @@ var author$project$RCAPI$updateMedia = F2(
 							A3(
 							elm$http$Http$bytesPart,
 							'media',
-							'image/png',
+							'text/plain',
 							elm$bytes$Bytes$Encode$encode(
 								elm$bytes$Bytes$Encode$string(''))),
 							A2(elm$http$Http$stringPart, 'thumb', '')

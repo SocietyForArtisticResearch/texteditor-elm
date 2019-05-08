@@ -176,7 +176,7 @@ updateMedia mediaObject expect =
                 [ Http.stringPart "name" mediaObject.name
                 , Http.stringPart "copyrightholder" mediaObject.copyright
                 , Http.stringPart "description" mediaObject.description
-                , Http.bytesPart "media" "image/png" (Bytes.Encode.encode (Bytes.Encode.string ""))
+                , Http.bytesPart "media" "text/plain" (Bytes.Encode.encode (Bytes.Encode.string ""))
                 , Http.stringPart "thumb" ""
                 ]
         , expect = expect
