@@ -29,16 +29,15 @@ Casper:
 - Switch Textarea/Codemirror/CSS Edit
 - Buttons
 - Styling
+- media file types in select dialog
 
 Luc:
-- Switch completely to marked markdown rendering
-- Insert media html into markdown before passing it to marked
-- Set innerhtml of preview via port
 - Check rendered html
 - Transcoding status type
 - Load corrected (new) version of json of additional media metadata list and expo metadata
 - Import/Export (Pandoc calls)
 - TOC
+
 
 ## DONE
 - Get userclass and metadata
@@ -57,3 +56,6 @@ Luc:
 - Loading, markdown display in codemirror
 - Saving
 - Backend update of changes (RC API)
+- Switch completely to marked markdown rendering
+- Insert media html into markdown before passing it to marked
+- Set innerhtml of preview via port

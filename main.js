@@ -5328,20 +5328,80 @@ var author$project$RCAPI$APIExposition = F6(
 	function (html, markdown, media, metadata, style, title) {
 		return {html: html, markdown: markdown, media: media, metadata: metadata, style: style, title: title};
 	});
+var author$project$RCAPI$APIAdditionalMediaMetadata = F3(
+	function (id, name, userClass) {
+		return {id: id, name: name, userClass: userClass};
+	});
+var elm$json$Json$Decode$map3 = _Json_map3;
+var elm$json$Json$Decode$map = _Json_map1;
+var elm$json$Json$Decode$oneOf = _Json_oneOf;
+var elm$json$Json$Decode$succeed = _Json_succeed;
+var elm$json$Json$Decode$maybe = function (decoder) {
+	return elm$json$Json$Decode$oneOf(
+		_List_fromArray(
+			[
+				A2(elm$json$Json$Decode$map, elm$core$Maybe$Just, decoder),
+				elm$json$Json$Decode$succeed(elm$core$Maybe$Nothing)
+			]));
+};
+var elm$json$Json$Decode$string = _Json_decodeString;
+var author$project$RCAPI$apiAdditionalMediaMetadata = A4(
+	elm$json$Json$Decode$map3,
+	author$project$RCAPI$APIAdditionalMediaMetadata,
+	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'userClass', elm$json$Json$Decode$string)));
+var author$project$RCAPI$APIExpositionMetadata = F2(
+	function (editorVersion, contentVersion) {
+		return {contentVersion: contentVersion, editorVersion: editorVersion};
+	});
+var author$project$RCAPI$apiExpositionMetadata = A3(
+	elm$json$Json$Decode$map2,
+	author$project$RCAPI$APIExpositionMetadata,
+	elm$json$Json$Decode$oneOf(
+		_List_fromArray(
+			[
+				A2(elm$json$Json$Decode$field, 'editorversion', elm$json$Json$Decode$string),
+				A2(elm$json$Json$Decode$field, 'editorVersion', elm$json$Json$Decode$string)
+			])),
+	A2(elm$json$Json$Decode$field, 'contentVersion', elm$json$Json$Decode$int));
 var author$project$RCAPI$Left = function (a) {
 	return {$: 'Left', a: a};
 };
-var elm$json$Json$Decode$map = _Json_map1;
-var elm$json$Json$Decode$string = _Json_decodeString;
 var author$project$RCAPI$eitherString = A2(elm$json$Json$Decode$map, author$project$RCAPI$Left, elm$json$Json$Decode$string);
+var author$project$RCAPI$Right = function (a) {
+	return {$: 'Right', a: a};
+};
+var author$project$RCAPI$rightDecoder = function (decoder) {
+	return A2(elm$json$Json$Decode$map, author$project$RCAPI$Right, decoder);
+};
+var elm$json$Json$Decode$list = _Json_decodeList;
 var elm$json$Json$Decode$map6 = _Json_map6;
 var author$project$RCAPI$apiExposition = A7(
 	elm$json$Json$Decode$map6,
 	author$project$RCAPI$APIExposition,
 	A2(elm$json$Json$Decode$field, 'html', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'markdown', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'media', author$project$RCAPI$eitherString),
-	A2(elm$json$Json$Decode$field, 'metadata', author$project$RCAPI$eitherString),
+	A2(
+		elm$json$Json$Decode$field,
+		'media',
+		elm$json$Json$Decode$oneOf(
+			_List_fromArray(
+				[
+					author$project$RCAPI$eitherString,
+					author$project$RCAPI$rightDecoder(
+					elm$json$Json$Decode$list(author$project$RCAPI$apiAdditionalMediaMetadata))
+				]))),
+	A2(
+		elm$json$Json$Decode$field,
+		'metadata',
+		elm$json$Json$Decode$oneOf(
+			_List_fromArray(
+				[
+					author$project$RCAPI$eitherString,
+					author$project$RCAPI$rightDecoder(author$project$RCAPI$apiExpositionMetadata)
+				]))),
 	A2(elm$json$Json$Decode$field, 'style', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'title', elm$json$Json$Decode$string));
 var elm$core$Result$mapError = F2(
@@ -7387,7 +7447,6 @@ var author$project$RCAPI$apiMediaEntry = A6(
 	A2(elm$json$Json$Decode$field, 'description', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'copyright', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string));
-var elm$json$Json$Decode$list = _Json_decodeList;
 var author$project$RCAPI$getMediaList = F2(
 	function (id, msg) {
 		return elm$http$Http$get(
@@ -7512,31 +7571,6 @@ var author$project$RCAPI$saveExposition = F2(
 				url: url
 			});
 	});
-var author$project$RCAPI$Right = function (a) {
-	return {$: 'Right', a: a};
-};
-var author$project$RCAPI$APIAdditionalMediaMetadata = F3(
-	function (id, name, userClass) {
-		return {id: id, name: name, userClass: userClass};
-	});
-var elm$json$Json$Decode$map3 = _Json_map3;
-var elm$json$Json$Decode$oneOf = _Json_oneOf;
-var elm$json$Json$Decode$succeed = _Json_succeed;
-var elm$json$Json$Decode$maybe = function (decoder) {
-	return elm$json$Json$Decode$oneOf(
-		_List_fromArray(
-			[
-				A2(elm$json$Json$Decode$map, elm$core$Maybe$Just, decoder),
-				elm$json$Json$Decode$succeed(elm$core$Maybe$Nothing)
-			]));
-};
-var author$project$RCAPI$apiAdditionalMediaMetadata = A4(
-	elm$json$Json$Decode$map3,
-	author$project$RCAPI$APIAdditionalMediaMetadata,
-	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'userClass', elm$json$Json$Decode$string)));
 var author$project$RCAPI$decodeMedia = function (exp) {
 	var mediaField = function () {
 		var _n0 = exp.media;
@@ -7561,20 +7595,6 @@ var author$project$RCAPI$decodeMedia = function (exp) {
 		exp,
 		{media: mediaField});
 };
-var author$project$RCAPI$APIExpositionMetadata = F2(
-	function (editorVersion, contentVersion) {
-		return {contentVersion: contentVersion, editorVersion: editorVersion};
-	});
-var author$project$RCAPI$apiExpositionMetadata = A3(
-	elm$json$Json$Decode$map2,
-	author$project$RCAPI$APIExpositionMetadata,
-	elm$json$Json$Decode$oneOf(
-		_List_fromArray(
-			[
-				A2(elm$json$Json$Decode$field, 'editorversion', elm$json$Json$Decode$string),
-				A2(elm$json$Json$Decode$field, 'editorVersion', elm$json$Json$Decode$string)
-			])),
-	A2(elm$json$Json$Decode$field, 'contentVersion', elm$json$Json$Decode$int));
 var author$project$RCAPI$decodeMetadata = function (exp) {
 	var metadataField = function () {
 		var _n0 = exp.metadata;

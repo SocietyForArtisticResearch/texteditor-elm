@@ -25,6 +25,11 @@ eitherString =
     map Left string
 
 
+rightDecoder : Decoder b -> Decoder (Either a b)
+rightDecoder decoder =
+    map Right decoder
+
+
 type alias APIExpositionMetadata =
     { editorVersion : String, contentVersion : Int }
 
@@ -60,9 +65,9 @@ apiExposition =
     map6 APIExposition
         (field "html" string)
         (field "markdown" string)
-        (field "media" eitherString)
+        (field "media" (oneOf [ eitherString, rightDecoder (list apiAdditionalMediaMetadata) ]))
         -- should work for both ways of encoding
-        (field "metadata" eitherString)
+        (field "metadata" (oneOf [ eitherString, rightDecoder apiExpositionMetadata ]))
         -- should work for both ways of encoding
         (field "style" string)
         (field "title" string)
