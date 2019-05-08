@@ -7798,8 +7798,8 @@ var author$project$RCAPI$uploadMedia = F4(
 							elm$http$Http$stringPart,
 							'name',
 							'image' + elm$core$String$fromInt(mediaCounter)),
-							A2(elm$http$Http$stringPart, 'copyrightholder', ''),
-							A2(elm$http$Http$stringPart, 'description', ''),
+							A2(elm$http$Http$stringPart, 'copyrightholder', 'copyright holder'),
+							A2(elm$http$Http$stringPart, 'description', 'description'),
 							A2(elm$http$Http$filePart, 'media', file),
 							A2(elm$http$Http$stringPart, 'thumb', '')
 						])),
