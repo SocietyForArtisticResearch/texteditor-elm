@@ -7959,12 +7959,7 @@ var author$project$Main$update = F2(
 								exposition: newExposition,
 								mediaClassesDict: author$project$RCAPI$toMediaClassesDict(e)
 							}),
-						elm$core$Platform$Cmd$batch(
-							_List_fromArray(
-								[
-									A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList),
-									author$project$Main$setContent(newExposition.markdownInput)
-								])));
+						A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 				} else {
 					var err = exp.a;
 					var _n12 = A2(elm$core$Debug$log, 'could not load exposition: ', err);
@@ -8010,12 +8005,17 @@ var author$project$Main$update = F2(
 					var modelWithProblems = A2(author$project$Main$addProblems, model, problems);
 					var expositionWithMedia = A3(elm$core$List$foldr, author$project$Exposition$addOrReplaceObject, modelWithProblems.exposition, mediaEntries);
 					var expositionWithClasses = A2(author$project$Exposition$addMediaUserClasses, expositionWithMedia, model.mediaClassesDict);
-					var _n17 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithMedia);
+					var _n17 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithClasses);
 					return _Utils_Tuple2(
 						_Utils_update(
 							modelWithProblems,
 							{exposition: expositionWithClasses}),
-						author$project$Main$setPreviewContent(expositionWithClasses.renderedHtml));
+						elm$core$Platform$Cmd$batch(
+							_List_fromArray(
+								[
+									author$project$Main$setContent(expositionWithClasses.markdownInput),
+									author$project$Main$setPreviewContent(expositionWithClasses.renderedHtml)
+								])));
 				}
 			case 'MediaEdit':
 				var objFromDialog = msg.a;

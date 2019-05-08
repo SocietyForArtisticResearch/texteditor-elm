@@ -328,10 +328,7 @@ update msg model =
                         | exposition = newExposition
                         , mediaClassesDict = RCAPI.toMediaClassesDict e
                       }
-                    , Cmd.batch
-                        [ RCAPI.getMediaList model.research GotMediaList
-                        , setContent newExposition.markdownInput
-                        ]
+                    , RCAPI.getMediaList model.research GotMediaList
                     )
 
                 Err err ->
@@ -379,12 +376,15 @@ update msg model =
                             addMediaUserClasses expositionWithMedia model.mediaClassesDict
 
                         _ =
-                            Debug.log "loaded exposition with media: " expositionWithMedia
+                            Debug.log "loaded exposition with media: " expositionWithClasses
                     in
                     ( { modelWithProblems
                         | exposition = expositionWithClasses
                       }
-                    , setPreviewContent expositionWithClasses.renderedHtml
+                    , Cmd.batch
+                        [ setContent expositionWithClasses.markdownInput
+                        , setPreviewContent expositionWithClasses.renderedHtml
+                        ]
                     )
 
         MediaEdit objFromDialog ->
