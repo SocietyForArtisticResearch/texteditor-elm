@@ -158,7 +158,7 @@ type Msg
     | MediaDialog E.Value
     | TableMediaDialog Int -- opened from table
     | GotConvertedHtml String
-    | MediaEdit Exposition.RCMediaObject
+    | MediaEdit ( String, Exposition.RCMediaObject )
     | MediaDelete Exposition.RCMediaObject
     | InsertTool Exposition.RCMediaObject
     | CloseMediaDialog
@@ -185,16 +185,16 @@ makeMediaEditFun : Exposition.RCMediaObject -> RCMediaEdit.Field -> String -> Ms
 makeMediaEditFun obj field input =
     case field of
         RCMediaEdit.Name ->
-            MediaEdit { obj | name = input }
+            MediaEdit ( obj.name, { obj | name = input } )
 
         RCMediaEdit.Description ->
-            MediaEdit { obj | description = input }
+            MediaEdit ( obj.name, { obj | description = input } )
 
         RCMediaEdit.UserClass ->
-            MediaEdit { obj | userClass = input }
+            MediaEdit ( obj.name, { obj | userClass = input } )
 
         RCMediaEdit.Copyright ->
-            MediaEdit { obj | copyright = input }
+            MediaEdit ( obj.name, { obj | copyright = input } )
 
 
 makeMediaEditMsgs : RCMediaObject -> RCMediaEdit.MediaEditMessages Msg
@@ -398,9 +398,9 @@ update msg model =
                         ]
                     )
 
-        MediaEdit objFromDialog ->
+        MediaEdit ( objInModelName, objFromDialog ) ->
             -- TODO: store in backend
-            case Exposition.objectByNameOrId objFromDialog.name model.exposition of
+            case Exposition.objectByNameOrId objInModelName model.exposition of
                 Nothing ->
                     let
                         modelWithProblem =
