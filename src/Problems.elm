@@ -8,6 +8,7 @@ type Problem
     | CannotLoadMedia String
     | NoMediaWithNameOrId
     | CannotSave
+    | CannotUpdateMedia
     | CannotFindMediaFieldInJson
 
 

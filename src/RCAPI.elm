@@ -1,4 +1,4 @@
-module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, APIPandocImport, getExposition, getMediaList, saveExposition, toMediaClassesDict, toRCExposition, toRCMediaObject, uploadImport, uploadMedia)
+module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, APIPandocImport, getExposition, getMediaList, saveExposition, toMediaClassesDict, toRCExposition, toRCMediaObject, updateMedia, uploadImport, uploadMedia)
 
 import Dict
 import Exposition exposing (OptionalDimensions, RCExposition, RCMediaObject, RCMediaType(..), defaultPlayerSettings)
@@ -156,6 +156,31 @@ uploadMedia researchId mediaCounter file expect =
         , expect = expect
         , timeout = Nothing
         , tracker = Just "uploadMedia"
+        }
+
+
+updateMedia : RCMediaObject -> Http.Expect msg -> Cmd msg
+updateMedia mediaObject expect =
+    Http.request
+        { method = "POST"
+        , url =
+            "text-editor/simple-media-edit"
+                ++ "?research="
+                ++ String.fromInt mediaObject.expositionId
+                ++ "&simple-media="
+                ++ String.fromInt mediaObject.id
+        , headers = []
+        , body =
+            Http.multipartBody
+                [ Http.stringPart "name" mediaObject.name
+                , Http.stringPart "copyrightholder" mediaObject.copyright
+                , Http.stringPart "description" mediaObject.description
+                , Http.stringPart "media" ""
+                , Http.stringPart "thumb" ""
+                ]
+        , expect = expect
+        , timeout = Nothing
+        , tracker = Nothing
         }
 
 

@@ -7364,8 +7364,14 @@ var author$project$Main$GotMediaList = function (a) {
 var author$project$Main$MediaDialog = function (a) {
 	return {$: 'MediaDialog', a: a};
 };
+var author$project$Main$SaveMediaEdit = function (a) {
+	return {$: 'SaveMediaEdit', a: a};
+};
 var author$project$Main$SavedExposition = function (a) {
 	return {$: 'SavedExposition', a: a};
+};
+var author$project$Main$SavedMediaEdit = function (a) {
+	return {$: 'SavedMediaEdit', a: a};
 };
 var author$project$Main$UploadImportFileSelected = function (a) {
 	return {$: 'UploadImportFileSelected', a: a};
@@ -7410,6 +7416,7 @@ var author$project$Problems$CannotLoadMedia = function (a) {
 	return {$: 'CannotLoadMedia', a: a};
 };
 var author$project$Problems$CannotSave = {$: 'CannotSave'};
+var author$project$Problems$CannotUpdateMedia = {$: 'CannotUpdateMedia'};
 var author$project$Problems$NoMediaWithNameOrId = {$: 'NoMediaWithNameOrId'};
 var author$project$Problems$splitResultListAcc = F3(
 	function (results, problems, oks) {
@@ -7760,6 +7767,27 @@ var author$project$RCAPI$toRCMediaObject = F2(
 				author$project$Problems$CannotLoadMedia(s));
 		}
 	});
+var author$project$RCAPI$updateMedia = F2(
+	function (mediaObject, expect) {
+		return elm$http$Http$request(
+			{
+				body: elm$http$Http$multipartBody(
+					_List_fromArray(
+						[
+							A2(elm$http$Http$stringPart, 'name', mediaObject.name),
+							A2(elm$http$Http$stringPart, 'copyrightholder', mediaObject.copyright),
+							A2(elm$http$Http$stringPart, 'description', mediaObject.description),
+							A2(elm$http$Http$stringPart, 'media', ''),
+							A2(elm$http$Http$stringPart, 'thumb', '')
+						])),
+				expect: expect,
+				headers: _List_Nil,
+				method: 'POST',
+				timeout: elm$core$Maybe$Nothing,
+				tracker: elm$core$Maybe$Nothing,
+				url: 'text-editor/simple-media-edit' + ('?research=' + (elm$core$String$fromInt(mediaObject.expositionId) + ('&simple-media=' + elm$core$String$fromInt(mediaObject.id))))
+			});
+	});
 var author$project$RCAPI$APIPandocImport = F2(
 	function (media, markdown) {
 		return {markdown: markdown, media: media};
@@ -8103,19 +8131,41 @@ var author$project$Main$update = F2(
 									}),
 								elm$core$Platform$Cmd$none);
 						} else {
-							return _Utils_Tuple2(
-								_Utils_update(
-									model,
-									{
-										exposition: A2(author$project$Exposition$replaceObject, objFromDialog, model.exposition),
-										mediaDialog: _Utils_Tuple3(
-											viewStatus,
-											elm$core$Maybe$Just(
-												_Utils_Tuple2(objFromDialog, objInModel.id)),
-											elm$core$Maybe$Just(viewObjectState))
-									}),
-								elm$core$Platform$Cmd$none);
+							var newModel = _Utils_update(
+								model,
+								{
+									exposition: A2(author$project$Exposition$replaceObject, objFromDialog, model.exposition),
+									mediaDialog: _Utils_Tuple3(
+										viewStatus,
+										elm$core$Maybe$Just(
+											_Utils_Tuple2(objFromDialog, objInModel.id)),
+										elm$core$Maybe$Just(viewObjectState))
+								});
+							var $temp$msg = author$project$Main$SaveMediaEdit(objFromDialog),
+								$temp$model = model;
+							msg = $temp$msg;
+							model = $temp$model;
+							continue update;
 						}
+					}
+				case 'SaveMediaEdit':
+					var obj = msg.a;
+					return _Utils_Tuple2(
+						model,
+						A2(
+							author$project$RCAPI$updateMedia,
+							obj,
+							elm$http$Http$expectWhatever(author$project$Main$SavedMediaEdit)));
+				case 'SavedMediaEdit':
+					var result = msg.a;
+					if (result.$ === 'Ok') {
+						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+					} else {
+						var s = result.a;
+						var _n20 = A2(elm$core$Debug$log, 'update media error: ', s);
+						return _Utils_Tuple2(
+							A2(author$project$Main$addProblem, model, author$project$Problems$CannotUpdateMedia),
+							elm$core$Platform$Cmd$none);
 					}
 				case 'MediaDelete':
 					var obj = msg.a;
@@ -8194,7 +8244,7 @@ var author$project$Main$update = F2(
 							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 					} else {
 						var e = result.a;
-						var _n22 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n24 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
 				default:
@@ -8214,7 +8264,7 @@ var author$project$Main$update = F2(
 							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 					} else {
 						var e = result.a;
-						var _n24 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n26 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
 			}

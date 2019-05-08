@@ -157,7 +157,6 @@ type Msg
     | MdContent E.Value
     | MediaDialog String
     | CMOpenMediaDialog E.Value
-      --    | TableMediaDialog Int -- opened from table
     | GotConvertedHtml String
     | MediaEdit ( String, Exposition.RCMediaObject )
     | MediaDelete Exposition.RCMediaObject
@@ -175,6 +174,8 @@ type Msg
     | UploadedImport (Result Http.Error RCAPI.APIPandocImport)
     | SaveExposition
     | SavedExposition (Result Http.Error ())
+    | SaveMediaEdit Exposition.RCMediaObject
+    | SavedMediaEdit (Result Http.Error ())
 
 
 
@@ -407,13 +408,33 @@ update msg model =
                             )
 
                         True ->
-                            ( { model
-                                | mediaDialog = ( viewStatus, Just ( objFromDialog, objInModel.id ), Just viewObjectState )
-                                , exposition =
-                                    Exposition.replaceObject objFromDialog model.exposition
-                              }
-                            , Cmd.none
-                            )
+                            let
+                                newModel =
+                                    { model
+                                        | mediaDialog =
+                                            ( viewStatus, Just ( objFromDialog, objInModel.id ), Just viewObjectState )
+                                        , exposition =
+                                            Exposition.replaceObject objFromDialog model.exposition
+                                    }
+                            in
+                            update (SaveMediaEdit objFromDialog) model
+
+        SaveMediaEdit obj ->
+            ( model
+            , RCAPI.updateMedia obj (Http.expectWhatever SavedMediaEdit)
+            )
+
+        SavedMediaEdit result ->
+            case result of
+                Ok _ ->
+                    ( model, Cmd.none )
+
+                Err s ->
+                    let
+                        _ =
+                            Debug.log "update media error: " s
+                    in
+                    ( addProblem model Problems.CannotUpdateMedia, Cmd.none )
 
         MediaDelete obj ->
             -- TODO: delete in backend
