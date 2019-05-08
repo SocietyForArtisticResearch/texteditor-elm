@@ -32,6 +32,7 @@ type alias Model =
     , problems : List Problems.Problem
     , mediaClassesDict : Dict.Dict Int String -- stores userclasses for media to be added to media list
     , saved : Bool
+    , mediaCounter : Int
     }
 
 
@@ -61,6 +62,7 @@ emptyModel research weave =
     , problems = []
     , mediaClassesDict = Dict.empty
     , saved = True
+    , mediaCounter = 0
     }
 
 
@@ -90,6 +92,11 @@ addProblem model problem =
 addProblems : Model -> List Problems.Problem -> Model
 addProblems model problems =
     { model | problems = problems ++ model.problems }
+
+
+incMediaCounter : Model -> Model
+incMediaCounter exp =
+    { exp | mediaCounter = exp.mediaCounter + 1 }
 
 
 main =
@@ -440,8 +447,8 @@ update msg model =
             )
 
         UploadMediaFileSelected file ->
-            ( model
-            , RCAPI.uploadMedia model.research file (Http.expectWhatever Uploaded)
+            ( incMediaCounter model
+            , RCAPI.uploadMedia model.research model.mediaCounter file (Http.expectWhatever Uploaded)
             )
 
         UploadImportFileSelect ->

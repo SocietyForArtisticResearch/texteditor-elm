@@ -5316,6 +5316,7 @@ var author$project$Main$emptyModel = F2(
 			exposition: author$project$Exposition$empty,
 			importUploadStatus: author$project$Main$Ready,
 			mediaClassesDict: elm$core$Dict$empty,
+			mediaCounter: 0,
 			mediaDialog: _Utils_Tuple3(rundis$elm_bootstrap$Bootstrap$Modal$hidden, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing),
 			mediaUploadStatus: author$project$Main$Ready,
 			problems: _List_Nil,
@@ -7394,6 +7395,11 @@ var author$project$Main$getContent = _Platform_outgoingPort(
 	function ($) {
 		return elm$json$Json$Encode$null;
 	});
+var author$project$Main$incMediaCounter = function (exp) {
+	return _Utils_update(
+		exp,
+		{mediaCounter: exp.mediaCounter + 1});
+};
 var author$project$Main$setContent = _Platform_outgoingPort('setContent', elm$json$Json$Encode$string);
 var author$project$Main$setPreviewContent = _Platform_outgoingPort('setPreviewContent', elm$json$Json$Encode$string);
 var author$project$Problems$CannotLoadMedia = function (a) {
@@ -7780,17 +7786,20 @@ var author$project$RCAPI$uploadImport = F3(
 				url: 'text-editor/import' + ('?research=' + elm$core$String$fromInt(researchId))
 			});
 	});
-var author$project$RCAPI$uploadMedia = F3(
-	function (researchId, file, expect) {
+var author$project$RCAPI$uploadMedia = F4(
+	function (researchId, mediaCounter, file, expect) {
 		return elm$http$Http$request(
 			{
 				body: elm$http$Http$multipartBody(
 					_List_fromArray(
 						[
 							A2(elm$http$Http$stringPart, 'mediatype', 'image'),
-							A2(elm$http$Http$stringPart, 'name', 'tmpName'),
-							A2(elm$http$Http$stringPart, 'copyrightholder', 'copyrightholder'),
-							A2(elm$http$Http$stringPart, 'description', 'description'),
+							A2(
+							elm$http$Http$stringPart,
+							'name',
+							'image' + elm$core$String$fromInt(mediaCounter)),
+							A2(elm$http$Http$stringPart, 'copyrightholder', ''),
+							A2(elm$http$Http$stringPart, 'description', ''),
 							A2(elm$http$Http$filePart, 'media', file),
 							A2(elm$http$Http$stringPart, 'thumb', '')
 						])),
@@ -8133,10 +8142,11 @@ var author$project$Main$update = F2(
 			case 'UploadMediaFileSelected':
 				var file = msg.a;
 				return _Utils_Tuple2(
-					model,
-					A3(
+					author$project$Main$incMediaCounter(model),
+					A4(
 						author$project$RCAPI$uploadMedia,
 						model.research,
+						model.mediaCounter,
 						file,
 						elm$http$Http$expectWhatever(author$project$Main$Uploaded)));
 			case 'UploadImportFileSelect':
