@@ -1,5 +1,6 @@
 module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, APIPandocImport, getExposition, getMediaList, saveExposition, toMediaClassesDict, toRCExposition, toRCMediaObject, updateMedia, uploadImport, uploadMedia)
 
+import Bytes.Encode
 import Dict
 import Exposition exposing (OptionalDimensions, RCExposition, RCMediaObject, RCMediaType(..), defaultPlayerSettings)
 import File exposing (File)
@@ -175,7 +176,7 @@ updateMedia mediaObject expect =
                 [ Http.stringPart "name" mediaObject.name
                 , Http.stringPart "copyrightholder" mediaObject.copyright
                 , Http.stringPart "description" mediaObject.description
-                , Http.stringPart "media" ""
+                , Http.bytesPart "media" "" (Bytes.Encode.encode (Bytes.Encode.string ""))
                 , Http.stringPart "thumb" ""
                 ]
         , expect = expect
