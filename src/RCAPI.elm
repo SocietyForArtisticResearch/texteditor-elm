@@ -1,4 +1,4 @@
-module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, getExposition, getMediaList, saveExposition, toMediaClassesDict, toRCExposition, toRCMediaObject, uploadMedia)
+module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, apiAdditionalMediaMetadata, getExposition, getMediaList, saveExposition, toMediaClassesDict, toRCExposition, toRCMediaObject, uploadMedia)
 
 import Dict
 import Exposition exposing (OptionalDimensions, RCExposition, RCMediaObject, RCMediaType(..), defaultPlayerSettings)
@@ -35,7 +35,7 @@ type alias APIExpositionMetadata =
 
 
 type alias APIAdditionalMediaMetadata =
-    { id : Int, name : String, userClass : Maybe String }
+    { id : Int, name : Maybe String, userClass : Maybe String }
 
 
 type alias APIExposition =
@@ -77,7 +77,7 @@ apiAdditionalMediaMetadata : Decoder APIAdditionalMediaMetadata
 apiAdditionalMediaMetadata =
     map3 APIAdditionalMediaMetadata
         (field "id" int)
-        (field "name" string)
+        (maybe (field "name" string))
         (maybe (field "userClass" string))
 
 
