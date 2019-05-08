@@ -102,18 +102,19 @@ type alias InputWithLabelProperties msg =
 viewInputWithLabel : InputWithLabelProperties msg -> Html msg
 viewInputWithLabel props =
     let
-        validationFeedback =
+        ( inputResult, validationFeedback ) =
             case props.validation of
                 Ok _ ->
-                    []
+                    ( Input.success, [] )
 
                 Err s ->
-                    [ text s ]
+                    ( Input.danger, [ text s ] )
     in
     Form.group []
         [ Form.label [ for props.nodeId ] [ text props.labeltext ]
         , Input.text
             [ Input.small
+            , inputResult
             , Input.attrs
                 [ placeholder props.placeholder
                 , value props.value

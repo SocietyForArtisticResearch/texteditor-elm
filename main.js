@@ -8664,11 +8664,18 @@ var rundis$elm_bootstrap$Bootstrap$Form$Input$Attrs = function (a) {
 var rundis$elm_bootstrap$Bootstrap$Form$Input$attrs = function (attrs_) {
 	return rundis$elm_bootstrap$Bootstrap$Form$Input$Attrs(attrs_);
 };
+var rundis$elm_bootstrap$Bootstrap$Form$FormInternal$Danger = {$: 'Danger'};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$Validation = function (a) {
+	return {$: 'Validation', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$danger = rundis$elm_bootstrap$Bootstrap$Form$Input$Validation(rundis$elm_bootstrap$Bootstrap$Form$FormInternal$Danger);
 var rundis$elm_bootstrap$Bootstrap$Form$Input$Size = function (a) {
 	return {$: 'Size', a: a};
 };
 var rundis$elm_bootstrap$Bootstrap$General$Internal$SM = {$: 'SM'};
 var rundis$elm_bootstrap$Bootstrap$Form$Input$small = rundis$elm_bootstrap$Bootstrap$Form$Input$Size(rundis$elm_bootstrap$Bootstrap$General$Internal$SM);
+var rundis$elm_bootstrap$Bootstrap$Form$FormInternal$Success = {$: 'Success'};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$success = rundis$elm_bootstrap$Bootstrap$Form$Input$Validation(rundis$elm_bootstrap$Bootstrap$Form$FormInternal$Success);
 var rundis$elm_bootstrap$Bootstrap$Form$Input$Text = {$: 'Text'};
 var rundis$elm_bootstrap$Bootstrap$Form$Input$Input = function (a) {
 	return {$: 'Input', a: a};
@@ -8843,18 +8850,22 @@ var rundis$elm_bootstrap$Bootstrap$Form$Input$input = F2(
 	});
 var rundis$elm_bootstrap$Bootstrap$Form$Input$text = rundis$elm_bootstrap$Bootstrap$Form$Input$input(rundis$elm_bootstrap$Bootstrap$Form$Input$Text);
 var author$project$RCMediaEdit$viewInputWithLabel = function (props) {
-	var validationFeedback = function () {
-		var _n0 = props.validation;
-		if (_n0.$ === 'Ok') {
-			return _List_Nil;
+	var _n0 = function () {
+		var _n1 = props.validation;
+		if (_n1.$ === 'Ok') {
+			return _Utils_Tuple2(rundis$elm_bootstrap$Bootstrap$Form$Input$success, _List_Nil);
 		} else {
-			var s = _n0.a;
-			return _List_fromArray(
-				[
-					elm$html$Html$text(s)
-				]);
+			var s = _n1.a;
+			return _Utils_Tuple2(
+				rundis$elm_bootstrap$Bootstrap$Form$Input$danger,
+				_List_fromArray(
+					[
+						elm$html$Html$text(s)
+					]));
 		}
 	}();
+	var inputResult = _n0.a;
+	var validationFeedback = _n0.b;
 	return A2(
 		rundis$elm_bootstrap$Bootstrap$Form$group,
 		_List_Nil,
@@ -8874,6 +8885,7 @@ var author$project$RCMediaEdit$viewInputWithLabel = function (props) {
 				_List_fromArray(
 					[
 						rundis$elm_bootstrap$Bootstrap$Form$Input$small,
+						inputResult,
 						rundis$elm_bootstrap$Bootstrap$Form$Input$attrs(
 						_List_fromArray(
 							[
