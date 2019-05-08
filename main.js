@@ -8088,19 +8088,21 @@ var author$project$Main$update = F2(
 								])));
 				}
 			case 'MediaEdit':
-				var objFromDialog = msg.a;
-				var _n17 = A2(author$project$Exposition$objectByNameOrId, objFromDialog.name, model.exposition);
-				if (_n17.$ === 'Nothing') {
+				var _n17 = msg.a;
+				var objInModelName = _n17.a;
+				var objFromDialog = _n17.b;
+				var _n18 = A2(author$project$Exposition$objectByNameOrId, objInModelName, model.exposition);
+				if (_n18.$ === 'Nothing') {
 					var modelWithProblem = A2(author$project$Main$addProblem, model, author$project$Problems$NoMediaWithNameOrId);
 					return _Utils_Tuple2(modelWithProblem, elm$core$Platform$Cmd$none);
 				} else {
-					var objInModel = _n17.a;
+					var objInModel = _n18.a;
 					var viewObjectState = A3(author$project$Exposition$validateMediaObject, model.exposition, objInModel, objFromDialog);
-					var _n18 = model.mediaDialog;
-					var viewStatus = _n18.a;
-					var objInEdit = _n18.b;
-					var _n19 = author$project$Exposition$isValid(viewObjectState.validation);
-					if (!_n19) {
+					var _n19 = model.mediaDialog;
+					var viewStatus = _n19.a;
+					var objInEdit = _n19.b;
+					var _n20 = author$project$Exposition$isValid(viewObjectState.validation);
+					if (!_n20) {
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -8202,7 +8204,7 @@ var author$project$Main$update = F2(
 						A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 				} else {
 					var e = result.a;
-					var _n23 = A2(elm$core$Debug$log, 'error uploading: ', e);
+					var _n24 = A2(elm$core$Debug$log, 'error uploading: ', e);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 			default:
@@ -8222,7 +8224,7 @@ var author$project$Main$update = F2(
 						A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 				} else {
 					var e = result.a;
-					var _n25 = A2(elm$core$Debug$log, 'error uploading: ', e);
+					var _n26 = A2(elm$core$Debug$log, 'error uploading: ', e);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 		}
@@ -8248,24 +8250,32 @@ var author$project$Main$makeMediaEditFun = F3(
 		switch (field.$) {
 			case 'Name':
 				return author$project$Main$MediaEdit(
-					_Utils_update(
-						obj,
-						{name: input}));
+					_Utils_Tuple2(
+						obj.name,
+						_Utils_update(
+							obj,
+							{name: input})));
 			case 'Description':
 				return author$project$Main$MediaEdit(
-					_Utils_update(
-						obj,
-						{description: input}));
+					_Utils_Tuple2(
+						obj.name,
+						_Utils_update(
+							obj,
+							{description: input})));
 			case 'UserClass':
 				return author$project$Main$MediaEdit(
-					_Utils_update(
-						obj,
-						{userClass: input}));
+					_Utils_Tuple2(
+						obj.name,
+						_Utils_update(
+							obj,
+							{userClass: input})));
 			default:
 				return author$project$Main$MediaEdit(
-					_Utils_update(
-						obj,
-						{copyright: input}));
+					_Utils_Tuple2(
+						obj.name,
+						_Utils_update(
+							obj,
+							{copyright: input})));
 		}
 	});
 var author$project$Main$makeMediaEditMsgs = function (obj) {
