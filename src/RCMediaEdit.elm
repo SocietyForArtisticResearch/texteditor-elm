@@ -89,6 +89,7 @@ type alias InputWithLabelProperties msg =
     , labeltext : String
     , placeholder : String
     , value : String
+    , validation : Result String String
     , onInput : String -> msg
     , help : String
     }
@@ -100,6 +101,15 @@ type alias InputWithLabelProperties msg =
 
 viewInputWithLabel : InputWithLabelProperties msg -> Html msg
 viewInputWithLabel props =
+    let
+        validationFeedback =
+            case props.validation of
+                Ok _ ->
+                    []
+
+                Err s ->
+                    [ text s ]
+    in
     Form.group []
         [ Form.label [ for props.nodeId ] [ text props.labeltext ]
         , Input.text
@@ -110,6 +120,7 @@ viewInputWithLabel props =
                 , Events.onInput props.onInput
                 ]
             ]
+        , Form.invalidFeedback [] validationFeedback
         , Form.help [] [ text props.help ]
         ]
 
@@ -133,14 +144,14 @@ viewTextAreaWithLabel props =
         ]
 
 
-fromValidation : Result String String -> String
-fromValidation result =
-    case result of
-        Ok userinput ->
-            userinput
 
-        Err error ->
-            "error!" ++ error
+-- fromValidation : Result String String -> String
+-- fromValidation result =
+--     case result of
+--         Ok userinput ->
+--             userinput
+--         Err error ->
+--             "error!" ++ error
 
 
 helpFromValidation : Result String String -> String
@@ -153,14 +164,15 @@ helpFromValidation result =
             "error: " ++ err
 
 
-view : RCMediaObjectViewState -> MediaEditMessages msg -> Html msg
-view objectState messages =
+view : RCMediaObjectViewState -> MediaEditMessages msg -> RCMediaObject -> Html msg
+view objectState messages objectInEdit =
     let
         nameProps =
             { nodeId = "name"
             , labeltext = "name"
             , placeholder = ""
-            , value = fromValidation objectState.validation.name
+            , value = objectInEdit.name
+            , validation = objectState.validation.name
             , onInput = messages.editTool Name
             , help = "" --helpFromValidation objectState.validation.name
             }
@@ -169,7 +181,8 @@ view objectState messages =
             { nodeId = "description"
             , labeltext = "description"
             , placeholder = "optional"
-            , value = fromValidation objectState.validation.description
+            , value = objectInEdit.description
+            , validation = objectState.validation.description
             , onInput = messages.editTool Description
             , help = "" --helpFromValidation objectState.validation.description
             }
@@ -178,7 +191,8 @@ view objectState messages =
             { nodeId = "copyright"
             , labeltext = "copyright"
             , placeholder = ""
-            , value = fromValidation objectState.validation.copyright
+            , value = objectInEdit.copyright
+            , validation = objectState.validation.copyright
             , onInput = messages.editTool Copyright
             , help = "" --helpFromValidation objectState.validation.copyright
             }

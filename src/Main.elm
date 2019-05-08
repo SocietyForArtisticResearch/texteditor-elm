@@ -258,9 +258,6 @@ update msg model =
                     case Exposition.objectByNameOrId mediaNameOrId model.exposition of
                         Just obj ->
                             let
-                                _ =
-                                    Debug.log "some success" obj
-
                                 viewObjectState =
                                     Exposition.validateMediaObject model.exposition obj obj
                             in
@@ -521,7 +518,7 @@ viewMediaDialog : RCExposition -> ( Modal.Visibility, RCMediaObject, RCMediaObje
 viewMediaDialog exposition ( visibility, object, viewObjectState ) =
     let
         mediaEditView =
-            RCMediaEdit.view viewObjectState (makeMediaEditMsgs object)
+            RCMediaEdit.view viewObjectState (makeMediaEditMsgs object) object
     in
     Modal.config CloseMediaDialog
         |> Modal.small

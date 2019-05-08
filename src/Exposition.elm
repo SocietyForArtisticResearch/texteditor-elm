@@ -250,11 +250,11 @@ validateName exp obj newName =
             objName =
                 obj.name
         in
-        if (obj.name /= newName) && List.member newName mediaNames then
-            Err "Another media object already has this name"
+        if (obj.name == newName) || not (List.member newName mediaNames) then
+            Ok newName
 
         else
-            Ok newName
+            Err "Another media object already has this name"
 
 
 type alias RCMediaObjectValidation =
