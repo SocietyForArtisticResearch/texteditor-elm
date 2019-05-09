@@ -1,4 +1,4 @@
-module RCMediaList exposing (view)
+module RCMediaList exposing (TableMessages, view)
 
 import Bootstrap.Button as Button
 import Bootstrap.Table as Table
@@ -8,7 +8,10 @@ import Html.Events exposing (onClick)
 
 
 type alias TableMessages msg =
-    String -> msg
+    { editObject : String -> msg
+    , deleteObject : RCMediaObject -> msg
+    , insertObject : RCMediaObject -> msg
+    }
 
 
 
@@ -35,15 +38,31 @@ view objectList message =
                     let
                         editButton =
                             Button.button
-                                [ Button.info
-                                , Button.attrs [ onClick <| message (String.fromInt object.id) ]
+                                [ Button.outlineInfo
+                                , Button.attrs [ onClick <| message.editObject (String.fromInt object.id) ]
                                 ]
                                 [ text "edit" ]
+
+                        insertButton =
+                            Button.button
+                                [ Button.outlineWarning
+                                , Button.attrs [ onClick <| message.insertObject object ]
+                                ]
+                                [ text "insert" ]
+
+                        removeButton =
+                            Button.button
+                                [ Button.outlineDanger
+                                , Button.attrs [ onClick <| message.deleteObject object ]
+                                ]
+                                [ text "X" ]
                     in
                     Table.tr []
                         [ Table.td [] [ text <| String.fromInt object.id ]
                         , Table.td [] [ text object.name ]
                         , Table.td [] [ editButton ]
+                        , Table.td [] [ insertButton ]
+                        , Table.td [] [ removeButton ]
                         ]
 
                 rows =

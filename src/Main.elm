@@ -199,6 +199,14 @@ makeMediaEditFun obj objId field input =
             MediaEdit ( String.fromInt objId, { obj | copyright = input } )
 
 
+makeTableMessages : TableMessages Msg
+makeTableMessages =
+    { editObject = MediaDialog
+    , removeObject = MediaDelete
+    , insertObject = MediaInsert
+    }
+
+
 
 -- UPDATE
 
