@@ -1,4 +1,4 @@
-module RCMediaEdit exposing (Field(..), MediaEditMessages, view)
+module RCMediaEdit exposing (Field(..), MediaEditMessage, view)
 
 import Bootstrap.Button as Button
 import Bootstrap.CDN as CDN
@@ -26,10 +26,8 @@ type Field
 --    | File
 
 
-type alias MediaEditMessages msg =
-    { editTool : Field -> String -> msg
-    , closeDialog : msg
-    }
+type alias MediaEditMessage msg =
+    Field -> String -> msg
 
 
 type alias CssClass =
@@ -164,8 +162,8 @@ helpFromValidation result =
             "error: " ++ err
 
 
-view : RCMediaObjectViewState -> MediaEditMessages msg -> RCMediaObject -> Html msg
-view objectState messages objectInEdit =
+view : RCMediaObjectViewState -> MediaEditMessage msg -> RCMediaObject -> Html msg
+view objectState editTool objectInEdit =
     let
         nameProps =
             { nodeId = "name"
@@ -173,7 +171,7 @@ view objectState messages objectInEdit =
             , placeholder = ""
             , value = objectInEdit.name
             , validation = objectState.validation.name
-            , onInput = messages.editTool Name
+            , onInput = editTool Name
             , help = "" --helpFromValidation objectState.validation.name
             }
 
@@ -183,7 +181,7 @@ view objectState messages objectInEdit =
             , placeholder = "optional"
             , value = objectInEdit.description
             , validation = objectState.validation.description
-            , onInput = messages.editTool Description
+            , onInput = editTool Description
             , help = "" --helpFromValidation objectState.validation.description
             }
 
@@ -193,7 +191,7 @@ view objectState messages objectInEdit =
             , placeholder = ""
             , value = objectInEdit.copyright
             , validation = objectState.validation.copyright
-            , onInput = messages.editTool Copyright
+            , onInput = editTool Copyright
             , help = "" --helpFromValidation objectState.validation.copyright
             }
 
@@ -210,17 +208,9 @@ view objectState messages objectInEdit =
             [ viewInputWithLabel nameProps
             , Form.group []
                 [ Form.label [ for "classPicker" ] [ text "Display size and location" ]
-                , viewClassesPicker "classPicker" cssClasses currentClass (messages.editTool UserClass)
+                , viewClassesPicker "classPicker" cssClasses currentClass (editTool UserClass)
                 ]
             , viewTextAreaWithLabel descriptionProps
             , viewInputWithLabel copyrightProps
-            , Form.group []
-                [ Button.button
-                    [ Button.outlinePrimary
-                    , Button.small
-                    , Button.attrs [ Events.onClick messages.closeDialog ]
-                    ]
-                    [ text "Close" ]
-                ]
             ]
         ]

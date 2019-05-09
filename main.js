@@ -8316,13 +8316,6 @@ var author$project$Main$makeMediaEditFun = F4(
 							{copyright: input})));
 		}
 	});
-var author$project$Main$makeMediaEditMsgs = F2(
-	function (obj, objId) {
-		return {
-			closeDialog: author$project$Main$CloseMediaDialog,
-			editTool: A2(author$project$Main$makeMediaEditFun, obj, objId)
-		};
-	});
 var author$project$RCMediaEdit$Copyright = {$: 'Copyright'};
 var author$project$RCMediaEdit$Description = {$: 'Description'};
 var author$project$RCMediaEdit$Name = {$: 'Name'};
@@ -9095,6 +9088,88 @@ var author$project$RCMediaEdit$viewTextAreaWithLabel = function (props) {
 					]))
 			]));
 };
+var elm$html$Html$form = _VirtualDom_node('form');
+var rundis$elm_bootstrap$Bootstrap$Form$form = F2(
+	function (attributes, children) {
+		return A2(elm$html$Html$form, attributes, children);
+	});
+var author$project$RCMediaEdit$view = F3(
+	function (objectState, editTool, objectInEdit) {
+		var nameProps = {
+			help: '',
+			labeltext: 'name',
+			nodeId: 'name',
+			onInput: editTool(author$project$RCMediaEdit$Name),
+			placeholder: '',
+			validation: objectState.validation.name,
+			value: objectInEdit.name
+		};
+		var descriptionProps = {
+			help: '',
+			labeltext: 'description',
+			nodeId: 'description',
+			onInput: editTool(author$project$RCMediaEdit$Description),
+			placeholder: 'optional',
+			validation: objectState.validation.description,
+			value: objectInEdit.description
+		};
+		var currentClass = function () {
+			var _n0 = objectState.validation.userClass;
+			if (_n0.$ === 'Ok') {
+				var val = _n0.a;
+				return val;
+			} else {
+				return 'big';
+			}
+		}();
+		var copyrightProps = {
+			help: '',
+			labeltext: 'copyright',
+			nodeId: 'copyright',
+			onInput: editTool(author$project$RCMediaEdit$Copyright),
+			placeholder: '',
+			validation: objectState.validation.copyright,
+			value: objectInEdit.copyright
+		};
+		return A2(
+			elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Form$form,
+					_List_Nil,
+					_List_fromArray(
+						[
+							author$project$RCMediaEdit$viewInputWithLabel(nameProps),
+							A2(
+							rundis$elm_bootstrap$Bootstrap$Form$group,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									rundis$elm_bootstrap$Bootstrap$Form$label,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$for('classPicker')
+										]),
+									_List_fromArray(
+										[
+											elm$html$Html$text('Display size and location')
+										])),
+									A4(
+									author$project$RCMediaEdit$viewClassesPicker,
+									'classPicker',
+									author$project$RCMediaEdit$cssClasses,
+									currentClass,
+									editTool(author$project$RCMediaEdit$UserClass))
+								])),
+							author$project$RCMediaEdit$viewTextAreaWithLabel(descriptionProps),
+							author$project$RCMediaEdit$viewInputWithLabel(copyrightProps)
+						]))
+				]));
+	});
+var elm$html$Html$p = _VirtualDom_node('p');
 var elm$html$Html$Events$onClick = function (msg) {
 	return A2(
 		elm$html$Html$Events$on,
@@ -9234,114 +9309,6 @@ var rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Size = function (a) {
-	return {$: 'Size', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Button$small = rundis$elm_bootstrap$Bootstrap$Internal$Button$Size(rundis$elm_bootstrap$Bootstrap$General$Internal$SM);
-var elm$html$Html$form = _VirtualDom_node('form');
-var rundis$elm_bootstrap$Bootstrap$Form$form = F2(
-	function (attributes, children) {
-		return A2(elm$html$Html$form, attributes, children);
-	});
-var author$project$RCMediaEdit$view = F3(
-	function (objectState, messages, objectInEdit) {
-		var nameProps = {
-			help: '',
-			labeltext: 'name',
-			nodeId: 'name',
-			onInput: messages.editTool(author$project$RCMediaEdit$Name),
-			placeholder: '',
-			validation: objectState.validation.name,
-			value: objectInEdit.name
-		};
-		var descriptionProps = {
-			help: '',
-			labeltext: 'description',
-			nodeId: 'description',
-			onInput: messages.editTool(author$project$RCMediaEdit$Description),
-			placeholder: 'optional',
-			validation: objectState.validation.description,
-			value: objectInEdit.description
-		};
-		var currentClass = function () {
-			var _n0 = objectState.validation.userClass;
-			if (_n0.$ === 'Ok') {
-				var val = _n0.a;
-				return val;
-			} else {
-				return 'big';
-			}
-		}();
-		var copyrightProps = {
-			help: '',
-			labeltext: 'copyright',
-			nodeId: 'copyright',
-			onInput: messages.editTool(author$project$RCMediaEdit$Copyright),
-			placeholder: '',
-			validation: objectState.validation.copyright,
-			value: objectInEdit.copyright
-		};
-		return A2(
-			elm$html$Html$div,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A2(
-					rundis$elm_bootstrap$Bootstrap$Form$form,
-					_List_Nil,
-					_List_fromArray(
-						[
-							author$project$RCMediaEdit$viewInputWithLabel(nameProps),
-							A2(
-							rundis$elm_bootstrap$Bootstrap$Form$group,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									rundis$elm_bootstrap$Bootstrap$Form$label,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$for('classPicker')
-										]),
-									_List_fromArray(
-										[
-											elm$html$Html$text('Display size and location')
-										])),
-									A4(
-									author$project$RCMediaEdit$viewClassesPicker,
-									'classPicker',
-									author$project$RCMediaEdit$cssClasses,
-									currentClass,
-									messages.editTool(author$project$RCMediaEdit$UserClass))
-								])),
-							author$project$RCMediaEdit$viewTextAreaWithLabel(descriptionProps),
-							author$project$RCMediaEdit$viewInputWithLabel(copyrightProps),
-							A2(
-							rundis$elm_bootstrap$Bootstrap$Form$group,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									rundis$elm_bootstrap$Bootstrap$Button$button,
-									_List_fromArray(
-										[
-											rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary,
-											rundis$elm_bootstrap$Bootstrap$Button$small,
-											rundis$elm_bootstrap$Bootstrap$Button$attrs(
-											_List_fromArray(
-												[
-													elm$html$Html$Events$onClick(messages.closeDialog)
-												]))
-										]),
-									_List_fromArray(
-										[
-											elm$html$Html$text('Close')
-										]))
-								]))
-						]))
-				]));
-	});
-var elm$html$Html$p = _VirtualDom_node('p');
 var rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {
 	return {$: 'Body', a: a};
 };
@@ -9371,6 +9338,21 @@ var rundis$elm_bootstrap$Bootstrap$Modal$config = function (closeMsg) {
 			withAnimation: elm$core$Maybe$Nothing
 		});
 };
+var rundis$elm_bootstrap$Bootstrap$Modal$Footer = function (a) {
+	return {$: 'Footer', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Modal$footer = F3(
+	function (attributes, children, _n0) {
+		var conf = _n0.a;
+		return rundis$elm_bootstrap$Bootstrap$Modal$Config(
+			_Utils_update(
+				conf,
+				{
+					footer: elm$core$Maybe$Just(
+						rundis$elm_bootstrap$Bootstrap$Modal$Footer(
+							{attributes: attributes, children: children}))
+				}));
+	});
 var elm$html$Html$h5 = _VirtualDom_node('h5');
 var rundis$elm_bootstrap$Bootstrap$Modal$Header = function (a) {
 	return {$: 'Header', a: a};
@@ -9779,34 +9761,55 @@ var author$project$Main$viewMediaDialog = F2(
 		var mediaEditView = A3(
 			author$project$RCMediaEdit$view,
 			viewObjectState,
-			A2(author$project$Main$makeMediaEditMsgs, object, objId),
+			A2(author$project$Main$makeMediaEditFun, object, objId),
 			object);
 		return A2(
 			rundis$elm_bootstrap$Bootstrap$Modal$view,
 			visibility,
 			A3(
-				rundis$elm_bootstrap$Bootstrap$Modal$body,
+				rundis$elm_bootstrap$Bootstrap$Modal$footer,
 				_List_Nil,
 				_List_fromArray(
 					[
 						A2(
-						elm$html$Html$p,
-						_List_Nil,
+						rundis$elm_bootstrap$Bootstrap$Button$button,
 						_List_fromArray(
-							[mediaEditView]))
+							[
+								rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary,
+								rundis$elm_bootstrap$Bootstrap$Button$attrs(
+								_List_fromArray(
+									[
+										elm$html$Html$Events$onClick(author$project$Main$CloseMediaDialog)
+									]))
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Close')
+							]))
 					]),
 				A3(
-					rundis$elm_bootstrap$Bootstrap$Modal$h5,
+					rundis$elm_bootstrap$Bootstrap$Modal$body,
 					_List_Nil,
 					_List_fromArray(
 						[
-							elm$html$Html$text('Edit object ' + object.name)
+							A2(
+							elm$html$Html$p,
+							_List_Nil,
+							_List_fromArray(
+								[mediaEditView]))
 						]),
-					A2(
-						rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
-						true,
-						rundis$elm_bootstrap$Bootstrap$Modal$small(
-							rundis$elm_bootstrap$Bootstrap$Modal$config(author$project$Main$CloseMediaDialog))))));
+					A3(
+						rundis$elm_bootstrap$Bootstrap$Modal$h5,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text('Edit object ' + object.name)
+							]),
+						A2(
+							rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
+							true,
+							rundis$elm_bootstrap$Bootstrap$Modal$small(
+								rundis$elm_bootstrap$Bootstrap$Modal$config(author$project$Main$CloseMediaDialog)))))));
 	});
 var elm$core$Basics$round = _Basics_round;
 var author$project$Main$viewUpload = F3(

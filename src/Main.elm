@@ -199,13 +199,6 @@ makeMediaEditFun obj objId field input =
             MediaEdit ( String.fromInt objId, { obj | copyright = input } )
 
 
-makeMediaEditMsgs : RCMediaObject -> Int -> RCMediaEdit.MediaEditMessages Msg
-makeMediaEditMsgs obj objId =
-    { editTool = makeMediaEditFun obj objId
-    , closeDialog = CloseMediaDialog
-    }
-
-
 
 -- UPDATE
 
@@ -531,13 +524,20 @@ viewMediaDialog : RCExposition -> ( Modal.Visibility, ( RCMediaObject, Int ), RC
 viewMediaDialog exposition ( visibility, ( object, objId ), viewObjectState ) =
     let
         mediaEditView =
-            RCMediaEdit.view viewObjectState (makeMediaEditMsgs object objId) object
+            RCMediaEdit.view viewObjectState (makeMediaEditFun object objId) object
     in
     Modal.config CloseMediaDialog
         |> Modal.small
         |> Modal.hideOnBackdropClick True
         |> Modal.h5 [] [ text <| "Edit object " ++ object.name ]
         |> Modal.body [] [ p [] [ mediaEditView ] ]
+        |> Modal.footer []
+            [ Button.button
+                [ Button.outlinePrimary
+                , Button.attrs [ onClick CloseMediaDialog ]
+                ]
+                [ text "Close" ]
+            ]
         |> Modal.view visibility
 
 
