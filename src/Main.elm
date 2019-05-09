@@ -201,9 +201,8 @@ makeMediaEditFun obj objId field input =
 
 makeMediaEditMsgs : RCMediaObject -> Int -> RCMediaEdit.MediaEditMessages Msg
 makeMediaEditMsgs obj objId =
-    { insertTool = InsertTool obj
-    , editTool = makeMediaEditFun obj objId
-    , deleteTool = MediaDelete obj
+    { editTool = makeMediaEditFun obj objId
+    , closeDialog = CloseMediaDialog
     }
 
 

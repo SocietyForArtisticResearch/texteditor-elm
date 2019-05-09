@@ -27,9 +27,8 @@ type Field
 
 
 type alias MediaEditMessages msg =
-    { insertTool : msg
-    , editTool : Field -> String -> msg
-    , deleteTool : msg
+    { editTool : Field -> String -> msg
+    , closeDialog : msg
     }
 
 
@@ -217,17 +216,11 @@ view objectState messages objectInEdit =
             , viewInputWithLabel copyrightProps
             , Form.group []
                 [ Button.button
-                    [ Button.primary
+                    [ Button.outlinePrimary
                     , Button.small
-                    , Button.attrs [ Events.onClick messages.insertTool ]
+                    , Button.attrs [ Events.onClick messages.closeDialog ]
                     ]
-                    [ text "Insert" ]
-                , Button.button
-                    [ Button.small
-                    , Button.danger
-                    , Button.attrs [ Events.onClick messages.deleteTool, Spacing.ml1 ]
-                    ]
-                    [ text "Remove" ]
+                    [ text "Close" ]
                 ]
             ]
         ]
