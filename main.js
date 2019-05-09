@@ -8279,6 +8279,13 @@ var author$project$Main$update = F2(
 var author$project$Main$SaveExposition = {$: 'SaveExposition'};
 var author$project$Main$UploadImportFileSelect = {$: 'UploadImportFileSelect'};
 var author$project$Main$UploadMediaFileSelect = {$: 'UploadMediaFileSelect'};
+var author$project$Main$InsertTool = function (a) {
+	return {$: 'InsertTool', a: a};
+};
+var author$project$Main$MediaDelete = function (a) {
+	return {$: 'MediaDelete', a: a};
+};
+var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$MediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertTool};
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
 var author$project$Main$MediaEdit = function (a) {
 	return {$: 'MediaEdit', a: a};
@@ -9839,12 +9846,15 @@ var author$project$Main$viewUpload = F3(
 		}
 	});
 var elm$html$Html$span = _VirtualDom_node('span');
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger = {$: 'Danger'};
+var rundis$elm_bootstrap$Bootstrap$Button$outlineDanger = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Info = {$: 'Info'};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
-	return {$: 'Roled', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Button$info = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Info));
+var rundis$elm_bootstrap$Bootstrap$Button$outlineInfo = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Info));
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Warning = {$: 'Warning'};
+var rundis$elm_bootstrap$Bootstrap$Button$outlineWarning = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Warning));
 var rundis$elm_bootstrap$Bootstrap$Table$Hover = {$: 'Hover'};
 var rundis$elm_bootstrap$Bootstrap$Table$hover = rundis$elm_bootstrap$Bootstrap$Table$Hover;
 var rundis$elm_bootstrap$Bootstrap$Table$THead = function (a) {
@@ -10393,7 +10403,7 @@ var rundis$elm_bootstrap$Bootstrap$Table$th = F2(
 			{children: children, options: options});
 	});
 var author$project$RCMediaList$view = F2(
-	function (objectList, message) {
+	function (objectList, messages) {
 		if (!objectList.b) {
 			return A2(
 				elm$html$Html$span,
@@ -10404,16 +10414,48 @@ var author$project$RCMediaList$view = F2(
 					]));
 		} else {
 			var rowFromRCObject = function (object) {
-				var editButton = A2(
+				var removeButton = A2(
 					rundis$elm_bootstrap$Bootstrap$Button$button,
 					_List_fromArray(
 						[
-							rundis$elm_bootstrap$Bootstrap$Button$info,
+							rundis$elm_bootstrap$Bootstrap$Button$outlineDanger,
 							rundis$elm_bootstrap$Bootstrap$Button$attrs(
 							_List_fromArray(
 								[
 									elm$html$Html$Events$onClick(
-									message(
+									messages.deleteObject(object))
+								]))
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('X')
+						]));
+				var insertButton = A2(
+					rundis$elm_bootstrap$Bootstrap$Button$button,
+					_List_fromArray(
+						[
+							rundis$elm_bootstrap$Bootstrap$Button$outlineWarning,
+							rundis$elm_bootstrap$Bootstrap$Button$attrs(
+							_List_fromArray(
+								[
+									elm$html$Html$Events$onClick(
+									messages.insertObject(object))
+								]))
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('insert')
+						]));
+				var editButton = A2(
+					rundis$elm_bootstrap$Bootstrap$Button$button,
+					_List_fromArray(
+						[
+							rundis$elm_bootstrap$Bootstrap$Button$outlineInfo,
+							rundis$elm_bootstrap$Bootstrap$Button$attrs(
+							_List_fromArray(
+								[
+									elm$html$Html$Events$onClick(
+									messages.editObject(
 										elm$core$String$fromInt(object.id)))
 								]))
 						]),
@@ -10445,7 +10487,17 @@ var author$project$RCMediaList$view = F2(
 							rundis$elm_bootstrap$Bootstrap$Table$td,
 							_List_Nil,
 							_List_fromArray(
-								[editButton]))
+								[editButton])),
+							A2(
+							rundis$elm_bootstrap$Bootstrap$Table$td,
+							_List_Nil,
+							_List_fromArray(
+								[insertButton])),
+							A2(
+							rundis$elm_bootstrap$Bootstrap$Table$td,
+							_List_Nil,
+							_List_fromArray(
+								[removeButton]))
 						]));
 			};
 			var rows = A2(elm$core$List$map, rowFromRCObject, objectList);
@@ -10522,7 +10574,7 @@ var author$project$Main$view = function (model) {
 				mediaDialogHtml,
 				A3(author$project$Main$viewUpload, author$project$Main$UploadMediaFileSelect, 'Upload Media', model.mediaUploadStatus),
 				A3(author$project$Main$viewUpload, author$project$Main$UploadImportFileSelect, 'Import Document', model.importUploadStatus),
-				A2(author$project$RCMediaList$view, model.exposition.media, author$project$Main$MediaDialog),
+				A2(author$project$RCMediaList$view, model.exposition.media, author$project$Main$makeTableMessages),
 				saveButton
 			]));
 };

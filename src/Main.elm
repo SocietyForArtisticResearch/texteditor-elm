@@ -199,11 +199,11 @@ makeMediaEditFun obj objId field input =
             MediaEdit ( String.fromInt objId, { obj | copyright = input } )
 
 
-makeTableMessages : TableMessages Msg
+makeTableMessages : RCMediaList.TableMessages Msg
 makeTableMessages =
     { editObject = MediaDialog
-    , removeObject = MediaDelete
-    , insertObject = MediaInsert
+    , deleteObject = MediaDelete
+    , insertObject = InsertTool
     }
 
 
@@ -584,6 +584,6 @@ view model =
         [ mediaDialogHtml
         , viewUpload UploadMediaFileSelect "Upload Media" model.mediaUploadStatus
         , viewUpload UploadImportFileSelect "Import Document" model.importUploadStatus
-        , RCMediaList.view model.exposition.media MediaDialog
+        , RCMediaList.view model.exposition.media makeTableMessages
         , saveButton
         ]

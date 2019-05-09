@@ -19,7 +19,7 @@ type alias TableMessages msg =
 
 
 view : List RCMediaObject -> TableMessages msg -> Html msg
-view objectList message =
+view objectList messages =
     case objectList of
         [] ->
             span [] [ text "no objects" ]
@@ -39,21 +39,21 @@ view objectList message =
                         editButton =
                             Button.button
                                 [ Button.outlineInfo
-                                , Button.attrs [ onClick <| message.editObject (String.fromInt object.id) ]
+                                , Button.attrs [ onClick <| messages.editObject (String.fromInt object.id) ]
                                 ]
                                 [ text "edit" ]
 
                         insertButton =
                             Button.button
                                 [ Button.outlineWarning
-                                , Button.attrs [ onClick <| message.insertObject object ]
+                                , Button.attrs [ onClick <| messages.insertObject object ]
                                 ]
                                 [ text "insert" ]
 
                         removeButton =
                             Button.button
                                 [ Button.outlineDanger
-                                , Button.attrs [ onClick <| message.deleteObject object ]
+                                , Button.attrs [ onClick <| messages.deleteObject object ]
                                 ]
                                 [ text "X" ]
                     in
