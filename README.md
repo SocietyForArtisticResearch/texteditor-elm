@@ -28,17 +28,12 @@ be made outside of elm.
 # Todo
 
 Casper:
-- Migrate Insert and Remove actions to the table
-- close button at bottom of dialog (loose the x).
-- Medialist display/Media browser
-- Layout issues
-- Validation display
-- Why can the user not change the object name/copyright/ ?
-- Drag and drop of media
-- Switch Textarea/Codemirror/CSS Edit
+- When deleting object, ask for confirmation 
+- Tabs ? Switch Textarea/Codemirror/CSS Edit
 - Buttons
 - Styling
 - media file types in select dialog
+- Drag and drop of media (postpone)
 
 Luc:
 - Check rendered html
@@ -48,6 +43,10 @@ Luc:
 
 
 ## DONE
+- Why can the user not change the object name/copyright/ ?
+- Validation display
+- Migrate Insert and Remove actions to the table
+- close button at bottom of dialog (loose the x).
 - Get userclass and metadata
 - RC Media Upload
 - upload to server
