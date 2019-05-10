@@ -9855,6 +9855,10 @@ var rundis$elm_bootstrap$Bootstrap$Button$outlineInfo = rundis$elm_bootstrap$Boo
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Warning = {$: 'Warning'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlineWarning = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Warning));
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Size = function (a) {
+	return {$: 'Size', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Button$small = rundis$elm_bootstrap$Bootstrap$Internal$Button$Size(rundis$elm_bootstrap$Bootstrap$General$Internal$SM);
 var rundis$elm_bootstrap$Bootstrap$Table$Hover = {$: 'Hover'};
 var rundis$elm_bootstrap$Bootstrap$Table$hover = rundis$elm_bootstrap$Bootstrap$Table$Hover;
 var rundis$elm_bootstrap$Bootstrap$Table$THead = function (a) {
@@ -10419,6 +10423,7 @@ var author$project$RCMediaList$view = F2(
 					rundis$elm_bootstrap$Bootstrap$Button$button,
 					_List_fromArray(
 						[
+							rundis$elm_bootstrap$Bootstrap$Button$small,
 							rundis$elm_bootstrap$Bootstrap$Button$outlineDanger,
 							rundis$elm_bootstrap$Bootstrap$Button$attrs(
 							_List_fromArray(
@@ -10436,6 +10441,7 @@ var author$project$RCMediaList$view = F2(
 					rundis$elm_bootstrap$Bootstrap$Button$button,
 					_List_fromArray(
 						[
+							rundis$elm_bootstrap$Bootstrap$Button$small,
 							rundis$elm_bootstrap$Bootstrap$Button$outlineWarning,
 							rundis$elm_bootstrap$Bootstrap$Button$attrs(
 							_List_fromArray(
@@ -10453,6 +10459,7 @@ var author$project$RCMediaList$view = F2(
 					rundis$elm_bootstrap$Bootstrap$Button$button,
 					_List_fromArray(
 						[
+							rundis$elm_bootstrap$Bootstrap$Button$small,
 							rundis$elm_bootstrap$Bootstrap$Button$outlineInfo,
 							rundis$elm_bootstrap$Bootstrap$Button$attrs(
 							_List_fromArray(

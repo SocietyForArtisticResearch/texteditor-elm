@@ -39,21 +39,24 @@ view objectList messages =
                     let
                         editButton =
                             Button.button
-                                [ Button.outlineInfo
+                                [ Button.small
+                                , Button.outlineInfo
                                 , Button.attrs [ onClick <| messages.editObject (String.fromInt object.id) ]
                                 ]
                                 [ text "edit" ]
 
                         insertButton =
                             Button.button
-                                [ Button.outlineWarning
+                                [ Button.small
+                                , Button.outlineWarning
                                 , Button.attrs [ Spacing.ml1, onClick <| messages.insertObject object ]
                                 ]
                                 [ text "insert" ]
 
                         removeButton =
                             Button.button
-                                [ Button.outlineDanger
+                                [ Button.small
+                                , Button.outlineDanger
                                 , Button.attrs [ Spacing.ml1, onClick <| messages.deleteObject object ]
                                 ]
                                 [ text "X" ]
