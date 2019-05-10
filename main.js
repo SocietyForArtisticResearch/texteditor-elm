@@ -10402,6 +10402,7 @@ var rundis$elm_bootstrap$Bootstrap$Table$th = F2(
 		return rundis$elm_bootstrap$Bootstrap$Table$Th(
 			{children: children, options: options});
 	});
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1 = elm$html$Html$Attributes$class('ml-1');
 var author$project$RCMediaList$view = F2(
 	function (objectList, messages) {
 		if (!objectList.b) {
@@ -10422,6 +10423,7 @@ var author$project$RCMediaList$view = F2(
 							rundis$elm_bootstrap$Bootstrap$Button$attrs(
 							_List_fromArray(
 								[
+									rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1,
 									elm$html$Html$Events$onClick(
 									messages.deleteObject(object))
 								]))
@@ -10438,6 +10440,7 @@ var author$project$RCMediaList$view = F2(
 							rundis$elm_bootstrap$Bootstrap$Button$attrs(
 							_List_fromArray(
 								[
+									rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1,
 									elm$html$Html$Events$onClick(
 									messages.insertObject(object))
 								]))

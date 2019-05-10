@@ -2,6 +2,7 @@ module RCMediaList exposing (TableMessages, view)
 
 import Bootstrap.Button as Button
 import Bootstrap.Table as Table
+import Bootstrap.Utilities.Spacing as Spacing
 import Exposition exposing (RCMediaObject)
 import Html exposing (Html, span, text)
 import Html.Events exposing (onClick)
@@ -46,14 +47,14 @@ view objectList messages =
                         insertButton =
                             Button.button
                                 [ Button.outlineWarning
-                                , Button.attrs [ onClick <| messages.insertObject object ]
+                                , Button.attrs [ Spacing.ml1, onClick <| messages.insertObject object ]
                                 ]
                                 [ text "insert" ]
 
                         removeButton =
                             Button.button
                                 [ Button.outlineDanger
-                                , Button.attrs [ onClick <| messages.deleteObject object ]
+                                , Button.attrs [ Spacing.ml1, onClick <| messages.deleteObject object ]
                                 ]
                                 [ text "X" ]
                     in
