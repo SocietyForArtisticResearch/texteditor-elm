@@ -10490,17 +10490,7 @@ var author$project$RCMediaList$view = F2(
 							rundis$elm_bootstrap$Bootstrap$Table$td,
 							_List_Nil,
 							_List_fromArray(
-								[editButton])),
-							A2(
-							rundis$elm_bootstrap$Bootstrap$Table$td,
-							_List_Nil,
-							_List_fromArray(
-								[insertButton])),
-							A2(
-							rundis$elm_bootstrap$Bootstrap$Table$td,
-							_List_Nil,
-							_List_fromArray(
-								[removeButton]))
+								[editButton, insertButton, removeButton]))
 						]));
 			};
 			var rows = A2(elm$core$List$map, rowFromRCObject, objectList);
