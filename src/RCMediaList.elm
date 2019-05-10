@@ -59,7 +59,7 @@ view objectList messages =
                                 , Button.outlineDanger
                                 , Button.attrs [ Spacing.ml1, onClick <| messages.deleteObject object ]
                                 ]
-                                [ text "X" ]
+                                [ text "x" ]
                     in
                     Table.tr []
                         [ Table.td [] [ text <| String.fromInt object.id ]

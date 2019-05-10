@@ -10435,7 +10435,7 @@ var author$project$RCMediaList$view = F2(
 						]),
 					_List_fromArray(
 						[
-							elm$html$Html$text('X')
+							elm$html$Html$text('x')
 						]));
 				var insertButton = A2(
 					rundis$elm_bootstrap$Bootstrap$Button$button,
