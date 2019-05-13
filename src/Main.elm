@@ -19,12 +19,14 @@ import RCMediaEdit
 import RCMediaList
 import Regex
 import String.Extra as Str
+import UserConfirmation
 
 
 type alias Model =
     { exposition : RCExposition
     , editGeneration : Int
     , mediaDialog : ( Modal.Visibility, Maybe ( RCMediaObject, Int ), Maybe RCMediaObjectViewState )
+    , confirmDialogVisibility : ( Modal.Visibility, Maybe Userconfirmation.ConfirmDialogContent, Maybe Userconfirmation.Messsages )
     , weave : Int
     , research : Int
     , mediaUploadStatus : UploadStatus
@@ -55,6 +57,7 @@ emptyModel research weave =
     { editGeneration = -1
     , exposition = Exposition.empty
     , mediaDialog = ( Modal.hidden, Nothing, Nothing )
+    , confirmDialog = ( Modal.hidden, Nothing, Nothing )
     , research = research
     , weave = weave
     , mediaUploadStatus = Ready
@@ -176,6 +179,8 @@ type Msg
     | SavedExposition (Result Http.Error ())
     | SaveMediaEdit Exposition.RCMediaObject
     | SavedMediaEdit (Result Http.Error String)
+    | AskUserConfirm Userconfirmation.ConfirmDialogContent Msg
+    | CloseConfirmDialog
 
 
 
@@ -201,8 +206,18 @@ makeMediaEditFun obj objId field input =
 
 makeTableMessages : RCMediaList.TableMessages Msg
 makeTableMessages =
+    let
+        confirmContent =
+            { prompt = "Are you sure?"
+            , confirm = "delete"
+            , reject = "keep"
+            }
+
+        confirmAndDelete =
+            AskUserConfirm confirmContent MediaDelete
+    in
     { editObject = MediaDialog
-    , deleteObject = MediaDelete
+    , deleteObject = confirmAndDelete
     , insertObject = InsertTool
     }
 
@@ -526,6 +541,13 @@ update msg model =
                             Debug.log "error uploading: " e
                     in
                     ( model, Cmd.none )
+                        
+        AskUserConfirm content message ->
+            ( { model | confirmDialog = (Modal.visible, Just content, Just message) }, Cmd.none )
+                
+            
+        CloseConfirmDialog ->
+            ( { model |  = ( Modal.hidden, Nothing, Nothing ) }, Cmd.none )
 
 
 viewMediaDialog : RCExposition -> ( Modal.Visibility, ( RCMediaObject, Int ), RCMediaObjectViewState ) -> Html Msg
@@ -546,6 +568,19 @@ viewMediaDialog exposition ( visibility, ( object, objId ), viewObjectState ) =
                 ]
                 [ text "Close" ]
             ]
+        |> Modal.view visibility
+
+
+viewConfirmDialog : Modal.Visibility -> Userconfirmation.ConfirmDialogContent -> Userconfirmation.Message Msg -> Html Msg
+viewConfirmDialog visibility content messages =
+    let
+        confirmViewBody =
+            Userconfirmation.view content messages
+    in
+    Modal.config CloseConfirmDialog
+        |> Modal.small
+        |> Modal.hideOnBackdropClick True
+        |> Modal.body [] [ p [] [ confirmViewBody ] ]
         |> Modal.view visibility
 
 
@@ -570,6 +605,20 @@ view model =
                 _ ->
                     div [] []
 
+        confirmDialogHtml =
+            case model.confirmDialog of
+                ( visibility, Just content, Just message ) ->
+                    let
+                        messages =
+                            { confirm = message -- this is the action to be taken if user accepts
+                            , reject = CloseConfirmDialog
+                            }
+                    in
+                    viewConfirmDialog visibility content messages
+
+                _ ->
+                    div [] []
+
         saveButtonText =
             if model.saved then
                 "Saved"
@@ -582,6 +631,7 @@ view model =
     in
     div []
         [ mediaDialogHtml
+        , confirmDialogHtml
         , viewUpload UploadMediaFileSelect "Upload Media" model.mediaUploadStatus
         , viewUpload UploadImportFileSelect "Import Document" model.importUploadStatus
         , RCMediaList.view model.exposition.media makeTableMessages
