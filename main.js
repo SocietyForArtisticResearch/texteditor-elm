@@ -8582,6 +8582,7 @@ var rundis$elm_bootstrap$Bootstrap$Form$label = F2(
 				attributes),
 			children);
 	});
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1 = elm$html$Html$Attributes$class('ml-1');
 var author$project$UserConfirm$view = F2(
 	function (dialogText, messages) {
 		return A2(
@@ -8639,7 +8640,8 @@ var author$project$UserConfirm$view = F2(
 											rundis$elm_bootstrap$Bootstrap$Button$attrs(
 											_List_fromArray(
 												[
-													elm$html$Html$Events$onClick(messages.reject)
+													elm$html$Html$Events$onClick(messages.reject),
+													rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1
 												]))
 										]),
 									_List_fromArray(
@@ -10534,7 +10536,6 @@ var rundis$elm_bootstrap$Bootstrap$Table$th = F2(
 		return rundis$elm_bootstrap$Bootstrap$Table$Th(
 			{children: children, options: options});
 	});
-var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1 = elm$html$Html$Attributes$class('ml-1');
 var author$project$RCMediaList$view = F2(
 	function (objectList, messages) {
 		if (!objectList.b) {

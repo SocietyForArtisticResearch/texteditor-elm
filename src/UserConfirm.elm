@@ -2,6 +2,7 @@ module UserConfirm exposing (ConfirmDialogContent, Messages, view)
 
 import Bootstrap.Button as Button
 import Bootstrap.Form as Form
+import Bootstrap.Utilities.Spacing as Spacing
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
@@ -39,7 +40,10 @@ view dialogText messages =
                     [ text dialogText.confirm ]
                 , Button.button
                     [ Button.outlineSecondary
-                    , Button.attrs [ onClick messages.reject ]
+                    , Button.attrs
+                        [ onClick messages.reject
+                        , Spacing.ml1
+                        ]
                     ]
                     [ text dialogText.reject ]
                 ]
