@@ -446,11 +446,8 @@ update msg model =
                     ( addProblem model Problems.CannotUpdateMedia, Cmd.none )
 
         MediaDelete obj ->
-            -- let
-            --     _ =
-            --         Debug.log "hmm, after this there is a problem" obj
-            -- in
-            ( model, Cmd.none )
+            -- not implemented
+            update CloseConfirmDialog model
 
         InsertTool obj ->
             -- not implemented

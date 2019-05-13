@@ -8180,7 +8180,11 @@ var author$project$Main$update = F2(
 					}
 				case 'MediaDelete':
 					var obj = msg.a;
-					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+					var $temp$msg = author$project$Main$CloseConfirmDialog,
+						$temp$model = model;
+					msg = $temp$msg;
+					model = $temp$model;
+					continue update;
 				case 'InsertTool':
 					var obj = msg.a;
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
