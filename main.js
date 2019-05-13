@@ -5312,6 +5312,7 @@ var rundis$elm_bootstrap$Bootstrap$Modal$hidden = rundis$elm_bootstrap$Bootstrap
 var author$project$Main$emptyModel = F2(
 	function (research, weave) {
 		return {
+			confirmDialog: _Utils_Tuple3(rundis$elm_bootstrap$Bootstrap$Modal$hidden, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing),
 			editGeneration: -1,
 			exposition: author$project$Exposition$empty,
 			importUploadStatus: author$project$Main$Ready,
@@ -7358,8 +7359,12 @@ var author$project$Exposition$withMd = F2(
 			exp,
 			{markdownInput: content});
 	});
+var author$project$Main$CloseConfirmDialog = {$: 'CloseConfirmDialog'};
 var author$project$Main$GotMediaList = function (a) {
 	return {$: 'GotMediaList', a: a};
+};
+var author$project$Main$MediaDelete = function (a) {
+	return {$: 'MediaDelete', a: a};
 };
 var author$project$Main$MediaDialog = function (a) {
 	return {$: 'MediaDialog', a: a};
@@ -8253,7 +8258,7 @@ var author$project$Main$update = F2(
 						var _n25 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
-				default:
+				case 'UploadedImport':
 					var result = msg.a;
 					if (result.$ === 'Ok') {
 						var importResult = result.a;
@@ -8273,19 +8278,801 @@ var author$project$Main$update = F2(
 						var _n27 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
+				case 'ConfirmMediaDelete':
+					var object = msg.a;
+					var messages = {
+						confirm: author$project$Main$MediaDelete(object),
+						reject: author$project$Main$CloseConfirmDialog
+					};
+					var content = {confirm: 'delete', prompt: object.name + ' is about to be deleted. Are you sure?', reject: 'keep'};
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								confirmDialog: _Utils_Tuple3(
+									rundis$elm_bootstrap$Bootstrap$Modal$shown,
+									elm$core$Maybe$Just(content),
+									elm$core$Maybe$Just(messages))
+							}),
+						elm$core$Platform$Cmd$none);
+				default:
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								confirmDialog: _Utils_Tuple3(rundis$elm_bootstrap$Bootstrap$Modal$hidden, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing)
+							}),
+						elm$core$Platform$Cmd$none);
 			}
 		}
 	});
 var author$project$Main$SaveExposition = {$: 'SaveExposition'};
 var author$project$Main$UploadImportFileSelect = {$: 'UploadImportFileSelect'};
 var author$project$Main$UploadMediaFileSelect = {$: 'UploadMediaFileSelect'};
+var author$project$Main$ConfirmMediaDelete = function (a) {
+	return {$: 'ConfirmMediaDelete', a: a};
+};
 var author$project$Main$InsertTool = function (a) {
 	return {$: 'InsertTool', a: a};
 };
-var author$project$Main$MediaDelete = function (a) {
-	return {$: 'MediaDelete', a: a};
+var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$ConfirmMediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertTool};
+var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
+	switch (handler.$) {
+		case 'Normal':
+			return 0;
+		case 'MayStopPropagation':
+			return 1;
+		case 'MayPreventDefault':
+			return 2;
+		default:
+			return 3;
+	}
 };
-var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$MediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertTool};
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$string(string));
+	});
+var elm$html$Html$Attributes$for = elm$html$Html$Attributes$stringProperty('htmlFor');
+var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
+	return {$: 'Attrs', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Button$attrs = function (attrs_) {
+	return rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs(attrs_);
+};
+var elm$html$Html$button = _VirtualDom_node('button');
+var elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (maybeValue.$ === 'Just') {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return elm$core$Maybe$Nothing;
+		}
+	});
+var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
+var elm$html$Html$Attributes$classList = function (classes) {
+	return elm$html$Html$Attributes$class(
+		A2(
+			elm$core$String$join,
+			' ',
+			A2(
+				elm$core$List$map,
+				elm$core$Tuple$first,
+				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
+};
+var elm$json$Json$Encode$bool = _Json_wrap;
+var elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$bool(bool));
+	});
+var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
+var rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption = function (size) {
+	switch (size.$) {
+		case 'XS':
+			return elm$core$Maybe$Nothing;
+		case 'SM':
+			return elm$core$Maybe$Just('sm');
+		case 'MD':
+			return elm$core$Maybe$Just('md');
+		case 'LG':
+			return elm$core$Maybe$Just('lg');
+		default:
+			return elm$core$Maybe$Just('xl');
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier = F2(
+	function (modifier, options) {
+		switch (modifier.$) {
+			case 'Size':
+				var size = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						size: elm$core$Maybe$Just(size)
+					});
+			case 'Coloring':
+				var coloring = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						coloring: elm$core$Maybe$Just(coloring)
+					});
+			case 'Block':
+				return _Utils_update(
+					options,
+					{block: true});
+			case 'Disabled':
+				var val = modifier.a;
+				return _Utils_update(
+					options,
+					{disabled: val});
+			default:
+				var attrs = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						attributes: _Utils_ap(options.attributes, attrs)
+					});
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions = {attributes: _List_Nil, block: false, coloring: elm$core$Maybe$Nothing, disabled: false, size: elm$core$Maybe$Nothing};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass = function (role) {
+	switch (role.$) {
+		case 'Primary':
+			return 'primary';
+		case 'Secondary':
+			return 'secondary';
+		case 'Success':
+			return 'success';
+		case 'Info':
+			return 'info';
+		case 'Warning':
+			return 'warning';
+		case 'Danger':
+			return 'danger';
+		case 'Dark':
+			return 'dark';
+		case 'Light':
+			return 'light';
+		default:
+			return 'link';
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes = function (modifiers) {
+	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier, rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions, modifiers);
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$classList(
+				_List_fromArray(
+					[
+						_Utils_Tuple2('btn', true),
+						_Utils_Tuple2('btn-block', options.block),
+						_Utils_Tuple2('disabled', options.disabled)
+					])),
+				elm$html$Html$Attributes$disabled(options.disabled)
+			]),
+		_Utils_ap(
+			function () {
+				var _n0 = A2(elm$core$Maybe$andThen, rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption, options.size);
+				if (_n0.$ === 'Just') {
+					var s = _n0.a;
+					return _List_fromArray(
+						[
+							elm$html$Html$Attributes$class('btn-' + s)
+						]);
+				} else {
+					return _List_Nil;
+				}
+			}(),
+			_Utils_ap(
+				function () {
+					var _n1 = options.coloring;
+					if (_n1.$ === 'Just') {
+						if (_n1.a.$ === 'Roled') {
+							var role = _n1.a.a;
+							return _List_fromArray(
+								[
+									elm$html$Html$Attributes$class(
+									'btn-' + rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
+								]);
+						} else {
+							var role = _n1.a.a;
+							return _List_fromArray(
+								[
+									elm$html$Html$Attributes$class(
+									'btn-outline-' + rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
+								]);
+						}
+					} else {
+						return _List_Nil;
+					}
+				}(),
+				options.attributes)));
+};
+var rundis$elm_bootstrap$Bootstrap$Button$button = F2(
+	function (options, children) {
+		return A2(
+			elm$html$Html$button,
+			rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes(options),
+			children);
+	});
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
+	return {$: 'Coloring', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
+	return {$: 'Outlined', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
+var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary = {$: 'Secondary'};
+var rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
+var rundis$elm_bootstrap$Bootstrap$Form$Attrs = function (a) {
+	return {$: 'Attrs', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$attrs = rundis$elm_bootstrap$Bootstrap$Form$Attrs;
+var elm$html$Html$form = _VirtualDom_node('form');
+var rundis$elm_bootstrap$Bootstrap$Form$form = F2(
+	function (attributes, children) {
+		return A2(elm$html$Html$form, attributes, children);
+	});
+var elm$html$Html$div = _VirtualDom_node('div');
+var rundis$elm_bootstrap$Bootstrap$Form$applyModifier = F2(
+	function (modifier, options) {
+		var value = modifier.a;
+		return _Utils_update(
+			options,
+			{
+				attributes: _Utils_ap(options.attributes, value)
+			});
+	});
+var rundis$elm_bootstrap$Bootstrap$Form$defaultOptions = {attributes: _List_Nil};
+var rundis$elm_bootstrap$Bootstrap$Form$toAttributes = function (modifiers) {
+	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Form$applyModifier, rundis$elm_bootstrap$Bootstrap$Form$defaultOptions, modifiers);
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('form-group')
+			]),
+		options.attributes);
+};
+var rundis$elm_bootstrap$Bootstrap$Form$group = F2(
+	function (options, children) {
+		return A2(
+			elm$html$Html$div,
+			rundis$elm_bootstrap$Bootstrap$Form$toAttributes(options),
+			children);
+	});
+var elm$html$Html$label = _VirtualDom_node('label');
+var rundis$elm_bootstrap$Bootstrap$Form$label = F2(
+	function (attributes, children) {
+		return A2(
+			elm$html$Html$label,
+			A2(
+				elm$core$List$cons,
+				elm$html$Html$Attributes$class('form-control-label'),
+				attributes),
+			children);
+	});
+var author$project$UserConfirm$view = F2(
+	function (dialogText, messages) {
+		return A2(
+			rundis$elm_bootstrap$Bootstrap$Form$form,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Form$group,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							rundis$elm_bootstrap$Bootstrap$Form$label,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$for('confirmButtons')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text(dialogText.prompt)
+								])),
+							A2(
+							rundis$elm_bootstrap$Bootstrap$Form$group,
+							_List_fromArray(
+								[
+									rundis$elm_bootstrap$Bootstrap$Form$attrs(
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$id('confirmButtons')
+										]))
+								]),
+							_List_fromArray(
+								[
+									A2(
+									rundis$elm_bootstrap$Bootstrap$Button$button,
+									_List_fromArray(
+										[
+											rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary,
+											rundis$elm_bootstrap$Bootstrap$Button$attrs(
+											_List_fromArray(
+												[
+													elm$html$Html$Events$onClick(messages.confirm)
+												]))
+										]),
+									_List_fromArray(
+										[
+											elm$html$Html$text(dialogText.confirm)
+										])),
+									A2(
+									rundis$elm_bootstrap$Bootstrap$Button$button,
+									_List_fromArray(
+										[
+											rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary,
+											rundis$elm_bootstrap$Bootstrap$Button$attrs(
+											_List_fromArray(
+												[
+													elm$html$Html$Events$onClick(messages.reject)
+												]))
+										]),
+									_List_fromArray(
+										[
+											elm$html$Html$text(dialogText.reject)
+										]))
+								]))
+						]))
+				]));
+	});
+var elm$html$Html$p = _VirtualDom_node('p');
+var rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {
+	return {$: 'Body', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Modal$Config = function (a) {
+	return {$: 'Config', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Modal$body = F3(
+	function (attributes, children, _n0) {
+		var conf = _n0.a;
+		return rundis$elm_bootstrap$Bootstrap$Modal$Config(
+			_Utils_update(
+				conf,
+				{
+					body: elm$core$Maybe$Just(
+						rundis$elm_bootstrap$Bootstrap$Modal$Body(
+							{attributes: attributes, children: children}))
+				}));
+	});
+var rundis$elm_bootstrap$Bootstrap$Modal$config = function (closeMsg) {
+	return rundis$elm_bootstrap$Bootstrap$Modal$Config(
+		{
+			body: elm$core$Maybe$Nothing,
+			closeMsg: closeMsg,
+			footer: elm$core$Maybe$Nothing,
+			header: elm$core$Maybe$Nothing,
+			options: {centered: true, hideOnBackdropClick: true, modalSize: elm$core$Maybe$Nothing},
+			withAnimation: elm$core$Maybe$Nothing
+		});
+};
+var rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick = F2(
+	function (hide, _n0) {
+		var conf = _n0.a;
+		var options = conf.options;
+		return rundis$elm_bootstrap$Bootstrap$Modal$Config(
+			_Utils_update(
+				conf,
+				{
+					options: _Utils_update(
+						options,
+						{hideOnBackdropClick: hide})
+				}));
+	});
+var rundis$elm_bootstrap$Bootstrap$General$Internal$SM = {$: 'SM'};
+var rundis$elm_bootstrap$Bootstrap$Modal$small = function (_n0) {
+	var conf = _n0.a;
+	var options = conf.options;
+	return rundis$elm_bootstrap$Bootstrap$Modal$Config(
+		_Utils_update(
+			conf,
+			{
+				options: _Utils_update(
+					options,
+					{
+						modalSize: elm$core$Maybe$Just(rundis$elm_bootstrap$Bootstrap$General$Internal$SM)
+					})
+			}));
+};
+var elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
+var elm$html$Html$Attributes$tabindex = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'tabIndex',
+		elm$core$String$fromInt(n));
+};
+var rundis$elm_bootstrap$Bootstrap$Modal$StartClose = {$: 'StartClose'};
+var rundis$elm_bootstrap$Bootstrap$Modal$getCloseMsg = function (config_) {
+	var _n0 = config_.withAnimation;
+	if (_n0.$ === 'Just') {
+		var animationMsg = _n0.a;
+		return animationMsg(rundis$elm_bootstrap$Bootstrap$Modal$StartClose);
+	} else {
+		return config_.closeMsg;
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Modal$isFade = function (conf) {
+	return A2(
+		elm$core$Maybe$withDefault,
+		false,
+		A2(
+			elm$core$Maybe$map,
+			function (_n0) {
+				return true;
+			},
+			conf.withAnimation));
+};
+var rundis$elm_bootstrap$Bootstrap$Modal$backdrop = F2(
+	function (visibility, conf) {
+		var attributes = function () {
+			switch (visibility.$) {
+				case 'Show':
+					return _Utils_ap(
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$classList(
+								_List_fromArray(
+									[
+										_Utils_Tuple2('modal-backdrop', true),
+										_Utils_Tuple2(
+										'fade',
+										rundis$elm_bootstrap$Bootstrap$Modal$isFade(conf)),
+										_Utils_Tuple2('show', true)
+									]))
+							]),
+						conf.options.hideOnBackdropClick ? _List_fromArray(
+							[
+								elm$html$Html$Events$onClick(
+								rundis$elm_bootstrap$Bootstrap$Modal$getCloseMsg(conf))
+							]) : _List_Nil);
+				case 'StartClose':
+					return _List_fromArray(
+						[
+							elm$html$Html$Attributes$classList(
+							_List_fromArray(
+								[
+									_Utils_Tuple2('modal-backdrop', true),
+									_Utils_Tuple2('fade', true),
+									_Utils_Tuple2('show', true)
+								]))
+						]);
+				case 'FadeClose':
+					return _List_fromArray(
+						[
+							elm$html$Html$Attributes$classList(
+							_List_fromArray(
+								[
+									_Utils_Tuple2('modal-backdrop', true),
+									_Utils_Tuple2('fade', true),
+									_Utils_Tuple2('show', false)
+								]))
+						]);
+				default:
+					return _List_fromArray(
+						[
+							elm$html$Html$Attributes$classList(
+							_List_fromArray(
+								[
+									_Utils_Tuple2('modal-backdrop', false),
+									_Utils_Tuple2(
+									'fade',
+									rundis$elm_bootstrap$Bootstrap$Modal$isFade(conf)),
+									_Utils_Tuple2('show', false)
+								]))
+						]);
+			}
+		}();
+		return _List_fromArray(
+			[
+				A2(elm$html$Html$div, attributes, _List_Nil)
+			]);
+	});
+var elm$core$String$contains = _String_contains;
+var elm$json$Json$Decode$andThen = _Json_andThen;
+var elm$json$Json$Decode$fail = _Json_fail;
+var elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
+	});
+var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$className = A2(
+	elm$json$Json$Decode$at,
+	_List_fromArray(
+		['className']),
+	elm$json$Json$Decode$string);
+var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$target = function (decoder) {
+	return A2(elm$json$Json$Decode$field, 'target', decoder);
+};
+var rundis$elm_bootstrap$Bootstrap$Modal$containerClickDecoder = function (closeMsg) {
+	return A2(
+		elm$json$Json$Decode$andThen,
+		function (c) {
+			return A2(elm$core$String$contains, 'elm-bootstrap-modal', c) ? elm$json$Json$Decode$succeed(closeMsg) : elm$json$Json$Decode$fail('ignoring');
+		},
+		rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$target(rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$className));
+};
+var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
+var rundis$elm_bootstrap$Bootstrap$Modal$display = F2(
+	function (visibility, conf) {
+		switch (visibility.$) {
+			case 'Show':
+				return _List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'pointer-events', 'none'),
+						A2(elm$html$Html$Attributes$style, 'display', 'block'),
+						elm$html$Html$Attributes$classList(
+						_List_fromArray(
+							[
+								_Utils_Tuple2('modal', true),
+								_Utils_Tuple2(
+								'fade',
+								rundis$elm_bootstrap$Bootstrap$Modal$isFade(conf)),
+								_Utils_Tuple2('show', true)
+							]))
+					]);
+			case 'StartClose':
+				return _List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'pointer-events', 'none'),
+						A2(elm$html$Html$Attributes$style, 'display', 'block'),
+						elm$html$Html$Attributes$classList(
+						_List_fromArray(
+							[
+								_Utils_Tuple2('modal', true),
+								_Utils_Tuple2('fade', true),
+								_Utils_Tuple2('show', true)
+							]))
+					]);
+			case 'FadeClose':
+				return _List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'pointer-events', 'none'),
+						A2(elm$html$Html$Attributes$style, 'display', 'block'),
+						elm$html$Html$Attributes$classList(
+						_List_fromArray(
+							[
+								_Utils_Tuple2('modal', true),
+								_Utils_Tuple2('fade', true),
+								_Utils_Tuple2('show', false)
+							])),
+						A2(
+						elm$html$Html$Events$on,
+						'transitionend',
+						elm$json$Json$Decode$succeed(conf.closeMsg))
+					]);
+			default:
+				return _List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'height', '0px'),
+						A2(elm$html$Html$Attributes$style, 'display', 'block'),
+						elm$html$Html$Attributes$classList(
+						_List_fromArray(
+							[
+								_Utils_Tuple2('modal', true),
+								_Utils_Tuple2(
+								'fade',
+								rundis$elm_bootstrap$Bootstrap$Modal$isFade(conf)),
+								_Utils_Tuple2('show', false)
+							]))
+					]);
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Modal$modalClass = function (size) {
+	var _n0 = rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption(size);
+	if (_n0.$ === 'Just') {
+		var s = _n0.a;
+		return _List_fromArray(
+			[
+				elm$html$Html$Attributes$class('modal-' + s)
+			]);
+	} else {
+		return _List_Nil;
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Modal$modalAttributes = function (options) {
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$classList(
+				_List_fromArray(
+					[
+						_Utils_Tuple2('modal-dialog', true),
+						_Utils_Tuple2('modal-dialog-centered', options.centered)
+					])),
+				A2(elm$html$Html$Attributes$style, 'pointer-events', 'auto')
+			]),
+		A2(
+			elm$core$Maybe$withDefault,
+			_List_Nil,
+			A2(elm$core$Maybe$map, rundis$elm_bootstrap$Bootstrap$Modal$modalClass, options.modalSize)));
+};
+var rundis$elm_bootstrap$Bootstrap$Modal$renderBody = function (maybeBody) {
+	if (maybeBody.$ === 'Just') {
+		var cfg = maybeBody.a.a;
+		return elm$core$Maybe$Just(
+			A2(
+				elm$html$Html$div,
+				A2(
+					elm$core$List$cons,
+					elm$html$Html$Attributes$class('modal-body'),
+					cfg.attributes),
+				cfg.children));
+	} else {
+		return elm$core$Maybe$Nothing;
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Modal$renderFooter = function (maybeFooter) {
+	if (maybeFooter.$ === 'Just') {
+		var cfg = maybeFooter.a.a;
+		return elm$core$Maybe$Just(
+			A2(
+				elm$html$Html$div,
+				A2(
+					elm$core$List$cons,
+					elm$html$Html$Attributes$class('modal-footer'),
+					cfg.attributes),
+				cfg.children));
+	} else {
+		return elm$core$Maybe$Nothing;
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Modal$closeButton = function (closeMsg) {
+	return A2(
+		elm$html$Html$button,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('close'),
+				elm$html$Html$Events$onClick(closeMsg)
+			]),
+		_List_fromArray(
+			[
+				elm$html$Html$text('×')
+			]));
+};
+var rundis$elm_bootstrap$Bootstrap$Modal$renderHeader = function (conf_) {
+	var _n0 = conf_.header;
+	if (_n0.$ === 'Just') {
+		var cfg = _n0.a.a;
+		return elm$core$Maybe$Just(
+			A2(
+				elm$html$Html$div,
+				A2(
+					elm$core$List$cons,
+					elm$html$Html$Attributes$class('modal-header'),
+					cfg.attributes),
+				_Utils_ap(
+					cfg.children,
+					_List_fromArray(
+						[
+							rundis$elm_bootstrap$Bootstrap$Modal$closeButton(
+							rundis$elm_bootstrap$Bootstrap$Modal$getCloseMsg(conf_))
+						]))));
+	} else {
+		return elm$core$Maybe$Nothing;
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Modal$view = F2(
+	function (visibility, _n0) {
+		var conf = _n0.a;
+		return A2(
+			elm$html$Html$div,
+			_List_Nil,
+			_Utils_ap(
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$div,
+						_Utils_ap(
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$tabindex(-1)
+								]),
+							A2(rundis$elm_bootstrap$Bootstrap$Modal$display, visibility, conf)),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$div,
+								_Utils_ap(
+									_List_fromArray(
+										[
+											A2(elm$html$Html$Attributes$attribute, 'role', 'document'),
+											elm$html$Html$Attributes$class('elm-bootstrap-modal')
+										]),
+									_Utils_ap(
+										rundis$elm_bootstrap$Bootstrap$Modal$modalAttributes(conf.options),
+										conf.options.hideOnBackdropClick ? _List_fromArray(
+											[
+												A2(
+												elm$html$Html$Events$on,
+												'click',
+												rundis$elm_bootstrap$Bootstrap$Modal$containerClickDecoder(conf.closeMsg))
+											]) : _List_Nil)),
+								_List_fromArray(
+									[
+										A2(
+										elm$html$Html$div,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$class('modal-content')
+											]),
+										A2(
+											elm$core$List$filterMap,
+											elm$core$Basics$identity,
+											_List_fromArray(
+												[
+													rundis$elm_bootstrap$Bootstrap$Modal$renderHeader(conf),
+													rundis$elm_bootstrap$Bootstrap$Modal$renderBody(conf.body),
+													rundis$elm_bootstrap$Bootstrap$Modal$renderFooter(conf.footer)
+												])))
+									]))
+							]))
+					]),
+				A2(rundis$elm_bootstrap$Bootstrap$Modal$backdrop, visibility, conf)));
+	});
+var author$project$Main$viewConfirmDialog = F3(
+	function (visibility, content, messages) {
+		var confirmViewBody = A2(author$project$UserConfirm$view, content, messages);
+		return A2(
+			rundis$elm_bootstrap$Bootstrap$Modal$view,
+			visibility,
+			A3(
+				rundis$elm_bootstrap$Bootstrap$Modal$body,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$p,
+						_List_Nil,
+						_List_fromArray(
+							[confirmViewBody]))
+					]),
+				A2(
+					rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
+					true,
+					rundis$elm_bootstrap$Bootstrap$Modal$small(
+						rundis$elm_bootstrap$Bootstrap$Modal$config(author$project$Main$CloseConfirmDialog)))));
+	});
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
 var author$project$Main$MediaEdit = function (a) {
 	return {$: 'MediaEdit', a: a};
@@ -8341,36 +9128,7 @@ var author$project$RCMediaEdit$cssClasses = _List_fromArray(
 		A2(author$project$RCMediaEdit$CssClass, 'floatRightMedium', 'medium & float right'),
 		A2(author$project$RCMediaEdit$CssClass, 'floatLeftMedium', 'medium & float left')
 	]);
-var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
-	switch (handler.$) {
-		case 'Normal':
-			return 0;
-		case 'MayStopPropagation':
-			return 1;
-		case 'MayPreventDefault':
-			return 2;
-		default:
-			return 3;
-	}
-};
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var elm$json$Json$Encode$bool = _Json_wrap;
-var elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$bool(bool));
-	});
 var elm$html$Html$Attributes$selected = elm$html$Html$Attributes$boolProperty('selected');
-var elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$string(string));
-	});
 var elm$html$Html$Attributes$value = elm$html$Html$Attributes$stringProperty('value');
 var elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
@@ -8378,17 +9136,12 @@ var elm$html$Html$Events$alwaysStop = function (x) {
 var elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
 	return {$: 'MayStopPropagation', a: a};
 };
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
 var elm$html$Html$Events$stopPropagationOn = F2(
 	function (event, decoder) {
 		return A2(
 			elm$virtual_dom$VirtualDom$on,
 			event,
 			elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
-	});
-var elm$json$Json$Decode$at = F2(
-	function (fields, decoder) {
-		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
 	});
 var elm$html$Html$Events$targetValue = A2(
 	elm$json$Json$Decode$at,
@@ -8434,28 +9187,6 @@ var rundis$elm_bootstrap$Bootstrap$Form$Select$create = F2(
 			{items: items, options: options});
 	});
 var elm$html$Html$select = _VirtualDom_node('select');
-var elm$core$Maybe$andThen = F2(
-	function (callback, maybeValue) {
-		if (maybeValue.$ === 'Just') {
-			var value = maybeValue.a;
-			return callback(value);
-		} else {
-			return elm$core$Maybe$Nothing;
-		}
-	});
-var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
-var elm$html$Html$Attributes$classList = function (classes) {
-	return elm$html$Html$Attributes$class(
-		A2(
-			elm$core$String$join,
-			' ',
-			A2(
-				elm$core$List$map,
-				elm$core$Tuple$first,
-				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
-};
-var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
-var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var rundis$elm_bootstrap$Bootstrap$Form$Select$applyModifier = F2(
 	function (modifier, options) {
 		switch (modifier.$) {
@@ -8505,16 +9236,6 @@ var rundis$elm_bootstrap$Bootstrap$Form$Select$applyModifier = F2(
 					});
 		}
 	});
-var elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
 var rundis$elm_bootstrap$Bootstrap$Form$Select$customEventOnChange = function (tagger) {
 	return A2(
 		elm$html$Html$Events$on,
@@ -8522,20 +9243,6 @@ var rundis$elm_bootstrap$Bootstrap$Form$Select$customEventOnChange = function (t
 		A2(elm$json$Json$Decode$map, tagger, elm$html$Html$Events$targetValue));
 };
 var rundis$elm_bootstrap$Bootstrap$Form$Select$defaultOptions = {attributes: _List_Nil, custom: false, disabled: false, id: elm$core$Maybe$Nothing, onChange: elm$core$Maybe$Nothing, size: elm$core$Maybe$Nothing, validation: elm$core$Maybe$Nothing};
-var rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption = function (size) {
-	switch (size.$) {
-		case 'XS':
-			return elm$core$Maybe$Nothing;
-		case 'SM':
-			return elm$core$Maybe$Just('sm');
-		case 'MD':
-			return elm$core$Maybe$Just('md');
-		case 'LG':
-			return elm$core$Maybe$Just('lg');
-		default:
-			return elm$core$Maybe$Just('xl');
-	}
-};
 var rundis$elm_bootstrap$Bootstrap$Form$Select$sizeAttribute = F2(
 	function (isCustom, size_) {
 		var prefix = isCustom ? 'custom-select-' : 'form-control-';
@@ -8635,35 +9342,7 @@ var author$project$RCMediaEdit$viewClassesPicker = F4(
 				]),
 			A2(elm$core$List$map, selectItem, classList));
 	});
-var elm$html$Html$Attributes$for = elm$html$Html$Attributes$stringProperty('htmlFor');
 var elm$html$Html$Attributes$placeholder = elm$html$Html$Attributes$stringProperty('placeholder');
-var elm$html$Html$div = _VirtualDom_node('div');
-var rundis$elm_bootstrap$Bootstrap$Form$applyModifier = F2(
-	function (modifier, options) {
-		var value = modifier.a;
-		return _Utils_update(
-			options,
-			{
-				attributes: _Utils_ap(options.attributes, value)
-			});
-	});
-var rundis$elm_bootstrap$Bootstrap$Form$defaultOptions = {attributes: _List_Nil};
-var rundis$elm_bootstrap$Bootstrap$Form$toAttributes = function (modifiers) {
-	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Form$applyModifier, rundis$elm_bootstrap$Bootstrap$Form$defaultOptions, modifiers);
-	return _Utils_ap(
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('form-group')
-			]),
-		options.attributes);
-};
-var rundis$elm_bootstrap$Bootstrap$Form$group = F2(
-	function (options, children) {
-		return A2(
-			elm$html$Html$div,
-			rundis$elm_bootstrap$Bootstrap$Form$toAttributes(options),
-			children);
-	});
 var elm$html$Html$small = _VirtualDom_node('small');
 var rundis$elm_bootstrap$Bootstrap$Form$help = F2(
 	function (attributes, children) {
@@ -8685,17 +9364,6 @@ var rundis$elm_bootstrap$Bootstrap$Form$invalidFeedback = F2(
 				attributes),
 			children);
 	});
-var elm$html$Html$label = _VirtualDom_node('label');
-var rundis$elm_bootstrap$Bootstrap$Form$label = F2(
-	function (attributes, children) {
-		return A2(
-			elm$html$Html$label,
-			A2(
-				elm$core$List$cons,
-				elm$html$Html$Attributes$class('form-control-label'),
-				attributes),
-			children);
-	});
 var rundis$elm_bootstrap$Bootstrap$Form$Input$Attrs = function (a) {
 	return {$: 'Attrs', a: a};
 };
@@ -8710,7 +9378,6 @@ var rundis$elm_bootstrap$Bootstrap$Form$Input$danger = rundis$elm_bootstrap$Boot
 var rundis$elm_bootstrap$Bootstrap$Form$Input$Size = function (a) {
 	return {$: 'Size', a: a};
 };
-var rundis$elm_bootstrap$Bootstrap$General$Internal$SM = {$: 'SM'};
 var rundis$elm_bootstrap$Bootstrap$Form$Input$small = rundis$elm_bootstrap$Bootstrap$Form$Input$Size(rundis$elm_bootstrap$Bootstrap$General$Internal$SM);
 var rundis$elm_bootstrap$Bootstrap$Form$FormInternal$Success = {$: 'Success'};
 var rundis$elm_bootstrap$Bootstrap$Form$Input$success = rundis$elm_bootstrap$Bootstrap$Form$Input$Validation(rundis$elm_bootstrap$Bootstrap$Form$FormInternal$Success);
@@ -9095,11 +9762,6 @@ var author$project$RCMediaEdit$viewTextAreaWithLabel = function (props) {
 					]))
 			]));
 };
-var elm$html$Html$form = _VirtualDom_node('form');
-var rundis$elm_bootstrap$Bootstrap$Form$form = F2(
-	function (attributes, children) {
-		return A2(elm$html$Html$form, attributes, children);
-	});
 var author$project$RCMediaEdit$view = F3(
 	function (objectState, editTool, objectInEdit) {
 		var nameProps = {
@@ -9176,175 +9838,6 @@ var author$project$RCMediaEdit$view = F3(
 						]))
 				]));
 	});
-var elm$html$Html$p = _VirtualDom_node('p');
-var elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		elm$html$Html$Events$on,
-		'click',
-		elm$json$Json$Decode$succeed(msg));
-};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
-	return {$: 'Attrs', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Button$attrs = function (attrs_) {
-	return rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs(attrs_);
-};
-var elm$html$Html$button = _VirtualDom_node('button');
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier = F2(
-	function (modifier, options) {
-		switch (modifier.$) {
-			case 'Size':
-				var size = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						size: elm$core$Maybe$Just(size)
-					});
-			case 'Coloring':
-				var coloring = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						coloring: elm$core$Maybe$Just(coloring)
-					});
-			case 'Block':
-				return _Utils_update(
-					options,
-					{block: true});
-			case 'Disabled':
-				var val = modifier.a;
-				return _Utils_update(
-					options,
-					{disabled: val});
-			default:
-				var attrs = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						attributes: _Utils_ap(options.attributes, attrs)
-					});
-		}
-	});
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions = {attributes: _List_Nil, block: false, coloring: elm$core$Maybe$Nothing, disabled: false, size: elm$core$Maybe$Nothing};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass = function (role) {
-	switch (role.$) {
-		case 'Primary':
-			return 'primary';
-		case 'Secondary':
-			return 'secondary';
-		case 'Success':
-			return 'success';
-		case 'Info':
-			return 'info';
-		case 'Warning':
-			return 'warning';
-		case 'Danger':
-			return 'danger';
-		case 'Dark':
-			return 'dark';
-		case 'Light':
-			return 'light';
-		default:
-			return 'link';
-	}
-};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes = function (modifiers) {
-	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier, rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions, modifiers);
-	return _Utils_ap(
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$classList(
-				_List_fromArray(
-					[
-						_Utils_Tuple2('btn', true),
-						_Utils_Tuple2('btn-block', options.block),
-						_Utils_Tuple2('disabled', options.disabled)
-					])),
-				elm$html$Html$Attributes$disabled(options.disabled)
-			]),
-		_Utils_ap(
-			function () {
-				var _n0 = A2(elm$core$Maybe$andThen, rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption, options.size);
-				if (_n0.$ === 'Just') {
-					var s = _n0.a;
-					return _List_fromArray(
-						[
-							elm$html$Html$Attributes$class('btn-' + s)
-						]);
-				} else {
-					return _List_Nil;
-				}
-			}(),
-			_Utils_ap(
-				function () {
-					var _n1 = options.coloring;
-					if (_n1.$ === 'Just') {
-						if (_n1.a.$ === 'Roled') {
-							var role = _n1.a.a;
-							return _List_fromArray(
-								[
-									elm$html$Html$Attributes$class(
-									'btn-' + rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
-								]);
-						} else {
-							var role = _n1.a.a;
-							return _List_fromArray(
-								[
-									elm$html$Html$Attributes$class(
-									'btn-outline-' + rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
-								]);
-						}
-					} else {
-						return _List_Nil;
-					}
-				}(),
-				options.attributes)));
-};
-var rundis$elm_bootstrap$Bootstrap$Button$button = F2(
-	function (options, children) {
-		return A2(
-			elm$html$Html$button,
-			rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes(options),
-			children);
-	});
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
-	return {$: 'Coloring', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
-	return {$: 'Outlined', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
-var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
-var rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {
-	return {$: 'Body', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Modal$Config = function (a) {
-	return {$: 'Config', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Modal$body = F3(
-	function (attributes, children, _n0) {
-		var conf = _n0.a;
-		return rundis$elm_bootstrap$Bootstrap$Modal$Config(
-			_Utils_update(
-				conf,
-				{
-					body: elm$core$Maybe$Just(
-						rundis$elm_bootstrap$Bootstrap$Modal$Body(
-							{attributes: attributes, children: children}))
-				}));
-	});
-var rundis$elm_bootstrap$Bootstrap$Modal$config = function (closeMsg) {
-	return rundis$elm_bootstrap$Bootstrap$Modal$Config(
-		{
-			body: elm$core$Maybe$Nothing,
-			closeMsg: closeMsg,
-			footer: elm$core$Maybe$Nothing,
-			header: elm$core$Maybe$Nothing,
-			options: {centered: true, hideOnBackdropClick: true, modalSize: elm$core$Maybe$Nothing},
-			withAnimation: elm$core$Maybe$Nothing
-		});
-};
 var rundis$elm_bootstrap$Bootstrap$Modal$Footer = function (a) {
 	return {$: 'Footer', a: a};
 };
@@ -9393,371 +9886,6 @@ var rundis$elm_bootstrap$Bootstrap$Modal$titledHeader = F3(
 				]));
 	});
 var rundis$elm_bootstrap$Bootstrap$Modal$h5 = rundis$elm_bootstrap$Bootstrap$Modal$titledHeader(elm$html$Html$h5);
-var rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick = F2(
-	function (hide, _n0) {
-		var conf = _n0.a;
-		var options = conf.options;
-		return rundis$elm_bootstrap$Bootstrap$Modal$Config(
-			_Utils_update(
-				conf,
-				{
-					options: _Utils_update(
-						options,
-						{hideOnBackdropClick: hide})
-				}));
-	});
-var rundis$elm_bootstrap$Bootstrap$Modal$small = function (_n0) {
-	var conf = _n0.a;
-	var options = conf.options;
-	return rundis$elm_bootstrap$Bootstrap$Modal$Config(
-		_Utils_update(
-			conf,
-			{
-				options: _Utils_update(
-					options,
-					{
-						modalSize: elm$core$Maybe$Just(rundis$elm_bootstrap$Bootstrap$General$Internal$SM)
-					})
-			}));
-};
-var elm$virtual_dom$VirtualDom$attribute = F2(
-	function (key, value) {
-		return A2(
-			_VirtualDom_attribute,
-			_VirtualDom_noOnOrFormAction(key),
-			_VirtualDom_noJavaScriptOrHtmlUri(value));
-	});
-var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
-var elm$html$Html$Attributes$tabindex = function (n) {
-	return A2(
-		_VirtualDom_attribute,
-		'tabIndex',
-		elm$core$String$fromInt(n));
-};
-var rundis$elm_bootstrap$Bootstrap$Modal$StartClose = {$: 'StartClose'};
-var rundis$elm_bootstrap$Bootstrap$Modal$getCloseMsg = function (config_) {
-	var _n0 = config_.withAnimation;
-	if (_n0.$ === 'Just') {
-		var animationMsg = _n0.a;
-		return animationMsg(rundis$elm_bootstrap$Bootstrap$Modal$StartClose);
-	} else {
-		return config_.closeMsg;
-	}
-};
-var rundis$elm_bootstrap$Bootstrap$Modal$isFade = function (conf) {
-	return A2(
-		elm$core$Maybe$withDefault,
-		false,
-		A2(
-			elm$core$Maybe$map,
-			function (_n0) {
-				return true;
-			},
-			conf.withAnimation));
-};
-var rundis$elm_bootstrap$Bootstrap$Modal$backdrop = F2(
-	function (visibility, conf) {
-		var attributes = function () {
-			switch (visibility.$) {
-				case 'Show':
-					return _Utils_ap(
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$classList(
-								_List_fromArray(
-									[
-										_Utils_Tuple2('modal-backdrop', true),
-										_Utils_Tuple2(
-										'fade',
-										rundis$elm_bootstrap$Bootstrap$Modal$isFade(conf)),
-										_Utils_Tuple2('show', true)
-									]))
-							]),
-						conf.options.hideOnBackdropClick ? _List_fromArray(
-							[
-								elm$html$Html$Events$onClick(
-								rundis$elm_bootstrap$Bootstrap$Modal$getCloseMsg(conf))
-							]) : _List_Nil);
-				case 'StartClose':
-					return _List_fromArray(
-						[
-							elm$html$Html$Attributes$classList(
-							_List_fromArray(
-								[
-									_Utils_Tuple2('modal-backdrop', true),
-									_Utils_Tuple2('fade', true),
-									_Utils_Tuple2('show', true)
-								]))
-						]);
-				case 'FadeClose':
-					return _List_fromArray(
-						[
-							elm$html$Html$Attributes$classList(
-							_List_fromArray(
-								[
-									_Utils_Tuple2('modal-backdrop', true),
-									_Utils_Tuple2('fade', true),
-									_Utils_Tuple2('show', false)
-								]))
-						]);
-				default:
-					return _List_fromArray(
-						[
-							elm$html$Html$Attributes$classList(
-							_List_fromArray(
-								[
-									_Utils_Tuple2('modal-backdrop', false),
-									_Utils_Tuple2(
-									'fade',
-									rundis$elm_bootstrap$Bootstrap$Modal$isFade(conf)),
-									_Utils_Tuple2('show', false)
-								]))
-						]);
-			}
-		}();
-		return _List_fromArray(
-			[
-				A2(elm$html$Html$div, attributes, _List_Nil)
-			]);
-	});
-var elm$core$String$contains = _String_contains;
-var elm$json$Json$Decode$andThen = _Json_andThen;
-var elm$json$Json$Decode$fail = _Json_fail;
-var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$className = A2(
-	elm$json$Json$Decode$at,
-	_List_fromArray(
-		['className']),
-	elm$json$Json$Decode$string);
-var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$target = function (decoder) {
-	return A2(elm$json$Json$Decode$field, 'target', decoder);
-};
-var rundis$elm_bootstrap$Bootstrap$Modal$containerClickDecoder = function (closeMsg) {
-	return A2(
-		elm$json$Json$Decode$andThen,
-		function (c) {
-			return A2(elm$core$String$contains, 'elm-bootstrap-modal', c) ? elm$json$Json$Decode$succeed(closeMsg) : elm$json$Json$Decode$fail('ignoring');
-		},
-		rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$target(rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$className));
-};
-var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
-var rundis$elm_bootstrap$Bootstrap$Modal$display = F2(
-	function (visibility, conf) {
-		switch (visibility.$) {
-			case 'Show':
-				return _List_fromArray(
-					[
-						A2(elm$html$Html$Attributes$style, 'pointer-events', 'none'),
-						A2(elm$html$Html$Attributes$style, 'display', 'block'),
-						elm$html$Html$Attributes$classList(
-						_List_fromArray(
-							[
-								_Utils_Tuple2('modal', true),
-								_Utils_Tuple2(
-								'fade',
-								rundis$elm_bootstrap$Bootstrap$Modal$isFade(conf)),
-								_Utils_Tuple2('show', true)
-							]))
-					]);
-			case 'StartClose':
-				return _List_fromArray(
-					[
-						A2(elm$html$Html$Attributes$style, 'pointer-events', 'none'),
-						A2(elm$html$Html$Attributes$style, 'display', 'block'),
-						elm$html$Html$Attributes$classList(
-						_List_fromArray(
-							[
-								_Utils_Tuple2('modal', true),
-								_Utils_Tuple2('fade', true),
-								_Utils_Tuple2('show', true)
-							]))
-					]);
-			case 'FadeClose':
-				return _List_fromArray(
-					[
-						A2(elm$html$Html$Attributes$style, 'pointer-events', 'none'),
-						A2(elm$html$Html$Attributes$style, 'display', 'block'),
-						elm$html$Html$Attributes$classList(
-						_List_fromArray(
-							[
-								_Utils_Tuple2('modal', true),
-								_Utils_Tuple2('fade', true),
-								_Utils_Tuple2('show', false)
-							])),
-						A2(
-						elm$html$Html$Events$on,
-						'transitionend',
-						elm$json$Json$Decode$succeed(conf.closeMsg))
-					]);
-			default:
-				return _List_fromArray(
-					[
-						A2(elm$html$Html$Attributes$style, 'height', '0px'),
-						A2(elm$html$Html$Attributes$style, 'display', 'block'),
-						elm$html$Html$Attributes$classList(
-						_List_fromArray(
-							[
-								_Utils_Tuple2('modal', true),
-								_Utils_Tuple2(
-								'fade',
-								rundis$elm_bootstrap$Bootstrap$Modal$isFade(conf)),
-								_Utils_Tuple2('show', false)
-							]))
-					]);
-		}
-	});
-var rundis$elm_bootstrap$Bootstrap$Modal$modalClass = function (size) {
-	var _n0 = rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption(size);
-	if (_n0.$ === 'Just') {
-		var s = _n0.a;
-		return _List_fromArray(
-			[
-				elm$html$Html$Attributes$class('modal-' + s)
-			]);
-	} else {
-		return _List_Nil;
-	}
-};
-var rundis$elm_bootstrap$Bootstrap$Modal$modalAttributes = function (options) {
-	return _Utils_ap(
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$classList(
-				_List_fromArray(
-					[
-						_Utils_Tuple2('modal-dialog', true),
-						_Utils_Tuple2('modal-dialog-centered', options.centered)
-					])),
-				A2(elm$html$Html$Attributes$style, 'pointer-events', 'auto')
-			]),
-		A2(
-			elm$core$Maybe$withDefault,
-			_List_Nil,
-			A2(elm$core$Maybe$map, rundis$elm_bootstrap$Bootstrap$Modal$modalClass, options.modalSize)));
-};
-var rundis$elm_bootstrap$Bootstrap$Modal$renderBody = function (maybeBody) {
-	if (maybeBody.$ === 'Just') {
-		var cfg = maybeBody.a.a;
-		return elm$core$Maybe$Just(
-			A2(
-				elm$html$Html$div,
-				A2(
-					elm$core$List$cons,
-					elm$html$Html$Attributes$class('modal-body'),
-					cfg.attributes),
-				cfg.children));
-	} else {
-		return elm$core$Maybe$Nothing;
-	}
-};
-var rundis$elm_bootstrap$Bootstrap$Modal$renderFooter = function (maybeFooter) {
-	if (maybeFooter.$ === 'Just') {
-		var cfg = maybeFooter.a.a;
-		return elm$core$Maybe$Just(
-			A2(
-				elm$html$Html$div,
-				A2(
-					elm$core$List$cons,
-					elm$html$Html$Attributes$class('modal-footer'),
-					cfg.attributes),
-				cfg.children));
-	} else {
-		return elm$core$Maybe$Nothing;
-	}
-};
-var rundis$elm_bootstrap$Bootstrap$Modal$closeButton = function (closeMsg) {
-	return A2(
-		elm$html$Html$button,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('close'),
-				elm$html$Html$Events$onClick(closeMsg)
-			]),
-		_List_fromArray(
-			[
-				elm$html$Html$text('×')
-			]));
-};
-var rundis$elm_bootstrap$Bootstrap$Modal$renderHeader = function (conf_) {
-	var _n0 = conf_.header;
-	if (_n0.$ === 'Just') {
-		var cfg = _n0.a.a;
-		return elm$core$Maybe$Just(
-			A2(
-				elm$html$Html$div,
-				A2(
-					elm$core$List$cons,
-					elm$html$Html$Attributes$class('modal-header'),
-					cfg.attributes),
-				_Utils_ap(
-					cfg.children,
-					_List_fromArray(
-						[
-							rundis$elm_bootstrap$Bootstrap$Modal$closeButton(
-							rundis$elm_bootstrap$Bootstrap$Modal$getCloseMsg(conf_))
-						]))));
-	} else {
-		return elm$core$Maybe$Nothing;
-	}
-};
-var rundis$elm_bootstrap$Bootstrap$Modal$view = F2(
-	function (visibility, _n0) {
-		var conf = _n0.a;
-		return A2(
-			elm$html$Html$div,
-			_List_Nil,
-			_Utils_ap(
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$div,
-						_Utils_ap(
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$tabindex(-1)
-								]),
-							A2(rundis$elm_bootstrap$Bootstrap$Modal$display, visibility, conf)),
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$div,
-								_Utils_ap(
-									_List_fromArray(
-										[
-											A2(elm$html$Html$Attributes$attribute, 'role', 'document'),
-											elm$html$Html$Attributes$class('elm-bootstrap-modal')
-										]),
-									_Utils_ap(
-										rundis$elm_bootstrap$Bootstrap$Modal$modalAttributes(conf.options),
-										conf.options.hideOnBackdropClick ? _List_fromArray(
-											[
-												A2(
-												elm$html$Html$Events$on,
-												'click',
-												rundis$elm_bootstrap$Bootstrap$Modal$containerClickDecoder(conf.closeMsg))
-											]) : _List_Nil)),
-								_List_fromArray(
-									[
-										A2(
-										elm$html$Html$div,
-										_List_fromArray(
-											[
-												elm$html$Html$Attributes$class('modal-content')
-											]),
-										A2(
-											elm$core$List$filterMap,
-											elm$core$Basics$identity,
-											_List_fromArray(
-												[
-													rundis$elm_bootstrap$Bootstrap$Modal$renderHeader(conf),
-													rundis$elm_bootstrap$Bootstrap$Modal$renderBody(conf.body),
-													rundis$elm_bootstrap$Bootstrap$Modal$renderFooter(conf.footer)
-												])))
-									]))
-							]))
-					]),
-				A2(rundis$elm_bootstrap$Bootstrap$Modal$backdrop, visibility, conf)));
-	});
 var author$project$Main$viewMediaDialog = F2(
 	function (exposition, _n0) {
 		var visibility = _n0.a;
@@ -10548,13 +10676,13 @@ var author$project$Main$view = function (model) {
 				elm$html$Html$text(saveButtonText)
 			]));
 	var mediaDialogHtml = function () {
-		var _n0 = model.mediaDialog;
-		if ((_n0.b.$ === 'Just') && (_n0.c.$ === 'Just')) {
-			var vis = _n0.a;
-			var _n1 = _n0.b.a;
-			var obj = _n1.a;
-			var objId = _n1.b;
-			var valid = _n0.c.a;
+		var _n1 = model.mediaDialog;
+		if ((_n1.b.$ === 'Just') && (_n1.c.$ === 'Just')) {
+			var vis = _n1.a;
+			var _n2 = _n1.b.a;
+			var obj = _n2.a;
+			var objId = _n2.b;
+			var valid = _n1.c.a;
 			return A2(
 				author$project$Main$viewMediaDialog,
 				model.exposition,
@@ -10566,12 +10694,24 @@ var author$project$Main$view = function (model) {
 			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
 		}
 	}();
+	var confirmDialogHtml = function () {
+		var _n0 = model.confirmDialog;
+		if ((_n0.b.$ === 'Just') && (_n0.c.$ === 'Just')) {
+			var visibility = _n0.a;
+			var content = _n0.b.a;
+			var messages = _n0.c.a;
+			return A3(author$project$Main$viewConfirmDialog, visibility, content, messages);
+		} else {
+			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
+		}
+	}();
 	return A2(
 		elm$html$Html$div,
 		_List_Nil,
 		_List_fromArray(
 			[
 				mediaDialogHtml,
+				confirmDialogHtml,
 				A3(author$project$Main$viewUpload, author$project$Main$UploadMediaFileSelect, 'Upload Media', model.mediaUploadStatus),
 				A3(author$project$Main$viewUpload, author$project$Main$UploadImportFileSelect, 'Import Document', model.importUploadStatus),
 				A2(author$project$RCMediaList$view, model.exposition.media, author$project$Main$makeTableMessages),

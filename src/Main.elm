@@ -26,7 +26,7 @@ type alias Model =
     { exposition : RCExposition
     , editGeneration : Int
     , mediaDialog : ( Modal.Visibility, Maybe ( RCMediaObject, Int ), Maybe RCMediaObjectViewState )
-    , confirmDialogVisibility : ( Modal.Visibility, Maybe UserConfirm.ConfirmDialogContent, Maybe (UserConfirm.Messages Msg) )
+    , confirmDialog : ( Modal.Visibility, Maybe UserConfirm.ConfirmDialogContent, Maybe (UserConfirm.Messages Msg) )
     , weave : Int
     , research : Int
     , mediaUploadStatus : UploadStatus
@@ -204,7 +204,7 @@ makeMediaEditFun obj objId field input =
             MediaEdit ( String.fromInt objId, { obj | copyright = input } )
 
 
-makeTableMessages : RCMediaList.TableMessages Msg -> Msg
+makeTableMessages : RCMediaList.TableMessages Msg
 makeTableMessages =
     { editObject = MediaDialog
     , deleteObject = ConfirmMediaDelete
@@ -541,8 +541,9 @@ update msg model =
                     , reject = "keep"
                     }
 
+                messages : UserConfirm.Messages Msg
                 messages =
-                    { confirm = MediaDelete obj
+                    { confirm = MediaDelete object
                     , reject = CloseConfirmDialog
                     }
             in
@@ -609,13 +610,7 @@ view model =
 
         confirmDialogHtml =
             case model.confirmDialog of
-                ( visibility, Just content, Just message ) ->
-                    let
-                        messages =
-                            { confirm = message -- this is the action to be taken if user accepts
-                            , reject = CloseConfirmDialog
-                            }
-                    in
+                ( visibility, Just content, Just messages ) ->
                     viewConfirmDialog visibility content messages
 
                 _ ->
