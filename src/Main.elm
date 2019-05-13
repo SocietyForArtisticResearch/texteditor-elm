@@ -19,14 +19,14 @@ import RCMediaEdit
 import RCMediaList
 import Regex
 import String.Extra as Str
-import UserConfirmation
+import UserConfirm
 
 
 type alias Model =
     { exposition : RCExposition
     , editGeneration : Int
     , mediaDialog : ( Modal.Visibility, Maybe ( RCMediaObject, Int ), Maybe RCMediaObjectViewState )
-    , confirmDialogVisibility : ( Modal.Visibility, Maybe Userconfirmation.ConfirmDialogContent, Maybe Userconfirmation.Messsages )
+    , confirmDialogVisibility : ( Modal.Visibility, Maybe UserConfirm.ConfirmDialogContent, Maybe (UserConfirm.Messages Msg) )
     , weave : Int
     , research : Int
     , mediaUploadStatus : UploadStatus
@@ -179,7 +179,7 @@ type Msg
     | SavedExposition (Result Http.Error ())
     | SaveMediaEdit Exposition.RCMediaObject
     | SavedMediaEdit (Result Http.Error String)
-    | AskUserConfirm Userconfirmation.ConfirmDialogContent Msg
+    | ConfirmMediaDelete Exposition.RCMediaObject
     | CloseConfirmDialog
 
 
@@ -204,20 +204,10 @@ makeMediaEditFun obj objId field input =
             MediaEdit ( String.fromInt objId, { obj | copyright = input } )
 
 
-makeTableMessages : RCMediaList.TableMessages Msg
+makeTableMessages : RCMediaList.TableMessages Msg -> Msg
 makeTableMessages =
-    let
-        confirmContent =
-            { prompt = "Are you sure?"
-            , confirm = "delete"
-            , reject = "keep"
-            }
-
-        confirmAndDelete =
-            AskUserConfirm confirmContent MediaDelete
-    in
     { editObject = MediaDialog
-    , deleteObject = confirmAndDelete
+    , deleteObject = ConfirmMediaDelete
     , insertObject = InsertTool
     }
 
@@ -541,13 +531,25 @@ update msg model =
                             Debug.log "error uploading: " e
                     in
                     ( model, Cmd.none )
-                        
-        AskUserConfirm content message ->
-            ( { model | confirmDialog = (Modal.visible, Just content, Just message) }, Cmd.none )
-                
-            
+
+        ConfirmMediaDelete object ->
+            let
+                content : UserConfirm.ConfirmDialogContent
+                content =
+                    { prompt = object.name ++ " is about to be deleted. Are you sure?"
+                    , confirm = "delete"
+                    , reject = "keep"
+                    }
+
+                messages =
+                    { confirm = MediaDelete obj
+                    , reject = CloseConfirmDialog
+                    }
+            in
+            ( { model | confirmDialog = ( Modal.shown, Just content, Just messages ) }, Cmd.none )
+
         CloseConfirmDialog ->
-            ( { model |  = ( Modal.hidden, Nothing, Nothing ) }, Cmd.none )
+            ( { model | confirmDialog = ( Modal.hidden, Nothing, Nothing ) }, Cmd.none )
 
 
 viewMediaDialog : RCExposition -> ( Modal.Visibility, ( RCMediaObject, Int ), RCMediaObjectViewState ) -> Html Msg
@@ -571,11 +573,11 @@ viewMediaDialog exposition ( visibility, ( object, objId ), viewObjectState ) =
         |> Modal.view visibility
 
 
-viewConfirmDialog : Modal.Visibility -> Userconfirmation.ConfirmDialogContent -> Userconfirmation.Message Msg -> Html Msg
+viewConfirmDialog : Modal.Visibility -> UserConfirm.ConfirmDialogContent -> UserConfirm.Messages Msg -> Html Msg
 viewConfirmDialog visibility content messages =
     let
         confirmViewBody =
-            Userconfirmation.view content messages
+            UserConfirm.view content messages
     in
     Modal.config CloseConfirmDialog
         |> Modal.small
