@@ -28,11 +28,12 @@ be made outside of elm.
 # Todo
 
 Casper:
-- When deleting object, ask for confirmation 
+- When deleting object, ask for confirmation (done, but on cancelling goes to redirect editor.html instead of styaing in page ??) 
 - Tabs ? Switch Textarea/Codemirror/CSS Edit
 - Buttons
 - Styling
 - media file types in select dialog
+
 - Drag and drop of media (postpone)
 
 Luc:

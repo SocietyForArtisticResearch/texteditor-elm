@@ -8180,6 +8180,7 @@ var author$project$Main$update = F2(
 					}
 				case 'MediaDelete':
 					var obj = msg.a;
+					var _n22 = A2(elm$core$Debug$log, 'hmm, after this there is a problem', obj);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				case 'InsertTool':
 					var obj = msg.a;
@@ -8255,7 +8256,7 @@ var author$project$Main$update = F2(
 							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 					} else {
 						var e = result.a;
-						var _n25 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n26 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
 				case 'UploadedImport':
@@ -8275,7 +8276,7 @@ var author$project$Main$update = F2(
 							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 					} else {
 						var e = result.a;
-						var _n27 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n28 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
 				case 'ConfirmMediaDelete':
@@ -8285,8 +8286,6 @@ var author$project$Main$update = F2(
 						reject: author$project$Main$CloseConfirmDialog
 					};
 					var content = {confirm: 'delete', prompt: object.name + ' is about to be deleted. Are you sure?', reject: 'keep'};
-					var _n28 = A2(elm$core$Debug$log, 'messages', messages);
-					var _n29 = A2(elm$core$Debug$log, 'object', object);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,

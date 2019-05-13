@@ -446,7 +446,10 @@ update msg model =
                     ( addProblem model Problems.CannotUpdateMedia, Cmd.none )
 
         MediaDelete obj ->
-            -- TODO: delete in backend
+            let
+                _ =
+                    Debug.log "hmm, after this there is a problem" obj
+            in
             ( model, Cmd.none )
 
         InsertTool obj ->
@@ -544,13 +547,6 @@ update msg model =
                     { confirm = MediaDelete object
                     , reject = CloseConfirmDialog
                     }
-
-                -- DEBUG
-                _ =
-                    Debug.log "messages" messages
-
-                _ =
-                    Debug.log "object" object
             in
             ( { model | confirmDialog = ( Modal.shown, Just content, Just messages ) }, Cmd.none )
 

@@ -10,12 +10,17 @@ import Html.Events exposing (onClick)
 
 
 -- this is a view that can be used to get user confirmation
+-- Messages: actions that are taken in response to user feedback
 
 
 type alias Messages msg =
     { confirm : msg
     , reject : msg
     }
+
+
+
+-- text displayed to user
 
 
 type alias ConfirmDialogContent =
