@@ -8285,6 +8285,8 @@ var author$project$Main$update = F2(
 						reject: author$project$Main$CloseConfirmDialog
 					};
 					var content = {confirm: 'delete', prompt: object.name + ' is about to be deleted. Are you sure?', reject: 'keep'};
+					var _n28 = A2(elm$core$Debug$log, 'messages', messages);
+					var _n29 = A2(elm$core$Debug$log, 'object', object);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -8526,12 +8528,12 @@ var rundis$elm_bootstrap$Bootstrap$Button$button = F2(
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
 	return {$: 'Coloring', a: a};
 };
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger = {$: 'Danger'};
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
 	return {$: 'Outlined', a: a};
 };
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
-var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
+var rundis$elm_bootstrap$Bootstrap$Button$outlineDanger = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary = {$: 'Secondary'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
@@ -8621,7 +8623,7 @@ var author$project$UserConfirm$view = F2(
 									rundis$elm_bootstrap$Bootstrap$Button$button,
 									_List_fromArray(
 										[
-											rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary,
+											rundis$elm_bootstrap$Bootstrap$Button$outlineDanger,
 											rundis$elm_bootstrap$Bootstrap$Button$attrs(
 											_List_fromArray(
 												[
@@ -8652,11 +8654,6 @@ var author$project$UserConfirm$view = F2(
 						]))
 				]));
 	});
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
-	return {$: 'Roled', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Button$primary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
 var rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {
 	return {$: 'Body', a: a};
 };
@@ -8686,21 +8683,6 @@ var rundis$elm_bootstrap$Bootstrap$Modal$config = function (closeMsg) {
 			withAnimation: elm$core$Maybe$Nothing
 		});
 };
-var rundis$elm_bootstrap$Bootstrap$Modal$Footer = function (a) {
-	return {$: 'Footer', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Modal$footer = F3(
-	function (attributes, children, _n0) {
-		var conf = _n0.a;
-		return rundis$elm_bootstrap$Bootstrap$Modal$Config(
-			_Utils_update(
-				conf,
-				{
-					footer: elm$core$Maybe$Just(
-						rundis$elm_bootstrap$Bootstrap$Modal$Footer(
-							{attributes: attributes, children: children}))
-				}));
-	});
 var rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick = F2(
 	function (hide, _n0) {
 		var conf = _n0.a;
@@ -9078,42 +9060,21 @@ var author$project$Main$viewConfirmDialog = F3(
 			rundis$elm_bootstrap$Bootstrap$Modal$view,
 			visibility,
 			A3(
-				rundis$elm_bootstrap$Bootstrap$Modal$footer,
+				rundis$elm_bootstrap$Bootstrap$Modal$body,
 				_List_Nil,
 				_List_fromArray(
 					[
 						A2(
-						rundis$elm_bootstrap$Bootstrap$Button$button,
+						elm$html$Html$div,
+						_List_Nil,
 						_List_fromArray(
-							[
-								rundis$elm_bootstrap$Bootstrap$Button$primary,
-								rundis$elm_bootstrap$Bootstrap$Button$attrs(
-								_List_fromArray(
-									[
-										elm$html$Html$Events$onClick(author$project$Main$CloseConfirmDialog)
-									]))
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('close ???')
-							]))
+							[confirmViewBody]))
 					]),
-				A3(
-					rundis$elm_bootstrap$Bootstrap$Modal$body,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$div,
-							_List_Nil,
-							_List_fromArray(
-								[confirmViewBody]))
-						]),
-					A2(
-						rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
-						true,
-						rundis$elm_bootstrap$Bootstrap$Modal$small(
-							rundis$elm_bootstrap$Bootstrap$Modal$config(author$project$Main$CloseConfirmDialog))))));
+				A2(
+					rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
+					true,
+					rundis$elm_bootstrap$Bootstrap$Modal$small(
+						rundis$elm_bootstrap$Bootstrap$Modal$config(author$project$Main$CloseConfirmDialog)))));
 	});
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
 var author$project$Main$MediaEdit = function (a) {
@@ -9881,6 +9842,24 @@ var author$project$RCMediaEdit$view = F3(
 				]));
 	});
 var elm$html$Html$p = _VirtualDom_node('p');
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
+var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
+var rundis$elm_bootstrap$Bootstrap$Modal$Footer = function (a) {
+	return {$: 'Footer', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Modal$footer = F3(
+	function (attributes, children, _n0) {
+		var conf = _n0.a;
+		return rundis$elm_bootstrap$Bootstrap$Modal$Config(
+			_Utils_update(
+				conf,
+				{
+					footer: elm$core$Maybe$Just(
+						rundis$elm_bootstrap$Bootstrap$Modal$Footer(
+							{attributes: attributes, children: children}))
+				}));
+	});
 var elm$html$Html$h5 = _VirtualDom_node('h5');
 var rundis$elm_bootstrap$Bootstrap$Modal$Header = function (a) {
 	return {$: 'Header', a: a};
@@ -10002,9 +9981,6 @@ var author$project$Main$viewUpload = F3(
 		}
 	});
 var elm$html$Html$span = _VirtualDom_node('span');
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger = {$: 'Danger'};
-var rundis$elm_bootstrap$Bootstrap$Button$outlineDanger = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Info = {$: 'Info'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlineInfo = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Info));

@@ -34,7 +34,7 @@ view dialogText messages =
                 [ text dialogText.prompt ]
             , Form.group [ Form.attrs [ id "confirmButtons" ] ]
                 [ Button.button
-                    [ Button.outlinePrimary
+                    [ Button.outlineDanger
                     , Button.attrs [ onClick messages.confirm ]
                     ]
                     [ text dialogText.confirm ]

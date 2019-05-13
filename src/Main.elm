@@ -534,18 +534,23 @@ update msg model =
 
         ConfirmMediaDelete object ->
             let
-                content : UserConfirm.ConfirmDialogContent
                 content =
                     { prompt = object.name ++ " is about to be deleted. Are you sure?"
                     , confirm = "delete"
                     , reject = "keep"
                     }
 
-                messages : UserConfirm.Messages Msg
                 messages =
                     { confirm = MediaDelete object
                     , reject = CloseConfirmDialog
                     }
+
+                -- DEBUG
+                _ =
+                    Debug.log "messages" messages
+
+                _ =
+                    Debug.log "object" object
             in
             ( { model | confirmDialog = ( Modal.shown, Just content, Just messages ) }, Cmd.none )
 
@@ -584,13 +589,6 @@ viewConfirmDialog visibility content messages =
         |> Modal.small
         |> Modal.hideOnBackdropClick True
         |> Modal.body [] [ div [] [ confirmViewBody ] ]
-        |> Modal.footer []
-            [ Button.button
-                [ Button.primary
-                , Button.attrs [ onClick CloseConfirmDialog ]
-                ]
-                [ text "close ???" ]
-            ]
         |> Modal.view visibility
 
 
