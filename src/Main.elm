@@ -591,6 +591,13 @@ viewConfirmDialog visibility content messages =
         |> Modal.small
         |> Modal.hideOnBackdropClick True
         |> Modal.body [] [ div [] [ confirmViewBody ] ]
+        |> Modal.footer []
+            [ Button.button
+                [ Button.outlinePrimary
+                , Button.attrs [ onClick CloseConfirmDialog ]
+                ]
+                [ text "Close" ]
+            ]
         |> Modal.view visibility
 
 
