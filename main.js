@@ -9081,7 +9081,7 @@ var author$project$Main$viewConfirmDialog = F3(
 			author$project$UserConfirm$view,
 			content,
 			{confirm: messages.confirm, reject: author$project$Main$CloseConfirmDialog});
-		return A2(
+		var modal = A2(
 			rundis$elm_bootstrap$Bootstrap$Modal$view,
 			visibility,
 			A3(
@@ -9121,6 +9121,8 @@ var author$project$Main$viewConfirmDialog = F3(
 						true,
 						rundis$elm_bootstrap$Bootstrap$Modal$small(
 							rundis$elm_bootstrap$Bootstrap$Modal$config(author$project$Main$CloseConfirmDialog))))));
+		var _n0 = A2(elm$core$Debug$log, 'modal view is', modal);
+		return modal;
 	});
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
 var author$project$Main$MediaEdit = function (a) {
@@ -10733,11 +10735,7 @@ var author$project$Main$view = function (model) {
 			var messages = _n0.c.a;
 			return A3(author$project$Main$viewConfirmDialog, visibility, content, messages);
 		} else {
-			return A3(
-				author$project$Main$viewConfirmDialog,
-				rundis$elm_bootstrap$Bootstrap$Modal$hidden,
-				{confirm: 'ok', prompt: 'I\'m hidden', reject: 'very ok'},
-				{confirm: author$project$Main$CloseConfirmDialog, reject: author$project$Main$CloseConfirmDialog});
+			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
 		}
 	}();
 	return A2(
