@@ -221,7 +221,6 @@ update msg model =
     -- let
     --     _ =
     --         Debug.log "update: " msg
-
     --     _ =
     --         Debug.log "model: " model
     -- in
@@ -630,7 +629,7 @@ view model =
                     viewConfirmDialog visibility content messages
 
                 _ ->
-                    div [] []
+                    viewConfirmDialog Modal.hidden { prompt = "I'm hidden", confirm = "ok", reject = "very ok" } { confirm = CloseConfirmDialog, reject = CloseConfirmDialog }
 
         saveButtonText =
             if model.saved then
