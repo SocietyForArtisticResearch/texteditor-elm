@@ -10733,7 +10733,11 @@ var author$project$Main$view = function (model) {
 			var messages = _n0.c.a;
 			return A3(author$project$Main$viewConfirmDialog, visibility, content, messages);
 		} else {
-			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
+			return A3(
+				author$project$Main$viewConfirmDialog,
+				rundis$elm_bootstrap$Bootstrap$Modal$hidden,
+				{confirm: 'ok', prompt: 'I\'m hidden', reject: 'very ok'},
+				{confirm: author$project$Main$CloseConfirmDialog, reject: author$project$Main$CloseConfirmDialog});
 		}
 	}();
 	return A2(
