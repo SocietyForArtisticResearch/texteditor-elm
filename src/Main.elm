@@ -587,19 +587,25 @@ viewConfirmDialog visibility content messages =
     let
         confirmViewBody =
             UserConfirm.view content { confirm = messages.confirm, reject = CloseConfirmDialog }
+
+        modal =
+            Modal.config CloseConfirmDialog
+                |> Modal.small
+                |> Modal.hideOnBackdropClick True
+                |> Modal.body [] [ div [] [ confirmViewBody ] ]
+                |> Modal.footer []
+                    [ Button.button
+                        [ Button.outlinePrimary
+                        , Button.attrs [ onClick CloseConfirmDialog ]
+                        ]
+                        [ text "Close" ]
+                    ]
+                |> Modal.view visibility
+
+        _ =
+            Debug.log "modal view is" modal
     in
-    Modal.config CloseConfirmDialog
-        |> Modal.small
-        |> Modal.hideOnBackdropClick True
-        |> Modal.body [] [ div [] [ confirmViewBody ] ]
-        |> Modal.footer []
-            [ Button.button
-                [ Button.outlinePrimary
-                , Button.attrs [ onClick CloseConfirmDialog ]
-                ]
-                [ text "Close" ]
-            ]
-        |> Modal.view visibility
+    modal
 
 
 viewUpload : Msg -> String -> UploadStatus -> Html Msg
@@ -629,7 +635,8 @@ view model =
                     viewConfirmDialog visibility content messages
 
                 _ ->
-                    viewConfirmDialog Modal.hidden { prompt = "I'm hidden", confirm = "ok", reject = "very ok" } { confirm = CloseConfirmDialog, reject = CloseConfirmDialog }
+                    -- maybe the view needs to exist in any state ?
+                    div [] []
 
         saveButtonText =
             if model.saved then
