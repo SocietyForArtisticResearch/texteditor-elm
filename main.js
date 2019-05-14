@@ -9078,7 +9078,10 @@ var rundis$elm_bootstrap$Bootstrap$Modal$view = F2(
 	});
 var author$project$Main$viewConfirmDialog = F3(
 	function (visibility, content, messages) {
-		var confirmViewBody = A2(author$project$UserConfirm$view, content, messages);
+		var confirmViewBody = A2(
+			author$project$UserConfirm$view,
+			content,
+			{confirm: messages.confirm, reject: author$project$Main$CloseConfirmDialog});
 		return A2(
 			rundis$elm_bootstrap$Bootstrap$Modal$view,
 			visibility,

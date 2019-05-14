@@ -218,11 +218,13 @@ makeTableMessages =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    let _ = Debug.log "update: " msg
+    let
+        _ =
+            Debug.log "update: " msg
 
-        _ = Debug.log "model: " model
-
-            in
+        _ =
+            Debug.log "model: " model
+    in
     case msg of
         GotConvertedHtml html ->
             ( { model | exposition = Exposition.withHtml model.exposition html }
@@ -585,7 +587,7 @@ viewConfirmDialog : Modal.Visibility -> UserConfirm.ConfirmDialogContent -> User
 viewConfirmDialog visibility content messages =
     let
         confirmViewBody =
-            UserConfirm.view content messages
+            UserConfirm.view content { confirm = messages.confirm, reject = CloseConfirmDialog }
     in
     Modal.config CloseConfirmDialog
         |> Modal.small
