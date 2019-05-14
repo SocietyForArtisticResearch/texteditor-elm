@@ -32,6 +32,8 @@ type alias ConfirmDialogContent =
 
 view : ConfirmDialogContent -> Messages msg -> Html msg
 view dialogText messages =
+    let _ = Debug.log "this is the reject message" messages.reject
+            in
     Form.form []
         [ Form.group []
             [ Form.label
