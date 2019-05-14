@@ -218,6 +218,11 @@ makeTableMessages =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
+    let _ = Debug.log "update: " msg
+
+        _ = Debug.log "model: " model
+
+            in
     case msg of
         GotConvertedHtml html ->
             ( { model | exposition = Exposition.withHtml model.exposition html }
@@ -542,12 +547,16 @@ update msg model =
 
                 messages =
                     { confirm = MediaDelete object
-                    , reject = CloseConfirmDialog
+                    , reject = CloseConfirmDialog -- rename
                     }
             in
             ( { model | confirmDialog = ( Modal.shown, Just content, Just messages ) }, Cmd.none )
 
         CloseConfirmDialog ->
+            let
+                _ =
+                    Debug.log "closeConfirmDialog" model
+            in
             ( { model | confirmDialog = ( Modal.hidden, Nothing, Nothing ) }, Cmd.none )
 
 
