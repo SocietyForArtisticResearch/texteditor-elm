@@ -1,14 +1,16 @@
 port module Main exposing (Msg(..), main, update, view)
 
 import Bootstrap.Button as Button
+import Bootstrap.Form as Form
 import Bootstrap.Modal as Modal
+import Bootstrap.Utilities.Spacing as Spacing
 import Browser
 import Dict
 import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectViewState, addMediaUserClasses, incContentVersion)
 import File exposing (File)
 import File.Select as Select
 import Html exposing (Html, button, div, p, span, text)
-import Html.Attributes exposing (attribute)
+import Html.Attributes exposing (attribute, for, id)
 import Html.Events exposing (on, onClick, onInput)
 import Http
 import Json.Decode as D
@@ -19,14 +21,13 @@ import RCMediaEdit
 import RCMediaList
 import Regex
 import String.Extra as Str
-import UserConfirm
 
 
 type alias Model =
     { exposition : RCExposition
     , editGeneration : Int
     , mediaDialog : ( Modal.Visibility, Maybe ( RCMediaObject, Int ), Maybe RCMediaObjectViewState )
-    , confirmDialog : ( Modal.Visibility, Maybe UserConfirm.ConfirmDialogContent, Maybe (UserConfirm.Messages Msg) )
+    , confirmDialog : ( Modal.Visibility, Maybe ConfirmDialogContent, Maybe (ConfirmMessages Msg) )
     , weave : Int
     , research : Int
     , mediaUploadStatus : UploadStatus
@@ -572,11 +573,11 @@ viewMediaDialog exposition ( visibility, ( object, objId ), viewObjectState ) =
         |> Modal.view visibility
 
 
-viewConfirmDialog : Modal.Visibility -> UserConfirm.ConfirmDialogContent -> UserConfirm.Messages Msg -> Html Msg
+viewConfirmDialog : Modal.Visibility -> ConfirmDialogContent -> ConfirmMessages Msg -> Html Msg
 viewConfirmDialog visibility content messages =
     let
         confirmViewBody =
-            UserConfirm.view content messages
+            viewConfirm content messages
     in
     Modal.config CloseConfirmDialog
         |> Modal.small
@@ -631,4 +632,52 @@ view model =
         , viewUpload UploadImportFileSelect "Import Document" model.importUploadStatus
         , RCMediaList.view model.exposition.media makeTableMessages
         , saveButton
+        ]
+
+
+
+-- this is a view that can be used to get user confirmation
+-- Messages: actions that are taken in response to user feedback
+
+
+type alias ConfirmMessages msg =
+    { confirm : msg
+    , reject : msg
+    }
+
+
+
+-- text displayed to user
+
+
+type alias ConfirmDialogContent =
+    { prompt : String
+    , confirm : String
+    , reject : String
+    }
+
+
+viewConfirm : ConfirmDialogContent -> ConfirmMessages msg -> Html msg
+viewConfirm dialogText messages =
+    Form.form []
+        [ Form.group []
+            [ Form.label
+                [ for "confirmButtons" ]
+                [ text dialogText.prompt ]
+            , Form.group [ Form.attrs [ id "confirmButtons" ] ]
+                [ Button.button
+                    [ Button.outlineDanger
+                    , Button.attrs [ onClick messages.confirm ]
+                    ]
+                    [ text dialogText.confirm ]
+                , Button.button
+                    [ Button.outlineSecondary
+                    , Button.attrs
+                        [ onClick messages.reject
+                        , Spacing.ml1
+                        ]
+                    ]
+                    [ text dialogText.reject ]
+                ]
+            ]
         ]

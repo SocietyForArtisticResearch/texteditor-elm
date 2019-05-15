@@ -8587,7 +8587,7 @@ var rundis$elm_bootstrap$Bootstrap$Form$label = F2(
 			children);
 	});
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1 = elm$html$Html$Attributes$class('ml-1');
-var author$project$UserConfirm$view = F2(
+var author$project$Main$viewConfirm = F2(
 	function (dialogText, messages) {
 		return A2(
 			rundis$elm_bootstrap$Bootstrap$Form$form,
@@ -9057,7 +9057,7 @@ var rundis$elm_bootstrap$Bootstrap$Modal$view = F2(
 	});
 var author$project$Main$viewConfirmDialog = F3(
 	function (visibility, content, messages) {
-		var confirmViewBody = A2(author$project$UserConfirm$view, content, messages);
+		var confirmViewBody = A2(author$project$Main$viewConfirm, content, messages);
 		return A2(
 			rundis$elm_bootstrap$Bootstrap$Modal$view,
 			visibility,
