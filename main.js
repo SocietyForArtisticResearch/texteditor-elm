@@ -8300,7 +8300,6 @@ var author$project$Main$update = F2(
 							}),
 						elm$core$Platform$Cmd$none);
 				default:
-					var _n28 = A2(elm$core$Debug$log, 'closeConfirmDialog', model);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -8657,9 +8656,6 @@ var author$project$Main$viewConfirm = F2(
 						]))
 				]));
 	});
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
-var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
 var rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {
 	return {$: 'Body', a: a};
 };
@@ -9077,7 +9073,7 @@ var rundis$elm_bootstrap$Bootstrap$Modal$view = F2(
 var author$project$Main$viewConfirmDialog = F3(
 	function (visibility, content, messages) {
 		var confirmViewBody = A2(author$project$Main$viewConfirm, content, messages);
-		var modal = A2(
+		return A2(
 			rundis$elm_bootstrap$Bootstrap$Modal$view,
 			visibility,
 			A3(
@@ -9086,19 +9082,70 @@ var author$project$Main$viewConfirmDialog = F3(
 				_List_fromArray(
 					[
 						A2(
-						rundis$elm_bootstrap$Bootstrap$Button$button,
+						rundis$elm_bootstrap$Bootstrap$Form$form,
+						_List_Nil,
 						_List_fromArray(
 							[
-								rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary,
-								rundis$elm_bootstrap$Bootstrap$Button$attrs(
+								A2(
+								rundis$elm_bootstrap$Bootstrap$Form$group,
+								_List_Nil,
 								_List_fromArray(
 									[
-										elm$html$Html$Events$onClick(author$project$Main$CloseConfirmDialog)
+										A2(
+										rundis$elm_bootstrap$Bootstrap$Form$label,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$for('confirmButtons')
+											]),
+										_List_fromArray(
+											[
+												elm$html$Html$text(content.prompt)
+											])),
+										A2(
+										rundis$elm_bootstrap$Bootstrap$Form$group,
+										_List_fromArray(
+											[
+												rundis$elm_bootstrap$Bootstrap$Form$attrs(
+												_List_fromArray(
+													[
+														elm$html$Html$Attributes$id('confirmButtons')
+													]))
+											]),
+										_List_fromArray(
+											[
+												A2(
+												rundis$elm_bootstrap$Bootstrap$Button$button,
+												_List_fromArray(
+													[
+														rundis$elm_bootstrap$Bootstrap$Button$outlineDanger,
+														rundis$elm_bootstrap$Bootstrap$Button$attrs(
+														_List_fromArray(
+															[
+																elm$html$Html$Events$onClick(messages.confirm)
+															]))
+													]),
+												_List_fromArray(
+													[
+														elm$html$Html$text(content.confirm)
+													])),
+												A2(
+												rundis$elm_bootstrap$Bootstrap$Button$button,
+												_List_fromArray(
+													[
+														rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary,
+														rundis$elm_bootstrap$Bootstrap$Button$attrs(
+														_List_fromArray(
+															[
+																elm$html$Html$Events$onClick(messages.reject),
+																rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1
+															]))
+													]),
+												_List_fromArray(
+													[
+														elm$html$Html$text(content.reject)
+													]))
+											]))
 									]))
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('Close')
 							]))
 					]),
 				A3(
@@ -9117,8 +9164,6 @@ var author$project$Main$viewConfirmDialog = F3(
 						true,
 						rundis$elm_bootstrap$Bootstrap$Modal$small(
 							rundis$elm_bootstrap$Bootstrap$Modal$config(author$project$Main$CloseConfirmDialog))))));
-		var _n0 = A2(elm$core$Debug$log, 'modal view is', modal);
-		return modal;
 	});
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
 var author$project$Main$MediaEdit = function (a) {
@@ -9886,6 +9931,9 @@ var author$project$RCMediaEdit$view = F3(
 				]));
 	});
 var elm$html$Html$p = _VirtualDom_node('p');
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
+var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
 var elm$html$Html$h5 = _VirtualDom_node('h5');
 var rundis$elm_bootstrap$Bootstrap$Modal$Header = function (a) {
 	return {$: 'Header', a: a};
