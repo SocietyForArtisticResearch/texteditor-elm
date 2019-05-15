@@ -219,6 +219,12 @@ makeTableMessages =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
+    -- let
+    --     _ =
+    --         Debug.log "update: " msg
+    --     _ =
+    --         Debug.log "model: " model
+    -- in
     case msg of
         GotConvertedHtml html ->
             ( { model | exposition = Exposition.withHtml model.exposition html }
@@ -543,12 +549,16 @@ update msg model =
 
                 messages =
                     { confirm = MediaDelete object
-                    , reject = CloseConfirmDialog
+                    , reject = CloseConfirmDialog -- rename
                     }
             in
             ( { model | confirmDialog = ( Modal.shown, Just content, Just messages ) }, Cmd.none )
 
         CloseConfirmDialog ->
+            let
+                _ =
+                    Debug.log "closeConfirmDialog" model
+            in
             ( { model | confirmDialog = ( Modal.hidden, Nothing, Nothing ) }, Cmd.none )
 
 
@@ -578,12 +588,25 @@ viewConfirmDialog visibility content messages =
     let
         confirmViewBody =
             viewConfirm content messages
+
+        modal =
+            Modal.config CloseConfirmDialog
+                |> Modal.small
+                |> Modal.hideOnBackdropClick True
+                |> Modal.body [] [ div [] [ confirmViewBody ] ]
+                |> Modal.footer []
+                    [ Button.button
+                        [ Button.outlinePrimary
+                        , Button.attrs [ onClick CloseConfirmDialog ]
+                        ]
+                        [ text "Close" ]
+                    ]
+                |> Modal.view visibility
+
+        _ =
+            Debug.log "modal view is" modal
     in
-    Modal.config CloseConfirmDialog
-        |> Modal.small
-        |> Modal.hideOnBackdropClick True
-        |> Modal.body [] [ div [] [ confirmViewBody ] ]
-        |> Modal.view visibility
+    modal
 
 
 viewUpload : Msg -> String -> UploadStatus -> Html Msg
@@ -613,6 +636,7 @@ view model =
                     viewConfirmDialog visibility content messages
 
                 _ ->
+                    -- maybe the view needs to exist in any state ?
                     div [] []
 
         saveButtonText =

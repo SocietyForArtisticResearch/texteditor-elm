@@ -8300,6 +8300,7 @@ var author$project$Main$update = F2(
 							}),
 						elm$core$Platform$Cmd$none);
 				default:
+					var _n28 = A2(elm$core$Debug$log, 'closeConfirmDialog', model);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -8656,6 +8657,9 @@ var author$project$Main$viewConfirm = F2(
 						]))
 				]));
 	});
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
+var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
 var rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {
 	return {$: 'Body', a: a};
 };
@@ -8685,6 +8689,21 @@ var rundis$elm_bootstrap$Bootstrap$Modal$config = function (closeMsg) {
 			withAnimation: elm$core$Maybe$Nothing
 		});
 };
+var rundis$elm_bootstrap$Bootstrap$Modal$Footer = function (a) {
+	return {$: 'Footer', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Modal$footer = F3(
+	function (attributes, children, _n0) {
+		var conf = _n0.a;
+		return rundis$elm_bootstrap$Bootstrap$Modal$Config(
+			_Utils_update(
+				conf,
+				{
+					footer: elm$core$Maybe$Just(
+						rundis$elm_bootstrap$Bootstrap$Modal$Footer(
+							{attributes: attributes, children: children}))
+				}));
+	});
 var rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick = F2(
 	function (hide, _n0) {
 		var conf = _n0.a;
@@ -9058,25 +9077,48 @@ var rundis$elm_bootstrap$Bootstrap$Modal$view = F2(
 var author$project$Main$viewConfirmDialog = F3(
 	function (visibility, content, messages) {
 		var confirmViewBody = A2(author$project$Main$viewConfirm, content, messages);
-		return A2(
+		var modal = A2(
 			rundis$elm_bootstrap$Bootstrap$Modal$view,
 			visibility,
 			A3(
-				rundis$elm_bootstrap$Bootstrap$Modal$body,
+				rundis$elm_bootstrap$Bootstrap$Modal$footer,
 				_List_Nil,
 				_List_fromArray(
 					[
 						A2(
-						elm$html$Html$div,
-						_List_Nil,
+						rundis$elm_bootstrap$Bootstrap$Button$button,
 						_List_fromArray(
-							[confirmViewBody]))
+							[
+								rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary,
+								rundis$elm_bootstrap$Bootstrap$Button$attrs(
+								_List_fromArray(
+									[
+										elm$html$Html$Events$onClick(author$project$Main$CloseConfirmDialog)
+									]))
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Close')
+							]))
 					]),
-				A2(
-					rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
-					true,
-					rundis$elm_bootstrap$Bootstrap$Modal$small(
-						rundis$elm_bootstrap$Bootstrap$Modal$config(author$project$Main$CloseConfirmDialog)))));
+				A3(
+					rundis$elm_bootstrap$Bootstrap$Modal$body,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$div,
+							_List_Nil,
+							_List_fromArray(
+								[confirmViewBody]))
+						]),
+					A2(
+						rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
+						true,
+						rundis$elm_bootstrap$Bootstrap$Modal$small(
+							rundis$elm_bootstrap$Bootstrap$Modal$config(author$project$Main$CloseConfirmDialog))))));
+		var _n0 = A2(elm$core$Debug$log, 'modal view is', modal);
+		return modal;
 	});
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
 var author$project$Main$MediaEdit = function (a) {
@@ -9844,24 +9886,6 @@ var author$project$RCMediaEdit$view = F3(
 				]));
 	});
 var elm$html$Html$p = _VirtualDom_node('p');
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
-var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
-var rundis$elm_bootstrap$Bootstrap$Modal$Footer = function (a) {
-	return {$: 'Footer', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Modal$footer = F3(
-	function (attributes, children, _n0) {
-		var conf = _n0.a;
-		return rundis$elm_bootstrap$Bootstrap$Modal$Config(
-			_Utils_update(
-				conf,
-				{
-					footer: elm$core$Maybe$Just(
-						rundis$elm_bootstrap$Bootstrap$Modal$Footer(
-							{attributes: attributes, children: children}))
-				}));
-	});
 var elm$html$Html$h5 = _VirtualDom_node('h5');
 var rundis$elm_bootstrap$Bootstrap$Modal$Header = function (a) {
 	return {$: 'Header', a: a};
