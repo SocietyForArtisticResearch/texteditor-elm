@@ -449,6 +449,10 @@ update msg model =
 
         MediaDelete obj ->
             -- not implemented
+            let
+                _ =
+                    Debug.log "All ok, no prob!" model
+            in
             update CloseConfirmDialog model
 
         InsertTool obj ->
