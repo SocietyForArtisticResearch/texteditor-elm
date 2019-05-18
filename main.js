@@ -8314,10 +8314,13 @@ var author$project$Main$update = F2(
 var author$project$Main$SaveExposition = {$: 'SaveExposition'};
 var author$project$Main$UploadImportFileSelect = {$: 'UploadImportFileSelect'};
 var author$project$Main$UploadMediaFileSelect = {$: 'UploadMediaFileSelect'};
+var author$project$Main$ConfirmMediaDelete = function (a) {
+	return {$: 'ConfirmMediaDelete', a: a};
+};
 var author$project$Main$InsertTool = function (a) {
 	return {$: 'InsertTool', a: a};
 };
-var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$MediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertTool};
+var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$ConfirmMediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertTool};
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	switch (handler.$) {
 		case 'Normal':
