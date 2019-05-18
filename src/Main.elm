@@ -578,26 +578,6 @@ viewMediaDialog exposition ( visibility, ( object, objId ), viewObjectState ) =
         |> Modal.view visibility
 
 
-viewConfirmDialog : Modal.Visibility -> ConfirmDialogContent -> UserConfirm.Messages Msg -> Html Msg
-viewConfirmDialog visibility content messages =
-    let
-        confirmViewBody =
-            UserConfirm.view content messages
-    in
-    Modal.config CloseConfirmDialog
-        |> Modal.small
-        |> Modal.hideOnBackdropClick True
-        |> Modal.body [] [ div [] [] ]
-        |> Modal.footer []
-            [ Button.button
-                [ Button.outlineDanger
-                , Button.attrs [ onClick messages.confirm ]
-                ]
-                [ text content.confirm ]
-            ]
-        |> Modal.view visibility
-
-
 viewUpload : Msg -> String -> UploadStatus -> Html Msg
 viewUpload onClickMsg buttonText status =
     case status of
@@ -622,7 +602,7 @@ view model =
         confirmDialogHtml =
             case model.confirmDialog of
                 ( visibility, Just content, Just messages ) ->
-                    viewConfirmDialog visibility content messages
+                    UserConfirm.view visibility content messages
 
                 ( visibility, _, _ ) ->
                     let
@@ -633,7 +613,7 @@ view model =
                             UserConfirm.Messages CloseConfirmDialog CloseConfirmDialog
                     in
                     -- maybe the view needs to exist in any state ?
-                    viewConfirmDialog visibility content messages
+                    UserConfirm.view visibility content messages
 
         saveButtonText =
             if model.saved then
