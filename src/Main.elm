@@ -209,7 +209,7 @@ makeMediaEditFun obj objId field input =
 makeTableMessages : RCMediaList.TableMessages Msg
 makeTableMessages =
     { editObject = MediaDialog
-    , deleteObject = MediaDelete
+    , deleteObject = ConfirmMediaDelete
     , insertObject = InsertTool
     }
 
