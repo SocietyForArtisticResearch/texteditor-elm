@@ -39,12 +39,12 @@ view visibility content messages =
         |> Modal.body [] [ p [] [ text content.prompt ] ]
         |> Modal.footer []
             [ Button.button
-                [ Button.outlineDanger
+                [ Button.danger
                 , Button.attrs [ onClick messages.confirm ]
                 ]
                 [ text content.confirm ]
             , Button.button
-                [ Button.outlineInfo
+                [ Button.secondary
                 , Button.attrs [ onClick messages.reject ]
                 ]
                 [ text content.reject ]
