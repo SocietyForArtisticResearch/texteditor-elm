@@ -209,7 +209,7 @@ makeMediaEditFun obj objId field input =
 makeTableMessages : RCMediaList.TableMessages Msg
 makeTableMessages =
     { editObject = MediaDialog
-    , deleteObject = ConfirmMediaDelete
+    , deleteObject = MediaDelete
     , insertObject = InsertTool
     }
 
@@ -578,7 +578,7 @@ viewConfirmDialog : Modal.Visibility -> ConfirmDialogContent -> UserConfirm.Mess
 viewConfirmDialog visibility content messages =
     let
         confirmViewBody =
-            viewConfirm content messages
+            UserConfirm.view content messages
     in
     Modal.config CloseConfirmDialog
         |> Modal.small
@@ -672,46 +672,37 @@ view model =
 
 -- this is a view that can be used to get user confirmation
 -- Messages: actions that are taken in response to user feedback
-
-
-type alias ConfirmMessages msg =
-    { confirm : msg
-    , reject : msg
-    }
-
-
-
--- text displayed to user
-
-
-type alias ConfirmDialogContent =
-    { prompt : String
-    , confirm : String
-    , reject : String
-    }
-
-
-viewConfirm : ConfirmDialogContent -> ConfirmMessages msg -> Html msg
-viewConfirm dialogText messages =
-    Form.form []
-        [ Form.group []
-            [ Form.label
-                [ for "confirmButtons" ]
-                [ text dialogText.prompt ]
-            , Form.group [ Form.attrs [ id "confirmButtons" ] ]
-                [ Button.button
-                    [ Button.outlineDanger
-                    , Button.attrs [ onClick messages.confirm ]
-                    ]
-                    [ text dialogText.confirm ]
-                , Button.button
-                    [ Button.outlineSecondary
-                    , Button.attrs
-                        [ onClick messages.reject
-                        , Spacing.ml1
-                        ]
-                    ]
-                    [ text dialogText.reject ]
-                ]
-            ]
-        ]
+-- type alias ConfirmMessages msg =
+--     { confirm : msg
+--     , reject : msg
+--     }
+-- -- text displayed to user
+-- type alias ConfirmDialogContent =
+--     { prompt : String
+--     , confirm : String
+--     , reject : String
+--     }
+-- viewConfirm : ConfirmDialogContent -> ConfirmMessages msg -> Html msg
+-- viewConfirm dialogText messages =
+--     Form.form []
+--         [ Form.group []
+--             [ Form.label
+--                 [ for "confirmButtons" ]
+--                 [ text dialogText.prompt ]
+--             , Form.group [ Form.attrs [ id "confirmButtons" ] ]
+--                 [ Button.button
+--                     [ Button.outlineDanger
+--                     , Button.attrs [ onClick messages.confirm ]
+--                     ]
+--                     [ text dialogText.confirm ]
+--                 , Button.button
+--                     [ Button.outlineSecondary
+--                     , Button.attrs
+--                         [ onClick messages.reject
+--                         , Spacing.ml1
+--                         ]
+--                     ]
+--                     [ text dialogText.reject ]
+--                 ]
+--             ]
+--         ]

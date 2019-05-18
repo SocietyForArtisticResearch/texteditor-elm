@@ -8310,20 +8310,13 @@ var author$project$Main$update = F2(
 			}
 		}
 	});
-var author$project$Main$ConfirmDialogContent = F3(
-	function (prompt, confirm, reject) {
-		return {confirm: confirm, prompt: prompt, reject: reject};
-	});
 var author$project$Main$SaveExposition = {$: 'SaveExposition'};
 var author$project$Main$UploadImportFileSelect = {$: 'UploadImportFileSelect'};
 var author$project$Main$UploadMediaFileSelect = {$: 'UploadMediaFileSelect'};
-var author$project$Main$ConfirmMediaDelete = function (a) {
-	return {$: 'ConfirmMediaDelete', a: a};
-};
 var author$project$Main$InsertTool = function (a) {
 	return {$: 'InsertTool', a: a};
 };
-var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$ConfirmMediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertTool};
+var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$MediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertTool};
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	switch (handler.$) {
 		case 'Normal':
@@ -8591,8 +8584,9 @@ var rundis$elm_bootstrap$Bootstrap$Form$label = F2(
 			children);
 	});
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1 = elm$html$Html$Attributes$class('ml-1');
-var author$project$Main$viewConfirm = F2(
+var author$project$UserConfirm$view = F2(
 	function (dialogText, messages) {
+		var _n0 = A2(elm$core$Debug$log, 'this is the reject message', messages.reject);
 		return A2(
 			rundis$elm_bootstrap$Bootstrap$Form$form,
 			_List_Nil,
@@ -9061,7 +9055,7 @@ var rundis$elm_bootstrap$Bootstrap$Modal$view = F2(
 	});
 var author$project$Main$viewConfirmDialog = F3(
 	function (visibility, content, messages) {
-		var confirmViewBody = A2(author$project$Main$viewConfirm, content, messages);
+		var confirmViewBody = A2(author$project$UserConfirm$view, content, messages);
 		return A2(
 			rundis$elm_bootstrap$Bootstrap$Modal$view,
 			visibility,
@@ -10672,6 +10666,10 @@ var author$project$RCMediaList$view = F2(
 				});
 		}
 	});
+var author$project$UserConfirm$ConfirmDialogContent = F3(
+	function (prompt, confirm, reject) {
+		return {confirm: confirm, prompt: prompt, reject: reject};
+	});
 var author$project$UserConfirm$Messages = F2(
 	function (confirm, reject) {
 		return {confirm: confirm, reject: reject};
@@ -10717,7 +10715,7 @@ var author$project$Main$view = function (model) {
 		} else {
 			var visibility = _n0.a;
 			var messages = A2(author$project$UserConfirm$Messages, author$project$Main$CloseConfirmDialog, author$project$Main$CloseConfirmDialog);
-			var content = A3(author$project$Main$ConfirmDialogContent, '', '', '');
+			var content = A3(author$project$UserConfirm$ConfirmDialogContent, '', '', '');
 			return A3(author$project$Main$viewConfirmDialog, visibility, content, messages);
 		}
 	}();
