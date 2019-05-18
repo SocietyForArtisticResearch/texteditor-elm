@@ -21,13 +21,14 @@ import RCMediaEdit
 import RCMediaList
 import Regex
 import String.Extra as Str
+import UserConfirm exposing (ConfirmDialogContent)
 
 
 type alias Model =
     { exposition : RCExposition
     , editGeneration : Int
     , mediaDialog : ( Modal.Visibility, Maybe ( RCMediaObject, Int ), Maybe RCMediaObjectViewState )
-    , confirmDialog : ( Modal.Visibility, Maybe ConfirmDialogContent, Maybe (ConfirmMessages Msg) )
+    , confirmDialog : ( Modal.Visibility, Maybe ConfirmDialogContent, Maybe (UserConfirm.Messages Msg) )
     , weave : Int
     , research : Int
     , mediaUploadStatus : UploadStatus
@@ -573,7 +574,7 @@ viewMediaDialog exposition ( visibility, ( object, objId ), viewObjectState ) =
         |> Modal.view visibility
 
 
-viewConfirmDialog : Modal.Visibility -> ConfirmDialogContent -> ConfirmMessages Msg -> Html Msg
+viewConfirmDialog : Modal.Visibility -> ConfirmDialogContent -> UserConfirm.Messages Msg -> Html Msg
 viewConfirmDialog visibility content messages =
     let
         confirmViewBody =
@@ -637,8 +638,16 @@ view model =
                 ( visibility, Just content, Just messages ) ->
                     viewConfirmDialog visibility content messages
 
-                _ ->
-                    div [] []
+                ( visibility, _, _ ) ->
+                    let
+                        content =
+                            ConfirmDialogContent "" "" ""
+
+                        messages =
+                            UserConfirm.Messages CloseConfirmDialog CloseConfirmDialog
+                    in
+                    -- maybe the view needs to exist in any state ?
+                    viewConfirmDialog visibility content messages
 
         saveButtonText =
             if model.saved then

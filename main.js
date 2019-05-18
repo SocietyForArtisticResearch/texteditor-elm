@@ -8310,6 +8310,10 @@ var author$project$Main$update = F2(
 			}
 		}
 	});
+var author$project$Main$ConfirmDialogContent = F3(
+	function (prompt, confirm, reject) {
+		return {confirm: confirm, prompt: prompt, reject: reject};
+	});
 var author$project$Main$SaveExposition = {$: 'SaveExposition'};
 var author$project$Main$UploadImportFileSelect = {$: 'UploadImportFileSelect'};
 var author$project$Main$UploadMediaFileSelect = {$: 'UploadMediaFileSelect'};
@@ -10740,6 +10744,10 @@ var author$project$RCMediaList$view = F2(
 				});
 		}
 	});
+var author$project$UserConfirm$Messages = F2(
+	function (confirm, reject) {
+		return {confirm: confirm, reject: reject};
+	});
 var author$project$Main$view = function (model) {
 	var saveButtonText = model.saved ? 'Saved' : 'Not Saved';
 	var saveButton = A2(
@@ -10779,7 +10787,10 @@ var author$project$Main$view = function (model) {
 			var messages = _n0.c.a;
 			return A3(author$project$Main$viewConfirmDialog, visibility, content, messages);
 		} else {
-			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
+			var visibility = _n0.a;
+			var messages = A2(author$project$UserConfirm$Messages, author$project$Main$CloseConfirmDialog, author$project$Main$CloseConfirmDialog);
+			var content = A3(author$project$Main$ConfirmDialogContent, '', '', '');
+			return A3(author$project$Main$viewConfirmDialog, visibility, content, messages);
 		}
 	}();
 	return A2(
