@@ -9882,18 +9882,21 @@ var author$project$Main$viewUpload = F3(
 	});
 var elm$html$Html$span = _VirtualDom_node('span');
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger = {$: 'Danger'};
-var rundis$elm_bootstrap$Bootstrap$Button$outlineDanger = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Info = {$: 'Info'};
-var rundis$elm_bootstrap$Bootstrap$Button$outlineInfo = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Info));
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Warning = {$: 'Warning'};
-var rundis$elm_bootstrap$Bootstrap$Button$outlineWarning = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Warning));
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
+	return {$: 'Roled', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Button$danger = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary = {$: 'Secondary'};
+var rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Size = function (a) {
 	return {$: 'Size', a: a};
 };
 var rundis$elm_bootstrap$Bootstrap$Button$small = rundis$elm_bootstrap$Bootstrap$Internal$Button$Size(rundis$elm_bootstrap$Bootstrap$General$Internal$SM);
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Success = {$: 'Success'};
+var rundis$elm_bootstrap$Bootstrap$Button$success = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Success));
 var rundis$elm_bootstrap$Bootstrap$Table$Hover = {$: 'Hover'};
 var rundis$elm_bootstrap$Bootstrap$Table$hover = rundis$elm_bootstrap$Bootstrap$Table$Hover;
 var rundis$elm_bootstrap$Bootstrap$Table$THead = function (a) {
@@ -10459,7 +10462,7 @@ var author$project$RCMediaList$view = F2(
 					_List_fromArray(
 						[
 							rundis$elm_bootstrap$Bootstrap$Button$small,
-							rundis$elm_bootstrap$Bootstrap$Button$outlineDanger,
+							rundis$elm_bootstrap$Bootstrap$Button$danger,
 							rundis$elm_bootstrap$Bootstrap$Button$attrs(
 							_List_fromArray(
 								[
@@ -10477,7 +10480,7 @@ var author$project$RCMediaList$view = F2(
 					_List_fromArray(
 						[
 							rundis$elm_bootstrap$Bootstrap$Button$small,
-							rundis$elm_bootstrap$Bootstrap$Button$outlineWarning,
+							rundis$elm_bootstrap$Bootstrap$Button$success,
 							rundis$elm_bootstrap$Bootstrap$Button$attrs(
 							_List_fromArray(
 								[
@@ -10495,7 +10498,7 @@ var author$project$RCMediaList$view = F2(
 					_List_fromArray(
 						[
 							rundis$elm_bootstrap$Bootstrap$Button$small,
-							rundis$elm_bootstrap$Bootstrap$Button$outlineInfo,
+							rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary,
 							rundis$elm_bootstrap$Bootstrap$Button$attrs(
 							_List_fromArray(
 								[
@@ -10578,6 +10581,8 @@ var author$project$UserConfirm$Messages = F2(
 	function (confirm, reject) {
 		return {confirm: confirm, reject: reject};
 	});
+var rundis$elm_bootstrap$Bootstrap$Button$secondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
 var author$project$UserConfirm$view = F3(
 	function (visibility, content, messages) {
 		return A2(
@@ -10592,7 +10597,7 @@ var author$project$UserConfirm$view = F3(
 						rundis$elm_bootstrap$Bootstrap$Button$button,
 						_List_fromArray(
 							[
-								rundis$elm_bootstrap$Bootstrap$Button$outlineDanger,
+								rundis$elm_bootstrap$Bootstrap$Button$danger,
 								rundis$elm_bootstrap$Bootstrap$Button$attrs(
 								_List_fromArray(
 									[
@@ -10607,7 +10612,7 @@ var author$project$UserConfirm$view = F3(
 						rundis$elm_bootstrap$Bootstrap$Button$button,
 						_List_fromArray(
 							[
-								rundis$elm_bootstrap$Bootstrap$Button$outlineInfo,
+								rundis$elm_bootstrap$Bootstrap$Button$secondary,
 								rundis$elm_bootstrap$Bootstrap$Button$attrs(
 								_List_fromArray(
 									[
