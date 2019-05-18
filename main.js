@@ -8180,6 +8180,7 @@ var author$project$Main$update = F2(
 					}
 				case 'MediaDelete':
 					var obj = msg.a;
+					var _n22 = A2(elm$core$Debug$log, 'All ok, no prob!', model);
 					var $temp$msg = author$project$Main$CloseConfirmDialog,
 						$temp$model = model;
 					msg = $temp$msg;
@@ -8259,7 +8260,7 @@ var author$project$Main$update = F2(
 							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 					} else {
 						var e = result.a;
-						var _n25 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n26 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
 				case 'UploadedImport':
@@ -8279,7 +8280,7 @@ var author$project$Main$update = F2(
 							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 					} else {
 						var e = result.a;
-						var _n27 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n28 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
 				case 'ConfirmMediaDelete':
