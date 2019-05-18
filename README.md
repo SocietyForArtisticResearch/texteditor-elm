@@ -29,6 +29,9 @@ be made outside of elm.
 
 Casper:
 - When deleting object, ask for confirmation (done, but on cancelling goes to redirect editor.html instead of styaing in page ??) 
+Observation: if MediaDelete call is called outside of Modal, no problem
+
+
 - Tabs ? Switch Textarea/Codemirror/CSS Edit
 - Buttons
 - Styling
