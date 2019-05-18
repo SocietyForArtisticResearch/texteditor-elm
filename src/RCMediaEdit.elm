@@ -1,4 +1,4 @@
-module RCMediaEdit exposing (Field(..), MediaEditMessage, view)
+module RCMediaEdit exposing (Field(..), MediaEditMessage, viewMediaDialog)
 
 import Bootstrap.Button as Button
 import Bootstrap.CDN as CDN
@@ -7,6 +7,7 @@ import Bootstrap.Form.Input as Input
 import Bootstrap.Form.Select as Select
 import Bootstrap.Form.Textarea as Textarea
 import Bootstrap.Grid as Grid
+import Bootstrap.Modal as Modal
 import Bootstrap.Utilities.Spacing as Spacing
 import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState)
 import Html exposing (..)
@@ -162,8 +163,8 @@ helpFromValidation result =
             "error: " ++ err
 
 
-view : RCMediaObjectViewState -> MediaEditMessage msg -> RCMediaObject -> Html msg
-view objectState editTool objectInEdit =
+viewBody : RCMediaObjectViewState -> MediaEditMessage msg -> RCMediaObject -> Html msg
+viewBody objectState editTool objectInEdit =
     let
         nameProps =
             { nodeId = "name"
@@ -214,3 +215,28 @@ view objectState editTool objectInEdit =
             , viewInputWithLabel copyrightProps
             ]
         ]
+
+
+type alias MakeMediaEditFun msg =
+    Exposition.RCMediaObject -> Int -> Field -> String -> msg
+
+
+viewMediaDialog : MakeMediaEditFun msg -> msg -> RCExposition -> ( Modal.Visibility, ( RCMediaObject, Int ), RCMediaObjectViewState ) -> Html msg
+viewMediaDialog makeMediaEditFun closeMediaDialog exposition ( visibility, ( object, objId ), viewObjectState ) =
+    let
+        mediaEditView =
+            viewBody viewObjectState (makeMediaEditFun object objId) object
+    in
+    Modal.config closeMediaDialog
+        |> Modal.small
+        |> Modal.hideOnBackdropClick True
+        |> Modal.h5 [] [ text <| "Edit object " ++ object.name ]
+        |> Modal.body [] [ p [] [ mediaEditView ] ]
+        |> Modal.footer []
+            [ Button.button
+                [ Button.outlinePrimary
+                , Button.attrs [ Events.onClick closeMediaDialog ]
+                ]
+                [ text "Close" ]
+            ]
+        |> Modal.view visibility

@@ -8311,17 +8311,10 @@ var author$project$Main$update = F2(
 			}
 		}
 	});
+var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
 var author$project$Main$SaveExposition = {$: 'SaveExposition'};
 var author$project$Main$UploadImportFileSelect = {$: 'UploadImportFileSelect'};
 var author$project$Main$UploadMediaFileSelect = {$: 'UploadMediaFileSelect'};
-var author$project$Main$ConfirmMediaDelete = function (a) {
-	return {$: 'ConfirmMediaDelete', a: a};
-};
-var author$project$Main$InsertTool = function (a) {
-	return {$: 'InsertTool', a: a};
-};
-var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$ConfirmMediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertTool};
-var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
 var author$project$Main$MediaEdit = function (a) {
 	return {$: 'MediaEdit', a: a};
 };
@@ -8358,6 +8351,73 @@ var author$project$Main$makeMediaEditFun = F4(
 							{copyright: input})));
 		}
 	});
+var author$project$Main$ConfirmMediaDelete = function (a) {
+	return {$: 'ConfirmMediaDelete', a: a};
+};
+var author$project$Main$InsertTool = function (a) {
+	return {$: 'InsertTool', a: a};
+};
+var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$ConfirmMediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertTool};
+var elm$core$Basics$round = _Basics_round;
+var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
+	switch (handler.$) {
+		case 'Normal':
+			return 0;
+		case 'MayStopPropagation':
+			return 1;
+		case 'MayPreventDefault':
+			return 2;
+		default:
+			return 3;
+	}
+};
+var elm$html$Html$button = _VirtualDom_node('button');
+var elm$html$Html$div = _VirtualDom_node('div');
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
+var author$project$Main$viewUpload = F3(
+	function (onClickMsg, buttonText, status) {
+		if (status.$ === 'Ready') {
+			return A2(
+				elm$html$Html$button,
+				_List_fromArray(
+					[
+						elm$html$Html$Events$onClick(onClickMsg)
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text(buttonText)
+					]));
+		} else {
+			var fraction = status.a;
+			return A2(
+				elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$text(
+						elm$core$String$fromInt(
+							elm$core$Basics$round(100 * fraction)) + '%')
+					]));
+		}
+	});
 var author$project$RCMediaEdit$Copyright = {$: 'Copyright'};
 var author$project$RCMediaEdit$Description = {$: 'Description'};
 var author$project$RCMediaEdit$Name = {$: 'Name'};
@@ -8376,20 +8436,6 @@ var author$project$RCMediaEdit$cssClasses = _List_fromArray(
 		A2(author$project$RCMediaEdit$CssClass, 'floatRightMedium', 'medium & float right'),
 		A2(author$project$RCMediaEdit$CssClass, 'floatLeftMedium', 'medium & float left')
 	]);
-var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
-	switch (handler.$) {
-		case 'Normal':
-			return 0;
-		case 'MayStopPropagation':
-			return 1;
-		case 'MayPreventDefault':
-			return 2;
-		default:
-			return 3;
-	}
-};
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var elm$json$Json$Encode$bool = _Json_wrap;
 var elm$html$Html$Attributes$boolProperty = F2(
 	function (key, bool) {
@@ -8413,7 +8459,6 @@ var elm$html$Html$Events$alwaysStop = function (x) {
 var elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
 	return {$: 'MayStopPropagation', a: a};
 };
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
 var elm$html$Html$Events$stopPropagationOn = F2(
 	function (event, decoder) {
 		return A2(
@@ -8540,16 +8585,6 @@ var rundis$elm_bootstrap$Bootstrap$Form$Select$applyModifier = F2(
 					});
 		}
 	});
-var elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
 var rundis$elm_bootstrap$Bootstrap$Form$Select$customEventOnChange = function (tagger) {
 	return A2(
 		elm$html$Html$Events$on,
@@ -8672,7 +8707,6 @@ var author$project$RCMediaEdit$viewClassesPicker = F4(
 	});
 var elm$html$Html$Attributes$for = elm$html$Html$Attributes$stringProperty('htmlFor');
 var elm$html$Html$Attributes$placeholder = elm$html$Html$Attributes$stringProperty('placeholder');
-var elm$html$Html$div = _VirtualDom_node('div');
 var rundis$elm_bootstrap$Bootstrap$Form$applyModifier = F2(
 	function (modifier, options) {
 		var value = modifier.a;
@@ -9135,7 +9169,7 @@ var rundis$elm_bootstrap$Bootstrap$Form$form = F2(
 	function (attributes, children) {
 		return A2(elm$html$Html$form, attributes, children);
 	});
-var author$project$RCMediaEdit$view = F3(
+var author$project$RCMediaEdit$viewBody = F3(
 	function (objectState, editTool, objectInEdit) {
 		var nameProps = {
 			help: '',
@@ -9212,19 +9246,12 @@ var author$project$RCMediaEdit$view = F3(
 				]));
 	});
 var elm$html$Html$p = _VirtualDom_node('p');
-var elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		elm$html$Html$Events$on,
-		'click',
-		elm$json$Json$Decode$succeed(msg));
-};
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
 	return {$: 'Attrs', a: a};
 };
 var rundis$elm_bootstrap$Bootstrap$Button$attrs = function (attrs_) {
 	return rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs(attrs_);
 };
-var elm$html$Html$button = _VirtualDom_node('button');
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier = F2(
 	function (modifier, options) {
 		switch (modifier.$) {
@@ -9793,17 +9820,17 @@ var rundis$elm_bootstrap$Bootstrap$Modal$view = F2(
 					]),
 				A2(rundis$elm_bootstrap$Bootstrap$Modal$backdrop, visibility, conf)));
 	});
-var author$project$Main$viewMediaDialog = F2(
-	function (exposition, _n0) {
+var author$project$RCMediaEdit$viewMediaDialog = F4(
+	function (makeMediaEditFun, closeMediaDialog, exposition, _n0) {
 		var visibility = _n0.a;
 		var _n1 = _n0.b;
 		var object = _n1.a;
 		var objId = _n1.b;
 		var viewObjectState = _n0.c;
 		var mediaEditView = A3(
-			author$project$RCMediaEdit$view,
+			author$project$RCMediaEdit$viewBody,
 			viewObjectState,
-			A2(author$project$Main$makeMediaEditFun, object, objId),
+			A2(makeMediaEditFun, object, objId),
 			object);
 		return A2(
 			rundis$elm_bootstrap$Bootstrap$Modal$view,
@@ -9821,7 +9848,7 @@ var author$project$Main$viewMediaDialog = F2(
 								rundis$elm_bootstrap$Bootstrap$Button$attrs(
 								_List_fromArray(
 									[
-										elm$html$Html$Events$onClick(author$project$Main$CloseMediaDialog)
+										elm$html$Html$Events$onClick(closeMediaDialog)
 									]))
 							]),
 						_List_fromArray(
@@ -9851,34 +9878,7 @@ var author$project$Main$viewMediaDialog = F2(
 							rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
 							true,
 							rundis$elm_bootstrap$Bootstrap$Modal$small(
-								rundis$elm_bootstrap$Bootstrap$Modal$config(author$project$Main$CloseMediaDialog)))))));
-	});
-var elm$core$Basics$round = _Basics_round;
-var author$project$Main$viewUpload = F3(
-	function (onClickMsg, buttonText, status) {
-		if (status.$ === 'Ready') {
-			return A2(
-				elm$html$Html$button,
-				_List_fromArray(
-					[
-						elm$html$Html$Events$onClick(onClickMsg)
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text(buttonText)
-					]));
-		} else {
-			var fraction = status.a;
-			return A2(
-				elm$html$Html$div,
-				_List_Nil,
-				_List_fromArray(
-					[
-						elm$html$Html$text(
-						elm$core$String$fromInt(
-							elm$core$Basics$round(100 * fraction)) + '%')
-					]));
-		}
+								rundis$elm_bootstrap$Bootstrap$Modal$config(closeMediaDialog)))))));
 	});
 var elm$html$Html$span = _VirtualDom_node('span');
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger = {$: 'Danger'};
@@ -10570,14 +10570,6 @@ var author$project$RCMediaList$view = F2(
 				});
 		}
 	});
-var author$project$UserConfirm$ConfirmDialogContent = F3(
-	function (prompt, confirm, reject) {
-		return {confirm: confirm, prompt: prompt, reject: reject};
-	});
-var author$project$UserConfirm$Messages = F2(
-	function (confirm, reject) {
-		return {confirm: confirm, reject: reject};
-	});
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
 	return {$: 'Roled', a: a};
 };
@@ -10665,8 +10657,10 @@ var author$project$Main$view = function (model) {
 			var obj = _n2.a;
 			var objId = _n2.b;
 			var valid = _n1.c.a;
-			return A2(
-				author$project$Main$viewMediaDialog,
+			return A4(
+				author$project$RCMediaEdit$viewMediaDialog,
+				author$project$Main$makeMediaEditFun,
+				author$project$Main$CloseMediaDialog,
 				model.exposition,
 				_Utils_Tuple3(
 					vis,
@@ -10684,10 +10678,7 @@ var author$project$Main$view = function (model) {
 			var messages = _n0.c.a;
 			return A3(author$project$UserConfirm$view, visibility, content, messages);
 		} else {
-			var visibility = _n0.a;
-			var messages = A2(author$project$UserConfirm$Messages, author$project$Main$CloseConfirmDialog, author$project$Main$CloseConfirmDialog);
-			var content = A3(author$project$UserConfirm$ConfirmDialogContent, '', '', '');
-			return A3(author$project$UserConfirm$view, visibility, content, messages);
+			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
 		}
 	}();
 	return A2(

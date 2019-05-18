@@ -557,27 +557,6 @@ update msg model =
             ( { model | confirmDialog = ( Modal.hidden, Nothing, Nothing ) }, Cmd.none )
 
 
-viewMediaDialog : RCExposition -> ( Modal.Visibility, ( RCMediaObject, Int ), RCMediaObjectViewState ) -> Html Msg
-viewMediaDialog exposition ( visibility, ( object, objId ), viewObjectState ) =
-    let
-        mediaEditView =
-            RCMediaEdit.view viewObjectState (makeMediaEditFun object objId) object
-    in
-    Modal.config CloseMediaDialog
-        |> Modal.small
-        |> Modal.hideOnBackdropClick True
-        |> Modal.h5 [] [ text <| "Edit object " ++ object.name ]
-        |> Modal.body [] [ p [] [ mediaEditView ] ]
-        |> Modal.footer []
-            [ Button.button
-                [ Button.outlinePrimary
-                , Button.attrs [ onClick CloseMediaDialog ]
-                ]
-                [ text "Close" ]
-            ]
-        |> Modal.view visibility
-
-
 viewUpload : Msg -> String -> UploadStatus -> Html Msg
 viewUpload onClickMsg buttonText status =
     case status of
@@ -594,7 +573,7 @@ view model =
         mediaDialogHtml =
             case model.mediaDialog of
                 ( vis, Just ( obj, objId ), Just valid ) ->
-                    viewMediaDialog model.exposition ( vis, ( obj, objId ), valid )
+                    RCMediaEdit.viewMediaDialog makeMediaEditFun CloseMediaDialog model.exposition ( vis, ( obj, objId ), valid )
 
                 _ ->
                     div [] []
@@ -604,16 +583,8 @@ view model =
                 ( visibility, Just content, Just messages ) ->
                     UserConfirm.view visibility content messages
 
-                ( visibility, _, _ ) ->
-                    let
-                        content =
-                            ConfirmDialogContent "" "" ""
-
-                        messages =
-                            UserConfirm.Messages CloseConfirmDialog CloseConfirmDialog
-                    in
-                    -- maybe the view needs to exist in any state ?
-                    UserConfirm.view visibility content messages
+                ( _, _, _ ) ->
+                    div [] []
 
         saveButtonText =
             if model.saved then
@@ -633,42 +604,3 @@ view model =
         , RCMediaList.view model.exposition.media makeTableMessages
         , saveButton
         ]
-
-
-
--- this is a view that can be used to get user confirmation
--- Messages: actions that are taken in response to user feedback
--- type alias ConfirmMessages msg =
---     { confirm : msg
---     , reject : msg
---     }
--- -- text displayed to user
--- type alias ConfirmDialogContent =
---     { prompt : String
---     , confirm : String
---     , reject : String
---     }
--- viewConfirm : ConfirmDialogContent -> ConfirmMessages msg -> Html msg
--- viewConfirm dialogText messages =
---     Form.form []
---         [ Form.group []
---             [ Form.label
---                 [ for "confirmButtons" ]
---                 [ text dialogText.prompt ]
---             , Form.group [ Form.attrs [ id "confirmButtons" ] ]
---                 [ Button.button
---                     [ Button.outlineDanger
---                     , Button.attrs [ onClick messages.confirm ]
---                     ]
---                     [ text dialogText.confirm ]
---                 , Button.button
---                     [ Button.outlineSecondary
---                     , Button.attrs
---                         [ onClick messages.reject
---                         , Spacing.ml1
---                         ]
---                     ]
---                     [ text dialogText.reject ]
---                 ]
---             ]
---         ]
