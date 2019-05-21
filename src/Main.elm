@@ -4,6 +4,7 @@ import Bootstrap.Button as Button
 import Bootstrap.Form as Form
 import Bootstrap.Modal as Modal
 import Bootstrap.Utilities.Spacing as Spacing
+import Bootstrap.Tab as Tab
 import Browser
 import Dict
 import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectViewState, addMediaUserClasses, incContentVersion)
@@ -29,6 +30,7 @@ type alias Model =
     , editGeneration : Int
     , mediaDialog : ( Modal.Visibility, Maybe ( RCMediaObject, Int ), Maybe RCMediaObjectViewState )
     , confirmDialog : ( Modal.Visibility, Maybe ConfirmDialogContent, Maybe (UserConfirm.Messages Msg) )
+    , tabState : Tab.State
     , weave : Int
     , research : Int
     , mediaUploadStatus : UploadStatus
@@ -60,6 +62,7 @@ emptyModel research weave =
     , exposition = Exposition.empty
     , mediaDialog = ( Modal.hidden, Nothing, Nothing )
     , confirmDialog = ( Modal.hidden, Nothing, Nothing )
+    , tabState = Tab.initialState
     , research = research
     , weave = weave
     , mediaUploadStatus = Ready
@@ -183,6 +186,7 @@ type Msg
     | SavedMediaEdit (Result Http.Error String)
     | ConfirmMediaDelete Exposition.RCMediaObject
     | CloseConfirmDialog
+    | TabMsg Tab.State
 
 
 
@@ -566,7 +570,10 @@ viewUpload onClickMsg buttonText status =
         Uploading fraction ->
             div [] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
 
-
+viewTabs : Model -> Html Msg
+viewTabs model =
+    case model.
+                
 view : Model -> Html Msg
 view model =
     let
