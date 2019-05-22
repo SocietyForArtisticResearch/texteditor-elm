@@ -7782,7 +7782,7 @@ var author$project$RCAPI$updateMedia = F2(
 							A2(elm$http$Http$stringPart, 'name', mediaObject.name),
 							A2(elm$http$Http$stringPart, 'copyrightholder', mediaObject.copyright),
 							A2(elm$http$Http$stringPart, 'description', mediaObject.description),
-							A2(elm$http$Http$stringPart, 'license', 'All rights reserved')
+							A2(elm$http$Http$stringPart, 'license', 'all-rights-reserved')
 						])),
 				expect: expect,
 				headers: _List_Nil,
