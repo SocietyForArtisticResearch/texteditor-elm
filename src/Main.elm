@@ -9,8 +9,8 @@ import Dict
 import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectViewState, addMediaUserClasses, incContentVersion)
 import File exposing (File)
 import File.Select as Select
-import Html exposing (Html, button, div, p, span, text)
-import Html.Attributes exposing (attribute, for, id)
+import Html exposing (Html, button, div, li, p, span, text, ul)
+import Html.Attributes exposing (attribute, class, for, href, id)
 import Html.Events exposing (on, onClick, onInput)
 import Http
 import Json.Decode as D
@@ -567,6 +567,16 @@ viewUpload onClickMsg buttonText status =
             div [] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
 
 
+viewTabs : Html Msg
+viewTabs =
+    ul [ class "nav nav-tabs" ]
+        [ li [ href "#" ] [ text "Markdown mode" ]
+        , li [ href "#" ] [ text "Plain text mode" ]
+        , li [ href "#" ] [ text "Style" ]
+        , li [ href "#" ] [ text "Media" ]
+        ]
+
+
 view : Model -> Html Msg
 view model =
     let
@@ -597,7 +607,8 @@ view model =
             button [ onClick SaveExposition ] [ text saveButtonText ]
     in
     div []
-        [ mediaDialogHtml
+        [ viewTabs
+        , mediaDialogHtml
         , confirmDialogHtml
         , viewUpload UploadMediaFileSelect "Upload Media" model.mediaUploadStatus
         , viewUpload UploadImportFileSelect "Import Document" model.importUploadStatus
