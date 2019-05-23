@@ -9,7 +9,7 @@ import Dict
 import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectViewState, addMediaUserClasses, incContentVersion)
 import File exposing (File)
 import File.Select as Select
-import Html exposing (Html, button, div, li, p, span, text, ul)
+import Html exposing (Html, a, button, div, li, p, span, text, ul)
 import Html.Attributes exposing (attribute, class, for, href, id)
 import Html.Events exposing (on, onClick, onInput)
 import Http
@@ -569,11 +569,17 @@ viewUpload onClickMsg buttonText status =
 
 viewTabs : Html Msg
 viewTabs =
+    let
+        tabLink =
+            \string -> a [ href "#" ] [ text string ]
+    in
     ul [ class "nav nav-tabs" ]
-        [ li [ href "#" ] [ text "Markdown mode" ]
-        , li [ href "#" ] [ text "Plain text mode" ]
-        , li [ href "#" ] [ text "Style" ]
-        , li [ href "#" ] [ text "Media" ]
+        [ li []
+            [ tabLink "Markdown mode" ]
+        , li []
+            [ tabLink "Text mode" ]
+        , li []
+            [ tabLink "Media list" ]
         ]
 
 

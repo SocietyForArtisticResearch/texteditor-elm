@@ -8371,6 +8371,7 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 			return 3;
 	}
 };
+var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$li = _VirtualDom_node('li');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
@@ -8389,55 +8390,50 @@ var elm$html$Html$Attributes$href = function (url) {
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
-var author$project$Main$viewTabs = A2(
-	elm$html$Html$ul,
-	_List_fromArray(
-		[
-			elm$html$Html$Attributes$class('nav nav-tabs')
-		]),
-	_List_fromArray(
-		[
-			A2(
-			elm$html$Html$li,
+var author$project$Main$viewTabs = function () {
+	var tabLink = function (string) {
+		return A2(
+			elm$html$Html$a,
 			_List_fromArray(
 				[
 					elm$html$Html$Attributes$href('#')
 				]),
 			_List_fromArray(
 				[
-					elm$html$Html$text('Markdown mode')
-				])),
-			A2(
-			elm$html$Html$li,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$href('#')
-				]),
-			_List_fromArray(
-				[
-					elm$html$Html$text('Plain text mode')
-				])),
-			A2(
-			elm$html$Html$li,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$href('#')
-				]),
-			_List_fromArray(
-				[
-					elm$html$Html$text('Style')
-				])),
-			A2(
-			elm$html$Html$li,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$href('#')
-				]),
-			_List_fromArray(
-				[
-					elm$html$Html$text('Media')
-				]))
-		]));
+					elm$html$Html$text(string)
+				]));
+	};
+	return A2(
+		elm$html$Html$ul,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('nav nav-tabs')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$li,
+				_List_Nil,
+				_List_fromArray(
+					[
+						tabLink('Markdown mode')
+					])),
+				A2(
+				elm$html$Html$li,
+				_List_Nil,
+				_List_fromArray(
+					[
+						tabLink('Text mode')
+					])),
+				A2(
+				elm$html$Html$li,
+				_List_Nil,
+				_List_fromArray(
+					[
+						tabLink('Media list')
+					]))
+			]));
+}();
 var elm$core$Basics$round = _Basics_round;
 var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$div = _VirtualDom_node('div');
