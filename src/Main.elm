@@ -2,6 +2,7 @@ port module Main exposing (Msg(..), main, update, view)
 
 import Bootstrap.Button as Button
 import Bootstrap.Form as Form
+import Bootstrap.Grid as Grid
 import Bootstrap.Modal as Modal
 import Bootstrap.Utilities.Spacing as Spacing
 import Browser
@@ -573,13 +574,15 @@ viewTabs =
         tabLink =
             \string -> a [ href "#" ] [ text string ]
     in
-    ul [ class "nav nav-tabs" ]
-        [ li []
-            [ tabLink "Markdown mode" ]
-        , li []
-            [ tabLink "Text mode" ]
-        , li []
-            [ tabLink "Media list" ]
+    Grid.container []
+        [ ul [ class "nav nav-tabs" ]
+            [ li []
+                [ tabLink "Markdown mode" ]
+            , li []
+                [ tabLink "Text mode" ]
+            , li []
+                [ tabLink "Media list" ]
+            ]
         ]
 
 

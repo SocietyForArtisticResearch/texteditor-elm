@@ -8390,6 +8390,19 @@ var elm$html$Html$Attributes$href = function (url) {
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
+var elm$html$Html$div = _VirtualDom_node('div');
+var rundis$elm_bootstrap$Bootstrap$Grid$container = F2(
+	function (attributes, children) {
+		return A2(
+			elm$html$Html$div,
+			_Utils_ap(
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('container')
+					]),
+				attributes),
+			children);
+	});
 var author$project$Main$viewTabs = function () {
 	var tabLink = function (string) {
 		return A2(
@@ -8404,39 +8417,44 @@ var author$project$Main$viewTabs = function () {
 				]));
 	};
 	return A2(
-		elm$html$Html$ul,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('nav nav-tabs')
-			]),
+		rundis$elm_bootstrap$Bootstrap$Grid$container,
+		_List_Nil,
 		_List_fromArray(
 			[
 				A2(
-				elm$html$Html$li,
-				_List_Nil,
+				elm$html$Html$ul,
 				_List_fromArray(
 					[
-						tabLink('Markdown mode')
-					])),
-				A2(
-				elm$html$Html$li,
-				_List_Nil,
+						elm$html$Html$Attributes$class('nav nav-tabs')
+					]),
 				_List_fromArray(
 					[
-						tabLink('Text mode')
-					])),
-				A2(
-				elm$html$Html$li,
-				_List_Nil,
-				_List_fromArray(
-					[
-						tabLink('Media list')
+						A2(
+						elm$html$Html$li,
+						_List_Nil,
+						_List_fromArray(
+							[
+								tabLink('Markdown mode')
+							])),
+						A2(
+						elm$html$Html$li,
+						_List_Nil,
+						_List_fromArray(
+							[
+								tabLink('Text mode')
+							])),
+						A2(
+						elm$html$Html$li,
+						_List_Nil,
+						_List_fromArray(
+							[
+								tabLink('Media list')
+							]))
 					]))
 			]));
 }();
 var elm$core$Basics$round = _Basics_round;
 var elm$html$Html$button = _VirtualDom_node('button');
-var elm$html$Html$div = _VirtualDom_node('div');
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
