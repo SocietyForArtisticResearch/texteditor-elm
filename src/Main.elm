@@ -572,15 +572,15 @@ viewTabs : Html Msg
 viewTabs =
     let
         tabLink =
-            \string -> a [ href "#" ] [ text string ]
+            \string -> a [ class "nav-link", href "#" ] [ text string ]
     in
     Grid.container []
         [ ul [ class "nav nav-tabs" ]
-            [ li []
+            [ li [ class "nav-item" ]
                 [ tabLink "Markdown mode" ]
-            , li []
+            , li [ class "nav-item" ]
                 [ tabLink "Text mode" ]
-            , li []
+            , li [ class "nav-item" ]
                 [ tabLink "Media list" ]
             ]
         ]

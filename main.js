@@ -8409,6 +8409,7 @@ var author$project$Main$viewTabs = function () {
 			elm$html$Html$a,
 			_List_fromArray(
 				[
+					elm$html$Html$Attributes$class('nav-link'),
 					elm$html$Html$Attributes$href('#')
 				]),
 			_List_fromArray(
@@ -8431,21 +8432,30 @@ var author$project$Main$viewTabs = function () {
 					[
 						A2(
 						elm$html$Html$li,
-						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('nav-item')
+							]),
 						_List_fromArray(
 							[
 								tabLink('Markdown mode')
 							])),
 						A2(
 						elm$html$Html$li,
-						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('nav-item')
+							]),
 						_List_fromArray(
 							[
 								tabLink('Text mode')
 							])),
 						A2(
 						elm$html$Html$li,
-						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('nav-item')
+							]),
 						_List_fromArray(
 							[
 								tabLink('Media list')
