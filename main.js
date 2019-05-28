@@ -8301,7 +8301,7 @@ var author$project$Main$update = F2(
 									elm$core$Maybe$Just(messages))
 							}),
 						elm$core$Platform$Cmd$none);
-				default:
+				case 'CloseConfirmDialog':
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -8309,6 +8309,10 @@ var author$project$Main$update = F2(
 								confirmDialog: _Utils_Tuple3(rundis$elm_bootstrap$Bootstrap$Modal$hidden, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing)
 							}),
 						elm$core$Platform$Cmd$none);
+				default:
+					var tab = msg.a;
+					var _n29 = A2(elm$core$Debug$log, 'switch tab', tab);
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 			}
 		}
 	});
@@ -8359,6 +8363,13 @@ var author$project$Main$InsertTool = function (a) {
 	return {$: 'InsertTool', a: a};
 };
 var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$ConfirmMediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertTool};
+var author$project$Main$MarkdownTab = {$: 'MarkdownTab'};
+var author$project$Main$MediaListTab = {$: 'MediaListTab'};
+var author$project$Main$PlainTextTab = {$: 'PlainTextTab'};
+var author$project$Main$StyleTab = {$: 'StyleTab'};
+var author$project$Main$SwitchTab = function (a) {
+	return {$: 'SwitchTab', a: a};
+};
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	switch (handler.$) {
 		case 'Normal':
@@ -8390,81 +8401,6 @@ var elm$html$Html$Attributes$href = function (url) {
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
-var elm$html$Html$div = _VirtualDom_node('div');
-var rundis$elm_bootstrap$Bootstrap$Grid$container = F2(
-	function (attributes, children) {
-		return A2(
-			elm$html$Html$div,
-			_Utils_ap(
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('container')
-					]),
-				attributes),
-			children);
-	});
-var author$project$Main$viewTabs = function () {
-	var tabLink = function (string) {
-		return A2(
-			elm$html$Html$a,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$class('nav-link'),
-					elm$html$Html$Attributes$href('#')
-				]),
-			_List_fromArray(
-				[
-					elm$html$Html$text(string)
-				]));
-	};
-	return A2(
-		rundis$elm_bootstrap$Bootstrap$Grid$container,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				elm$html$Html$ul,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('nav nav-tabs')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$li,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('nav-item')
-							]),
-						_List_fromArray(
-							[
-								tabLink('Markdown mode')
-							])),
-						A2(
-						elm$html$Html$li,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('nav-item')
-							]),
-						_List_fromArray(
-							[
-								tabLink('Text mode')
-							])),
-						A2(
-						elm$html$Html$li,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('nav-item')
-							]),
-						_List_fromArray(
-							[
-								tabLink('Media list')
-							]))
-					]))
-			]));
-}();
-var elm$core$Basics$round = _Basics_round;
-var elm$html$Html$button = _VirtualDom_node('button');
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -8482,6 +8418,67 @@ var elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		elm$json$Json$Decode$succeed(msg));
 };
+var elm$html$Html$div = _VirtualDom_node('div');
+var rundis$elm_bootstrap$Bootstrap$Grid$container = F2(
+	function (attributes, children) {
+		return A2(
+			elm$html$Html$div,
+			_Utils_ap(
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('container')
+					]),
+				attributes),
+			children);
+	});
+var author$project$Main$viewTabs = function () {
+	var tabLink = F2(
+		function (tab, title) {
+			return A2(
+				elm$html$Html$li,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('nav-item')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$a,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('nav-link'),
+								elm$html$Html$Attributes$href('#'),
+								elm$html$Html$Events$onClick(
+								author$project$Main$SwitchTab(tab))
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text(title)
+							]))
+					]));
+		});
+	return A2(
+		rundis$elm_bootstrap$Bootstrap$Grid$container,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$ul,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('nav nav-tabs')
+					]),
+				_List_fromArray(
+					[
+						A2(tabLink, author$project$Main$MarkdownTab, 'Markdown mode'),
+						A2(tabLink, author$project$Main$PlainTextTab, 'Text mode'),
+						A2(tabLink, author$project$Main$MediaListTab, 'Media'),
+						A2(tabLink, author$project$Main$StyleTab, 'Style')
+					]))
+			]));
+}();
+var elm$core$Basics$round = _Basics_round;
+var elm$html$Html$button = _VirtualDom_node('button');
 var author$project$Main$viewUpload = F3(
 	function (onClickMsg, buttonText, status) {
 		if (status.$ === 'Ready') {

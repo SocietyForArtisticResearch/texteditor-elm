@@ -184,6 +184,7 @@ type Msg
     | SavedMediaEdit (Result Http.Error String)
     | ConfirmMediaDelete Exposition.RCMediaObject
     | CloseConfirmDialog
+    | SwitchTab TabState
 
 
 
@@ -557,6 +558,14 @@ update msg model =
         CloseConfirmDialog ->
             ( { model | confirmDialog = ( Modal.hidden, Nothing, Nothing ) }, Cmd.none )
 
+        SwitchTab tab ->
+            -- TODO call JS ports to change visibility of editors
+            let
+                _ =
+                    Debug.log "switch tab" tab
+            in
+            ( model, Cmd.none )
+
 
 viewUpload : Msg -> String -> UploadStatus -> Html Msg
 viewUpload onClickMsg buttonText status =
@@ -568,20 +577,28 @@ viewUpload onClickMsg buttonText status =
             div [] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
 
 
+type TabState
+    = MarkdownTab
+    | PlainTextTab
+    | StyleTab
+    | MediaListTab
+
+
 viewTabs : Html Msg
 viewTabs =
     let
-        tabLink =
-            \string -> a [ class "nav-link", href "#" ] [ text string ]
+        tabLink : TabState -> String -> Html Msg
+        tabLink tab title =
+            li [ class "nav-item" ]
+                [ a [ class "nav-link", href "#", onClick (SwitchTab tab) ] [ text title ]
+                ]
     in
     Grid.container []
         [ ul [ class "nav nav-tabs" ]
-            [ li [ class "nav-item" ]
-                [ tabLink "Markdown mode" ]
-            , li [ class "nav-item" ]
-                [ tabLink "Text mode" ]
-            , li [ class "nav-item" ]
-                [ tabLink "Media list" ]
+            [ tabLink MarkdownTab "Markdown mode"
+            , tabLink PlainTextTab "Text mode"
+            , tabLink MediaListTab "Media"
+            , tabLink StyleTab "Style"
             ]
         ]
 
