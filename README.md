@@ -28,9 +28,6 @@ be made outside of elm.
 # Todo
 
 Casper:
-- When deleting object, ask for confirmation (done, but on cancelling goes to redirect editor.html instead of styaing in page ??) 
-Observation: if MediaDelete call is called outside of Modal, no problem
-
 
 - Tabs ? Switch Textarea/Codemirror/CSS Edit
 - Buttons
@@ -40,6 +37,9 @@ Observation: if MediaDelete call is called outside of Modal, no problem
 - Drag and drop of media (postpone)
 
 Luc:
+- Ports for switching editors (style, plain, markdown)
+- Mediadelete
+- Mediaupdate
 - Check rendered html
 - Transcoding status type
 - Import/Export (Pandoc calls)
