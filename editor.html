@@ -46,16 +46,24 @@
 	  
 	</div>
           <div class="col">
-            <div id="preview">
-            </div>
+              <div id="preview">
+              </div>
           </div>
-        </div>
       </div>
+    </div>
     </div>
 </body>
 <script>
  var urlParams = new URLSearchParams(window.location.search);
 
+ const editorCmMd = 0;
+ 
+ const editorTxtMd = 1;
+
+ const editorCmCss = 2;
+ 
+ var selectedEditor = editorCmMd;
+ 
  var cmMarkdown = CodeMirror.fromTextArea(document.getElementById("cm-markdown"));
 
  var textareaMarkdown = document.getElementById("textarea-markdown")
@@ -78,6 +86,11 @@
 
  cmMarkdown.on("changes", function() {
      app.ports.currentGeneration.send(cmMarkdown.changeGeneration());
+
+     if (selectedEditor == editorCmMd) {
+	 textareaMarkdown.value = cmMarkdown.getValue();
+     };
+
  });
 
 
@@ -100,10 +113,12 @@
 
 
  function sendContent() {
+     
      app.ports.cmContent.send({
          generation: cmMarkdown.changeGeneration(),
          content: cmMarkdown.getValue()
      });
+     
  }
 
  app.ports.getContent.subscribe(function() {
@@ -132,7 +147,9 @@
  });
 
 
- textareaMarkdown.addEventListener("input", function() { console.log(textareaMarkdown.value.console) } );
+ textareaMarkdown.addEventListener("input", function() {
+     cmMarkdown.setValue(textareaMarkdown.value);
+ } );
 
 
 </script>
