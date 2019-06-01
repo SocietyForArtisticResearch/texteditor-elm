@@ -77,7 +77,7 @@
  });
 
 
- function setEditor(editor) {
+ function setEditorDisplay(editor) {
      switch(editor) {
 	 case editorCmMd:	     
 	     textareaMarkdown.style.display = "none"
@@ -94,7 +94,7 @@
      }
  }
 
- setEditor(selectedEditor);
+ setEditorDisplay(selectedEditor);
  
  // send current edit generation
  /* setInterval(function(){
@@ -138,7 +138,8 @@
 
 
  app.ports.setEditor.subscribe(function(editor) {
-     setEditor(editor);
+     console.log(editor);
+     setEditorDisplay(editor);
  });
  
  app.ports.getContent.subscribe(function() {
