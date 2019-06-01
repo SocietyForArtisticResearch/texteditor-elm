@@ -38,6 +38,7 @@ type alias Model =
     , mediaClassesDict : Dict.Dict Int String -- stores userclasses for media to be added to media list
     , saved : Bool
     , mediaCounter : Int
+    , selectedEditor : TabState
     }
 
 
@@ -69,6 +70,7 @@ emptyModel research weave =
     , mediaClassesDict = Dict.empty
     , saved = True
     , mediaCounter = 0
+    , selectedEditor = CmMarkdownTab
     }
 
 
@@ -127,6 +129,13 @@ port setContent : String -> Cmd msg
 
 
 port mediaDialog : (E.Value -> msg) -> Sub msg
+
+
+
+--- editor selection
+
+
+port setEditor : Int -> Cmd msg
 
 
 
@@ -564,7 +573,7 @@ update msg model =
                 _ =
                     Debug.log "switch tab" tab
             in
-            ( model, Cmd.none )
+            ( model, enumTabState tab |> setEditor )
 
 
 viewUpload : Msg -> String -> UploadStatus -> Html Msg
@@ -578,25 +587,49 @@ viewUpload onClickMsg buttonText status =
 
 
 type TabState
-    = MarkdownTab
-    | PlainTextTab
+    = CmMarkdownTab
+    | TxtMarkdownTab
     | StyleTab
     | MediaListTab
 
 
-viewTabs : Html Msg
-viewTabs =
+enumTabState : TabState -> Int
+enumTabState t =
+    case t of
+        CmMarkdownTab ->
+            0
+
+        TxtMarkdownTab ->
+            1
+
+        StyleTab ->
+            2
+
+        MediaListTab ->
+            3
+
+
+viewTabs : Model -> Html Msg
+viewTabs model =
     let
         tabLink : TabState -> String -> Html Msg
         tabLink tab title =
+            let
+                selectedClass =
+                    if model.selectedEditor == tab then
+                        "nav-link selected"
+
+                    else
+                        "nav-link"
+            in
             li [ class "nav-item" ]
-                [ a [ class "nav-link", href "#", onClick (SwitchTab tab) ] [ text title ]
+                [ a [ class selectedClass, href "#", onClick (SwitchTab tab) ] [ text title ]
                 ]
     in
     Grid.container []
         [ ul [ class "nav nav-tabs" ]
-            [ tabLink MarkdownTab "Markdown mode"
-            , tabLink PlainTextTab "Text mode"
+            [ tabLink CmMarkdownTab "Markdown"
+            , tabLink TxtMarkdownTab "Markdown plain"
             , tabLink MediaListTab "Media"
             , tabLink StyleTab "Style"
             ]
@@ -633,7 +666,7 @@ view model =
             button [ onClick SaveExposition ] [ text saveButtonText ]
     in
     div []
-        [ viewTabs
+        [ viewTabs model
         , mediaDialogHtml
         , confirmDialogHtml
         , viewUpload UploadMediaFileSelect "Upload Media" model.mediaUploadStatus

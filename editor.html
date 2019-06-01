@@ -77,7 +77,25 @@
  });
 
 
+ function setEditor(editor) {
+     switch(editor) {
+	 case editorCmMd:	     
+	     textareaMarkdown.style.display = "none"
+	     cmMarkdown.getWrapperElement().style.display = "inline";
+	     selectedEditor = editor;
+	     break;
+	 case editorTxtMd:
+	     cmMarkdown.getWrapperElement().style.display = "none";
+	     textareaMarkdown.style.display = "inline"
+	     selectedEditor = editor;
+	     break;
+	 default:
+	     console.log("editor selection not known or not implemented");
+     }
+ }
 
+ setEditor(selectedEditor);
+ 
  // send current edit generation
  /* setInterval(function(){
   *     app.ports.currentGeneration.send(cm.changeGeneration());
@@ -87,10 +105,7 @@
  cmMarkdown.on("changes", function() {
      app.ports.currentGeneration.send(cmMarkdown.changeGeneration());
 
-//     if (selectedEditor == editorCmMd) {
      textareaMarkdown.value = cmMarkdown.getValue();
-  //   };
-
  });
 
 
@@ -100,13 +115,13 @@
      let tok = cmMarkdown.getTokenTypeAt(pos);
      if (tok !== null && tok !== undefined) {
          if (tok.includes("rcmedia")) {
-             let word = cmMarkdown.findWordAt(pos);
-             let content = cmMarkdown.getRange(word.anchor, word.head)
-             if (content !== "}" && content !== "!{") {
+	     let word = cmMarkdown.findWordAt(pos);
+	     let content = cmMarkdown.getRange(word.anchor, word.head)
+	     if (content !== "}" && content !== "!{") {
                  app.ports.mediaDialog.send({
-                     media: content
+		     media: content
                  });
-             }
+	     }
          }
      }
  });
@@ -121,6 +136,11 @@
      
  }
 
+
+ app.ports.setEditor.subscribe(function(editor) {
+     setEditor(editor);
+ });
+ 
  app.ports.getContent.subscribe(function() {
      sendContent();
  });
@@ -137,7 +157,6 @@
      app.ports.getHtml.send(marked(md));
  });
 
-
  app.ports.setPreviewContent.subscribe(function(content) {
      var preview = document.getElementById("preview")
      var newTo = document.createElement('div');
@@ -149,7 +168,7 @@
 
  textareaMarkdown.addEventListener("input", function() {
      cmMarkdown.setValue(textareaMarkdown.value);
- } );
+ });
 
 
 </script>

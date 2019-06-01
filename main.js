@@ -5301,6 +5301,7 @@ var author$project$Main$decodeFlags = A3(
 	A2(elm$json$Json$Decode$field, 'research', elm$json$Json$Decode$int));
 var author$project$Settings$editorVersion = '2.0.0';
 var author$project$Exposition$empty = {authors: _List_Nil, contentVersion: 0, css: '', currentWeave: 0, editorVersion: author$project$Settings$editorVersion, id: 0, markdownInput: '', media: _List_Nil, renderedHtml: '', title: ''};
+var author$project$Main$CmMarkdownTab = {$: 'CmMarkdownTab'};
 var author$project$Main$Ready = {$: 'Ready'};
 var elm$core$Basics$negate = function (n) {
 	return -n;
@@ -5323,6 +5324,7 @@ var author$project$Main$emptyModel = F2(
 			problems: _List_Nil,
 			research: research,
 			saved: true,
+			selectedEditor: author$project$Main$CmMarkdownTab,
 			weave: weave
 		};
 	});
@@ -7403,6 +7405,18 @@ var author$project$Main$addProblems = F2(
 	});
 var elm$json$Json$Encode$string = _Json_wrap;
 var author$project$Main$convertMarkdown = _Platform_outgoingPort('convertMarkdown', elm$json$Json$Encode$string);
+var author$project$Main$enumTabState = function (t) {
+	switch (t.$) {
+		case 'CmMarkdownTab':
+			return 0;
+		case 'TxtMarkdownTab':
+			return 1;
+		case 'StyleTab':
+			return 2;
+		default:
+			return 3;
+	}
+};
 var elm$json$Json$Encode$null = _Json_encodeNull;
 var author$project$Main$getContent = _Platform_outgoingPort(
 	'getContent',
@@ -7415,6 +7429,8 @@ var author$project$Main$incMediaCounter = function (exp) {
 		{mediaCounter: exp.mediaCounter + 1});
 };
 var author$project$Main$setContent = _Platform_outgoingPort('setContent', elm$json$Json$Encode$string);
+var elm$json$Json$Encode$int = _Json_wrap;
+var author$project$Main$setEditor = _Platform_outgoingPort('setEditor', elm$json$Json$Encode$int);
 var author$project$Main$setPreviewContent = _Platform_outgoingPort('setPreviewContent', elm$json$Json$Encode$string);
 var author$project$Problems$CannotFindMediaFieldInJson = {$: 'CannotFindMediaFieldInJson'};
 var author$project$Problems$CannotLoadMedia = function (a) {
@@ -7517,7 +7533,6 @@ var elm$http$Http$multipartBody = function (parts) {
 		_Http_toFormData(parts));
 };
 var elm$http$Http$stringPart = _Http_pair;
-var elm$json$Json$Encode$int = _Json_wrap;
 var elm$json$Json$Encode$list = F2(
 	function (func, entries) {
 		return _Json_wrap(
@@ -8312,7 +8327,10 @@ var author$project$Main$update = F2(
 				default:
 					var tab = msg.a;
 					var _n29 = A2(elm$core$Debug$log, 'switch tab', tab);
-					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+					return _Utils_Tuple2(
+						model,
+						author$project$Main$setEditor(
+							author$project$Main$enumTabState(tab)));
 			}
 		}
 	});
@@ -8363,13 +8381,12 @@ var author$project$Main$InsertTool = function (a) {
 	return {$: 'InsertTool', a: a};
 };
 var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$ConfirmMediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertTool};
-var author$project$Main$MarkdownTab = {$: 'MarkdownTab'};
 var author$project$Main$MediaListTab = {$: 'MediaListTab'};
-var author$project$Main$PlainTextTab = {$: 'PlainTextTab'};
 var author$project$Main$StyleTab = {$: 'StyleTab'};
 var author$project$Main$SwitchTab = function (a) {
 	return {$: 'SwitchTab', a: a};
 };
+var author$project$Main$TxtMarkdownTab = {$: 'TxtMarkdownTab'};
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	switch (handler.$) {
 		case 'Normal':
@@ -8431,9 +8448,10 @@ var rundis$elm_bootstrap$Bootstrap$Grid$container = F2(
 				attributes),
 			children);
 	});
-var author$project$Main$viewTabs = function () {
+var author$project$Main$viewTabs = function (model) {
 	var tabLink = F2(
 		function (tab, title) {
+			var selectedClass = _Utils_eq(model.selectedEditor, tab) ? 'nav-link selected' : 'nav-link';
 			return A2(
 				elm$html$Html$li,
 				_List_fromArray(
@@ -8446,7 +8464,7 @@ var author$project$Main$viewTabs = function () {
 						elm$html$Html$a,
 						_List_fromArray(
 							[
-								elm$html$Html$Attributes$class('nav-link'),
+								elm$html$Html$Attributes$class(selectedClass),
 								elm$html$Html$Attributes$href('#'),
 								elm$html$Html$Events$onClick(
 								author$project$Main$SwitchTab(tab))
@@ -8470,13 +8488,13 @@ var author$project$Main$viewTabs = function () {
 					]),
 				_List_fromArray(
 					[
-						A2(tabLink, author$project$Main$MarkdownTab, 'Markdown mode'),
-						A2(tabLink, author$project$Main$PlainTextTab, 'Text mode'),
+						A2(tabLink, author$project$Main$CmMarkdownTab, 'Markdown'),
+						A2(tabLink, author$project$Main$TxtMarkdownTab, 'Markdown plain'),
 						A2(tabLink, author$project$Main$MediaListTab, 'Media'),
 						A2(tabLink, author$project$Main$StyleTab, 'Style')
 					]))
 			]));
-}();
+};
 var elm$core$Basics$round = _Basics_round;
 var elm$html$Html$button = _VirtualDom_node('button');
 var author$project$Main$viewUpload = F3(
@@ -10765,7 +10783,7 @@ var author$project$Main$view = function (model) {
 		_List_Nil,
 		_List_fromArray(
 			[
-				author$project$Main$viewTabs,
+				author$project$Main$viewTabs(model),
 				mediaDialogHtml,
 				confirmDialogHtml,
 				A3(author$project$Main$viewUpload, author$project$Main$UploadMediaFileSelect, 'Upload Media', model.mediaUploadStatus),
