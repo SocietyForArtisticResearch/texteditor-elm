@@ -117,10 +117,10 @@
   */
 
  function mkGenerationObj() {
-     {
+     return ({
 	 md: cmMarkdown.changeGeneration(),
 	 style: cmStyle.changeGeneration()
-     }
+     })
  }
  
  cmMarkdown.on("changes", function() {
