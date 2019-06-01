@@ -587,7 +587,7 @@ update msg model =
                 _ =
                     Debug.log "switch tab" tab
             in
-            ( { model | selectedTab = tab }, enumTabState tab |> setEditor )
+            ( { model | selectedEditor = tab }, enumTabState tab |> setEditor )
 
 
 viewUpload : Msg -> String -> UploadStatus -> Html Msg

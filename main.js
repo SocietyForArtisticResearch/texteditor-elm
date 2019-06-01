@@ -8365,7 +8365,9 @@ var author$project$Main$update = F2(
 					var tab = msg.a;
 					var _n29 = A2(elm$core$Debug$log, 'switch tab', tab);
 					return _Utils_Tuple2(
-						model,
+						_Utils_update(
+							model,
+							{selectedEditor: tab}),
 						author$project$Main$setEditor(
 							author$project$Main$enumTabState(tab)));
 			}
