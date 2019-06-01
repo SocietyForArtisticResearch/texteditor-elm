@@ -80,21 +80,22 @@
  function setEditorDisplay(editor) {
      switch(editor) {
 	 case editorCmMd:
-	     if (selectedEditor == editorTxtMd) {
-		 cmMarkdown.setValue(textareaMarkdown.value);
-	     };
+	     var setAfterShow = selectedEditor == editorTxtMd);
 	     textareaMarkdown.style.display = "none"
 	     cmMarkdown.getWrapperElement().style.display = "block";
 	     selectedEditor = editor;
+	     if (setAfterShow) {
+		 cmMarkdown.setValue(textareaMarkdown.value);
+	     };
 	     break;
-	 case editorTxtMd:
-	     cmMarkdown.getWrapperElement().style.display = "none";
-	     textareaMarkdown.style.display = "block"
-	     selectedEditor = editor;
-	     break;
-	 default:
-	     console.log("editor selection not known or not implemented");
-     }
+     case editorTxtMd:
+     cmMarkdown.getWrapperElement().style.display = "none";
+     textareaMarkdown.style.display = "block"
+     selectedEditor = editor;
+     break;
+     default:
+     console.log("editor selection not known or not implemented");
+ }
  }
 
  setEditorDisplay(selectedEditor);
@@ -141,7 +142,6 @@
 
 
  app.ports.setEditor.subscribe(function(editor) {
-     console.log(editor);
      setEditorDisplay(editor);
  });
  
