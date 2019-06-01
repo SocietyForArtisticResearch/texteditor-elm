@@ -39,8 +39,8 @@
 	      <textarea id="textarea-markdown">
 	      </textarea>
 
-              <!-- <textarea id="cm-style">
-		   </textarea> -->
+              <textarea id="cm-style">
+	      </textarea>
           </div>
 
 	  
@@ -66,6 +66,8 @@
  
  var cmMarkdown = CodeMirror.fromTextArea(document.getElementById("cm-markdown"));
 
+ var cmStyle = CodeMirror.fromTextArea(document.getElementById("cm-style"));
+
  var textareaMarkdown = document.getElementById("textarea-markdown")
  
  var app = Elm.Main.init({
@@ -82,6 +84,7 @@
 	 case editorCmMd:
 	     let setAfterShow = (selectedEditor == editorTxtMd);
 	     textareaMarkdown.style.display = "none"
+	     cmStyle.getWrapperElement().style.display = "none";
 	     cmMarkdown.getWrapperElement().style.display = "block";
 	     selectedEditor = editor;
 	     if (setAfterShow) {
@@ -90,7 +93,14 @@
 	     break;
 	 case editorTxtMd:
 	     cmMarkdown.getWrapperElement().style.display = "none";
+	     cmStyle.getWrapperElement().style.display = "none";
 	     textareaMarkdown.style.display = "block"
+	     selectedEditor = editor;
+	     break;
+	 case editorCmCss:
+	     cmMarkdown.getWrapperElement().style.display = "none";
+	     textareaMarkdown.style.display = "none"
+	     cmStyle.getWrapperElement().style.display = "block";
 	     selectedEditor = editor;
 	     break;
 	 default:
@@ -106,10 +116,22 @@
   * }, 100);
   */
 
+ function mkGenerationObj() {
+     {
+	 md: cmMarkdown.changeGeneration(),
+	 style: cmStyle.changeGeneration()
+     }
+ }
+ 
  cmMarkdown.on("changes", function() {
-     app.ports.currentGeneration.send(cmMarkdown.changeGeneration());
+     app.ports.currentGeneration.send( mkGenerationObj() );
 
      textareaMarkdown.value = cmMarkdown.getValue();
+ });
+
+
+ cmStyle.on("changes", function() {
+     app.ports.currentGeneration.send( mkGenerationObj() );
  });
 
 
@@ -131,13 +153,12 @@
  });
 
 
- function sendContent() {
-     
+ function sendContent() {     
      app.ports.cmContent.send({
-	 generation: cmMarkdown.changeGeneration(),
-	 content: cmMarkdown.getValue()
+	 generation: mkGenerationObj(),
+	 md: cmMarkdown.getValue(),
+	 style: cmStyle.getValue()
      });
-     
  }
 
 
@@ -151,12 +172,32 @@
 
 
  app.ports.setContent.subscribe(function(content) {
-     cmMarkdown.setValue(content);
+     cmMarkdown.setValue(content[0]);
+     cmStyle.setValue(content[1]);
 
      textareaMarkdown.value = content;
  });
 
 
+
+ /* function sendStyleContent() {     
+  *     app.ports.cmStyleContent.send({
+    generation: cmStyle.changeGeneration(),
+    content: cmStyle.getValue()
+  *     });
+  * }
+  * 
+  * app.ports.getStyleContent.subscribe(function() {
+  *     sendContent();
+  * });
+
+
+  * app.ports.setStyleContent.subscribe(function(content) {
+  *     cmStyle.setValue(content);
+  * });
+  */
+
+ 
  app.ports.convertMarkdown.subscribe(function(md) {
      app.ports.getHtml.send(marked(md));
  });

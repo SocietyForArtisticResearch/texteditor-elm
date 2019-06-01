@@ -5314,7 +5314,7 @@ var author$project$Main$emptyModel = F2(
 	function (research, weave) {
 		return {
 			confirmDialog: _Utils_Tuple3(rundis$elm_bootstrap$Bootstrap$Modal$hidden, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing),
-			editGeneration: -1,
+			editGeneration: _Utils_Tuple2(-1, -1),
 			exposition: author$project$Exposition$empty,
 			importUploadStatus: author$project$Main$Ready,
 			mediaClassesDict: elm$core$Dict$empty,
@@ -7349,6 +7349,12 @@ var author$project$Exposition$validateMediaObject = F3(
 			validation: validation
 		};
 	});
+var author$project$Exposition$withCSS = F2(
+	function (exp, content) {
+		return _Utils_update(
+			exp,
+			{css: content});
+	});
 var author$project$Exposition$withHtml = F2(
 	function (exp, content) {
 		return _Utils_update(
@@ -7405,6 +7411,15 @@ var author$project$Main$addProblems = F2(
 	});
 var elm$json$Json$Encode$string = _Json_wrap;
 var author$project$Main$convertMarkdown = _Platform_outgoingPort('convertMarkdown', elm$json$Json$Encode$string);
+var elm$core$Tuple$pair = F2(
+	function (a, b) {
+		return _Utils_Tuple2(a, b);
+	});
+var author$project$Main$decodeGeneration = A3(
+	elm$json$Json$Decode$map2,
+	elm$core$Tuple$pair,
+	A2(elm$json$Json$Decode$field, 'md', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'style', elm$json$Json$Decode$int));
 var author$project$Main$enumTabState = function (t) {
 	switch (t.$) {
 		case 'CmMarkdownTab':
@@ -7428,7 +7443,29 @@ var author$project$Main$incMediaCounter = function (exp) {
 		exp,
 		{mediaCounter: exp.mediaCounter + 1});
 };
-var author$project$Main$setContent = _Platform_outgoingPort('setContent', elm$json$Json$Encode$string);
+var elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(_Utils_Tuple0),
+				entries));
+	});
+var author$project$Main$setContent = _Platform_outgoingPort(
+	'setContent',
+	function ($) {
+		var a = $.a;
+		var b = $.b;
+		return A2(
+			elm$json$Json$Encode$list,
+			elm$core$Basics$identity,
+			_List_fromArray(
+				[
+					elm$json$Json$Encode$string(a),
+					elm$json$Json$Encode$string(b)
+				]));
+	});
 var elm$json$Json$Encode$int = _Json_wrap;
 var author$project$Main$setEditor = _Platform_outgoingPort('setEditor', elm$json$Json$Encode$int);
 var author$project$Main$setPreviewContent = _Platform_outgoingPort('setPreviewContent', elm$json$Json$Encode$string);
@@ -7533,15 +7570,6 @@ var elm$http$Http$multipartBody = function (parts) {
 		_Http_toFormData(parts));
 };
 var elm$http$Http$stringPart = _Http_pair;
-var elm$json$Json$Encode$list = F2(
-	function (func, entries) {
-		return _Json_wrap(
-			A3(
-				elm$core$List$foldl,
-				_Json_addEntry(func),
-				_Json_emptyArray(_Utils_Tuple0),
-				entries));
-	});
 var elm$json$Json$Encode$object = function (pairs) {
 	return _Json_wrap(
 		A3(
@@ -7958,7 +7986,7 @@ var author$project$Main$update = F2(
 						author$project$Main$setPreviewContent(html));
 				case 'EditGeneration':
 					var val = msg.a;
-					var _n1 = A2(elm$json$Json$Decode$decodeValue, elm$json$Json$Decode$int, val);
+					var _n1 = A2(elm$json$Json$Decode$decodeValue, author$project$Main$decodeGeneration, val);
 					if (_n1.$ === 'Ok') {
 						var gen = _n1.a;
 						return (!_Utils_eq(gen, model.editGeneration)) ? _Utils_Tuple2(
@@ -7975,28 +8003,36 @@ var author$project$Main$update = F2(
 					}
 				case 'MdContent':
 					var val = msg.a;
-					var _n2 = _Utils_Tuple2(
+					var _n2 = _Utils_Tuple3(
 						A2(
 							elm$json$Json$Decode$decodeValue,
-							A2(elm$json$Json$Decode$field, 'generation', elm$json$Json$Decode$int),
+							A2(elm$json$Json$Decode$field, 'generation', author$project$Main$decodeGeneration),
 							val),
 						A2(
 							elm$json$Json$Decode$decodeValue,
-							A2(elm$json$Json$Decode$field, 'content', elm$json$Json$Decode$string),
+							A2(elm$json$Json$Decode$field, 'md', elm$json$Json$Decode$string),
+							val),
+						A2(
+							elm$json$Json$Decode$decodeValue,
+							A2(elm$json$Json$Decode$field, 'style', elm$json$Json$Decode$string),
 							val));
-					if ((_n2.a.$ === 'Ok') && (_n2.b.$ === 'Ok')) {
+					if (((_n2.a.$ === 'Ok') && (_n2.b.$ === 'Ok')) && (_n2.c.$ === 'Ok')) {
 						var gen = _n2.a.a;
-						var content = _n2.b.a;
-						var newHtml = A2(author$project$Exposition$insertToolHtml, content, model.exposition);
+						var mdcontent = _n2.b.a;
+						var stylecontent = _n2.c.a;
+						var newHtml = A2(author$project$Exposition$insertToolHtml, mdcontent, model.exposition);
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
 								{
 									editGeneration: gen,
 									exposition: A2(
-										author$project$Exposition$withHtml,
-										A2(author$project$Exposition$withMd, model.exposition, content),
-										newHtml)
+										author$project$Exposition$withCSS,
+										A2(
+											author$project$Exposition$withHtml,
+											A2(author$project$Exposition$withMd, model.exposition, mdcontent),
+											newHtml),
+										stylecontent)
 								}),
 							author$project$Main$convertMarkdown(newHtml));
 					} else {
@@ -8124,7 +8160,8 @@ var author$project$Main$update = F2(
 							elm$core$Platform$Cmd$batch(
 								_List_fromArray(
 									[
-										author$project$Main$setContent(expositionWithClasses.markdownInput),
+										author$project$Main$setContent(
+										_Utils_Tuple2(expositionWithClasses.markdownInput, expositionWithClasses.css)),
 										author$project$Main$setPreviewContent(expositionWithClasses.renderedHtml)
 									])));
 					}
@@ -8451,7 +8488,7 @@ var rundis$elm_bootstrap$Bootstrap$Grid$container = F2(
 var author$project$Main$viewTabs = function (model) {
 	var tabLink = F2(
 		function (tab, title) {
-			var selectedClass = _Utils_eq(model.selectedEditor, tab) ? 'nav-link selected' : 'nav-link';
+			var selectedClass = _Utils_eq(model.selectedEditor, tab) ? 'nav-link active' : 'nav-link';
 			return A2(
 				elm$html$Html$li,
 				_List_fromArray(

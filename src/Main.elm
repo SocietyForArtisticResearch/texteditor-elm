@@ -27,7 +27,7 @@ import UserConfirm exposing (ConfirmDialogContent)
 
 type alias Model =
     { exposition : RCExposition
-    , editGeneration : Int
+    , editGeneration : ( Int, Int )
     , mediaDialog : ( Modal.Visibility, Maybe ( RCMediaObject, Int ), Maybe RCMediaObjectViewState )
     , confirmDialog : ( Modal.Visibility, Maybe ConfirmDialogContent, Maybe (UserConfirm.Messages Msg) )
     , weave : Int
@@ -58,7 +58,7 @@ decodeFlags =
 
 emptyModel : Int -> Int -> Model
 emptyModel research weave =
-    { editGeneration = -1
+    { editGeneration = ( -1, -1 )
     , exposition = Exposition.empty
     , mediaDialog = ( Modal.hidden, Nothing, Nothing )
     , confirmDialog = ( Modal.hidden, Nothing, Nothing )
@@ -113,7 +113,7 @@ main =
 
 
 -- PORTS
--- code mirror
+-- code mirror markdown
 
 
 port currentGeneration : (E.Value -> msg) -> Sub msg
@@ -125,13 +125,18 @@ port cmContent : (E.Value -> msg) -> Sub msg
 port getContent : () -> Cmd msg
 
 
-port setContent : String -> Cmd msg
+port setContent : ( String, String ) -> Cmd msg
 
 
 port mediaDialog : (E.Value -> msg) -> Sub msg
 
 
 
+-- -- code mirror style
+-- port currentStyleGeneration : (E.Value -> msg) -> Sub msg
+-- port cmStyleContent : (E.Value -> msg) -> Sub msg
+-- port getStyleContent : () -> Cmd msg
+-- port setStyleContent : String -> Cmd msg
 --- editor selection
 
 
@@ -229,6 +234,11 @@ makeTableMessages =
 -- UPDATE
 
 
+decodeGeneration : D.Decoder ( Int, Int )
+decodeGeneration =
+    D.map2 Tuple.pair (D.field "md" D.int) (D.field "style" D.int)
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -238,7 +248,7 @@ update msg model =
             )
 
         EditGeneration val ->
-            case D.decodeValue D.int val of
+            case D.decodeValue decodeGeneration val of
                 Ok gen ->
                     if gen /= model.editGeneration then
                         ( { model
@@ -257,21 +267,25 @@ update msg model =
 
         MdContent val ->
             case
-                ( D.decodeValue (D.field "generation" D.int) val
-                , D.decodeValue (D.field "content" D.string) val
+                ( D.decodeValue (D.field "generation" decodeGeneration) val
+                , D.decodeValue (D.field "md" D.string) val
+                , D.decodeValue (D.field "style" D.string) val
                 )
             of
-                ( Ok gen, Ok content ) ->
+                ( Ok gen, Ok mdcontent, Ok stylecontent ) ->
                     let
                         newHtml =
-                            Exposition.insertToolHtml content model.exposition
+                            Exposition.insertToolHtml mdcontent model.exposition
                     in
                     ( { model
                         | editGeneration = gen
                         , exposition =
-                            Exposition.withHtml
-                                (Exposition.withMd model.exposition content)
-                                newHtml
+                            Exposition.withCSS
+                                (Exposition.withHtml
+                                    (Exposition.withMd model.exposition mdcontent)
+                                    newHtml
+                                )
+                                stylecontent
                       }
                     , convertMarkdown newHtml
                     )
@@ -394,7 +408,7 @@ update msg model =
                         | exposition = expositionWithClasses
                       }
                     , Cmd.batch
-                        [ setContent expositionWithClasses.markdownInput
+                        [ setContent ( expositionWithClasses.markdownInput, expositionWithClasses.css )
                         , setPreviewContent expositionWithClasses.renderedHtml
                         ]
                     )
@@ -617,7 +631,7 @@ viewTabs model =
             let
                 selectedClass =
                     if model.selectedEditor == tab then
-                        "nav-link selected"
+                        "nav-link active"
 
                     else
                         "nav-link"

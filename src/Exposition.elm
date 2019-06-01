@@ -1,4 +1,4 @@
-module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, objectByNameOrId, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withHtml, withMd)
+module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, objectByNameOrId, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withCSS, withHtml, withMd)
 
 import Dict
 import Html.String as Html
@@ -67,6 +67,11 @@ withMd exp content =
 withHtml : RCExposition -> String -> RCExposition
 withHtml exp content =
     { exp | renderedHtml = content }
+
+
+withCSS : RCExposition -> String -> RCExposition
+withCSS exp content =
+    { exp | css = content }
 
 
 type alias OptionalDimensions =
