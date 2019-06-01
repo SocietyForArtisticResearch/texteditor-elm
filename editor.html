@@ -79,14 +79,17 @@
 
  function setEditorDisplay(editor) {
      switch(editor) {
-	 case editorCmMd:	     
+	 case editorCmMd:
+	     if (selectedEditor == editorTxtMd) {
+		 cmMarkdown.setValue(textareaMarkdown.value);
+	     };
 	     textareaMarkdown.style.display = "none"
-	     cmMarkdown.getWrapperElement().style.display = "inline";
+	     cmMarkdown.getWrapperElement().style.display = "block";
 	     selectedEditor = editor;
 	     break;
 	 case editorTxtMd:
 	     cmMarkdown.getWrapperElement().style.display = "none";
-	     textareaMarkdown.style.display = "inline"
+	     textareaMarkdown.style.display = "block"
 	     selectedEditor = editor;
 	     break;
 	 default:
@@ -114,15 +117,15 @@
      let pos = cmMarkdown.getCursor();
      let tok = cmMarkdown.getTokenTypeAt(pos);
      if (tok !== null && tok !== undefined) {
-         if (tok.includes("rcmedia")) {
+	 if (tok.includes("rcmedia")) {
 	     let word = cmMarkdown.findWordAt(pos);
 	     let content = cmMarkdown.getRange(word.anchor, word.head)
 	     if (content !== "}" && content !== "!{") {
-                 app.ports.mediaDialog.send({
+		 app.ports.mediaDialog.send({
 		     media: content
-                 });
+		 });
 	     }
-         }
+	 }
      }
  });
 
@@ -130,8 +133,8 @@
  function sendContent() {
      
      app.ports.cmContent.send({
-         generation: cmMarkdown.changeGeneration(),
-         content: cmMarkdown.getValue()
+	 generation: cmMarkdown.changeGeneration(),
+	 content: cmMarkdown.getValue()
      });
      
  }
