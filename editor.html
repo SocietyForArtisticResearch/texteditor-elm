@@ -87,9 +87,9 @@
  cmMarkdown.on("changes", function() {
      app.ports.currentGeneration.send(cmMarkdown.changeGeneration());
 
-     if (selectedEditor == editorCmMd) {
-	 textareaMarkdown.value = cmMarkdown.getValue();
-     };
+//     if (selectedEditor == editorCmMd) {
+     textareaMarkdown.value = cmMarkdown.getValue();
+  //   };
 
  });
 
