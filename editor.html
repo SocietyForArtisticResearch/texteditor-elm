@@ -182,10 +182,13 @@
      cmMarkdown.setValue(content.md);
      cmStyle.setValue(content.style);
 
-
      styleElem.innerHTML = content.style;
      
      textareaMarkdown.value = content;
+
+     let preview = document.getElementById("preview");
+     preview.classList.add("exposition");
+     preview.classList.add("exposition-content");
  });
 
 
