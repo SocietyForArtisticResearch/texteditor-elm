@@ -46,7 +46,7 @@
 	  
 	</div>
           <div class="col">
-              <div id="preview">
+              <div class="exposition exposition-content " id="preview">
               </div>
           </div>
       </div>
@@ -93,6 +93,7 @@
 	     selectedEditor = editor;
 	     if (setAfterShow) {
 		 cmMarkdown.setValue(textareaMarkdown.value);
+		 cmMarkdown.refresh();
 	     };
 	     break;
 	 case editorTxtMd:
@@ -106,6 +107,7 @@
 	     textareaMarkdown.style.display = "none"
 	     cmStyle.getWrapperElement().style.display = "block";
 	     selectedEditor = editor;
+	     cmStyle.refresh();
 	     break;
 	 default:
 	     console.log("editor selection not known or not implemented");
