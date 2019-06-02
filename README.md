@@ -29,21 +29,25 @@ be made outside of elm.
 
 Casper:
 
+- Media list tab
 - Tabs ? Switch Textarea/Codemirror/CSS Edit
 - Buttons
-- Styling
+- Styling (editor sizes)
 - media file types in select dialog
 
-- Drag and drop of media (postpone)
-
 Luc:
-- Ports for switching editors (style, plain, markdown)
 - Mediadelete
 - Mediaupdate
 - Check rendered html
 - Transcoding status type
 - Import/Export (Pandoc calls)
 - TOC
+- Generate preview html (final static html)
+
+## Postponed
+
+- Drag and drop of media (postpone)
+- Real-time collaborative editing
 
 
 ## DONE
@@ -71,3 +75,4 @@ Luc:
 - Insert media html into markdown before passing it to marked
 - Set innerhtml of preview via port
 - Load corrected (new) version of json of additional media metadata list and expo metadata
+- Ports for switching editors (style, plain, markdown)

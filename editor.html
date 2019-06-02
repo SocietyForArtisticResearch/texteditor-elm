@@ -179,12 +179,13 @@
 
 
  app.ports.setContent.subscribe(function(content) {
+     
      cmMarkdown.setValue(content.md);
      cmStyle.setValue(content.style);
 
      styleElem.innerHTML = content.style;
      
-     textareaMarkdown.value = content;
+     textareaMarkdown.value = content.style;
  });
 
 
