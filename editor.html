@@ -74,7 +74,9 @@
 
  var cmStyle = CodeMirror.fromTextArea(document.getElementById("cm-style"));
 
- var textareaMarkdown = document.getElementById("textarea-markdown")
+var textareaMarkdown = document.getElementById("textarea-markdown");
+
+var mediaList = document.getElementById("media-list");
  
  var app = Elm.Main.init({
      node: document.getElementById('elm'),
@@ -91,6 +93,7 @@
 	     let setAfterShow = (selectedEditor == editorTxtMd);
 	     textareaMarkdown.style.display = "none"
 	     cmStyle.getWrapperElement().style.display = "none";
+	     mediaList.style.display = "none";
 	     cmMarkdown.getWrapperElement().style.display = "block";
 	     selectedEditor = editor;
 	     if (setAfterShow) {
@@ -101,15 +104,25 @@
 	 case editorTxtMd:
 	     cmMarkdown.getWrapperElement().style.display = "none";
 	     cmStyle.getWrapperElement().style.display = "none";
+	     mediaList.style.display = "none";
 	     textareaMarkdown.style.display = "block"
 	     selectedEditor = editor;
 	     break;
 	 case editorCmCss:
 	     cmMarkdown.getWrapperElement().style.display = "none";
 	     textareaMarkdown.style.display = "none"
+             mediaList.style.display = "none";
 	     cmStyle.getWrapperElement().style.display = "block";
 	     selectedEditor = editor;
 	     cmStyle.refresh();
+	     break;
+         case editorMediaList:
+	     cmMarkdown.getWrapperElement().style.display = "none";
+	     cmStyle.getWrapperElement().style.display = "none";
+	     mediaList.style.display = "none";
+	     textareaMarkdown.style.display = "none";
+	     mediaList.style.display = "block";
+	     selectedEditor = editor;
 	     break;
 	 default:
 	     console.log("editor selection not known or not implemented");

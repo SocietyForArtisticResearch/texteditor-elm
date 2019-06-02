@@ -10693,13 +10693,22 @@ var author$project$RCMediaList$view = F2(
 								elm$html$Html$text('edit')
 							]))
 					]));
-			return rundis$elm_bootstrap$Bootstrap$Table$table(
-				{
-					options: _List_fromArray(
-						[rundis$elm_bootstrap$Bootstrap$Table$hover, rundis$elm_bootstrap$Bootstrap$Table$striped, rundis$elm_bootstrap$Bootstrap$Table$small]),
-					tbody: A2(rundis$elm_bootstrap$Bootstrap$Table$tbody, _List_Nil, rows),
-					thead: head
-				});
+			return A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$id('media-list')
+					]),
+				_List_fromArray(
+					[
+						rundis$elm_bootstrap$Bootstrap$Table$table(
+						{
+							options: _List_fromArray(
+								[rundis$elm_bootstrap$Bootstrap$Table$hover, rundis$elm_bootstrap$Bootstrap$Table$striped, rundis$elm_bootstrap$Bootstrap$Table$small]),
+							tbody: A2(rundis$elm_bootstrap$Bootstrap$Table$tbody, _List_Nil, rows),
+							thead: head
+						})
+					]));
 		}
 	});
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
