@@ -93,10 +93,9 @@ console.log(document.getElementById("media-list"));
 
 
 function setEditorDisplay(editor) {
-    if (mediaList === null) {
-	mediaList = document.getElementById("media-list");
-	console.log("editor", editor, "media-list", mediaList);
-    }
+    
+    mediaList = document.getElementById("media-list");
+
      switch(editor) {
 	 case editorCmMd:
 	     let setAfterShow = (selectedEditor == editorTxtMd);
