@@ -76,10 +76,7 @@
 
 var textareaMarkdown = document.getElementById("textarea-markdown");
 
-var mediaList = document.getElementById("media-list");
-console.log("first definition",mediaList);
-console.log(document.getElementById("media-list"));
- 
+
  var app = Elm.Main.init({
      node: document.getElementById('elm'),
      flags: {
@@ -87,6 +84,12 @@ console.log(document.getElementById("media-list"));
          research: parseInt(urlParams.get('research'))
      }
  });
+
+/* needs to be defined after elm has "booted" */
+var mediaList = document.getElementById("media-list");
+console.log("first definition",mediaList);
+console.log(document.getElementById("media-list"));
+ 
 
 
 function setEditorDisplay(editor) {
