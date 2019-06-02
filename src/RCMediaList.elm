@@ -5,7 +5,7 @@ import Bootstrap.Table as Table
 import Bootstrap.Utilities.Spacing as Spacing
 import Exposition exposing (RCMediaObject)
 import Html exposing (Html, div, span, text)
-import Html.Attributes exposing (id)
+import Html.Attributes exposing (id, style)
 import Html.Events exposing (onClick)
 
 
@@ -71,7 +71,7 @@ view objectList messages =
                 rows =
                     List.map rowFromRCObject objectList
             in
-            div [ id "media-list" ]
+            div [ id "media-list", style "display" "none" ]
                 [ Table.table
                     { options = [ Table.hover, Table.striped, Table.small ]
                     , thead = head

@@ -10697,7 +10697,8 @@ var author$project$RCMediaList$view = F2(
 				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$id('media-list')
+						elm$html$Html$Attributes$id('media-list'),
+						A2(elm$html$Html$Attributes$style, 'display', 'none')
 					]),
 				_List_fromArray(
 					[
