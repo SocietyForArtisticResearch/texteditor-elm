@@ -88,7 +88,7 @@ var mediaList = document.getElementById("media-list");
 
 
 function setEditorDisplay(editor) {
-    if (mediaList === undefined) {
+    if (mediaList === null) {
 	mediaList = document.getElementById("media-list");
 	console.log("editor", editor, "media-list", mediaList);
     }
