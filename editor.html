@@ -87,7 +87,11 @@ var mediaList = document.getElementById("media-list");
  });
 
 
- function setEditorDisplay(editor) {
+function setEditorDisplay(editor) {
+    if (mediaList === undefined) {
+	mediaList = document.getElementById("media-list");
+	console.log("editor", editor, "media-list", mediaList);
+    }
      switch(editor) {
 	 case editorCmMd:
 	     let setAfterShow = (selectedEditor == editorTxtMd);
