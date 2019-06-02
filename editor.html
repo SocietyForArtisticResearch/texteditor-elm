@@ -185,10 +185,6 @@
      styleElem.innerHTML = content.style;
      
      textareaMarkdown.value = content;
-
-     let preview = document.getElementById("preview");
-     preview.classList.add("exposition");
-     preview.classList.add("exposition-content");
  });
 
 
@@ -219,6 +215,8 @@
      var preview = document.getElementById("preview")
      var newTo = document.createElement('div');
      newTo.id = "preview";
+     newTo.classList.add("exposition");
+     newTo.classList.add("exposition-content");
      newTo.innerHTML = content;
      morphdom(preview, newTo);
  });
