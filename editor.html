@@ -76,7 +76,6 @@
 
 var textareaMarkdown = document.getElementById("textarea-markdown");
 
-
  var app = Elm.Main.init({
      node: document.getElementById('elm'),
      flags: {
@@ -85,23 +84,27 @@ var textareaMarkdown = document.getElementById("textarea-markdown");
      }
  });
 
-/* needs to be defined after elm has "booted" */
-var mediaList = document.getElementById("media-list");
-console.log("first definition",mediaList);
-console.log(document.getElementById("media-list"));
  
-
-
 function setEditorDisplay(editor) {
     
-    mediaList = document.getElementById("media-list");
-
+    let showMediaList = function ( shouldDisplayIfExist ) {
+	var mediaList = document.getElementById("media-list");
+	/* media List may not exist yet, this will only set if it does */
+	if (mediaList) {
+	    if (shouldDisplayIfExist) {
+		mediaList.style.diplay = "block";
+	    } else {
+		mediaList.style.display = "none";
+	    }
+	}
+    }
+	    
      switch(editor) {
 	 case editorCmMd:
 	     let setAfterShow = (selectedEditor == editorTxtMd);
 	     textareaMarkdown.style.display = "none"
 	     cmStyle.getWrapperElement().style.display = "none";
-	     mediaList.style.display = "none";
+	     showMediaList(false);
 	     cmMarkdown.getWrapperElement().style.display = "block";
 	     selectedEditor = editor;
 	     if (setAfterShow) {
@@ -112,14 +115,14 @@ function setEditorDisplay(editor) {
 	 case editorTxtMd:
 	     cmMarkdown.getWrapperElement().style.display = "none";
 	     cmStyle.getWrapperElement().style.display = "none";
-	     mediaList.style.display = "none";
+	     showMediaList(false);
 	     textareaMarkdown.style.display = "block"
 	     selectedEditor = editor;
 	     break;
 	 case editorCmCss:
 	     cmMarkdown.getWrapperElement().style.display = "none";
 	     textareaMarkdown.style.display = "none"
-             mediaList.style.display = "none";
+             showMediaList(false);
 	     cmStyle.getWrapperElement().style.display = "block";
 	     selectedEditor = editor;
 	     cmStyle.refresh();
@@ -127,7 +130,7 @@ function setEditorDisplay(editor) {
          case editorMediaList:
 	     cmMarkdown.getWrapperElement().style.display = "none";
 	     cmStyle.getWrapperElement().style.display = "none";
-	     mediaList.style.display = "none";
+	     showMediaList(true);
 	     textareaMarkdown.style.display = "none";
 	     mediaList.style.display = "block";
 	     selectedEditor = editor;
