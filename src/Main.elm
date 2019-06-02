@@ -125,7 +125,7 @@ port cmContent : (E.Value -> msg) -> Sub msg
 port getContent : () -> Cmd msg
 
 
-port setContent : ( String, String ) -> Cmd msg
+port setContent : E.Value -> Cmd msg
 
 
 port mediaDialog : (E.Value -> msg) -> Sub msg
@@ -408,7 +408,14 @@ update msg model =
                         | exposition = expositionWithClasses
                       }
                     , Cmd.batch
-                        [ setContent ( expositionWithClasses.markdownInput, expositionWithClasses.css )
+                        [ setContent
+                            (E.object
+                                [ ( "md"
+                                  , E.string expositionWithClasses.markdownInput
+                                  )
+                                , ( "style", E.string expositionWithClasses.css )
+                                ]
+                            )
                         , setPreviewContent expositionWithClasses.renderedHtml
                         ]
                     )

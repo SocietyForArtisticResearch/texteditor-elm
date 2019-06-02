@@ -7443,29 +7443,7 @@ var author$project$Main$incMediaCounter = function (exp) {
 		exp,
 		{mediaCounter: exp.mediaCounter + 1});
 };
-var elm$json$Json$Encode$list = F2(
-	function (func, entries) {
-		return _Json_wrap(
-			A3(
-				elm$core$List$foldl,
-				_Json_addEntry(func),
-				_Json_emptyArray(_Utils_Tuple0),
-				entries));
-	});
-var author$project$Main$setContent = _Platform_outgoingPort(
-	'setContent',
-	function ($) {
-		var a = $.a;
-		var b = $.b;
-		return A2(
-			elm$json$Json$Encode$list,
-			elm$core$Basics$identity,
-			_List_fromArray(
-				[
-					elm$json$Json$Encode$string(a),
-					elm$json$Json$Encode$string(b)
-				]));
-	});
+var author$project$Main$setContent = _Platform_outgoingPort('setContent', elm$core$Basics$identity);
 var elm$json$Json$Encode$int = _Json_wrap;
 var author$project$Main$setEditor = _Platform_outgoingPort('setEditor', elm$json$Json$Encode$int);
 var author$project$Main$setPreviewContent = _Platform_outgoingPort('setPreviewContent', elm$json$Json$Encode$string);
@@ -7570,6 +7548,15 @@ var elm$http$Http$multipartBody = function (parts) {
 		_Http_toFormData(parts));
 };
 var elm$http$Http$stringPart = _Http_pair;
+var elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(_Utils_Tuple0),
+				entries));
+	});
 var elm$json$Json$Encode$object = function (pairs) {
 	return _Json_wrap(
 		A3(
@@ -8161,7 +8148,16 @@ var author$project$Main$update = F2(
 								_List_fromArray(
 									[
 										author$project$Main$setContent(
-										_Utils_Tuple2(expositionWithClasses.markdownInput, expositionWithClasses.css)),
+										elm$json$Json$Encode$object(
+											_List_fromArray(
+												[
+													_Utils_Tuple2(
+													'md',
+													elm$json$Json$Encode$string(expositionWithClasses.markdownInput)),
+													_Utils_Tuple2(
+													'style',
+													elm$json$Json$Encode$string(expositionWithClasses.css))
+												]))),
 										author$project$Main$setPreviewContent(expositionWithClasses.renderedHtml)
 									])));
 					}

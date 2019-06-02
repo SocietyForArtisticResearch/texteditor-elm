@@ -56,6 +56,10 @@
 <script>
  var urlParams = new URLSearchParams(window.location.search);
 
+ var styleElem = document.createElement('style');
+ styleElem.type = 'text/css';
+ document.getElementsByTagName('head')[0].appendChild(styleElem);
+ 
  const editorCmMd = 0;
  
  const editorTxtMd = 1;
@@ -132,8 +136,9 @@
 
  cmStyle.on("changes", function() {
      app.ports.currentGeneration.send( mkGenerationObj() );
- });
 
+     styleElem.innerHTML = cmStyle.getValue();
+ });
 
 
  cmMarkdown.on("mousedown", function() {
@@ -172,9 +177,12 @@
 
 
  app.ports.setContent.subscribe(function(content) {
-     cmMarkdown.setValue(content[0]);
-     cmStyle.setValue(content[1]);
+     cmMarkdown.setValue(content.md);
+     cmStyle.setValue(content.style);
 
+
+     styleElem.innerHTML = content.style;
+     
      textareaMarkdown.value = content;
  });
 
