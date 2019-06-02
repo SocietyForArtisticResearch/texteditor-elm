@@ -88,13 +88,15 @@ var textareaMarkdown = document.getElementById("textarea-markdown");
 function setEditorDisplay(editor) {
     
     let showMediaList = function ( shouldDisplayIfExist ) {
-	var mediaList = document.getElementById("media-list");
+	let mediaList = document.getElementById("media-list");
 	/* media List may not exist yet, this will only set if it does */
-	if (mediaList) {
+	if (mediaList != null) {
 	    if (shouldDisplayIfExist) {
 		mediaList.style.diplay = "block";
+		console.log("show media");
 	    } else {
 		mediaList.style.display = "none";
+		console.log("hide media");
 	    }
 	} else {
 	    console.log("media list does not exist (yet?)", document.getElementById("media-list"));
