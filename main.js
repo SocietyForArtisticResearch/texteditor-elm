@@ -7883,6 +7883,7 @@ var author$project$RCAPI$uploadMedia = F4(
 							'image' + elm$core$String$fromInt(mediaCounter)),
 							A2(elm$http$Http$stringPart, 'copyrightholder', 'copyright holder'),
 							A2(elm$http$Http$stringPart, 'description', 'description'),
+							A2(elm$http$Http$stringPart, 'license', 'all-rights-reserved'),
 							A2(elm$http$Http$filePart, 'media', file),
 							A2(elm$http$Http$stringPart, 'thumb', '')
 						])),
@@ -8251,7 +8252,12 @@ var author$project$Main$update = F2(
 					var obj = msg.a;
 					return _Utils_Tuple2(
 						model,
-						A2(author$project$RCAPI$deleteMedia, obj, author$project$Main$MediaDeleted));
+						elm$core$Platform$Cmd$batch(
+							_List_fromArray(
+								[
+									A2(author$project$RCAPI$deleteMedia, obj, author$project$Main$MediaDeleted),
+									A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList)
+								])));
 				case 'MediaDeleted':
 					var obj = msg.a;
 					var $temp$msg = author$project$Main$CloseConfirmDialog,

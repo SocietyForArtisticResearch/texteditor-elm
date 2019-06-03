@@ -151,6 +151,7 @@ uploadMedia researchId mediaCounter file expect =
                 , Http.stringPart "name" ("image" ++ String.fromInt mediaCounter)
                 , Http.stringPart "copyrightholder" "copyright holder"
                 , Http.stringPart "description" "description"
+                , Http.stringPart "license" "all-rights-reserved"
                 , Http.filePart "media" file
                 , Http.stringPart "thumb" ""
                 ]

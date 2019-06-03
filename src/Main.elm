@@ -483,7 +483,7 @@ update msg model =
                     ( addProblem model Problems.CannotUpdateMedia, Cmd.none )
 
         MediaDelete obj ->
-            ( model, RCAPI.deleteMedia obj MediaDeleted )
+            ( model, Cmd.batch [ RCAPI.deleteMedia obj MediaDeleted, RCAPI.getMediaList model.research GotMediaList ] )
 
         MediaDeleted obj ->
             update CloseConfirmDialog model
