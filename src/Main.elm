@@ -601,7 +601,11 @@ viewUpload : Msg -> String -> UploadStatus -> Html Msg
 viewUpload onClickMsg buttonText status =
     case status of
         Ready ->
-            button [ onClick onClickMsg ] [ text buttonText ]
+            Button.button
+                [ Button.secondary
+                , Button.attrs [ onClick onClickMsg ]
+                ]
+                [ text buttonText ]
 
         Uploading fraction ->
             div [] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
@@ -685,6 +689,9 @@ view model =
 
         saveButton =
             button [ onClick SaveExposition ] [ text saveButtonText ]
+
+        mediaList =
+            RCMediaList.view model.exposition.media makeTableMessages
     in
     div []
         [ viewTabs model
@@ -692,6 +699,6 @@ view model =
         , confirmDialogHtml
         , viewUpload UploadMediaFileSelect "Upload Media" model.mediaUploadStatus
         , viewUpload UploadImportFileSelect "Import Document" model.importUploadStatus
-        , RCMediaList.view model.exposition.media makeTableMessages
+        , mediaList
         , saveButton
         ]

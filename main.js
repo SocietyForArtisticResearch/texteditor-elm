@@ -8531,15 +8531,194 @@ var author$project$Main$viewTabs = function (model) {
 			]));
 };
 var elm$core$Basics$round = _Basics_round;
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
+	return {$: 'Attrs', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Button$attrs = function (attrs_) {
+	return rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs(attrs_);
+};
 var elm$html$Html$button = _VirtualDom_node('button');
+var elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (maybeValue.$ === 'Just') {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return elm$core$Maybe$Nothing;
+		}
+	});
+var elm$html$Html$Attributes$classList = function (classes) {
+	return elm$html$Html$Attributes$class(
+		A2(
+			elm$core$String$join,
+			' ',
+			A2(
+				elm$core$List$map,
+				elm$core$Tuple$first,
+				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
+};
+var elm$json$Json$Encode$bool = _Json_wrap;
+var elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$bool(bool));
+	});
+var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
+var rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption = function (size) {
+	switch (size.$) {
+		case 'XS':
+			return elm$core$Maybe$Nothing;
+		case 'SM':
+			return elm$core$Maybe$Just('sm');
+		case 'MD':
+			return elm$core$Maybe$Just('md');
+		case 'LG':
+			return elm$core$Maybe$Just('lg');
+		default:
+			return elm$core$Maybe$Just('xl');
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier = F2(
+	function (modifier, options) {
+		switch (modifier.$) {
+			case 'Size':
+				var size = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						size: elm$core$Maybe$Just(size)
+					});
+			case 'Coloring':
+				var coloring = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						coloring: elm$core$Maybe$Just(coloring)
+					});
+			case 'Block':
+				return _Utils_update(
+					options,
+					{block: true});
+			case 'Disabled':
+				var val = modifier.a;
+				return _Utils_update(
+					options,
+					{disabled: val});
+			default:
+				var attrs = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						attributes: _Utils_ap(options.attributes, attrs)
+					});
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions = {attributes: _List_Nil, block: false, coloring: elm$core$Maybe$Nothing, disabled: false, size: elm$core$Maybe$Nothing};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass = function (role) {
+	switch (role.$) {
+		case 'Primary':
+			return 'primary';
+		case 'Secondary':
+			return 'secondary';
+		case 'Success':
+			return 'success';
+		case 'Info':
+			return 'info';
+		case 'Warning':
+			return 'warning';
+		case 'Danger':
+			return 'danger';
+		case 'Dark':
+			return 'dark';
+		case 'Light':
+			return 'light';
+		default:
+			return 'link';
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes = function (modifiers) {
+	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier, rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions, modifiers);
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$classList(
+				_List_fromArray(
+					[
+						_Utils_Tuple2('btn', true),
+						_Utils_Tuple2('btn-block', options.block),
+						_Utils_Tuple2('disabled', options.disabled)
+					])),
+				elm$html$Html$Attributes$disabled(options.disabled)
+			]),
+		_Utils_ap(
+			function () {
+				var _n0 = A2(elm$core$Maybe$andThen, rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption, options.size);
+				if (_n0.$ === 'Just') {
+					var s = _n0.a;
+					return _List_fromArray(
+						[
+							elm$html$Html$Attributes$class('btn-' + s)
+						]);
+				} else {
+					return _List_Nil;
+				}
+			}(),
+			_Utils_ap(
+				function () {
+					var _n1 = options.coloring;
+					if (_n1.$ === 'Just') {
+						if (_n1.a.$ === 'Roled') {
+							var role = _n1.a.a;
+							return _List_fromArray(
+								[
+									elm$html$Html$Attributes$class(
+									'btn-' + rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
+								]);
+						} else {
+							var role = _n1.a.a;
+							return _List_fromArray(
+								[
+									elm$html$Html$Attributes$class(
+									'btn-outline-' + rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
+								]);
+						}
+					} else {
+						return _List_Nil;
+					}
+				}(),
+				options.attributes)));
+};
+var rundis$elm_bootstrap$Bootstrap$Button$button = F2(
+	function (options, children) {
+		return A2(
+			elm$html$Html$button,
+			rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes(options),
+			children);
+	});
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
+	return {$: 'Coloring', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
+	return {$: 'Roled', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary = {$: 'Secondary'};
+var rundis$elm_bootstrap$Bootstrap$Button$secondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
 var author$project$Main$viewUpload = F3(
 	function (onClickMsg, buttonText, status) {
 		if (status.$ === 'Ready') {
 			return A2(
-				elm$html$Html$button,
+				rundis$elm_bootstrap$Bootstrap$Button$button,
 				_List_fromArray(
 					[
-						elm$html$Html$Events$onClick(onClickMsg)
+						rundis$elm_bootstrap$Bootstrap$Button$secondary,
+						rundis$elm_bootstrap$Bootstrap$Button$attrs(
+						_List_fromArray(
+							[
+								elm$html$Html$Events$onClick(onClickMsg)
+							]))
 					]),
 				_List_fromArray(
 					[
@@ -8576,14 +8755,6 @@ var author$project$RCMediaEdit$cssClasses = _List_fromArray(
 		A2(author$project$RCMediaEdit$CssClass, 'floatRightMedium', 'medium & float right'),
 		A2(author$project$RCMediaEdit$CssClass, 'floatLeftMedium', 'medium & float left')
 	]);
-var elm$json$Json$Encode$bool = _Json_wrap;
-var elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$bool(bool));
-	});
 var elm$html$Html$Attributes$selected = elm$html$Html$Attributes$boolProperty('selected');
 var elm$html$Html$Attributes$value = elm$html$Html$Attributes$stringProperty('value');
 var elm$html$Html$Events$alwaysStop = function (x) {
@@ -8647,26 +8818,6 @@ var rundis$elm_bootstrap$Bootstrap$Form$Select$create = F2(
 			{items: items, options: options});
 	});
 var elm$html$Html$select = _VirtualDom_node('select');
-var elm$core$Maybe$andThen = F2(
-	function (callback, maybeValue) {
-		if (maybeValue.$ === 'Just') {
-			var value = maybeValue.a;
-			return callback(value);
-		} else {
-			return elm$core$Maybe$Nothing;
-		}
-	});
-var elm$html$Html$Attributes$classList = function (classes) {
-	return elm$html$Html$Attributes$class(
-		A2(
-			elm$core$String$join,
-			' ',
-			A2(
-				elm$core$List$map,
-				elm$core$Tuple$first,
-				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
-};
-var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
 var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var rundis$elm_bootstrap$Bootstrap$Form$Select$applyModifier = F2(
 	function (modifier, options) {
@@ -8724,20 +8875,6 @@ var rundis$elm_bootstrap$Bootstrap$Form$Select$customEventOnChange = function (t
 		A2(elm$json$Json$Decode$map, tagger, elm$html$Html$Events$targetValue));
 };
 var rundis$elm_bootstrap$Bootstrap$Form$Select$defaultOptions = {attributes: _List_Nil, custom: false, disabled: false, id: elm$core$Maybe$Nothing, onChange: elm$core$Maybe$Nothing, size: elm$core$Maybe$Nothing, validation: elm$core$Maybe$Nothing};
-var rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption = function (size) {
-	switch (size.$) {
-		case 'XS':
-			return elm$core$Maybe$Nothing;
-		case 'SM':
-			return elm$core$Maybe$Just('sm');
-		case 'MD':
-			return elm$core$Maybe$Just('md');
-		case 'LG':
-			return elm$core$Maybe$Just('lg');
-		default:
-			return elm$core$Maybe$Just('xl');
-	}
-};
 var rundis$elm_bootstrap$Bootstrap$Form$Select$sizeAttribute = F2(
 	function (isCustom, size_) {
 		var prefix = isCustom ? 'custom-select-' : 'form-control-';
@@ -9378,132 +9515,6 @@ var author$project$RCMediaEdit$viewBody = F3(
 				]));
 	});
 var elm$html$Html$p = _VirtualDom_node('p');
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
-	return {$: 'Attrs', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Button$attrs = function (attrs_) {
-	return rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs(attrs_);
-};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier = F2(
-	function (modifier, options) {
-		switch (modifier.$) {
-			case 'Size':
-				var size = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						size: elm$core$Maybe$Just(size)
-					});
-			case 'Coloring':
-				var coloring = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						coloring: elm$core$Maybe$Just(coloring)
-					});
-			case 'Block':
-				return _Utils_update(
-					options,
-					{block: true});
-			case 'Disabled':
-				var val = modifier.a;
-				return _Utils_update(
-					options,
-					{disabled: val});
-			default:
-				var attrs = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						attributes: _Utils_ap(options.attributes, attrs)
-					});
-		}
-	});
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions = {attributes: _List_Nil, block: false, coloring: elm$core$Maybe$Nothing, disabled: false, size: elm$core$Maybe$Nothing};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass = function (role) {
-	switch (role.$) {
-		case 'Primary':
-			return 'primary';
-		case 'Secondary':
-			return 'secondary';
-		case 'Success':
-			return 'success';
-		case 'Info':
-			return 'info';
-		case 'Warning':
-			return 'warning';
-		case 'Danger':
-			return 'danger';
-		case 'Dark':
-			return 'dark';
-		case 'Light':
-			return 'light';
-		default:
-			return 'link';
-	}
-};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes = function (modifiers) {
-	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier, rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions, modifiers);
-	return _Utils_ap(
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$classList(
-				_List_fromArray(
-					[
-						_Utils_Tuple2('btn', true),
-						_Utils_Tuple2('btn-block', options.block),
-						_Utils_Tuple2('disabled', options.disabled)
-					])),
-				elm$html$Html$Attributes$disabled(options.disabled)
-			]),
-		_Utils_ap(
-			function () {
-				var _n0 = A2(elm$core$Maybe$andThen, rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption, options.size);
-				if (_n0.$ === 'Just') {
-					var s = _n0.a;
-					return _List_fromArray(
-						[
-							elm$html$Html$Attributes$class('btn-' + s)
-						]);
-				} else {
-					return _List_Nil;
-				}
-			}(),
-			_Utils_ap(
-				function () {
-					var _n1 = options.coloring;
-					if (_n1.$ === 'Just') {
-						if (_n1.a.$ === 'Roled') {
-							var role = _n1.a.a;
-							return _List_fromArray(
-								[
-									elm$html$Html$Attributes$class(
-									'btn-' + rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
-								]);
-						} else {
-							var role = _n1.a.a;
-							return _List_fromArray(
-								[
-									elm$html$Html$Attributes$class(
-									'btn-outline-' + rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
-								]);
-						}
-					} else {
-						return _List_Nil;
-					}
-				}(),
-				options.attributes)));
-};
-var rundis$elm_bootstrap$Bootstrap$Button$button = F2(
-	function (options, children) {
-		return A2(
-			elm$html$Html$button,
-			rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes(options),
-			children);
-	});
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
-	return {$: 'Coloring', a: a};
-};
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
 	return {$: 'Outlined', a: a};
 };
@@ -10016,7 +10027,6 @@ var elm$html$Html$span = _VirtualDom_node('span');
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger = {$: 'Danger'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlineDanger = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary = {$: 'Secondary'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Success = {$: 'Success'};
@@ -10712,13 +10722,8 @@ var author$project$RCMediaList$view = F2(
 					]));
 		}
 	});
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
-	return {$: 'Roled', a: a};
-};
 var rundis$elm_bootstrap$Bootstrap$Button$danger = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
-var rundis$elm_bootstrap$Bootstrap$Button$secondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
 var author$project$UserConfirm$view = F3(
 	function (visibility, content, messages) {
 		return A2(
@@ -10791,6 +10796,7 @@ var author$project$Main$view = function (model) {
 			[
 				elm$html$Html$text(saveButtonText)
 			]));
+	var mediaList = A2(author$project$RCMediaList$view, model.exposition.media, author$project$Main$makeTableMessages);
 	var mediaDialogHtml = function () {
 		var _n1 = model.mediaDialog;
 		if ((_n1.b.$ === 'Just') && (_n1.c.$ === 'Just')) {
@@ -10833,7 +10839,7 @@ var author$project$Main$view = function (model) {
 				confirmDialogHtml,
 				A3(author$project$Main$viewUpload, author$project$Main$UploadMediaFileSelect, 'Upload Media', model.mediaUploadStatus),
 				A3(author$project$Main$viewUpload, author$project$Main$UploadImportFileSelect, 'Import Document', model.importUploadStatus),
-				A2(author$project$RCMediaList$view, model.exposition.media, author$project$Main$makeTableMessages),
+				mediaList,
 				saveButton
 			]));
 };
