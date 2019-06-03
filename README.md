@@ -29,13 +29,14 @@ be made outside of elm.
 
 Casper:
 
-- display problems
+- display Problems (as warnings etc)
 - what about "insert"?
 - Buttons
 - Styling (editor sizes)
 - media file types in select dialog
 
 Luc:
+- make media upload numbering safe (uuid?)
 - Check rendered html
 - Transcoding status type
 - Import/Export (Pandoc calls)
