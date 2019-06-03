@@ -1,4 +1,4 @@
-module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, APIPandocImport, getExposition, getMediaList, saveExposition, toMediaClassesDict, toRCExposition, toRCMediaObject, updateMedia, uploadImport, uploadMedia)
+module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, APIPandocImport, deleteMedia, getExposition, getMediaList, saveExposition, toMediaClassesDict, toRCExposition, toRCMediaObject, updateMedia, uploadImport, uploadMedia)
 
 import Bytes.Encode
 import Dict
@@ -134,7 +134,7 @@ getMediaList id msg =
 getExposition : Int -> Int -> (Result Http.Error APIExposition -> msg) -> Cmd msg
 getExposition researchId weave msg =
     Http.get
-        { url = " text-editor/load?research=" ++ String.fromInt researchId ++ "&weave=" ++ String.fromInt weave
+        { url = "text-editor/load?research=" ++ String.fromInt researchId ++ "&weave=" ++ String.fromInt weave
         , expect = Http.expectJson msg apiExposition
         }
 
@@ -177,14 +177,23 @@ updateMedia mediaObject expect =
                 , Http.stringPart "copyrightholder" mediaObject.copyright
                 , Http.stringPart "description" mediaObject.description
                 , Http.stringPart "license" "all-rights-reserved"
-
-                --                , Http.bytesPart "media" "text/plain" (Bytes.Encode.encode (Bytes.Encode.string ""))
-                --      , Http.stringPart "media" ""
-                --                , Http.stringPart "thumb" ""
                 ]
         , expect = expect
         , timeout = Nothing
         , tracker = Nothing
+        }
+
+
+deleteMedia : RCMediaObject -> (Result Http.Error () -> msg) -> Cmd msg
+deleteMedia mediaObject expect =
+    Http.post
+        { url =
+            "text-editor/simple-media-remove?research="
+                ++ String.fromInt mediaObject.expositionId
+                ++ "&simple-media="
+                ++ String.fromInt mediaObject.id
+        , body = Http.emptyBody
+        , expect = Http.expectWhatever expect
         }
 
 

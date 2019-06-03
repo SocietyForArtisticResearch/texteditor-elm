@@ -6294,7 +6294,7 @@ var author$project$RCAPI$getExposition = F3(
 		return elm$http$Http$get(
 			{
 				expect: A2(elm$http$Http$expectJson, msg, author$project$RCAPI$apiExposition),
-				url: ' text-editor/load?research=' + (elm$core$String$fromInt(researchId) + ('&weave=' + elm$core$String$fromInt(weave)))
+				url: 'text-editor/load?research=' + (elm$core$String$fromInt(researchId) + ('&weave=' + elm$core$String$fromInt(weave)))
 			});
 	});
 var elm$core$Debug$log = _Debug_log;
@@ -7374,9 +7374,13 @@ var author$project$Main$GotMediaList = function (a) {
 var author$project$Main$MediaDelete = function (a) {
 	return {$: 'MediaDelete', a: a};
 };
+var author$project$Main$MediaDeleted = function (a) {
+	return {$: 'MediaDeleted', a: a};
+};
 var author$project$Main$MediaDialog = function (a) {
 	return {$: 'MediaDialog', a: a};
 };
+var author$project$Main$SaveExposition = {$: 'SaveExposition'};
 var author$project$Main$SaveMediaEdit = function (a) {
 	return {$: 'SaveMediaEdit', a: a};
 };
@@ -7488,6 +7492,36 @@ var author$project$Problems$splitResultListAcc = F3(
 var author$project$Problems$splitResultList = function (results) {
 	return A3(author$project$Problems$splitResultListAcc, results, _List_Nil, _List_Nil);
 };
+var elm$http$Http$expectBytesResponse = F2(
+	function (toMsg, toResult) {
+		return A3(
+			_Http_expect,
+			'arraybuffer',
+			_Http_toDataView,
+			A2(elm$core$Basics$composeR, toResult, toMsg));
+	});
+var elm$http$Http$expectWhatever = function (toMsg) {
+	return A2(
+		elm$http$Http$expectBytesResponse,
+		toMsg,
+		elm$http$Http$resolve(
+			function (_n0) {
+				return elm$core$Result$Ok(_Utils_Tuple0);
+			}));
+};
+var elm$http$Http$post = function (r) {
+	return elm$http$Http$request(
+		{body: r.body, expect: r.expect, headers: _List_Nil, method: 'POST', timeout: elm$core$Maybe$Nothing, tracker: elm$core$Maybe$Nothing, url: r.url});
+};
+var author$project$RCAPI$deleteMedia = F2(
+	function (mediaObject, expect) {
+		return elm$http$Http$post(
+			{
+				body: elm$http$Http$emptyBody,
+				expect: elm$http$Http$expectWhatever(expect),
+				url: 'text-editor/simple-media-remove?research=' + (elm$core$String$fromInt(mediaObject.expositionId) + ('&simple-media=' + elm$core$String$fromInt(mediaObject.id)))
+			});
+	});
 var author$project$RCAPI$APIMediaEntry = F5(
 	function (id, media, description, copyright, name) {
 		return {copyright: copyright, description: description, id: id, media: media, name: name};
@@ -7524,23 +7558,6 @@ var author$project$RCAPI$getMediaList = F2(
 				url: '/text-editor/simple-media-list?research=' + elm$core$String$fromInt(id)
 			});
 	});
-var elm$http$Http$expectBytesResponse = F2(
-	function (toMsg, toResult) {
-		return A3(
-			_Http_expect,
-			'arraybuffer',
-			_Http_toDataView,
-			A2(elm$core$Basics$composeR, toResult, toMsg));
-	});
-var elm$http$Http$expectWhatever = function (toMsg) {
-	return A2(
-		elm$http$Http$expectBytesResponse,
-		toMsg,
-		elm$http$Http$resolve(
-			function (_n0) {
-				return elm$core$Result$Ok(_Utils_Tuple0);
-			}));
-};
 var elm$http$Http$multipartBody = function (parts) {
 	return A2(
 		_Http_pair,
@@ -8218,18 +8235,25 @@ var author$project$Main$update = F2(
 					var result = msg.a;
 					if (result.$ === 'Ok') {
 						var s = result.a;
-						var _n20 = A2(elm$core$Debug$log, 'update media result: ', s);
-						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+						var $temp$msg = author$project$Main$SaveExposition,
+							$temp$model = model;
+						msg = $temp$msg;
+						model = $temp$model;
+						continue update;
 					} else {
 						var s = result.a;
-						var _n21 = A2(elm$core$Debug$log, 'update media error: ', s);
+						var _n20 = A2(elm$core$Debug$log, 'update media error: ', s);
 						return _Utils_Tuple2(
 							A2(author$project$Main$addProblem, model, author$project$Problems$CannotUpdateMedia),
 							elm$core$Platform$Cmd$none);
 					}
 				case 'MediaDelete':
 					var obj = msg.a;
-					var _n22 = A2(elm$core$Debug$log, 'All ok, no prob!', model);
+					return _Utils_Tuple2(
+						model,
+						A2(author$project$RCAPI$deleteMedia, obj, author$project$Main$MediaDeleted));
+				case 'MediaDeleted':
+					var obj = msg.a;
 					var $temp$msg = author$project$Main$CloseConfirmDialog,
 						$temp$model = model;
 					msg = $temp$msg;
@@ -8309,7 +8333,7 @@ var author$project$Main$update = F2(
 							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 					} else {
 						var e = result.a;
-						var _n26 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n24 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
 				case 'UploadedImport':
@@ -8329,7 +8353,7 @@ var author$project$Main$update = F2(
 							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 					} else {
 						var e = result.a;
-						var _n28 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n26 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
 				case 'ConfirmMediaDelete':
@@ -8338,7 +8362,7 @@ var author$project$Main$update = F2(
 						confirm: author$project$Main$MediaDelete(object),
 						reject: author$project$Main$CloseConfirmDialog
 					};
-					var content = {confirm: 'delete', prompt: object.name + ' is about to be deleted. Are you sure?', reject: 'keep'};
+					var content = {confirm: 'Delete', prompt: object.name + ' is about to be deleted. Are you sure?', reject: 'Keep'};
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -8359,7 +8383,6 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				default:
 					var tab = msg.a;
-					var _n29 = A2(elm$core$Debug$log, 'switch tab', tab);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -8370,7 +8393,6 @@ var author$project$Main$update = F2(
 		}
 	});
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
-var author$project$Main$SaveExposition = {$: 'SaveExposition'};
 var author$project$Main$UploadImportFileSelect = {$: 'UploadImportFileSelect'};
 var author$project$Main$UploadMediaFileSelect = {$: 'UploadMediaFileSelect'};
 var author$project$Main$MediaEdit = function (a) {
@@ -8700,12 +8722,12 @@ var rundis$elm_bootstrap$Bootstrap$Button$button = F2(
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
 	return {$: 'Coloring', a: a};
 };
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
 	return {$: 'Roled', a: a};
 };
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary = {$: 'Secondary'};
-var rundis$elm_bootstrap$Bootstrap$Button$secondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
+var rundis$elm_bootstrap$Bootstrap$Button$primary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
 var author$project$Main$viewUpload = F3(
 	function (onClickMsg, buttonText, status) {
 		if (status.$ === 'Ready') {
@@ -8713,7 +8735,7 @@ var author$project$Main$viewUpload = F3(
 				rundis$elm_bootstrap$Bootstrap$Button$button,
 				_List_fromArray(
 					[
-						rundis$elm_bootstrap$Bootstrap$Button$secondary,
+						rundis$elm_bootstrap$Bootstrap$Button$primary,
 						rundis$elm_bootstrap$Bootstrap$Button$attrs(
 						_List_fromArray(
 							[
@@ -9518,7 +9540,6 @@ var elm$html$Html$p = _VirtualDom_node('p');
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
 	return {$: 'Outlined', a: a};
 };
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
 var rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {
@@ -10027,6 +10048,7 @@ var elm$html$Html$span = _VirtualDom_node('span');
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger = {$: 'Danger'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlineDanger = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary = {$: 'Secondary'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Success = {$: 'Success'};
@@ -10724,6 +10746,8 @@ var author$project$RCMediaList$view = F2(
 	});
 var rundis$elm_bootstrap$Bootstrap$Button$danger = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
+var rundis$elm_bootstrap$Bootstrap$Button$secondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
 var author$project$UserConfirm$view = F3(
 	function (visibility, content, messages) {
 		return A2(
@@ -10784,13 +10808,21 @@ var author$project$UserConfirm$view = F3(
 						rundis$elm_bootstrap$Bootstrap$Modal$small(
 							rundis$elm_bootstrap$Bootstrap$Modal$config(messages.reject))))));
 	});
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Light = {$: 'Light'};
+var rundis$elm_bootstrap$Bootstrap$Button$light = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Light));
 var author$project$Main$view = function (model) {
 	var saveButtonText = model.saved ? 'Saved' : 'Not Saved';
 	var saveButton = A2(
-		elm$html$Html$button,
+		rundis$elm_bootstrap$Bootstrap$Button$button,
 		_List_fromArray(
 			[
-				elm$html$Html$Events$onClick(author$project$Main$SaveExposition)
+				rundis$elm_bootstrap$Bootstrap$Button$light,
+				rundis$elm_bootstrap$Bootstrap$Button$attrs(
+				_List_fromArray(
+					[
+						elm$html$Html$Events$onClick(author$project$Main$SaveExposition)
+					]))
 			]),
 		_List_fromArray(
 			[
@@ -10839,8 +10871,8 @@ var author$project$Main$view = function (model) {
 				confirmDialogHtml,
 				A3(author$project$Main$viewUpload, author$project$Main$UploadMediaFileSelect, 'Upload Media', model.mediaUploadStatus),
 				A3(author$project$Main$viewUpload, author$project$Main$UploadImportFileSelect, 'Import Document', model.importUploadStatus),
-				mediaList,
-				saveButton
+				saveButton,
+				mediaList
 			]));
 };
 var elm$browser$Browser$External = function (a) {

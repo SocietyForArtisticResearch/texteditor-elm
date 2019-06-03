@@ -47,6 +47,13 @@ type UploadStatus
     | Uploading Float
 
 
+type TabState
+    = CmMarkdownTab
+    | TxtMarkdownTab
+    | StyleTab
+    | MediaListTab
+
+
 type alias Flags =
     { weave : Int, research : Int }
 
@@ -199,10 +206,10 @@ type Msg
     | ConfirmMediaDelete Exposition.RCMediaObject
     | CloseConfirmDialog
     | SwitchTab TabState
+    | MediaDeleted (Result Http.Error ())
 
 
 
--- | MediaReplace Exposition.RCMediaObject
 -- not yet validated, only update request
 
 
@@ -466,11 +473,7 @@ update msg model =
         SavedMediaEdit result ->
             case result of
                 Ok s ->
-                    let
-                        _ =
-                            Debug.log "update media result: " s
-                    in
-                    ( model, Cmd.none )
+                    update SaveExposition model
 
                 Err s ->
                     let
@@ -480,11 +483,9 @@ update msg model =
                     ( addProblem model Problems.CannotUpdateMedia, Cmd.none )
 
         MediaDelete obj ->
-            -- not implemented
-            let
-                _ =
-                    Debug.log "All ok, no prob!" model
-            in
+            ( model, RCAPI.deleteMedia obj MediaDeleted )
+
+        MediaDeleted obj ->
             update CloseConfirmDialog model
 
         InsertTool obj ->
@@ -574,8 +575,8 @@ update msg model =
             let
                 content =
                     { prompt = object.name ++ " is about to be deleted. Are you sure?"
-                    , confirm = "delete"
-                    , reject = "keep"
+                    , confirm = "Delete"
+                    , reject = "Keep"
                     }
 
                 messages =
@@ -589,11 +590,6 @@ update msg model =
             ( { model | confirmDialog = ( Modal.hidden, Nothing, Nothing ) }, Cmd.none )
 
         SwitchTab tab ->
-            -- TODO call JS ports to change visibility of editors
-            let
-                _ =
-                    Debug.log "switch tab" tab
-            in
             ( { model | selectedEditor = tab }, enumTabState tab |> setEditor )
 
 
@@ -602,20 +598,13 @@ viewUpload onClickMsg buttonText status =
     case status of
         Ready ->
             Button.button
-                [ Button.secondary
+                [ Button.primary
                 , Button.attrs [ onClick onClickMsg ]
                 ]
                 [ text buttonText ]
 
         Uploading fraction ->
             div [] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
-
-
-type TabState
-    = CmMarkdownTab
-    | TxtMarkdownTab
-    | StyleTab
-    | MediaListTab
 
 
 enumTabState : TabState -> Int
@@ -688,7 +677,7 @@ view model =
                 "Not Saved"
 
         saveButton =
-            button [ onClick SaveExposition ] [ text saveButtonText ]
+            Button.button [ Button.light, Button.attrs [ onClick SaveExposition ] ] [ text saveButtonText ]
 
         mediaList =
             RCMediaList.view model.exposition.media makeTableMessages
@@ -699,6 +688,6 @@ view model =
         , confirmDialogHtml
         , viewUpload UploadMediaFileSelect "Upload Media" model.mediaUploadStatus
         , viewUpload UploadImportFileSelect "Import Document" model.importUploadStatus
-        , mediaList
         , saveButton
+        , mediaList
         ]
