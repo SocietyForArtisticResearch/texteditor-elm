@@ -7894,6 +7894,7 @@ var author$project$RCAPI$uploadMedia = F4(
 				url: 'text-editor/simple-media-add' + ('?research=' + elm$core$String$fromInt(researchId))
 			});
 	});
+var elm$core$Basics$e = _Basics_e;
 var elm$core$Task$Perform = function (a) {
 	return {$: 'Perform', a: a};
 };
@@ -8326,6 +8327,7 @@ var author$project$Main$update = F2(
 				case 'Uploaded':
 					var result = msg.a;
 					if (result.$ === 'Ok') {
+						var _n24 = A2(elm$core$Debug$log, 'uploaded result: ', elm$core$Basics$e);
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -8333,7 +8335,7 @@ var author$project$Main$update = F2(
 							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 					} else {
 						var e = result.a;
-						var _n24 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n25 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
 				case 'UploadedImport':
@@ -8353,7 +8355,7 @@ var author$project$Main$update = F2(
 							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 					} else {
 						var e = result.a;
-						var _n26 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n27 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
 				case 'ConfirmMediaDelete':

@@ -542,6 +542,10 @@ update msg model =
         Uploaded result ->
             case result of
                 Ok _ ->
+                    let
+                        _ =
+                            Debug.log "uploaded result: " e
+                    in
                     ( { model | mediaUploadStatus = Ready }, RCAPI.getMediaList model.research GotMediaList )
 
                 Err e ->
