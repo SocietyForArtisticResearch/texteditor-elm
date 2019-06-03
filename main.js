@@ -7894,7 +7894,6 @@ var author$project$RCAPI$uploadMedia = F4(
 				url: 'text-editor/simple-media-add' + ('?research=' + elm$core$String$fromInt(researchId))
 			});
 	});
-var elm$core$Basics$e = _Basics_e;
 var elm$core$Task$Perform = function (a) {
 	return {$: 'Perform', a: a};
 };
@@ -8327,7 +8326,7 @@ var author$project$Main$update = F2(
 				case 'Uploaded':
 					var result = msg.a;
 					if (result.$ === 'Ok') {
-						var _n24 = A2(elm$core$Debug$log, 'uploaded result: ', elm$core$Basics$e);
+						var _n24 = A2(elm$core$Debug$log, 'uploaded result: ', result);
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
