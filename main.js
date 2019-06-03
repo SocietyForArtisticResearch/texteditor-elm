@@ -8279,7 +8279,7 @@ var author$project$Main$update = F2(
 							model.research,
 							model.mediaCounter,
 							file,
-							elm$http$Http$expectWhatever(author$project$Main$Uploaded)));
+							elm$http$Http$expectString(author$project$Main$Uploaded)));
 				case 'UploadImportFileSelect':
 					return _Utils_Tuple2(
 						model,

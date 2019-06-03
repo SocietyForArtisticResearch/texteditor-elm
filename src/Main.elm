@@ -197,7 +197,7 @@ type Msg
     | UploadImportFileSelected File
     | GotMediaUploadProgress Http.Progress
     | GotImportUploadProgress Http.Progress
-    | Uploaded (Result Http.Error ())
+    | Uploaded (Result Http.Error String)
     | UploadedImport (Result Http.Error RCAPI.APIPandocImport)
     | SaveExposition
     | SavedExposition (Result Http.Error ())
@@ -499,7 +499,7 @@ update msg model =
 
         UploadMediaFileSelected file ->
             ( incMediaCounter model
-            , RCAPI.uploadMedia model.research model.mediaCounter file (Http.expectWhatever Uploaded)
+            , RCAPI.uploadMedia model.research model.mediaCounter file (Http.expectString Uploaded)
             )
 
         UploadImportFileSelect ->
