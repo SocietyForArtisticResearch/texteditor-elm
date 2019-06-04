@@ -139,8 +139,8 @@ getExposition researchId weave msg =
         }
 
 
-uploadMedia : Int -> Int -> File -> Http.Expect msg -> Cmd msg
-uploadMedia researchId mediaCounter file expect =
+uploadMedia : Int -> String -> File -> Http.Expect msg -> Cmd msg
+uploadMedia researchId mediaName file expect =
     Http.request
         { method = "POST"
         , url = "text-editor/simple-media-add" ++ "?research=" ++ String.fromInt researchId
@@ -148,7 +148,7 @@ uploadMedia researchId mediaCounter file expect =
         , body =
             Http.multipartBody
                 [ Http.stringPart "mediatype" "image"
-                , Http.stringPart "name" ("image" ++ String.fromInt mediaCounter)
+                , Http.stringPart "name" mediaName
                 , Http.stringPart "copyrightholder" "copyright holder"
                 , Http.stringPart "description" "description"
                 , Http.stringPart "license" "all-rights-reserved"

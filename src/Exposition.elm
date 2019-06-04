@@ -1,8 +1,9 @@
-module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, objectByNameOrId, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withCSS, withHtml, withMd)
+module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, mkMediaName, objectByNameOrId, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withCSS, withHtml, withMd)
 
 import Dict
 import Html.String as Html
 import Html.String.Attributes as Attr
+import Parser exposing ((|.), (|=))
 import Regex
 import Settings
 
@@ -72,6 +73,35 @@ withHtml exp content =
 withCSS : RCExposition -> String -> RCExposition
 withCSS exp content =
     { exp | css = content }
+
+
+mkMediaName : RCExposition -> String
+mkMediaName exp =
+    let
+        imageNames =
+            List.map
+                (Parser.run
+                    (Parser.succeed identity
+                        |. Parser.keyword "media"
+                        |= Parser.int
+                    )
+                )
+                (List.map .name exp.media)
+
+        maxImage =
+            List.foldr
+                (\res maxI ->
+                    case res of
+                        Ok i ->
+                            max maxI i
+
+                        Err _ ->
+                            maxI
+                )
+                0
+                imageNames
+    in
+    "image" ++ String.fromInt (maxImage + 1)
 
 
 type alias OptionalDimensions =
