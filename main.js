@@ -7812,7 +7812,7 @@ var author$project$Exposition$mkMediaName = function (exp) {
 			}),
 		0,
 		imageNames);
-	return 'image' + elm$core$String$fromInt(maxImage + 1);
+	return 'media' + elm$core$String$fromInt(maxImage + 1);
 };
 var author$project$Exposition$thumbUrl = function (data) {
 	return '/text-editor/simple-media-thumb?research=' + (elm$core$String$fromInt(data.expositionId) + ('&simple-media=' + (elm$core$String$fromInt(data.id) + '&width=132&height=132')));
