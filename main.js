@@ -8989,8 +8989,8 @@ var author$project$Main$renderIcon = function (icon) {
 					elm$html$Html$Attributes$src(
 					_Utils_ap(author$project$Main$iconUrl, url)),
 					elm$html$Html$Attributes$class('m-1'),
-					elm$html$Html$Attributes$width(25),
-					elm$html$Html$Attributes$height(25)
+					elm$html$Html$Attributes$width(15),
+					elm$html$Html$Attributes$height(15)
 				]),
 			_List_Nil);
 	};

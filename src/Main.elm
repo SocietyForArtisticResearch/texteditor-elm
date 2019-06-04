@@ -613,8 +613,8 @@ renderIcon icon =
             img
                 [ src (iconUrl ++ url)
                 , class "m-1"
-                , Html.Attributes.width 25
-                , Html.Attributes.height 25
+                , Html.Attributes.width 15
+                , Html.Attributes.height 15
                 ]
                 []
     in
