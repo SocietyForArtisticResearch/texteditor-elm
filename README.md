@@ -29,15 +29,15 @@ be made outside of elm.
 
 Casper:
 
-- Media list tab
-- Tabs ? Switch Textarea/Codemirror/CSS Edit
+- display Problems (as warnings etc)
+- what about "insert"?
 - Buttons
 - Styling (editor sizes)
 - media file types in select dialog
 
 Luc:
-- Mediadelete
-- Mediaupdate
+
+- reload media list after deletion
 - Check rendered html
 - Transcoding status type
 - Import/Export (Pandoc calls)
@@ -76,3 +76,8 @@ Luc:
 - Set innerhtml of preview via port
 - Load corrected (new) version of json of additional media metadata list and expo metadata
 - Ports for switching editors (style, plain, markdown)
+- Media list tab
+- Tabs ? Switch Textarea/Codemirror/CSS Edit
+- Mediadelete
+- Mediaupdate
+- make media upload numbering safe (uuid?)

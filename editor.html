@@ -8,6 +8,7 @@
     <script src="elm-editor/lib/codemirror.js"></script>
     <link rel="stylesheet" href="elm-editor/lib/codemirror.css">
     <script src="elm-editor/lib/markdown.js"></script>
+    <script src="elm-editor/lib/css.js"></script>
     <script src="elm-editor/lib/marked.min.js"></script>
     <script src="elm-editor/lib/morphdom-umd.min.js"></script>
     <script src="elm-editor/main.js"></script>
@@ -27,29 +28,29 @@
 
 <body>
     <div class="container-fluid">
-      <div class="row">
-	<div class="col">
-	  <div id="elm">
-          </div>
+	<div class="row">
+	    <div class="col">
+		<div id="elm">
+		</div>
 
-          <div id="editors">
-              <textarea id="cm-markdown">
-	      </textarea>
-	      
-	      <textarea id="textarea-markdown">
-	      </textarea>
+		<div id="editors">
+		    <textarea id="cm-markdown">
+		    </textarea>
+		    
+		    <textarea id="textarea-markdown">
+		    </textarea>
 
-              <textarea id="cm-style">
-	      </textarea>
-          </div>
+		    <textarea id="cm-style">
+		    </textarea>
+		</div>
 
-	  
+		
+	    </div>
+            <div class="col">
+		<div class="exposition exposition-content" id="preview">
+		</div>
+            </div>
 	</div>
-          <div class="col">
-              <div class="exposition exposition-content" id="preview">
-              </div>
-          </div>
-      </div>
     </div>
     </div>
 </body>
@@ -70,11 +71,11 @@
  
  var selectedEditor = editorCmMd;
  
- var cmMarkdown = CodeMirror.fromTextArea(document.getElementById("cm-markdown"));
+ var cmMarkdown = CodeMirror.fromTextArea(document.getElementById("cm-markdown"), {mode:  "markdown"});
 
- var cmStyle = CodeMirror.fromTextArea(document.getElementById("cm-style"));
+ var cmStyle = CodeMirror.fromTextArea(document.getElementById("cm-style"), {mode:  "css"});
 
-var textareaMarkdown = document.getElementById("textarea-markdown");
+ var textareaMarkdown = document.getElementById("textarea-markdown");
 
  var app = Elm.Main.init({
      node: document.getElementById('elm'),
@@ -85,24 +86,24 @@ var textareaMarkdown = document.getElementById("textarea-markdown");
  });
 
  
-function setEditorDisplay(editor) {
-    
-    let showMediaList = function ( shouldDisplayIfExist ) {
-	let mediaList = document.getElementById("media-list");
-	/* media List may not exist yet, this will only set if it does */
-	if (mediaList != null) {
-	    if (shouldDisplayIfExist) {
-		mediaList.style.display = "block";
-		console.log("show media");
-	    } else {
-		mediaList.style.display = "none";
-		console.log("hide media");
-	    }
-	} else {
-	    console.log("media list does not exist (yet?)", document.getElementById("media-list"));
-	}
-    }
-	    
+ function setEditorDisplay(editor) {
+     
+     let showMediaList = function ( shouldDisplayIfExist ) {
+	 let mediaList = document.getElementById("media-list");
+	 /* media List may not exist yet, this will only set if it does */
+	 if (mediaList != null) {
+	     if (shouldDisplayIfExist) {
+		 mediaList.style.display = "block";
+		 console.log("show media");
+	     } else {
+		 mediaList.style.display = "none";
+		 console.log("hide media");
+	     }
+	 } else {
+	     console.log("media list does not exist (yet?)", document.getElementById("media-list"));
+	 }
+     }
+     
      switch(editor) {
 	 case editorCmMd:
 	     let setAfterShow = (selectedEditor == editorTxtMd);
