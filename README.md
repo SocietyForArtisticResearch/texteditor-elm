@@ -36,7 +36,8 @@ Casper:
 - media file types in select dialog
 
 Luc:
-- make media upload numbering safe (uuid?)
+
+- reload media list after deletion
 - Check rendered html
 - Transcoding status type
 - Import/Export (Pandoc calls)
@@ -79,3 +80,4 @@ Luc:
 - Tabs ? Switch Textarea/Codemirror/CSS Edit
 - Mediadelete
 - Mediaupdate
+- make media upload numbering safe (uuid?)
