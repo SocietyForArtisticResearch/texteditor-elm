@@ -82,7 +82,7 @@ mkMediaName exp =
             List.map
                 (Parser.run
                     (Parser.succeed identity
-                        |. Parser.keyword "media"
+                        |. Parser.symbol "media"
                         |= Parser.int
                     )
                 )
