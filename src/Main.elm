@@ -686,13 +686,11 @@ viewTabs model =
                 [ a [ class selectedClass, href "#", onClick (SwitchTab tab) ] [ text title ]
                 ]
     in
-    Grid.container []
-        [ ul [ class "nav nav-tabs" ]
-            [ tabLink CmMarkdownTab "Markdown"
-            , tabLink TxtMarkdownTab "Markdown plain"
-            , tabLink MediaListTab "Media"
-            , tabLink StyleTab "Style"
-            ]
+    ul [ class "nav nav-tabs" ]
+        [ tabLink CmMarkdownTab "Markdown"
+        , tabLink TxtMarkdownTab "Markdown plain"
+        , tabLink MediaListTab "Media"
+        , tabLink StyleTab "Style"
         ]
 
 

@@ -8992,19 +8992,6 @@ var elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		elm$json$Json$Decode$succeed(msg));
 };
-var elm$html$Html$div = _VirtualDom_node('div');
-var rundis$elm_bootstrap$Bootstrap$Grid$container = F2(
-	function (attributes, children) {
-		return A2(
-			elm$html$Html$div,
-			_Utils_ap(
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('container')
-					]),
-				attributes),
-			children);
-	});
 var author$project$Main$viewTabs = function (model) {
 	var tabLink = F2(
 		function (tab, title) {
@@ -9033,23 +9020,17 @@ var author$project$Main$viewTabs = function (model) {
 					]));
 		});
 	return A2(
-		rundis$elm_bootstrap$Bootstrap$Grid$container,
-		_List_Nil,
+		elm$html$Html$ul,
 		_List_fromArray(
 			[
-				A2(
-				elm$html$Html$ul,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('nav nav-tabs')
-					]),
-				_List_fromArray(
-					[
-						A2(tabLink, author$project$Main$CmMarkdownTab, 'Markdown'),
-						A2(tabLink, author$project$Main$TxtMarkdownTab, 'Markdown plain'),
-						A2(tabLink, author$project$Main$MediaListTab, 'Media'),
-						A2(tabLink, author$project$Main$StyleTab, 'Style')
-					]))
+				elm$html$Html$Attributes$class('nav nav-tabs')
+			]),
+		_List_fromArray(
+			[
+				A2(tabLink, author$project$Main$CmMarkdownTab, 'Markdown'),
+				A2(tabLink, author$project$Main$TxtMarkdownTab, 'Markdown plain'),
+				A2(tabLink, author$project$Main$MediaListTab, 'Media'),
+				A2(tabLink, author$project$Main$StyleTab, 'Style')
 			]));
 };
 var author$project$Main$baseUrl = 'elm-editor/';
@@ -9105,6 +9086,7 @@ var elm$core$List$append = F2(
 			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
 		}
 	});
+var elm$html$Html$div = _VirtualDom_node('div');
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
 	return {$: 'Attrs', a: a};
 };
