@@ -615,8 +615,8 @@ renderIcon icon =
                 , class "m-1"
                 , Html.Attributes.width 15
                 , Html.Attributes.height 15
-                , style "position" "relative"
-                , style "top" "-2px"
+                , Html.Attributes.style "position" "relative"
+                , Html.Attributes.style "top" "-2px"
                 ]
                 []
     in

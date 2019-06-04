@@ -8974,6 +8974,8 @@ var elm$html$Html$Attributes$src = function (url) {
 		'src',
 		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
+var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
 var elm$html$Html$Attributes$width = function (n) {
 	return A2(
 		_VirtualDom_attribute,
@@ -8990,7 +8992,9 @@ var author$project$Main$renderIcon = function (icon) {
 					_Utils_ap(author$project$Main$iconUrl, url)),
 					elm$html$Html$Attributes$class('m-1'),
 					elm$html$Html$Attributes$width(15),
-					elm$html$Html$Attributes$height(15)
+					elm$html$Html$Attributes$height(15),
+					A2(elm$html$Html$Attributes$style, 'position', 'relative'),
+					A2(elm$html$Html$Attributes$style, 'top', '-2px')
 				]),
 			_List_Nil);
 	};
@@ -10308,8 +10312,6 @@ var rundis$elm_bootstrap$Bootstrap$Modal$containerClickDecoder = function (close
 		},
 		rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$target(rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$className));
 };
-var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
 var rundis$elm_bootstrap$Bootstrap$Modal$display = F2(
 	function (visibility, conf) {
 		switch (visibility.$) {
