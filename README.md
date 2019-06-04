@@ -37,6 +37,7 @@ Casper:
 
 Luc:
 
+- .rcimage .rcvideo .rcaudio classes are missing from rendered HTML, means editor is not compatible with old text-editor css sheets.
 - reload media list after deletion
 - Check rendered html
 - Transcoding status type

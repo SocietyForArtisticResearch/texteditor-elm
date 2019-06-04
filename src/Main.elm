@@ -635,8 +635,8 @@ viewUpload icon needsOffset onClickMsg buttonText status =
                 [ Button.light
                 , Button.attrs <| List.append [ onClick onClickMsg ] spacing
                 ]
-                [ text buttonText
-                , renderIcon icon
+                [ renderIcon icon
+                , text buttonText
                 ]
 
         Uploading fraction ->
@@ -722,8 +722,8 @@ view model =
         [ viewTabs model
         , mediaDialogHtml
         , confirmDialogHtml
-        , viewUpload PlusIcon False UploadMediaFileSelect "media" model.mediaUploadStatus
-        , viewUpload ImportIcon True UploadImportFileSelect "import" model.importUploadStatus
+        , viewUpload PlusIcon False UploadMediaFileSelect "Media" model.mediaUploadStatus
+        , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
         , mediaList
         , saveButton
         , mediaList
