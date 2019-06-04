@@ -101,7 +101,7 @@ mkMediaName exp =
                 0
                 imageNames
     in
-    "image" ++ String.fromInt (maxImage + 1)
+    "media" ++ String.fromInt (maxImage + 1)
 
 
 type alias OptionalDimensions =
