@@ -608,15 +608,25 @@ type Icon
 
 renderIcon : Icon -> Html Msg
 renderIcon icon =
+    let
+        iconImg url =
+            img
+                [ src (iconUrl ++ url)
+                , class "m-1"
+                , Html.Attributes.width 25
+                , Html.Attributes.height 25
+                ]
+                []
+    in
     case icon of
         PlusIcon ->
-            img [ src (iconUrl ++ "plus.svg"), class "m-1" ] []
+            iconImg "plus.svg"
 
         ImportIcon ->
-            img [ src (iconUrl ++ "import-export.svg"), class "m-1" ] []
+            iconImg "import-export.svg"
 
         SaveIcon ->
-            img [ src (iconUrl ++ "save.svg"), class "m-1" ] []
+            iconImg "save.svg"
 
 
 viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg

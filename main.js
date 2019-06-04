@@ -9055,41 +9055,45 @@ var author$project$Main$viewTabs = function (model) {
 var author$project$Main$baseUrl = 'elm-editor/';
 var author$project$Main$iconUrl = author$project$Main$baseUrl + 'lib/icons/';
 var elm$html$Html$img = _VirtualDom_node('img');
+var elm$html$Html$Attributes$height = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'height',
+		elm$core$String$fromInt(n));
+};
 var elm$html$Html$Attributes$src = function (url) {
 	return A2(
 		elm$html$Html$Attributes$stringProperty,
 		'src',
 		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
+var elm$html$Html$Attributes$width = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'width',
+		elm$core$String$fromInt(n));
+};
 var author$project$Main$renderIcon = function (icon) {
+	var iconImg = function (url) {
+		return A2(
+			elm$html$Html$img,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$src(
+					_Utils_ap(author$project$Main$iconUrl, url)),
+					elm$html$Html$Attributes$class('m-1'),
+					elm$html$Html$Attributes$width(25),
+					elm$html$Html$Attributes$height(25)
+				]),
+			_List_Nil);
+	};
 	switch (icon.$) {
 		case 'PlusIcon':
-			return A2(
-				elm$html$Html$img,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$src(author$project$Main$iconUrl + 'plus.svg'),
-						elm$html$Html$Attributes$class('m-1')
-					]),
-				_List_Nil);
+			return iconImg('plus.svg');
 		case 'ImportIcon':
-			return A2(
-				elm$html$Html$img,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$src(author$project$Main$iconUrl + 'import-export.svg'),
-						elm$html$Html$Attributes$class('m-1')
-					]),
-				_List_Nil);
+			return iconImg('import-export.svg');
 		default:
-			return A2(
-				elm$html$Html$img,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$src(author$project$Main$iconUrl + 'save.svg'),
-						elm$html$Html$Attributes$class('m-1')
-					]),
-				_List_Nil);
+			return iconImg('save.svg');
 	}
 };
 var elm$core$Basics$round = _Basics_round;
