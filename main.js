@@ -9068,7 +9068,8 @@ var author$project$Main$renderIcon = function (icon) {
 				elm$html$Html$img,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$src(author$project$Main$iconUrl + 'plus.svg')
+						elm$html$Html$Attributes$src(author$project$Main$iconUrl + 'plus.svg'),
+						elm$html$Html$Attributes$class('m-1')
 					]),
 				_List_Nil);
 		case 'ImportIcon':
@@ -9076,7 +9077,8 @@ var author$project$Main$renderIcon = function (icon) {
 				elm$html$Html$img,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$src(author$project$Main$iconUrl + 'import.svg')
+						elm$html$Html$Attributes$src(author$project$Main$iconUrl + 'import-export.svg'),
+						elm$html$Html$Attributes$class('m-1')
 					]),
 				_List_Nil);
 		default:
@@ -9084,7 +9086,8 @@ var author$project$Main$renderIcon = function (icon) {
 				elm$html$Html$img,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$src(author$project$Main$iconUrl + 'save.svg')
+						elm$html$Html$Attributes$src(author$project$Main$iconUrl + 'save.svg'),
+						elm$html$Html$Attributes$class('m-1')
 					]),
 				_List_Nil);
 	}

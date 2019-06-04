@@ -610,13 +610,13 @@ renderIcon : Icon -> Html Msg
 renderIcon icon =
     case icon of
         PlusIcon ->
-            img [ src (iconUrl ++ "plus.svg") ] []
+            img [ src (iconUrl ++ "plus.svg"), class "m-1" ] []
 
         ImportIcon ->
-            img [ src (iconUrl ++ "import.svg") ] []
+            img [ src (iconUrl ++ "import-export.svg"), class "m-1" ] []
 
         SaveIcon ->
-            img [ src (iconUrl ++ "save.svg") ] []
+            img [ src (iconUrl ++ "save.svg"), class "m-1" ] []
 
 
 viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg
