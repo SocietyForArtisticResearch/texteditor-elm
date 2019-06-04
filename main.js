@@ -8891,6 +8891,8 @@ var author$project$Main$update = F2(
 		}
 	});
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
+var author$project$Main$ImportIcon = {$: 'ImportIcon'};
+var author$project$Main$PlusIcon = {$: 'PlusIcon'};
 var author$project$Main$UploadImportFileSelect = {$: 'UploadImportFileSelect'};
 var author$project$Main$UploadMediaFileSelect = {$: 'UploadMediaFileSelect'};
 var author$project$Main$MediaEdit = function (a) {
@@ -9049,6 +9051,43 @@ var author$project$Main$viewTabs = function (model) {
 						A2(tabLink, author$project$Main$StyleTab, 'Style')
 					]))
 			]));
+};
+var author$project$Main$baseUrl = 'elm-editor/';
+var author$project$Main$iconUrl = author$project$Main$baseUrl + 'lib/icons/';
+var elm$html$Html$img = _VirtualDom_node('img');
+var elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var author$project$Main$renderIcon = function (icon) {
+	switch (icon.$) {
+		case 'PlusIcon':
+			return A2(
+				elm$html$Html$img,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$src(author$project$Main$iconUrl + 'plus.svg')
+					]),
+				_List_Nil);
+		case 'ImportIcon':
+			return A2(
+				elm$html$Html$img,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$src(author$project$Main$iconUrl + 'import.svg')
+					]),
+				_List_Nil);
+		default:
+			return A2(
+				elm$html$Html$img,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$src(author$project$Main$iconUrl + 'save.svg')
+					]),
+				_List_Nil);
+	}
 };
 var elm$core$Basics$round = _Basics_round;
 var elm$core$List$append = F2(
@@ -9235,8 +9274,8 @@ var rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary = {$: 'Secondary'};
 var rundis$elm_bootstrap$Bootstrap$Button$secondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1 = elm$html$Html$Attributes$class('m-1');
-var author$project$Main$viewUpload = F4(
-	function (needsOffset, onClickMsg, buttonText, status) {
+var author$project$Main$viewUpload = F5(
+	function (icon, needsOffset, onClickMsg, buttonText, status) {
 		var spacing = needsOffset ? _List_fromArray(
 			[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1]) : _List_Nil;
 		if (status.$ === 'Ready') {
@@ -9256,7 +9295,8 @@ var author$project$Main$viewUpload = F4(
 					]),
 				_List_fromArray(
 					[
-						elm$html$Html$text(buttonText)
+						elm$html$Html$text(buttonText),
+						author$project$Main$renderIcon(icon)
 					]));
 		} else {
 			var fraction = status.a;
@@ -11379,8 +11419,8 @@ var author$project$Main$view = function (model) {
 				author$project$Main$viewTabs(model),
 				mediaDialogHtml,
 				confirmDialogHtml,
-				A4(author$project$Main$viewUpload, false, author$project$Main$UploadMediaFileSelect, 'Upload Media', model.mediaUploadStatus),
-				A4(author$project$Main$viewUpload, true, author$project$Main$UploadImportFileSelect, 'Import Document', model.importUploadStatus),
+				A5(author$project$Main$viewUpload, author$project$Main$PlusIcon, false, author$project$Main$UploadMediaFileSelect, 'Upload Media', model.mediaUploadStatus),
+				A5(author$project$Main$viewUpload, author$project$Main$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import Document', model.importUploadStatus),
 				mediaList,
 				saveButton,
 				mediaList

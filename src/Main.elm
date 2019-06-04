@@ -10,8 +10,8 @@ import Dict
 import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectViewState, addMediaUserClasses, incContentVersion)
 import File exposing (File)
 import File.Select as Select
-import Html exposing (Html, a, button, div, li, p, span, text, ul)
-import Html.Attributes exposing (attribute, class, for, href, id)
+import Html exposing (Html, a, button, div, img, li, p, span, text, ul)
+import Html.Attributes exposing (attribute, class, for, href, id, src)
 import Html.Events exposing (on, onClick, onInput)
 import Http
 import Json.Decode as D
@@ -23,6 +23,16 @@ import RCMediaList
 import Regex
 import String.Extra as Str
 import UserConfirm exposing (ConfirmDialogContent)
+
+
+baseUrl : String
+baseUrl =
+    "elm-editor/"
+
+
+iconUrl : String
+iconUrl =
+    baseUrl ++ "lib/icons/"
 
 
 type alias Model =
@@ -590,8 +600,27 @@ update msg model =
             ( { model | selectedEditor = tab }, enumTabState tab |> setEditor )
 
 
-viewUpload : Bool -> Msg -> String -> UploadStatus -> Html Msg
-viewUpload needsOffset onClickMsg buttonText status =
+type Icon
+    = PlusIcon
+    | ImportIcon
+    | SaveIcon
+
+
+renderIcon : Icon -> Html Msg
+renderIcon icon =
+    case icon of
+        PlusIcon ->
+            img [ src (iconUrl ++ "plus.svg") ] []
+
+        ImportIcon ->
+            img [ src (iconUrl ++ "import.svg") ] []
+
+        SaveIcon ->
+            img [ src (iconUrl ++ "save.svg") ] []
+
+
+viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg
+viewUpload icon needsOffset onClickMsg buttonText status =
     let
         spacing =
             if needsOffset then
@@ -606,7 +635,9 @@ viewUpload needsOffset onClickMsg buttonText status =
                 [ Button.secondary
                 , Button.attrs <| List.append [ onClick onClickMsg ] spacing
                 ]
-                [ text buttonText ]
+                [ text buttonText
+                , renderIcon icon
+                ]
 
         Uploading fraction ->
             div [] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
@@ -691,8 +722,8 @@ view model =
         [ viewTabs model
         , mediaDialogHtml
         , confirmDialogHtml
-        , viewUpload False UploadMediaFileSelect "Upload Media" model.mediaUploadStatus
-        , viewUpload True UploadImportFileSelect "Import Document" model.importUploadStatus
+        , viewUpload PlusIcon False UploadMediaFileSelect "Upload Media" model.mediaUploadStatus
+        , viewUpload ImportIcon True UploadImportFileSelect "Import Document" model.importUploadStatus
         , mediaList
         , saveButton
         , mediaList
