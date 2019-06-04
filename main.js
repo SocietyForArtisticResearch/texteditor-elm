@@ -9298,8 +9298,8 @@ var author$project$Main$viewUpload = F5(
 					]),
 				_List_fromArray(
 					[
-						elm$html$Html$text(buttonText),
-						author$project$Main$renderIcon(icon)
+						author$project$Main$renderIcon(icon),
+						elm$html$Html$text(buttonText)
 					]));
 		} else {
 			var fraction = status.a;
@@ -11422,8 +11422,8 @@ var author$project$Main$view = function (model) {
 				author$project$Main$viewTabs(model),
 				mediaDialogHtml,
 				confirmDialogHtml,
-				A5(author$project$Main$viewUpload, author$project$Main$PlusIcon, false, author$project$Main$UploadMediaFileSelect, 'media', model.mediaUploadStatus),
-				A5(author$project$Main$viewUpload, author$project$Main$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'import', model.importUploadStatus),
+				A5(author$project$Main$viewUpload, author$project$Main$PlusIcon, false, author$project$Main$UploadMediaFileSelect, 'Media', model.mediaUploadStatus),
+				A5(author$project$Main$viewUpload, author$project$Main$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
 				mediaList,
 				saveButton,
 				mediaList
