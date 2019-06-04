@@ -9267,12 +9267,12 @@ var rundis$elm_bootstrap$Bootstrap$Button$button = F2(
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
 	return {$: 'Coloring', a: a};
 };
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Light = {$: 'Light'};
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
 	return {$: 'Roled', a: a};
 };
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary = {$: 'Secondary'};
-var rundis$elm_bootstrap$Bootstrap$Button$secondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
+var rundis$elm_bootstrap$Bootstrap$Button$light = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Light));
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1 = elm$html$Html$Attributes$class('m-1');
 var author$project$Main$viewUpload = F5(
 	function (icon, needsOffset, onClickMsg, buttonText, status) {
@@ -9283,7 +9283,7 @@ var author$project$Main$viewUpload = F5(
 				rundis$elm_bootstrap$Bootstrap$Button$button,
 				_List_fromArray(
 					[
-						rundis$elm_bootstrap$Bootstrap$Button$secondary,
+						rundis$elm_bootstrap$Bootstrap$Button$light,
 						rundis$elm_bootstrap$Bootstrap$Button$attrs(
 						A2(
 							elm$core$List$append,
@@ -10601,6 +10601,7 @@ var elm$html$Html$span = _VirtualDom_node('span');
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger = {$: 'Danger'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlineDanger = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary = {$: 'Secondary'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Success = {$: 'Success'};
@@ -11298,6 +11299,8 @@ var author$project$RCMediaList$view = F2(
 	});
 var rundis$elm_bootstrap$Bootstrap$Button$danger = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
+var rundis$elm_bootstrap$Bootstrap$Button$secondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
 var author$project$UserConfirm$view = F3(
 	function (visibility, content, messages) {
 		return A2(
@@ -11358,9 +11361,6 @@ var author$project$UserConfirm$view = F3(
 						rundis$elm_bootstrap$Bootstrap$Modal$small(
 							rundis$elm_bootstrap$Bootstrap$Modal$config(messages.reject))))));
 	});
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Light = {$: 'Light'};
-var rundis$elm_bootstrap$Bootstrap$Button$light = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Light));
 var author$project$Main$view = function (model) {
 	var saveButtonText = model.saved ? 'Saved' : 'Not Saved';
 	var saveButton = A2(
@@ -11419,8 +11419,8 @@ var author$project$Main$view = function (model) {
 				author$project$Main$viewTabs(model),
 				mediaDialogHtml,
 				confirmDialogHtml,
-				A5(author$project$Main$viewUpload, author$project$Main$PlusIcon, false, author$project$Main$UploadMediaFileSelect, 'Upload Media', model.mediaUploadStatus),
-				A5(author$project$Main$viewUpload, author$project$Main$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import Document', model.importUploadStatus),
+				A5(author$project$Main$viewUpload, author$project$Main$PlusIcon, false, author$project$Main$UploadMediaFileSelect, 'media', model.mediaUploadStatus),
+				A5(author$project$Main$viewUpload, author$project$Main$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'import', model.importUploadStatus),
 				mediaList,
 				saveButton,
 				mediaList
