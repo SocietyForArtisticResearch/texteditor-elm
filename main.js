@@ -8893,6 +8893,7 @@ var author$project$Main$update = F2(
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
 var author$project$Main$ImportIcon = {$: 'ImportIcon'};
 var author$project$Main$PlusIcon = {$: 'PlusIcon'};
+var author$project$Main$SaveIcon = {$: 'SaveIcon'};
 var author$project$Main$UploadImportFileSelect = {$: 'UploadImportFileSelect'};
 var author$project$Main$UploadMediaFileSelect = {$: 'UploadMediaFileSelect'};
 var author$project$Main$MediaEdit = function (a) {
@@ -8938,12 +8939,8 @@ var author$project$Main$InsertTool = function (a) {
 	return {$: 'InsertTool', a: a};
 };
 var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$ConfirmMediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertTool};
-var author$project$Main$MediaListTab = {$: 'MediaListTab'};
-var author$project$Main$StyleTab = {$: 'StyleTab'};
-var author$project$Main$SwitchTab = function (a) {
-	return {$: 'SwitchTab', a: a};
-};
-var author$project$Main$TxtMarkdownTab = {$: 'TxtMarkdownTab'};
+var author$project$Main$baseUrl = 'elm-editor/';
+var author$project$Main$iconUrl = author$project$Main$baseUrl + 'lib/icons/';
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	switch (handler.$) {
 		case 'Normal':
@@ -8956,11 +8953,7 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 			return 3;
 	}
 };
-var elm$html$Html$a = _VirtualDom_node('a');
-var elm$html$Html$li = _VirtualDom_node('li');
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var elm$html$Html$ul = _VirtualDom_node('ul');
+var elm$html$Html$img = _VirtualDom_node('img');
 var elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
 		return A2(
@@ -8969,6 +8962,58 @@ var elm$html$Html$Attributes$stringProperty = F2(
 			elm$json$Json$Encode$string(string));
 	});
 var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
+var elm$html$Html$Attributes$height = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'height',
+		elm$core$String$fromInt(n));
+};
+var elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var elm$html$Html$Attributes$width = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'width',
+		elm$core$String$fromInt(n));
+};
+var author$project$Main$renderIcon = function (icon) {
+	var iconImg = function (url) {
+		return A2(
+			elm$html$Html$img,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$src(
+					_Utils_ap(author$project$Main$iconUrl, url)),
+					elm$html$Html$Attributes$class('m-1'),
+					elm$html$Html$Attributes$width(25),
+					elm$html$Html$Attributes$height(25)
+				]),
+			_List_Nil);
+	};
+	switch (icon.$) {
+		case 'PlusIcon':
+			return iconImg('plus.svg');
+		case 'ImportIcon':
+			return iconImg('import-export.svg');
+		default:
+			return iconImg('save.svg');
+	}
+};
+var author$project$Main$MediaListTab = {$: 'MediaListTab'};
+var author$project$Main$StyleTab = {$: 'StyleTab'};
+var author$project$Main$SwitchTab = function (a) {
+	return {$: 'SwitchTab', a: a};
+};
+var author$project$Main$TxtMarkdownTab = {$: 'TxtMarkdownTab'};
+var elm$html$Html$a = _VirtualDom_node('a');
+var elm$html$Html$li = _VirtualDom_node('li');
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$html$Html$ul = _VirtualDom_node('ul');
 var elm$html$Html$Attributes$href = function (url) {
 	return A2(
 		elm$html$Html$Attributes$stringProperty,
@@ -9032,50 +9077,6 @@ var author$project$Main$viewTabs = function (model) {
 				A2(tabLink, author$project$Main$MediaListTab, 'Media'),
 				A2(tabLink, author$project$Main$StyleTab, 'Style')
 			]));
-};
-var author$project$Main$baseUrl = 'elm-editor/';
-var author$project$Main$iconUrl = author$project$Main$baseUrl + 'lib/icons/';
-var elm$html$Html$img = _VirtualDom_node('img');
-var elm$html$Html$Attributes$height = function (n) {
-	return A2(
-		_VirtualDom_attribute,
-		'height',
-		elm$core$String$fromInt(n));
-};
-var elm$html$Html$Attributes$src = function (url) {
-	return A2(
-		elm$html$Html$Attributes$stringProperty,
-		'src',
-		_VirtualDom_noJavaScriptOrHtmlUri(url));
-};
-var elm$html$Html$Attributes$width = function (n) {
-	return A2(
-		_VirtualDom_attribute,
-		'width',
-		elm$core$String$fromInt(n));
-};
-var author$project$Main$renderIcon = function (icon) {
-	var iconImg = function (url) {
-		return A2(
-			elm$html$Html$img,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$src(
-					_Utils_ap(author$project$Main$iconUrl, url)),
-					elm$html$Html$Attributes$class('m-1'),
-					elm$html$Html$Attributes$width(25),
-					elm$html$Html$Attributes$height(25)
-				]),
-			_List_Nil);
-	};
-	switch (icon.$) {
-		case 'PlusIcon':
-			return iconImg('plus.svg');
-		case 'ImportIcon':
-			return iconImg('import-export.svg');
-		default:
-			return iconImg('save.svg');
-	}
 };
 var elm$core$Basics$round = _Basics_round;
 var elm$core$List$append = F2(
@@ -11365,6 +11366,7 @@ var author$project$Main$view = function (model) {
 			]),
 		_List_fromArray(
 			[
+				author$project$Main$renderIcon(author$project$Main$SaveIcon),
 				elm$html$Html$text(saveButtonText)
 			]));
 	var mediaList = A2(author$project$RCMediaList$view, model.exposition.media, author$project$Main$makeTableMessages);

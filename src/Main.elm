@@ -721,7 +721,7 @@ view model =
                 "Not Saved"
 
         saveButton =
-            Button.button [ Button.light, Button.attrs [ onClick SaveExposition ] ] [ text saveButtonText ]
+            Button.button [ Button.light, Button.attrs [ onClick SaveExposition ] ] [ renderIcon SaveIcon, text saveButtonText ]
 
         mediaList =
             RCMediaList.view model.exposition.media makeTableMessages
