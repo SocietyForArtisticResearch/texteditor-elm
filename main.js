@@ -8531,6 +8531,14 @@ var author$project$Main$viewTabs = function (model) {
 			]));
 };
 var elm$core$Basics$round = _Basics_round;
+var elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
+		}
+	});
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
 	return {$: 'Attrs', a: a};
 };
@@ -8706,8 +8714,11 @@ var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary = {$: 'Secondary'};
 var rundis$elm_bootstrap$Bootstrap$Button$secondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
-var author$project$Main$viewUpload = F3(
-	function (onClickMsg, buttonText, status) {
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1 = elm$html$Html$Attributes$class('m-1');
+var author$project$Main$viewUpload = F4(
+	function (needsOffset, onClickMsg, buttonText, status) {
+		var spacing = needsOffset ? _List_fromArray(
+			[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1]) : _List_Nil;
 		if (status.$ === 'Ready') {
 			return A2(
 				rundis$elm_bootstrap$Bootstrap$Button$button,
@@ -8715,10 +8726,13 @@ var author$project$Main$viewUpload = F3(
 					[
 						rundis$elm_bootstrap$Bootstrap$Button$secondary,
 						rundis$elm_bootstrap$Bootstrap$Button$attrs(
-						_List_fromArray(
-							[
-								elm$html$Html$Events$onClick(onClickMsg)
-							]))
+						A2(
+							elm$core$List$append,
+							_List_fromArray(
+								[
+									elm$html$Html$Events$onClick(onClickMsg)
+								]),
+							spacing))
 					]),
 				_List_fromArray(
 					[
@@ -10837,8 +10851,8 @@ var author$project$Main$view = function (model) {
 				author$project$Main$viewTabs(model),
 				mediaDialogHtml,
 				confirmDialogHtml,
-				A3(author$project$Main$viewUpload, author$project$Main$UploadMediaFileSelect, 'Upload Media', model.mediaUploadStatus),
-				A3(author$project$Main$viewUpload, author$project$Main$UploadImportFileSelect, 'Import Document', model.importUploadStatus),
+				A4(author$project$Main$viewUpload, false, author$project$Main$UploadMediaFileSelect, 'Upload Media', model.mediaUploadStatus),
+				A4(author$project$Main$viewUpload, true, author$project$Main$UploadImportFileSelect, 'Import Document', model.importUploadStatus),
 				mediaList,
 				saveButton
 			]));

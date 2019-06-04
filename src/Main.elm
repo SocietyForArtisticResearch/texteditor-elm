@@ -597,13 +597,21 @@ update msg model =
             ( { model | selectedEditor = tab }, enumTabState tab |> setEditor )
 
 
-viewUpload : Msg -> String -> UploadStatus -> Html Msg
-viewUpload onClickMsg buttonText status =
+viewUpload : Bool -> Msg -> String -> UploadStatus -> Html Msg
+viewUpload needsOffset onClickMsg buttonText status =
+    let
+        spacing =
+            if needsOffset then
+                [ Spacing.m1 ]
+
+            else
+                []
+    in
     case status of
         Ready ->
             Button.button
                 [ Button.secondary
-                , Button.attrs [ onClick onClickMsg ]
+                , Button.attrs <| List.append [ onClick onClickMsg ] spacing
                 ]
                 [ text buttonText ]
 
@@ -697,8 +705,8 @@ view model =
         [ viewTabs model
         , mediaDialogHtml
         , confirmDialogHtml
-        , viewUpload UploadMediaFileSelect "Upload Media" model.mediaUploadStatus
-        , viewUpload UploadImportFileSelect "Import Document" model.importUploadStatus
+        , viewUpload False UploadMediaFileSelect "Upload Media" model.mediaUploadStatus
+        , viewUpload True UploadImportFileSelect "Import Document" model.importUploadStatus
         , mediaList
         , saveButton
         ]
