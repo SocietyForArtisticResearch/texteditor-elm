@@ -5014,11 +5014,14 @@ var elm$core$Set$toList = function (_n0) {
 	return elm$core$Dict$keys(dict);
 };
 var elm$core$List$cons = _List_cons;
+var rundis$elm_bootstrap$Bootstrap$Alert$Shown = {$: 'Shown'};
+var rundis$elm_bootstrap$Bootstrap$Alert$shown = rundis$elm_bootstrap$Bootstrap$Alert$Shown;
 var author$project$Main$addProblem = F2(
 	function (model, problem) {
 		return _Utils_update(
 			model,
 			{
+				alertVisibility: rundis$elm_bootstrap$Bootstrap$Alert$shown,
 				problems: A2(elm$core$List$cons, problem, model.problems)
 			});
 	});
@@ -5438,8 +5441,6 @@ var elm$core$Basics$negate = function (n) {
 };
 var elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var elm$core$Dict$empty = elm$core$Dict$RBEmpty_elm_builtin;
-var rundis$elm_bootstrap$Bootstrap$Alert$Shown = {$: 'Shown'};
-var rundis$elm_bootstrap$Bootstrap$Alert$shown = rundis$elm_bootstrap$Bootstrap$Alert$Shown;
 var rundis$elm_bootstrap$Bootstrap$Modal$Hide = {$: 'Hide'};
 var rundis$elm_bootstrap$Bootstrap$Modal$hidden = rundis$elm_bootstrap$Bootstrap$Modal$Hide;
 var author$project$Main$emptyModel = F2(
@@ -7947,6 +7948,7 @@ var author$project$Main$addProblems = F2(
 		return _Utils_update(
 			model,
 			{
+				alertVisibility: rundis$elm_bootstrap$Bootstrap$Alert$shown,
 				problems: _Utils_ap(problems, model.problems)
 			});
 	});
@@ -9110,7 +9112,6 @@ var author$project$Problems$asString = function (problem) {
 			return 'import http error';
 	}
 };
-var elm$html$Html$div = _VirtualDom_node('div');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var rundis$elm_bootstrap$Bootstrap$Alert$Config = function (a) {
@@ -9164,6 +9165,7 @@ var rundis$elm_bootstrap$Bootstrap$Internal$Role$Info = {$: 'Info'};
 var rundis$elm_bootstrap$Bootstrap$Alert$info = function (conf) {
 	return A2(rundis$elm_bootstrap$Bootstrap$Alert$role, rundis$elm_bootstrap$Bootstrap$Internal$Role$Info, conf);
 };
+var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$span = _VirtualDom_node('span');
 var elm$virtual_dom$VirtualDom$attribute = F2(
@@ -9364,34 +9366,38 @@ var rundis$elm_bootstrap$Bootstrap$Alert$view = F2(
 			A3(rundis$elm_bootstrap$Bootstrap$Alert$maybeAddDismissButton, visibility, configRec, configRec.children));
 	});
 var author$project$Main$viewAlert = function (model) {
-	var _n0 = model.problems;
-	if (!_n0.b) {
-		return A2(elm$html$Html$div, _List_Nil, _List_Nil);
-	} else {
-		var problems = _n0;
-		var problemStrings = A2(elm$core$List$map, author$project$Problems$asString, problems);
-		var problemAsString = A2(elm$core$String$join, ' ', problemStrings);
-		return A2(
-			rundis$elm_bootstrap$Bootstrap$Alert$view,
-			model.alertVisibility,
+	var message = function () {
+		var _n0 = model.problems;
+		if (!_n0.b) {
+			return 'test - no problem :-)';
+		} else {
+			var problems = _n0;
+			return A2(
+				elm$core$String$join,
+				' ',
+				A2(elm$core$List$map, author$project$Problems$asString, problems));
+		}
+	}();
+	return A2(
+		rundis$elm_bootstrap$Bootstrap$Alert$view,
+		model.alertVisibility,
+		A2(
+			rundis$elm_bootstrap$Bootstrap$Alert$children,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Alert$h4,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text('there is a problem')
+						])),
+					elm$html$Html$text('this is the problem: ' + message)
+				]),
 			A2(
-				rundis$elm_bootstrap$Bootstrap$Alert$children,
-				_List_fromArray(
-					[
-						A2(
-						rundis$elm_bootstrap$Bootstrap$Alert$h4,
-						_List_Nil,
-						_List_fromArray(
-							[
-								elm$html$Html$text('there is a problem')
-							])),
-						elm$html$Html$text('this is the problem: ' + problemAsString)
-					]),
-				A2(
-					rundis$elm_bootstrap$Bootstrap$Alert$dismissable,
-					author$project$Main$AlertMsg,
-					rundis$elm_bootstrap$Bootstrap$Alert$info(rundis$elm_bootstrap$Bootstrap$Alert$config))));
-	}
+				rundis$elm_bootstrap$Bootstrap$Alert$dismissable,
+				author$project$Main$AlertMsg,
+				rundis$elm_bootstrap$Bootstrap$Alert$info(rundis$elm_bootstrap$Bootstrap$Alert$config))));
 };
 var author$project$Main$MediaListTab = {$: 'MediaListTab'};
 var author$project$Main$StyleTab = {$: 'StyleTab'};

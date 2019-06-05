@@ -112,12 +112,12 @@ init flags =
 
 addProblem : Model -> Problems.Problem -> Model
 addProblem model problem =
-    { model | problems = problem :: model.problems }
+    { model | problems = problem :: model.problems, alertVisibility = Alert.shown }
 
 
 addProblems : Model -> List Problems.Problem -> Model
 addProblems model problems =
-    { model | problems = problems ++ model.problems }
+    { model | problems = problems ++ model.problems, alertVisibility = Alert.shown }
 
 
 main =
@@ -735,26 +735,23 @@ viewTabs model =
 
 viewAlert : Model -> Html Msg
 viewAlert model =
-    case model.problems of
-        [] ->
-            div [] []
+    let
+        message =
+            case model.problems of
+                [] ->
+                    "test - no problem :-)"
 
-        problems ->
-            let
-                problemStrings =
-                    List.map Problems.asString problems
-
-                problemAsString =
-                    String.join " " problemStrings
-            in
-            Alert.config
-                |> Alert.info
-                |> Alert.dismissable AlertMsg
-                |> Alert.children
-                    [ Alert.h4 [] [ text "there is a problem" ]
-                    , text <| "this is the problem: " ++ problemAsString
-                    ]
-                |> Alert.view model.alertVisibility
+                problems ->
+                    String.join " " <| List.map Problems.asString problems
+    in
+    Alert.config
+        |> Alert.info
+        |> Alert.dismissable AlertMsg
+        |> Alert.children
+            [ Alert.h4 [] [ text "there is a problem" ]
+            , text <| "this is the problem: " ++ message
+            ]
+        |> Alert.view model.alertVisibility
 
 
 view : Model -> Html Msg
