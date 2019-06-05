@@ -4,6 +4,7 @@ import Bootstrap.Button as Button
 import Bootstrap.Form as Form
 import Bootstrap.Grid as Grid
 import Bootstrap.Modal as Modal
+import Bootstrap.Alert as Alert
 import Bootstrap.Utilities.Spacing as Spacing
 import Browser
 import Dict
@@ -40,6 +41,7 @@ type alias Model =
     , editGeneration : ( Int, Int )
     , mediaDialog : ( Modal.Visibility, Maybe ( RCMediaObject, Int ), Maybe RCMediaObjectViewState )
     , confirmDialog : ( Modal.Visibility, Maybe ConfirmDialogContent, Maybe (UserConfirm.Messages Msg) )
+    , alertVisibility : Alert.Visibility
     , weave : Int
     , research : Int
     , mediaUploadStatus : UploadStatus
@@ -78,6 +80,7 @@ emptyModel research weave =
     , exposition = Exposition.empty
     , mediaDialog = ( Modal.hidden, Nothing, Nothing )
     , confirmDialog = ( Modal.hidden, Nothing, Nothing )
+    , alertVisibility = Alert.shown 
     , research = research
     , weave = weave
     , mediaUploadStatus = Ready
@@ -210,6 +213,7 @@ type Msg
     | CloseConfirmDialog
     | SwitchTab TabState
     | MediaDeleted (Result Http.Error ())
+    | AlertMsg Alert.Visibility
 
 
 
@@ -611,6 +615,9 @@ update msg model =
         SwitchTab tab ->
             ( { model | selectedEditor = tab }, enumTabState tab |> setEditor )
 
+        AlertMsg visibility ->
+            ( { model | alertVisibility = visibility } , Cmd.none )
+
 
 type Icon
     = PlusIcon
@@ -708,6 +715,28 @@ viewTabs model =
         ]
 
 
+viewAlert : Model -> Html Msg
+viewAlert model =
+    case model.problems of
+        [] -> div [] []
+
+        problems ->
+            let
+                problemStrings =
+                    List.map Problems.asString problems
+
+                problemAsString =
+                    String.join " " problemStrings 
+            in
+                Alert.config
+                 |> Alert.info
+                 |> Alert.dismissable AlertMsg
+                 |> Alert.children
+                    [ Alert.h4 [] [ text "there is a problem" ]
+                    , text <|  "this is the problem: " ++ problemAsString ]
+                 |> Alert.view model.alertVisibility
+    
+        
 view : Model -> Html Msg
 view model =
     let
@@ -747,5 +776,6 @@ view model =
         , viewUpload PlusIcon False UploadMediaFileSelect "Media" model.mediaUploadStatus
         , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
         , saveButton
+            , viewAlert model
         , mediaList
         ]

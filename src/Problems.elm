@@ -1,4 +1,4 @@
-module Problems exposing (Problem(..), splitResultList)
+module Problems exposing (Problem(..), splitResultList, asString)
 
 -- problem idea comes from rtfeldman sp-application talk youtube
 
@@ -31,3 +31,30 @@ splitResultListAcc results problems oks =
 
         (Err p) :: rest ->
             splitResultListAcc rest (p :: problems) oks
+
+asString : Problem -> String
+asString problem =
+    case problem of
+        WrongExpositionUrl ->
+            "unknown exposition url"
+
+        CannotLoadMedia name ->
+            "cannot load media " ++ name
+
+        NoMediaWithNameOrId ->
+            "media doesn't exist"
+
+        CannotSave ->
+            "saving error"
+
+        CannotUpdateMedia ->
+            "problem updaing media"
+
+        CannotFindMediaFieldInJson ->
+            "unkown media field in the json"
+
+        CannotImportFile _  ->
+            "import http error"
+
+ 
+               
