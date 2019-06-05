@@ -112,12 +112,12 @@ init flags =
 
 addProblem : Model -> Problems.Problem -> Model
 addProblem model problem =
-    { model | problems = problem :: model.problems , alertVisibility = Alert.shown }
+    { model | problems = problem :: model.problems, alertVisibility = Alert.shown }
 
 
 addProblems : Model -> List Problems.Problem -> Model
 addProblems model problems =
-    { model | problems = problems ++ model.problems , alertVisibility = Alert.shown }
+    { model | problems = problems ++ model.problems, alertVisibility = Alert.shown }
 
 
 main =
@@ -139,6 +139,18 @@ port getContent : () -> Cmd msg
 
 
 port setContent : E.Value -> Cmd msg
+
+
+updateEditorContent : Model -> Cmd msg
+updateEditorContent model =
+    setContent
+        (E.object
+            [ ( "md"
+              , E.string model.exposition.markdownInput
+              )
+            , ( "style", E.string model.exposition.css )
+            ]
+        )
 
 
 port mediaDialog : (E.Value -> msg) -> Sub msg
@@ -573,18 +585,24 @@ update msg model =
                     let
                         _ =
                             Debug.log "import result: " importResult
+
+                        newModel =
+                            { model
+                                | importUploadStatus = Ready
+                                , exposition =
+                                    Exposition.withMd model.exposition
+                                        (Exposition.replaceImagesWithTools
+                                            (model.exposition.markdownInput ++ importResult.markdown)
+                                            importResult.media
+                                        )
+                            }
                     in
                     -- TODO: convert images to tools in markdown!
-                    ( { model
-                        | importUploadStatus = Ready
-                        , exposition =
-                            Exposition.withMd model.exposition
-                                (Exposition.replaceImagesWithTools
-                                    (model.exposition.markdownInput ++ importResult.markdown)
-                                    importResult.media
-                                )
-                      }
-                    , RCAPI.getMediaList model.research GotMediaList
+                    ( newModel
+                    , Cmd.batch
+                        [ updateEditorContent newModel
+                        , RCAPI.getMediaList model.research GotMediaList
+                        ]
                     )
 
                 Err e ->
@@ -722,18 +740,18 @@ viewAlert model =
             case model.problems of
                 [] ->
                     "test - no problem :-)"
-                
+
                 problems ->
-                    String.join " " <|  List.map Problems.asString problems
+                    String.join " " <| List.map Problems.asString problems
     in
-        Alert.config
-            |> Alert.info
-            |> Alert.dismissable AlertMsg
-            |> Alert.children
-               [ Alert.h4 [] [ text "there is a problem" ]
-               , text <| "this is the problem: " ++ message
-               ]
-            |> Alert.view model.alertVisibility
+    Alert.config
+        |> Alert.info
+        |> Alert.dismissable AlertMsg
+        |> Alert.children
+            [ Alert.h4 [] [ text "there is a problem" ]
+            , text <| "this is the problem: " ++ message
+            ]
+        |> Alert.view model.alertVisibility
 
 
 view : Model -> Html Msg

@@ -7985,6 +7985,32 @@ var author$project$Main$setContent = _Platform_outgoingPort('setContent', elm$co
 var elm$json$Json$Encode$int = _Json_wrap;
 var author$project$Main$setEditor = _Platform_outgoingPort('setEditor', elm$json$Json$Encode$int);
 var author$project$Main$setPreviewContent = _Platform_outgoingPort('setPreviewContent', elm$json$Json$Encode$string);
+var elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			elm$core$List$foldl,
+			F2(
+				function (_n0, obj) {
+					var k = _n0.a;
+					var v = _n0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(_Utils_Tuple0),
+			pairs));
+};
+var author$project$Main$updateEditorContent = function (model) {
+	return author$project$Main$setContent(
+		elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'md',
+					elm$json$Json$Encode$string(model.exposition.markdownInput)),
+					_Utils_Tuple2(
+					'style',
+					elm$json$Json$Encode$string(model.exposition.css))
+				])));
+};
 var author$project$Problems$CannotFindMediaFieldInJson = {$: 'CannotFindMediaFieldInJson'};
 var author$project$Problems$CannotImportFile = function (a) {
 	return {$: 'CannotImportFile', a: a};
@@ -8111,19 +8137,6 @@ var elm$json$Json$Encode$list = F2(
 				_Json_emptyArray(_Utils_Tuple0),
 				entries));
 	});
-var elm$json$Json$Encode$object = function (pairs) {
-	return _Json_wrap(
-		A3(
-			elm$core$List$foldl,
-			F2(
-				function (_n0, obj) {
-					var k = _n0.a;
-					var v = _n0.b;
-					return A3(_Json_addField, k, v, obj);
-				}),
-			_Json_emptyObject(_Utils_Tuple0),
-			pairs));
-};
 var author$project$RCAPI$saveExposition = F2(
 	function (exposition, expect) {
 		var url = 'text-editor/save' + ('?research=' + (elm$core$String$fromInt(exposition.id) + ('&weave=' + elm$core$String$fromInt(exposition.currentWeave))));
@@ -8886,21 +8899,27 @@ var author$project$Main$update = F2(
 					var result = msg.a;
 					if (result.$ === 'Ok') {
 						var importResult = result.a;
+						var newModel = _Utils_update(
+							model,
+							{
+								exposition: A2(
+									author$project$Exposition$withMd,
+									model.exposition,
+									A2(
+										author$project$Exposition$replaceImagesWithTools,
+										_Utils_ap(model.exposition.markdownInput, importResult.markdown),
+										importResult.media)),
+								importUploadStatus: author$project$Main$Ready
+							});
 						var _n27 = A2(elm$core$Debug$log, 'import result: ', importResult);
 						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									exposition: A2(
-										author$project$Exposition$withMd,
-										model.exposition,
-										A2(
-											author$project$Exposition$replaceImagesWithTools,
-											_Utils_ap(model.exposition.markdownInput, importResult.markdown),
-											importResult.media)),
-									importUploadStatus: author$project$Main$Ready
-								}),
-							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
+							newModel,
+							elm$core$Platform$Cmd$batch(
+								_List_fromArray(
+									[
+										author$project$Main$updateEditorContent(newModel),
+										A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList)
+									])));
 					} else {
 						var e = result.a;
 						var _n28 = A2(elm$core$Debug$log, 'error uploading: ', e);
