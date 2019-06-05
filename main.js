@@ -5438,11 +5438,14 @@ var elm$core$Basics$negate = function (n) {
 };
 var elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var elm$core$Dict$empty = elm$core$Dict$RBEmpty_elm_builtin;
+var rundis$elm_bootstrap$Bootstrap$Alert$Shown = {$: 'Shown'};
+var rundis$elm_bootstrap$Bootstrap$Alert$shown = rundis$elm_bootstrap$Bootstrap$Alert$Shown;
 var rundis$elm_bootstrap$Bootstrap$Modal$Hide = {$: 'Hide'};
 var rundis$elm_bootstrap$Bootstrap$Modal$hidden = rundis$elm_bootstrap$Bootstrap$Modal$Hide;
 var author$project$Main$emptyModel = F2(
 	function (research, weave) {
 		return {
+			alertVisibility: rundis$elm_bootstrap$Bootstrap$Alert$shown,
 			confirmDialog: _Utils_Tuple3(rundis$elm_bootstrap$Bootstrap$Modal$hidden, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing),
 			editGeneration: _Utils_Tuple2(-1, -1),
 			exposition: author$project$Exposition$empty,
@@ -8879,7 +8882,7 @@ var author$project$Main$update = F2(
 								confirmDialog: _Utils_Tuple3(rundis$elm_bootstrap$Bootstrap$Modal$hidden, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing)
 							}),
 						elm$core$Platform$Cmd$none);
-				default:
+				case 'SwitchTab':
 					var tab = msg.a;
 					return _Utils_Tuple2(
 						_Utils_update(
@@ -8887,6 +8890,13 @@ var author$project$Main$update = F2(
 							{selectedEditor: tab}),
 						author$project$Main$setEditor(
 							author$project$Main$enumTabState(tab)));
+				default:
+					var visibility = msg.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{alertVisibility: visibility}),
+						elm$core$Platform$Cmd$none);
 			}
 		}
 	});
