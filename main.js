@@ -8176,15 +8176,13 @@ var author$project$RCAPI$APIMediaEntry = F5(
 	});
 var author$project$RCAPI$mkMediaEntry = F5(
 	function (id, media, description, copyright, name) {
-		var d = function () {
-			if (description.$ === 'Just') {
-				var desc = description.a;
-				return desc;
-			} else {
-				return '';
-			}
-		}();
-		return A5(author$project$RCAPI$APIMediaEntry, id, media, d, copyright, name);
+		return A5(
+			author$project$RCAPI$APIMediaEntry,
+			id,
+			media,
+			A2(elm$core$Maybe$withDefault, '', description),
+			A2(elm$core$Maybe$withDefault, '', copyright),
+			name);
 	});
 var elm$json$Json$Decode$map5 = _Json_map5;
 var author$project$RCAPI$apiMediaEntry = A6(
@@ -8194,7 +8192,8 @@ var author$project$RCAPI$apiMediaEntry = A6(
 	A2(elm$json$Json$Decode$field, 'media', author$project$RCAPI$apiMedia),
 	elm$json$Json$Decode$maybe(
 		A2(elm$json$Json$Decode$field, 'description', elm$json$Json$Decode$string)),
-	A2(elm$json$Json$Decode$field, 'copyright', elm$json$Json$Decode$string),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'copyright', elm$json$Json$Decode$string)),
 	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string));
 var author$project$RCAPI$getMediaList = F2(
 	function (id, msg) {

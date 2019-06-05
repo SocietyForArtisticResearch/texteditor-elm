@@ -53,18 +53,9 @@ type alias APIMediaEntry =
     { id : Int, media : APIMedia, description : String, copyright : String, name : String }
 
 
-mkMediaEntry : Int -> APIMedia -> Maybe String -> String -> String -> APIMediaEntry
+mkMediaEntry : Int -> APIMedia -> Maybe String -> Maybe String -> String -> APIMediaEntry
 mkMediaEntry id media description copyright name =
-    let
-        d =
-            case description of
-                Just desc ->
-                    desc
-
-                Nothing ->
-                    ""
-    in
-    APIMediaEntry id media d copyright name
+    APIMediaEntry id media (Maybe.withDefault "" description) (Maybe.withDefault "" copyright) name
 
 
 type alias APIMedia =
@@ -114,7 +105,7 @@ apiMediaEntry =
         (field "id" int)
         (field "media" apiMedia)
         (maybe (field "description" string))
-        (field "copyright" string)
+        (maybe (field "copyright" string))
         (field "name" string)
 
 
