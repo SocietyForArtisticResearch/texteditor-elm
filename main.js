@@ -8219,7 +8219,7 @@ var elm$json$Json$Encode$list = F2(
 var author$project$RCAPI$saveExposition = F2(
 	function (exposition, expect) {
 		var url = 'text-editor/save' + ('?research=' + (elm$core$String$fromInt(exposition.id) + ('&weave=' + elm$core$String$fromInt(exposition.currentWeave))));
-		var _n0 = A2(elm$core$Debug$log, 'about to save html: ', exposition.renderedHtml);
+		var _n0 = A2(elm$core$Debug$log, 'about to save html: ', exposition);
 		return elm$http$Http$request(
 			{
 				body: elm$http$Http$multipartBody(
@@ -8745,7 +8745,7 @@ var author$project$Main$update = F2(
 					var result = msg.a;
 					if (result.$ === 'Ok') {
 						var r = result.a;
-						var _n11 = A2(elm$core$Debug$log, 'save error: ', r);
+						var _n11 = A2(elm$core$Debug$log, 'save result: ', r);
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,

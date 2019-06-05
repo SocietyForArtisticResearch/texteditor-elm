@@ -398,7 +398,7 @@ update msg model =
                 Ok r ->
                     let
                         _ =
-                            Debug.log "save error: " r
+                            Debug.log "save result: " r
                     in
                     ( { model | saved = True }, Cmd.none )
 
