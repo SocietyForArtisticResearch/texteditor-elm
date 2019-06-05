@@ -53,6 +53,20 @@ type alias APIMediaEntry =
     { id : Int, media : APIMedia, description : String, copyright : String, name : String }
 
 
+mkMediaEntry : Int -> APIMedia -> Maybe String -> String -> String -> APIMediaEntry
+mkMediaEntry id media description copyright name =
+    let
+        d =
+            case description of
+                Just desc ->
+                    desc
+
+                Nothing ->
+                    ""
+    in
+    APIMediaEntry id media d copyright name
+
+
 type alias APIMedia =
     { mediaType : String, status : String, width : Int, height : Int }
 
@@ -96,10 +110,10 @@ apiExpositionMetadata =
 
 apiMediaEntry : Decoder APIMediaEntry
 apiMediaEntry =
-    map5 APIMediaEntry
+    map5 mkMediaEntry
         (field "id" int)
         (field "media" apiMedia)
-        (field "description" string)
+        (maybe (field "description" string))
         (field "copyright" string)
         (field "name" string)
 

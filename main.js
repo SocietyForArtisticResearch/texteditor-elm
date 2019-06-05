@@ -8158,10 +8158,6 @@ var author$project$RCAPI$deleteMedia = F2(
 				url: 'text-editor/simple-media-remove?research=' + (elm$core$String$fromInt(mediaObject.expositionId) + ('&simple-media=' + elm$core$String$fromInt(mediaObject.id)))
 			});
 	});
-var author$project$RCAPI$APIMediaEntry = F5(
-	function (id, media, description, copyright, name) {
-		return {copyright: copyright, description: description, id: id, media: media, name: name};
-	});
 var author$project$RCAPI$APIMedia = F4(
 	function (mediaType, status, width, height) {
 		return {height: height, mediaType: mediaType, status: status, width: width};
@@ -8174,13 +8170,30 @@ var author$project$RCAPI$apiMedia = A5(
 	A2(elm$json$Json$Decode$field, 'status', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'width', elm$json$Json$Decode$int),
 	A2(elm$json$Json$Decode$field, 'height', elm$json$Json$Decode$int));
+var author$project$RCAPI$APIMediaEntry = F5(
+	function (id, media, description, copyright, name) {
+		return {copyright: copyright, description: description, id: id, media: media, name: name};
+	});
+var author$project$RCAPI$mkMediaEntry = F5(
+	function (id, media, description, copyright, name) {
+		var d = function () {
+			if (description.$ === 'Just') {
+				var desc = description.a;
+				return desc;
+			} else {
+				return '';
+			}
+		}();
+		return A5(author$project$RCAPI$APIMediaEntry, id, media, d, copyright, name);
+	});
 var elm$json$Json$Decode$map5 = _Json_map5;
 var author$project$RCAPI$apiMediaEntry = A6(
 	elm$json$Json$Decode$map5,
-	author$project$RCAPI$APIMediaEntry,
+	author$project$RCAPI$mkMediaEntry,
 	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
 	A2(elm$json$Json$Decode$field, 'media', author$project$RCAPI$apiMedia),
-	A2(elm$json$Json$Decode$field, 'description', elm$json$Json$Decode$string),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'description', elm$json$Json$Decode$string)),
 	A2(elm$json$Json$Decode$field, 'copyright', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string));
 var author$project$RCAPI$getMediaList = F2(
