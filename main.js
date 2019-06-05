@@ -11414,7 +11414,6 @@ var author$project$Main$view = function (model) {
 				confirmDialogHtml,
 				A5(author$project$Main$viewUpload, author$project$Main$PlusIcon, false, author$project$Main$UploadMediaFileSelect, 'Media', model.mediaUploadStatus),
 				A5(author$project$Main$viewUpload, author$project$Main$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
-				mediaList,
 				saveButton,
 				mediaList
 			]));

@@ -734,7 +734,6 @@ view model =
         , confirmDialogHtml
         , viewUpload PlusIcon False UploadMediaFileSelect "Media" model.mediaUploadStatus
         , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
-        , mediaList
         , saveButton
         , mediaList
         ]
