@@ -8194,6 +8194,12 @@ var author$project$RCAPI$getMediaList = F2(
 				url: '/text-editor/simple-media-list?research=' + elm$core$String$fromInt(id)
 			});
 	});
+var elm$http$Http$expectString = function (toMsg) {
+	return A2(
+		elm$http$Http$expectStringResponse,
+		toMsg,
+		elm$http$Http$resolve(elm$core$Result$Ok));
+};
 var elm$http$Http$multipartBody = function (parts) {
 	return A2(
 		_Http_pair,
@@ -8268,7 +8274,7 @@ var author$project$RCAPI$saveExposition = F2(
 								0,
 								elm$json$Json$Encode$object(_List_Nil)))
 						])),
-				expect: elm$http$Http$expectWhatever(expect),
+				expect: elm$http$Http$expectString(expect),
 				headers: _List_Nil,
 				method: 'POST',
 				timeout: elm$core$Maybe$Nothing,
@@ -8580,12 +8586,6 @@ var elm$file$File$Select$file = F2(
 			toMsg,
 			_File_uploadOne(mimes));
 	});
-var elm$http$Http$expectString = function (toMsg) {
-	return A2(
-		elm$http$Http$expectStringResponse,
-		toMsg,
-		elm$http$Http$resolve(elm$core$Result$Ok));
-};
 var elm$core$Basics$clamp = F3(
 	function (low, high, number) {
 		return (_Utils_cmp(number, low) < 0) ? low : ((_Utils_cmp(number, high) > 0) ? high : number);
@@ -8744,6 +8744,8 @@ var author$project$Main$update = F2(
 				case 'SavedExposition':
 					var result = msg.a;
 					if (result.$ === 'Ok') {
+						var r = result.a;
+						var _n11 = A2(elm$core$Debug$log, 'save error: ', r);
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -8751,7 +8753,7 @@ var author$project$Main$update = F2(
 							elm$core$Platform$Cmd$none);
 					} else {
 						var s = result.a;
-						var _n11 = A2(elm$core$Debug$log, 'save error: ', s);
+						var _n12 = A2(elm$core$Debug$log, 'save error: ', s);
 						return _Utils_Tuple2(
 							A2(author$project$Main$addProblem, model, author$project$Problems$CannotSave),
 							elm$core$Platform$Cmd$none);
@@ -8767,17 +8769,17 @@ var author$project$Main$update = F2(
 							elm$core$Platform$Cmd$none);
 					} else {
 						var media = mediaResult.a;
-						var _n13 = author$project$Problems$splitResultList(
+						var _n14 = author$project$Problems$splitResultList(
 							A2(
 								elm$core$List$map,
 								author$project$RCAPI$toRCMediaObject(model.research),
 								media));
-						var problems = _n13.a;
-						var mediaEntries = _n13.b;
+						var problems = _n14.a;
+						var mediaEntries = _n14.b;
 						var modelWithProblems = A2(author$project$Main$addProblems, model, problems);
 						var expositionWithMedia = A3(elm$core$List$foldr, author$project$Exposition$addOrReplaceObject, modelWithProblems.exposition, mediaEntries);
 						var expositionWithClasses = A2(author$project$Exposition$addMediaUserClasses, expositionWithMedia, model.mediaClassesDict);
-						var _n14 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithClasses);
+						var _n15 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithClasses);
 						return _Utils_Tuple2(
 							_Utils_update(
 								modelWithProblems,
@@ -8800,21 +8802,21 @@ var author$project$Main$update = F2(
 									])));
 					}
 				case 'MediaEdit':
-					var _n15 = msg.a;
-					var objInModelName = _n15.a;
-					var objFromDialog = _n15.b;
-					var _n16 = A2(author$project$Exposition$objectByNameOrId, objInModelName, model.exposition);
-					if (_n16.$ === 'Nothing') {
+					var _n16 = msg.a;
+					var objInModelName = _n16.a;
+					var objFromDialog = _n16.b;
+					var _n17 = A2(author$project$Exposition$objectByNameOrId, objInModelName, model.exposition);
+					if (_n17.$ === 'Nothing') {
 						var modelWithProblem = A2(author$project$Main$addProblem, model, author$project$Problems$NoMediaWithNameOrId);
 						return _Utils_Tuple2(modelWithProblem, elm$core$Platform$Cmd$none);
 					} else {
-						var objInModel = _n16.a;
+						var objInModel = _n17.a;
 						var viewObjectState = A3(author$project$Exposition$validateMediaObject, model.exposition, objInModel, objFromDialog);
-						var _n17 = model.mediaDialog;
-						var viewStatus = _n17.a;
-						var objInEdit = _n17.b;
-						var _n18 = author$project$Exposition$isValid(viewObjectState.validation);
-						if (!_n18) {
+						var _n18 = model.mediaDialog;
+						var viewStatus = _n18.a;
+						var objInEdit = _n18.b;
+						var _n19 = author$project$Exposition$isValid(viewObjectState.validation);
+						if (!_n19) {
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
@@ -8863,7 +8865,7 @@ var author$project$Main$update = F2(
 						continue update;
 					} else {
 						var s = result.a;
-						var _n20 = A2(elm$core$Debug$log, 'update media error: ', s);
+						var _n21 = A2(elm$core$Debug$log, 'update media error: ', s);
 						return _Utils_Tuple2(
 							A2(author$project$Main$addProblem, model, author$project$Problems$CannotUpdateMedia),
 							elm$core$Platform$Cmd$none);
@@ -8957,7 +8959,7 @@ var author$project$Main$update = F2(
 				case 'Uploaded':
 					var result = msg.a;
 					if (result.$ === 'Ok') {
-						var _n24 = A2(elm$core$Debug$log, 'uploaded result: ', result);
+						var _n25 = A2(elm$core$Debug$log, 'uploaded result: ', result);
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -8965,7 +8967,7 @@ var author$project$Main$update = F2(
 							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 					} else {
 						var e = result.a;
-						var _n25 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n26 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
 				case 'UploadedImport':
@@ -8984,7 +8986,7 @@ var author$project$Main$update = F2(
 										importResult.media)),
 								importUploadStatus: author$project$Main$Ready
 							});
-						var _n27 = A2(elm$core$Debug$log, 'import result: ', importResult);
+						var _n28 = A2(elm$core$Debug$log, 'import result: ', importResult);
 						return _Utils_Tuple2(
 							newModel,
 							elm$core$Platform$Cmd$batch(
@@ -8995,7 +8997,7 @@ var author$project$Main$update = F2(
 									])));
 					} else {
 						var e = result.a;
-						var _n28 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n29 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(
 							A2(
 								author$project$Main$addProblem,

@@ -218,7 +218,7 @@ type Msg
     | Uploaded (Result Http.Error String)
     | UploadedImport (Result Http.Error RCAPI.APIPandocImport)
     | SaveExposition
-    | SavedExposition (Result Http.Error ())
+    | SavedExposition (Result Http.Error String)
     | SaveMediaEdit Exposition.RCMediaObject
     | SavedMediaEdit (Result Http.Error String)
     | ConfirmMediaDelete Exposition.RCMediaObject
@@ -395,7 +395,11 @@ update msg model =
 
         SavedExposition result ->
             case result of
-                Ok _ ->
+                Ok r ->
+                    let
+                        _ =
+                            Debug.log "save error: " r
+                    in
                     ( { model | saved = True }, Cmd.none )
 
                 Err s ->

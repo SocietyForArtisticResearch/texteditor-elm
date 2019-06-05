@@ -259,7 +259,9 @@ saveExposition exposition expect =
                     )
                 , Http.stringPart "toc" (E.encode 0 (E.object [])) -- TODO add actual toc
                 ]
-        , expect = Http.expectWhatever expect
+
+        --        , expect = Http.expectWhatever expect
+        , expect = Http.expectString expect
         , timeout = Nothing
         , tracker = Nothing
         }
