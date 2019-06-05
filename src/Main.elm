@@ -414,12 +414,20 @@ update msg model =
 
         GotMediaList mediaResult ->
             case mediaResult of
-                Err _ ->
+                Err e ->
+                    let
+                        _ =
+                            Debug.log "media list loading issue: " e
+                    in
                     ( addProblem model (Problems.CannotLoadMedia "http request failed")
                     , Cmd.none
                     )
 
                 Ok media ->
+                    let
+                        _ =
+                            Debug.log "loaded media: " media
+                    in
                     let
                         ( problems, mediaEntries ) =
                             Problems.splitResultList
