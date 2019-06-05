@@ -486,7 +486,11 @@ update msg model =
                     ( addProblem model Problems.CannotUpdateMedia, Cmd.none )
 
         MediaDelete obj ->
-            ( model, Cmd.batch [ RCAPI.deleteMedia obj MediaDeleted, RCAPI.getMediaList model.research GotMediaList ] )
+            let
+                modelWithoutObj =
+                    { model | exposition = Exposition.withoutMedia obj.id model.exposition }
+            in
+            ( modelWithoutObj, Cmd.batch [ RCAPI.deleteMedia obj MediaDeleted, RCAPI.getMediaList model.research GotMediaList ] )
 
         MediaDeleted obj ->
             update CloseConfirmDialog model
@@ -593,7 +597,7 @@ update msg model =
             ( { model | confirmDialog = ( Modal.shown, Just content, Just messages ) }, Cmd.none )
 
         CloseConfirmDialog ->
-            ( { model | confirmDialog = ( Modal.hidden, Nothing, Nothing ) }, RCAPI.getMediaList model.research GotMediaList )
+            ( { model | confirmDialog = ( Modal.hidden, Nothing, Nothing ) }, Cmd.none )
 
         SwitchTab tab ->
             ( { model | selectedEditor = tab }, enumTabState tab |> setEditor )

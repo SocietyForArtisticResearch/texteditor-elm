@@ -1,4 +1,4 @@
-module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, mkMediaName, objectByNameOrId, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withCSS, withHtml, withMd)
+module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, mkMediaName, objectByNameOrId, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withCSS, withHtml, withMd, withoutMedia)
 
 import Dict
 import Html.String as Html
@@ -243,6 +243,11 @@ addOrReplaceObject obj exp =
 
     else
         addObject obj exp
+
+
+withoutMedia : Int -> RCExposition -> RCExposition
+withoutMedia id exp =
+    { exp | media = List.filter (\o -> o.id /= id) exp.media }
 
 
 mediaUrl : RCMediaObject -> String

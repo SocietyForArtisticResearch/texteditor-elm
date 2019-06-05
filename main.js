@@ -7884,6 +7884,19 @@ var author$project$Exposition$withMd = F2(
 			exp,
 			{markdownInput: content});
 	});
+var author$project$Exposition$withoutMedia = F2(
+	function (id, exp) {
+		return _Utils_update(
+			exp,
+			{
+				media: A2(
+					elm$core$List$filter,
+					function (o) {
+						return !_Utils_eq(o.id, id);
+					},
+					exp.media)
+			});
+	});
 var author$project$Main$CloseConfirmDialog = {$: 'CloseConfirmDialog'};
 var author$project$Main$GotMediaList = function (a) {
 	return {$: 'GotMediaList', a: a};
@@ -8762,8 +8775,13 @@ var author$project$Main$update = F2(
 					}
 				case 'MediaDelete':
 					var obj = msg.a;
-					return _Utils_Tuple2(
+					var modelWithoutObj = _Utils_update(
 						model,
+						{
+							exposition: A2(author$project$Exposition$withoutMedia, obj.id, model.exposition)
+						});
+					return _Utils_Tuple2(
+						modelWithoutObj,
 						elm$core$Platform$Cmd$batch(
 							_List_fromArray(
 								[
@@ -8904,7 +8922,7 @@ var author$project$Main$update = F2(
 							{
 								confirmDialog: _Utils_Tuple3(rundis$elm_bootstrap$Bootstrap$Modal$hidden, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing)
 							}),
-						A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
+						elm$core$Platform$Cmd$none);
 				default:
 					var tab = msg.a;
 					return _Utils_Tuple2(
