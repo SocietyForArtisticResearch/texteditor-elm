@@ -7830,11 +7830,46 @@ var author$project$Exposition$mkMediaName = function (exp) {
 		imageNames);
 	return 'media' + elm$core$String$fromInt(maxImage + 1);
 };
+var elm$core$List$drop = F2(
+	function (n, list) {
+		drop:
+		while (true) {
+			if (n <= 0) {
+				return list;
+			} else {
+				if (!list.b) {
+					return list;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs;
+					n = $temp$n;
+					list = $temp$list;
+					continue drop;
+				}
+			}
+		}
+	});
+var author$project$Exposition$toolOrLink = F2(
+	function (_n0, mediaIds) {
+		var imageIdx = _n0.a;
+		var originalUrl = _n0.b;
+		var _n1 = elm$core$List$head(
+			A2(elm$core$List$drop, imageIdx - 1, mediaIds));
+		if (_n1.$ === 'Just') {
+			var i = _n1.a;
+			return '!{' + (elm$core$String$fromInt(i) + '}');
+		} else {
+			return '![]' + (originalUrl + ')');
+		}
+	});
+var elm$core$String$filter = _String_filter;
 var author$project$Exposition$replaceImagesWithTools = F2(
 	function (md, mediaIds) {
-		var r = elm$regex$Regex$fromString('![[^]]*](([^)]+)){[^}]+}');
+		var r = elm$regex$Regex$fromString('![[^]*](\\([^)]+)\\){[^}]+}');
 		if (r.$ === 'Nothing') {
-			return md;
+			return '';
 		} else {
 			var reg = r.a;
 			return A3(
@@ -7847,7 +7882,22 @@ var author$project$Exposition$replaceImagesWithTools = F2(
 						var fname = elm$core$List$head(
 							elm$core$List$reverse(
 								A2(elm$core$String$split, '/', sub)));
-						return A2(elm$core$Maybe$withDefault, '', fname);
+						if (fname.$ === 'Nothing') {
+							return '';
+						} else {
+							var f = fname.a;
+							var _n3 = elm$core$String$toInt(
+								A2(elm$core$String$filter, elm$core$Char$isDigit, f));
+							if (_n3.$ === 'Nothing') {
+								return '';
+							} else {
+								var i = _n3.a;
+								return A2(
+									author$project$Exposition$toolOrLink,
+									_Utils_Tuple2(i, sub),
+									mediaIds);
+							}
+						}
 					} else {
 						return '';
 					}

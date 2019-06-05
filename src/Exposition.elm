@@ -533,15 +533,25 @@ replaceToolsWithImages exp urlPrefix =
                 md
 
 
+toolOrLink : ( Int, String ) -> List Int -> String
+toolOrLink ( imageIdx, originalUrl ) mediaIds =
+    case List.head (List.drop (imageIdx - 1) mediaIds) of
+        Just i ->
+            "!{" ++ String.fromInt i ++ "}"
+
+        Nothing ->
+            "![]" ++ originalUrl ++ ")"
+
+
 replaceImagesWithTools : String -> List Int -> String
 replaceImagesWithTools md mediaIds =
     let
         r =
-            Regex.fromString "![[^]]*](([^)]+)){[^}]+}"
+            Regex.fromString "![[^]*](\\([^)]+)\\){[^}]+}"
     in
     case r of
         Nothing ->
-            md
+            ""
 
         Just reg ->
             Regex.replace reg
@@ -552,7 +562,17 @@ replaceImagesWithTools md mediaIds =
                                 fname =
                                     List.head (List.reverse (String.split "/" sub))
                             in
-                            Maybe.withDefault "" fname
+                            case fname of
+                                Nothing ->
+                                    ""
+
+                                Just f ->
+                                    case String.toInt <| String.filter Char.isDigit f of
+                                        Nothing ->
+                                            ""
+
+                                        Just i ->
+                                            toolOrLink ( i, sub ) mediaIds
 
                         _ ->
                             ""
