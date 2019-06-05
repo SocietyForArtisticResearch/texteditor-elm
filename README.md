@@ -32,18 +32,21 @@ Casper:
 - media list displays as "no objects" when there are no objects, also when media list tab has not been selected, i.e. id is wrong or something like that
 - what about "insert"?
   @Luc, I wanted this to insert on codemirror current position, probably we need a port for this?
+  @Casper: It's possible, but does it make sense to insert if the user cannot see where he/she is? Shouldn't the media list appear on the right (instead of the preview)?
 - Buttons
 - Styling (editor sizes, double scrollbars, percentage when uploading)
 - "markdown plain" should be somewhere else, not a main tab
 - media file types in select dialog
+- display title of exposition somewhere
 
 Luc:
 
+- why is css not used in preview?
+- multiple doc imports create duplicate media names
 - Check rendered html
 - Transcoding status type
-- Import/Export (Pandoc calls)
+- Export (Pandoc calls)
 - TOC
-- Generate preview html (final static html)
 
 ## Postponed
 
@@ -86,3 +89,5 @@ Luc:
 - make media upload numbering safe (uuid?)
 - .rcimage .rcvideo .rcaudio classes are missing from rendered HTML, means editor is not compatible with old text-editor css sheets.
 - reload media list after deletion
+- Pandoc import working in principle
+- Generate preview html (final static html)
