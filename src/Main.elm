@@ -767,5 +767,6 @@ view model =
         , viewUpload PlusIcon False UploadMediaFileSelect "Media" model.mediaUploadStatus
         , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
         , saveButton
+            , viewAlert model
         , mediaList
         ]

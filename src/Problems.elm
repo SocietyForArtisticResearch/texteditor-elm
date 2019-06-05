@@ -53,5 +53,8 @@ asString problem =
         CannotFindMediaFieldInJson ->
             "unkown media field in the json"
 
+        CannotImportFile _  ->
+            "import http error"
+
  
                
