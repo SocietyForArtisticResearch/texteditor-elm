@@ -30,8 +30,8 @@ be made outside of elm.
 Casper:
 
 - media list displays as "no objects" when there are no objects, also when media list tab has not been selected, i.e. id is wrong or something like that
-- display Problems (as warnings etc)
 - what about "insert"?
+  @Luc, I wanted this to insert on codemirror current position, probably we need a port for this?
 - Buttons
 - Styling (editor sizes, double scrollbars, percentage when uploading)
 - "markdown plain" should be somewhere else, not a main tab
@@ -53,6 +53,7 @@ Luc:
 
 
 ## DONE
+- display Problems (as warnings etc)
 - Why can the user not change the object name/copyright/ ?
 - Validation display
 - Migrate Insert and Remove actions to the table

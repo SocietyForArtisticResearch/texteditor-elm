@@ -10914,6 +10914,28 @@ var author$project$RCMediaEdit$viewMediaDialog = F4(
 							rundis$elm_bootstrap$Bootstrap$Modal$small(
 								rundis$elm_bootstrap$Bootstrap$Modal$config(closeMediaDialog)))))));
 	});
+var rundis$elm_bootstrap$Bootstrap$Alert$attrs = F2(
+	function (attributes, _n0) {
+		var configRec = _n0.a;
+		return rundis$elm_bootstrap$Bootstrap$Alert$Config(
+			_Utils_update(
+				configRec,
+				{attributes: attributes}));
+	});
+var rundis$elm_bootstrap$Bootstrap$Alert$simple = F3(
+	function (role_, attributes, children_) {
+		return A2(
+			rundis$elm_bootstrap$Bootstrap$Alert$view,
+			rundis$elm_bootstrap$Bootstrap$Alert$Shown,
+			A2(
+				rundis$elm_bootstrap$Bootstrap$Alert$children,
+				children_,
+				A2(
+					rundis$elm_bootstrap$Bootstrap$Alert$attrs,
+					attributes,
+					A2(rundis$elm_bootstrap$Bootstrap$Alert$role, role_, rundis$elm_bootstrap$Bootstrap$Alert$config))));
+	});
+var rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo = rundis$elm_bootstrap$Bootstrap$Alert$simple(rundis$elm_bootstrap$Bootstrap$Internal$Role$Info);
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger = {$: 'Danger'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlineDanger = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
@@ -11455,11 +11477,21 @@ var author$project$RCMediaList$view = F2(
 	function (objectList, messages) {
 		if (!objectList.b) {
 			return A2(
-				elm$html$Html$span,
-				_List_Nil,
+				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$text('no objects')
+						elm$html$Html$Attributes$id('media-list'),
+						A2(elm$html$Html$Attributes$style, 'display', 'none')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text('no objects yet, add by using + Media button')
+							]))
 					]));
 		} else {
 			var rowFromRCObject = function (object) {

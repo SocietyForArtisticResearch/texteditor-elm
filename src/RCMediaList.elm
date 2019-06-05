@@ -3,6 +3,7 @@ module RCMediaList exposing (TableMessages, view)
 import Bootstrap.Button as Button
 import Bootstrap.Table as Table
 import Bootstrap.Utilities.Spacing as Spacing
+import Bootstrap.Alert as Alert
 import Exposition exposing (RCMediaObject)
 import Html exposing (Html, div, span, text)
 import Html.Attributes exposing (id, style)
@@ -24,7 +25,9 @@ view : List RCMediaObject -> TableMessages msg -> Html msg
 view objectList messages =
     case objectList of
         [] ->
-            span [] [ text "no objects" ]
+            div [id "media-list",  style "display" "none"] [
+                 Alert.simpleInfo [] [text "no objects yet, add by using + Media button"]
+                ]
 
         _ ->
             let
