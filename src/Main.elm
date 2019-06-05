@@ -1,10 +1,10 @@
 port module Main exposing (Msg(..), main, update, view)
 
+import Bootstrap.Alert as Alert
 import Bootstrap.Button as Button
 import Bootstrap.Form as Form
 import Bootstrap.Grid as Grid
 import Bootstrap.Modal as Modal
-import Bootstrap.Alert as Alert
 import Bootstrap.Utilities.Spacing as Spacing
 import Browser
 import Dict
@@ -80,7 +80,7 @@ emptyModel research weave =
     , exposition = Exposition.empty
     , mediaDialog = ( Modal.hidden, Nothing, Nothing )
     , confirmDialog = ( Modal.hidden, Nothing, Nothing )
-    , alertVisibility = Alert.shown 
+    , alertVisibility = Alert.shown
     , research = research
     , weave = weave
     , mediaUploadStatus = Ready
@@ -139,6 +139,18 @@ port getContent : () -> Cmd msg
 
 
 port setContent : E.Value -> Cmd msg
+
+
+updateEditorContent : Model -> Cmd msg
+updateEditorContent model =
+    setContent
+        (E.object
+            [ ( "md"
+              , E.string model.exposition.markdownInput
+              )
+            , ( "style", E.string model.exposition.css )
+            ]
+        )
 
 
 port mediaDialog : (E.Value -> msg) -> Sub msg
@@ -573,18 +585,24 @@ update msg model =
                     let
                         _ =
                             Debug.log "import result: " importResult
+
+                        newModel =
+                            { model
+                                | importUploadStatus = Ready
+                                , exposition =
+                                    Exposition.withMd model.exposition
+                                        (Exposition.replaceImagesWithTools
+                                            (model.exposition.markdownInput ++ importResult.markdown)
+                                            importResult.media
+                                        )
+                            }
                     in
                     -- TODO: convert images to tools in markdown!
-                    ( { model
-                        | importUploadStatus = Ready
-                        , exposition =
-                            Exposition.withMd model.exposition
-                                (Exposition.replaceImagesWithTools
-                                    (model.exposition.markdownInput ++ importResult.markdown)
-                                    importResult.media
-                                )
-                      }
-                    , RCAPI.getMediaList model.research GotMediaList
+                    ( newModel
+                    , Cmd.batch
+                        [ updateEditorContent newModel
+                        , RCAPI.getMediaList model.research GotMediaList
+                        ]
                     )
 
                 Err e ->
@@ -616,7 +634,7 @@ update msg model =
             ( { model | selectedEditor = tab }, enumTabState tab |> setEditor )
 
         AlertMsg visibility ->
-            ( { model | alertVisibility = visibility } , Cmd.none )
+            ( { model | alertVisibility = visibility }, Cmd.none )
 
 
 type Icon
@@ -718,7 +736,8 @@ viewTabs model =
 viewAlert : Model -> Html Msg
 viewAlert model =
     case model.problems of
-        [] -> div [] []
+        [] ->
+            div [] []
 
         problems ->
             let
@@ -726,17 +745,18 @@ viewAlert model =
                     List.map Problems.asString problems
 
                 problemAsString =
-                    String.join " " problemStrings 
+                    String.join " " problemStrings
             in
-                Alert.config
-                 |> Alert.info
-                 |> Alert.dismissable AlertMsg
-                 |> Alert.children
+            Alert.config
+                |> Alert.info
+                |> Alert.dismissable AlertMsg
+                |> Alert.children
                     [ Alert.h4 [] [ text "there is a problem" ]
-                    , text <|  "this is the problem: " ++ problemAsString ]
-                 |> Alert.view model.alertVisibility
-    
-        
+                    , text <| "this is the problem: " ++ problemAsString
+                    ]
+                |> Alert.view model.alertVisibility
+
+
 view : Model -> Html Msg
 view model =
     let
@@ -776,6 +796,6 @@ view model =
         , viewUpload PlusIcon False UploadMediaFileSelect "Media" model.mediaUploadStatus
         , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
         , saveButton
-            , viewAlert model
+        , viewAlert model
         , mediaList
         ]

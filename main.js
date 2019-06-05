@@ -7983,6 +7983,32 @@ var author$project$Main$setContent = _Platform_outgoingPort('setContent', elm$co
 var elm$json$Json$Encode$int = _Json_wrap;
 var author$project$Main$setEditor = _Platform_outgoingPort('setEditor', elm$json$Json$Encode$int);
 var author$project$Main$setPreviewContent = _Platform_outgoingPort('setPreviewContent', elm$json$Json$Encode$string);
+var elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			elm$core$List$foldl,
+			F2(
+				function (_n0, obj) {
+					var k = _n0.a;
+					var v = _n0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(_Utils_Tuple0),
+			pairs));
+};
+var author$project$Main$updateEditorContent = function (model) {
+	return author$project$Main$setContent(
+		elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'md',
+					elm$json$Json$Encode$string(model.exposition.markdownInput)),
+					_Utils_Tuple2(
+					'style',
+					elm$json$Json$Encode$string(model.exposition.css))
+				])));
+};
 var author$project$Problems$CannotFindMediaFieldInJson = {$: 'CannotFindMediaFieldInJson'};
 var author$project$Problems$CannotImportFile = function (a) {
 	return {$: 'CannotImportFile', a: a};
@@ -8109,19 +8135,6 @@ var elm$json$Json$Encode$list = F2(
 				_Json_emptyArray(_Utils_Tuple0),
 				entries));
 	});
-var elm$json$Json$Encode$object = function (pairs) {
-	return _Json_wrap(
-		A3(
-			elm$core$List$foldl,
-			F2(
-				function (_n0, obj) {
-					var k = _n0.a;
-					var v = _n0.b;
-					return A3(_Json_addField, k, v, obj);
-				}),
-			_Json_emptyObject(_Utils_Tuple0),
-			pairs));
-};
 var author$project$RCAPI$saveExposition = F2(
 	function (exposition, expect) {
 		var url = 'text-editor/save' + ('?research=' + (elm$core$String$fromInt(exposition.id) + ('&weave=' + elm$core$String$fromInt(exposition.currentWeave))));
@@ -8884,21 +8897,27 @@ var author$project$Main$update = F2(
 					var result = msg.a;
 					if (result.$ === 'Ok') {
 						var importResult = result.a;
+						var newModel = _Utils_update(
+							model,
+							{
+								exposition: A2(
+									author$project$Exposition$withMd,
+									model.exposition,
+									A2(
+										author$project$Exposition$replaceImagesWithTools,
+										_Utils_ap(model.exposition.markdownInput, importResult.markdown),
+										importResult.media)),
+								importUploadStatus: author$project$Main$Ready
+							});
 						var _n27 = A2(elm$core$Debug$log, 'import result: ', importResult);
 						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									exposition: A2(
-										author$project$Exposition$withMd,
-										model.exposition,
-										A2(
-											author$project$Exposition$replaceImagesWithTools,
-											_Utils_ap(model.exposition.markdownInput, importResult.markdown),
-											importResult.media)),
-									importUploadStatus: author$project$Main$Ready
-								}),
-							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
+							newModel,
+							elm$core$Platform$Cmd$batch(
+								_List_fromArray(
+									[
+										author$project$Main$updateEditorContent(newModel),
+										A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList)
+									])));
 					} else {
 						var e = result.a;
 						var _n28 = A2(elm$core$Debug$log, 'error uploading: ', e);
@@ -9069,23 +9088,93 @@ var author$project$Main$renderIcon = function (icon) {
 			return iconImg('save.svg');
 	}
 };
-var author$project$Main$MediaListTab = {$: 'MediaListTab'};
-var author$project$Main$StyleTab = {$: 'StyleTab'};
-var author$project$Main$SwitchTab = function (a) {
-	return {$: 'SwitchTab', a: a};
+var author$project$Main$AlertMsg = function (a) {
+	return {$: 'AlertMsg', a: a};
 };
-var author$project$Main$TxtMarkdownTab = {$: 'TxtMarkdownTab'};
-var elm$html$Html$a = _VirtualDom_node('a');
-var elm$html$Html$li = _VirtualDom_node('li');
+var author$project$Problems$asString = function (problem) {
+	switch (problem.$) {
+		case 'WrongExpositionUrl':
+			return 'unknown exposition url';
+		case 'CannotLoadMedia':
+			var name = problem.a;
+			return 'cannot load media ' + name;
+		case 'NoMediaWithNameOrId':
+			return 'media doesn\'t exist';
+		case 'CannotSave':
+			return 'saving error';
+		case 'CannotUpdateMedia':
+			return 'problem updaing media';
+		case 'CannotFindMediaFieldInJson':
+			return 'unkown media field in the json';
+		default:
+			return 'import http error';
+	}
+};
+var elm$html$Html$div = _VirtualDom_node('div');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var elm$html$Html$ul = _VirtualDom_node('ul');
-var elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
+var rundis$elm_bootstrap$Bootstrap$Alert$Config = function (a) {
+	return {$: 'Config', a: a};
 };
+var rundis$elm_bootstrap$Bootstrap$Alert$children = F2(
+	function (children_, _n0) {
+		var configRec = _n0.a;
+		return rundis$elm_bootstrap$Bootstrap$Alert$Config(
+			_Utils_update(
+				configRec,
+				{children: children_}));
+	});
+var rundis$elm_bootstrap$Bootstrap$Internal$Role$Secondary = {$: 'Secondary'};
+var rundis$elm_bootstrap$Bootstrap$Alert$config = rundis$elm_bootstrap$Bootstrap$Alert$Config(
+	{attributes: _List_Nil, children: _List_Nil, dismissable: elm$core$Maybe$Nothing, role: rundis$elm_bootstrap$Bootstrap$Internal$Role$Secondary, visibility: rundis$elm_bootstrap$Bootstrap$Alert$Shown, withAnimation: false});
+var rundis$elm_bootstrap$Bootstrap$Alert$dismissable = F2(
+	function (dismissMsg, _n0) {
+		var configRec = _n0.a;
+		return rundis$elm_bootstrap$Bootstrap$Alert$Config(
+			_Utils_update(
+				configRec,
+				{
+					dismissable: elm$core$Maybe$Just(dismissMsg)
+				}));
+	});
+var elm$html$Html$h4 = _VirtualDom_node('h4');
+var rundis$elm_bootstrap$Bootstrap$Alert$headingPrivate = F3(
+	function (elemFn, attributes, children_) {
+		return A2(
+			elemFn,
+			A2(
+				elm$core$List$cons,
+				elm$html$Html$Attributes$class('alert-header'),
+				attributes),
+			children_);
+	});
+var rundis$elm_bootstrap$Bootstrap$Alert$h4 = F2(
+	function (attributes, children_) {
+		return A3(rundis$elm_bootstrap$Bootstrap$Alert$headingPrivate, elm$html$Html$h4, attributes, children_);
+	});
+var rundis$elm_bootstrap$Bootstrap$Alert$role = F2(
+	function (role_, _n0) {
+		var configRec = _n0.a;
+		return rundis$elm_bootstrap$Bootstrap$Alert$Config(
+			_Utils_update(
+				configRec,
+				{role: role_}));
+	});
+var rundis$elm_bootstrap$Bootstrap$Internal$Role$Info = {$: 'Info'};
+var rundis$elm_bootstrap$Bootstrap$Alert$info = function (conf) {
+	return A2(rundis$elm_bootstrap$Bootstrap$Alert$role, rundis$elm_bootstrap$Bootstrap$Internal$Role$Info, conf);
+};
+var elm$html$Html$button = _VirtualDom_node('button');
+var elm$html$Html$span = _VirtualDom_node('span');
+var elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
+var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -9102,6 +9191,222 @@ var elm$html$Html$Events$onClick = function (msg) {
 		elm$html$Html$Events$on,
 		'click',
 		elm$json$Json$Decode$succeed(msg));
+};
+var rundis$elm_bootstrap$Bootstrap$Alert$Closed = {$: 'Closed'};
+var rundis$elm_bootstrap$Bootstrap$Alert$StartClose = {$: 'StartClose'};
+var rundis$elm_bootstrap$Bootstrap$Alert$clickHandler = F2(
+	function (visibility, configRec) {
+		var handleClick = F2(
+			function (viz, toMsg) {
+				return elm$html$Html$Events$onClick(
+					toMsg(viz));
+			});
+		var _n0 = configRec.dismissable;
+		if (_n0.$ === 'Just') {
+			var dismissMsg = _n0.a;
+			return _List_fromArray(
+				[
+					configRec.withAnimation ? A2(handleClick, rundis$elm_bootstrap$Bootstrap$Alert$StartClose, dismissMsg) : A2(handleClick, rundis$elm_bootstrap$Bootstrap$Alert$Closed, dismissMsg)
+				]);
+		} else {
+			return _List_Nil;
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Alert$injectButton = F2(
+	function (btn, children_) {
+		if (children_.b) {
+			var head = children_.a;
+			var tail = children_.b;
+			return A2(
+				elm$core$List$cons,
+				head,
+				A2(elm$core$List$cons, btn, tail));
+		} else {
+			return _List_fromArray(
+				[btn]);
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Alert$isDismissable = function (configRec) {
+	var _n0 = configRec.dismissable;
+	if (_n0.$ === 'Just') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Alert$maybeAddDismissButton = F3(
+	function (visibilty, configRec, children_) {
+		return rundis$elm_bootstrap$Bootstrap$Alert$isDismissable(configRec) ? A2(
+			rundis$elm_bootstrap$Bootstrap$Alert$injectButton,
+			A2(
+				elm$html$Html$button,
+				_Utils_ap(
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$type_('button'),
+							elm$html$Html$Attributes$class('close'),
+							A2(elm$html$Html$Attributes$attribute, 'aria-label', 'close')
+						]),
+					A2(rundis$elm_bootstrap$Bootstrap$Alert$clickHandler, visibilty, configRec)),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$span,
+						_List_fromArray(
+							[
+								A2(elm$html$Html$Attributes$attribute, 'aria-hidden', 'true')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('×')
+							]))
+					])),
+			children_) : children_;
+	});
+var elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
+		}
+	});
+var elm$core$List$concat = function (lists) {
+	return A3(elm$core$List$foldr, elm$core$List$append, _List_Nil, lists);
+};
+var elm$html$Html$Attributes$classList = function (classes) {
+	return elm$html$Html$Attributes$class(
+		A2(
+			elm$core$String$join,
+			' ',
+			A2(
+				elm$core$List$map,
+				elm$core$Tuple$first,
+				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass = F2(
+	function (prefix, role) {
+		return elm$html$Html$Attributes$class(
+			prefix + ('-' + function () {
+				switch (role.$) {
+					case 'Primary':
+						return 'primary';
+					case 'Secondary':
+						return 'secondary';
+					case 'Success':
+						return 'success';
+					case 'Info':
+						return 'info';
+					case 'Warning':
+						return 'warning';
+					case 'Danger':
+						return 'danger';
+					case 'Light':
+						return 'light';
+					default:
+						return 'dark';
+				}
+			}()));
+	});
+var rundis$elm_bootstrap$Bootstrap$Alert$viewAttributes = F2(
+	function (visibility, configRec) {
+		var visibiltyAttributes = _Utils_eq(visibility, rundis$elm_bootstrap$Bootstrap$Alert$Closed) ? _List_fromArray(
+			[
+				A2(elm$html$Html$Attributes$style, 'display', 'none')
+			]) : _List_Nil;
+		var animationAttributes = function () {
+			if (configRec.withAnimation) {
+				var _n0 = configRec.dismissable;
+				if (_n0.$ === 'Just') {
+					var dismissMsg = _n0.a;
+					return _List_fromArray(
+						[
+							A2(
+							elm$html$Html$Events$on,
+							'transitionend',
+							elm$json$Json$Decode$succeed(
+								dismissMsg(rundis$elm_bootstrap$Bootstrap$Alert$Closed)))
+						]);
+				} else {
+					return _List_Nil;
+				}
+			} else {
+				return _List_Nil;
+			}
+		}();
+		var alertAttributes = _List_fromArray(
+			[
+				A2(elm$html$Html$Attributes$attribute, 'role', 'alert'),
+				elm$html$Html$Attributes$classList(
+				_List_fromArray(
+					[
+						_Utils_Tuple2('alert', true),
+						_Utils_Tuple2(
+						'alert-dismissible',
+						rundis$elm_bootstrap$Bootstrap$Alert$isDismissable(configRec)),
+						_Utils_Tuple2('fade', configRec.withAnimation),
+						_Utils_Tuple2(
+						'show',
+						_Utils_eq(visibility, rundis$elm_bootstrap$Bootstrap$Alert$Shown))
+					])),
+				A2(rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass, 'alert', configRec.role)
+			]);
+		return elm$core$List$concat(
+			_List_fromArray(
+				[configRec.attributes, alertAttributes, visibiltyAttributes, animationAttributes]));
+	});
+var rundis$elm_bootstrap$Bootstrap$Alert$view = F2(
+	function (visibility, _n0) {
+		var configRec = _n0.a;
+		return A2(
+			elm$html$Html$div,
+			A2(rundis$elm_bootstrap$Bootstrap$Alert$viewAttributes, visibility, configRec),
+			A3(rundis$elm_bootstrap$Bootstrap$Alert$maybeAddDismissButton, visibility, configRec, configRec.children));
+	});
+var author$project$Main$viewAlert = function (model) {
+	var _n0 = model.problems;
+	if (!_n0.b) {
+		return A2(elm$html$Html$div, _List_Nil, _List_Nil);
+	} else {
+		var problems = _n0;
+		var problemStrings = A2(elm$core$List$map, author$project$Problems$asString, problems);
+		var problemAsString = A2(elm$core$String$join, ' ', problemStrings);
+		return A2(
+			rundis$elm_bootstrap$Bootstrap$Alert$view,
+			model.alertVisibility,
+			A2(
+				rundis$elm_bootstrap$Bootstrap$Alert$children,
+				_List_fromArray(
+					[
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Alert$h4,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text('there is a problem')
+							])),
+						elm$html$Html$text('this is the problem: ' + problemAsString)
+					]),
+				A2(
+					rundis$elm_bootstrap$Bootstrap$Alert$dismissable,
+					author$project$Main$AlertMsg,
+					rundis$elm_bootstrap$Bootstrap$Alert$info(rundis$elm_bootstrap$Bootstrap$Alert$config))));
+	}
+};
+var author$project$Main$MediaListTab = {$: 'MediaListTab'};
+var author$project$Main$StyleTab = {$: 'StyleTab'};
+var author$project$Main$SwitchTab = function (a) {
+	return {$: 'SwitchTab', a: a};
+};
+var author$project$Main$TxtMarkdownTab = {$: 'TxtMarkdownTab'};
+var elm$html$Html$a = _VirtualDom_node('a');
+var elm$html$Html$li = _VirtualDom_node('li');
+var elm$html$Html$ul = _VirtualDom_node('ul');
+var elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
 };
 var author$project$Main$viewTabs = function (model) {
 	var tabLink = F2(
@@ -9145,22 +9450,12 @@ var author$project$Main$viewTabs = function (model) {
 			]));
 };
 var elm$core$Basics$round = _Basics_round;
-var elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
-		}
-	});
-var elm$html$Html$div = _VirtualDom_node('div');
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
 	return {$: 'Attrs', a: a};
 };
 var rundis$elm_bootstrap$Bootstrap$Button$attrs = function (attrs_) {
 	return rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs(attrs_);
 };
-var elm$html$Html$button = _VirtualDom_node('button');
 var elm$core$Maybe$andThen = F2(
 	function (callback, maybeValue) {
 		if (maybeValue.$ === 'Just') {
@@ -9170,16 +9465,6 @@ var elm$core$Maybe$andThen = F2(
 			return elm$core$Maybe$Nothing;
 		}
 	});
-var elm$html$Html$Attributes$classList = function (classes) {
-	return elm$html$Html$Attributes$class(
-		A2(
-			elm$core$String$join,
-			' ',
-			A2(
-				elm$core$List$map,
-				elm$core$Tuple$first,
-				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
-};
 var elm$json$Json$Encode$bool = _Json_wrap;
 var elm$html$Html$Attributes$boolProperty = F2(
 	function (key, bool) {
@@ -9779,7 +10064,6 @@ var rundis$elm_bootstrap$Bootstrap$Form$Input$sizeAttribute = function (size) {
 		},
 		rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption(size));
 };
-var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
 var rundis$elm_bootstrap$Bootstrap$Form$Input$typeAttribute = function (inputType) {
 	return elm$html$Html$Attributes$type_(
 		function () {
@@ -10255,14 +10539,6 @@ var rundis$elm_bootstrap$Bootstrap$Modal$small = function (_n0) {
 					})
 			}));
 };
-var elm$virtual_dom$VirtualDom$attribute = F2(
-	function (key, value) {
-		return A2(
-			_VirtualDom_attribute,
-			_VirtualDom_noOnOrFormAction(key),
-			_VirtualDom_noJavaScriptOrHtmlUri(value));
-	});
-var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
 var elm$html$Html$Attributes$tabindex = function (n) {
 	return A2(
 		_VirtualDom_attribute,
@@ -10651,7 +10927,6 @@ var author$project$RCMediaEdit$viewMediaDialog = F4(
 							rundis$elm_bootstrap$Bootstrap$Modal$small(
 								rundis$elm_bootstrap$Bootstrap$Modal$config(closeMediaDialog)))))));
 	});
-var elm$html$Html$span = _VirtualDom_node('span');
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger = {$: 'Danger'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlineDanger = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
@@ -10957,30 +11232,6 @@ var rundis$elm_bootstrap$Bootstrap$Table$maybeAddScopeToFirstCell = function (ro
 var elm$html$Html$tr = _VirtualDom_node('tr');
 var elm$html$Html$td = _VirtualDom_node('td');
 var elm$html$Html$th = _VirtualDom_node('th');
-var rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass = F2(
-	function (prefix, role) {
-		return elm$html$Html$Attributes$class(
-			prefix + ('-' + function () {
-				switch (role.$) {
-					case 'Primary':
-						return 'primary';
-					case 'Secondary':
-						return 'secondary';
-					case 'Success':
-						return 'success';
-					case 'Info':
-						return 'info';
-					case 'Warning':
-						return 'warning';
-					case 'Danger':
-						return 'danger';
-					case 'Light':
-						return 'light';
-					default:
-						return 'dark';
-				}
-			}()));
-	});
 var rundis$elm_bootstrap$Bootstrap$Table$cellAttribute = function (option) {
 	switch (option.$) {
 		case 'RoledCell':
@@ -11477,6 +11728,7 @@ var author$project$Main$view = function (model) {
 				A5(author$project$Main$viewUpload, author$project$Main$PlusIcon, false, author$project$Main$UploadMediaFileSelect, 'Media', model.mediaUploadStatus),
 				A5(author$project$Main$viewUpload, author$project$Main$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
 				saveButton,
+				author$project$Main$viewAlert(model),
 				mediaList
 			]));
 };
