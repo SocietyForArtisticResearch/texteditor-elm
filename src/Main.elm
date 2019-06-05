@@ -375,12 +375,15 @@ update msg model =
 
                         _ =
                             Debug.log "loaded: " newExposition
+
+                        newModel =
+                            { model
+                                | exposition = newExposition
+                                , mediaClassesDict = RCAPI.toMediaClassesDict e
+                            }
                     in
-                    ( { model
-                        | exposition = newExposition
-                        , mediaClassesDict = RCAPI.toMediaClassesDict e
-                      }
-                    , RCAPI.getMediaList model.research GotMediaList
+                    ( newModel
+                    , Cmd.batch [ updateEditorContent newModel, RCAPI.getMediaList model.research GotMediaList ]
                     )
 
                 Err err ->
