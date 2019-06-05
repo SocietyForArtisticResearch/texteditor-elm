@@ -5441,12 +5441,14 @@ var elm$core$Basics$negate = function (n) {
 };
 var elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var elm$core$Dict$empty = elm$core$Dict$RBEmpty_elm_builtin;
+var rundis$elm_bootstrap$Bootstrap$Alert$Closed = {$: 'Closed'};
+var rundis$elm_bootstrap$Bootstrap$Alert$closed = rundis$elm_bootstrap$Bootstrap$Alert$Closed;
 var rundis$elm_bootstrap$Bootstrap$Modal$Hide = {$: 'Hide'};
 var rundis$elm_bootstrap$Bootstrap$Modal$hidden = rundis$elm_bootstrap$Bootstrap$Modal$Hide;
 var author$project$Main$emptyModel = F2(
 	function (research, weave) {
 		return {
-			alertVisibility: rundis$elm_bootstrap$Bootstrap$Alert$shown,
+			alertVisibility: rundis$elm_bootstrap$Bootstrap$Alert$closed,
 			confirmDialog: _Utils_Tuple3(rundis$elm_bootstrap$Bootstrap$Modal$hidden, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing),
 			editGeneration: _Utils_Tuple2(-1, -1),
 			exposition: author$project$Exposition$empty,
@@ -9194,7 +9196,6 @@ var elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		elm$json$Json$Decode$succeed(msg));
 };
-var rundis$elm_bootstrap$Bootstrap$Alert$Closed = {$: 'Closed'};
 var rundis$elm_bootstrap$Bootstrap$Alert$StartClose = {$: 'StartClose'};
 var rundis$elm_bootstrap$Bootstrap$Alert$clickHandler = F2(
 	function (visibility, configRec) {
