@@ -535,7 +535,29 @@ replaceToolsWithImages exp urlPrefix =
 
 replaceImagesWithTools : String -> List Int -> String
 replaceImagesWithTools md mediaIds =
-    md
+    let
+        r =
+            Regex.fromString "![[^]]*](([^)]+)){[^}]+}"
+    in
+    case r of
+        Nothing ->
+            md
+
+        Just reg ->
+            Regex.replace reg
+                (\m ->
+                    case m.submatches of
+                        (Just sub) :: _ ->
+                            let
+                                fname =
+                                    List.head (List.reverse (String.split "/" sub))
+                            in
+                            Maybe.withDefault "" fname
+
+                        _ ->
+                            ""
+                )
+                md
 
 
 
