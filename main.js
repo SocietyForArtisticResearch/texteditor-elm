@@ -6616,6 +6616,20 @@ var author$project$Exposition$addDimensions = F2(
 var author$project$Exposition$mediaUrl = function (data) {
 	return '/text-editor/simple-media-resource?research=' + (elm$core$String$fromInt(data.expositionId) + ('&simple-media=' + elm$core$String$fromInt(data.id)));
 };
+var author$project$Exposition$rcClass = function (t) {
+	switch (t.$) {
+		case 'RCVideo':
+			return 'rcvideo';
+		case 'RCAudio':
+			return 'rcaudio';
+		case 'RCSvg':
+			return 'rcsvg';
+		case 'RCPdf':
+			return 'rcpdf';
+		default:
+			return 'rcimage';
+	}
+};
 var elm$core$Basics$neq = _Utils_notEqual;
 var zwilias$elm_html_string$Html$Types$Node = F3(
 	function (a, b, c) {
@@ -6681,7 +6695,10 @@ var author$project$Exposition$objectDiv = F2(
 					_List_fromArray(
 						[
 							_Utils_Tuple2('rcobject', true),
-							_Utils_Tuple2(obj.userClass, obj.userClass !== '')
+							_Utils_Tuple2(obj.userClass, obj.userClass !== ''),
+							_Utils_Tuple2(
+							author$project$Exposition$rcClass(obj.mediaType),
+							true)
 						]))
 				]),
 			_List_fromArray(
@@ -6747,10 +6764,7 @@ var author$project$Exposition$asHtml = function (media) {
 				data,
 				A2(
 					zwilias$elm_html_string$Html$String$figure,
-					_List_fromArray(
-						[
-							zwilias$elm_html_string$Html$String$Attributes$class('rcimage')
-						]),
+					_List_Nil,
 					_List_fromArray(
 						[
 							A2(
@@ -6815,10 +6829,7 @@ var author$project$Exposition$asHtml = function (media) {
 				data,
 				A2(
 					zwilias$elm_html_string$Html$String$figure,
-					_List_fromArray(
-						[
-							zwilias$elm_html_string$Html$String$Attributes$class('rcimage')
-						]),
+					_List_Nil,
 					_List_fromArray(
 						[
 							A2(
@@ -6910,8 +6921,7 @@ var author$project$Exposition$asHtml = function (media) {
 										zwilias$elm_html_string$Html$String$Attributes$preload(
 										author$project$Exposition$preloadToString(playerData.preload)),
 										zwilias$elm_html_string$Html$String$Attributes$autoplay(playerData.autoplay),
-										zwilias$elm_html_string$Html$String$Attributes$loop(playerData.loop),
-										zwilias$elm_html_string$Html$String$Attributes$class('rcvideo')
+										zwilias$elm_html_string$Html$String$Attributes$loop(playerData.loop)
 									])),
 							_List_fromArray(
 								[

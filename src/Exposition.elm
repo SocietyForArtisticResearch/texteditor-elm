@@ -160,6 +160,25 @@ type alias TOC =
     List TOCEntry
 
 
+rcClass : RCMediaType -> String
+rcClass t =
+    case t of
+        RCVideo _ ->
+            "rcvideo"
+
+        RCAudio _ ->
+            "rcaudio"
+
+        RCSvg ->
+            "rcsvg"
+
+        RCPdf ->
+            "rcpdf"
+
+        RCImage ->
+            "rcimage"
+
+
 preloadToString : Preload -> String
 preloadToString p =
     case p of
@@ -344,6 +363,7 @@ objectDiv obj child =
         , Attr.classList
             [ ( "rcobject", True )
             , ( obj.userClass, obj.userClass /= "" )
+            , ( rcClass obj.mediaType, True )
             ]
         ]
         [ child ]
@@ -359,7 +379,7 @@ asHtml media =
     case ( media.mediaType, media ) of
         ( RCImage, data ) ->
             objectDiv data <|
-                Html.figure [ Attr.class "rcimage" ]
+                Html.figure []
                     [ Html.img (addDimensions data.dimensions [ Attr.src (mediaUrl data), Attr.alt data.name ]) []
                     , Html.figcaption [] [ Html.text data.caption ]
                     ]
@@ -380,7 +400,7 @@ asHtml media =
 
         ( RCSvg, data ) ->
             objectDiv data <|
-                Html.figure [ Attr.class "rcimage" ]
+                Html.figure []
                     [ Html.object
                         (addDimensions data.dimensions
                             [ Attr.attribute "data" (mediaUrl data)
@@ -418,7 +438,6 @@ asHtml media =
                             , Attr.preload (preloadToString playerData.preload)
                             , Attr.autoplay playerData.autoplay
                             , Attr.loop playerData.loop
-                            , Attr.class "rcvideo"
                             ]
                         )
                         [ Html.source [ Attr.src (mediaUrl data), Attr.attribute "type" "video/mp4" ] []
