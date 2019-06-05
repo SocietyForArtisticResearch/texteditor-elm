@@ -29,15 +29,16 @@ be made outside of elm.
 
 Casper:
 
+- media list displays as "no objects" when there are no objects, also when media list tab has not been selected, i.e. id is wrong or something like that
 - display Problems (as warnings etc)
 - what about "insert"?
 - Buttons
-- Styling (editor sizes)
+- Styling (editor sizes, double scrollbars, percentage when uploading)
+- "markdown plain" should be somewhere else, not a main tab
 - media file types in select dialog
 
 Luc:
 
-- reload media list after deletion
 - Check rendered html
 - Transcoding status type
 - Import/Export (Pandoc calls)
@@ -48,6 +49,7 @@ Luc:
 
 - Drag and drop of media (postpone)
 - Real-time collaborative editing
+- autofocus on right hand side
 
 
 ## DONE
@@ -82,3 +84,4 @@ Luc:
 - Mediaupdate
 - make media upload numbering safe (uuid?)
 - .rcimage .rcvideo .rcaudio classes are missing from rendered HTML, means editor is not compatible with old text-editor css sheets.
+- reload media list after deletion

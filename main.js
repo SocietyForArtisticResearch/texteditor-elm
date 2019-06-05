@@ -7828,6 +7828,10 @@ var author$project$Exposition$mkMediaName = function (exp) {
 		imageNames);
 	return 'media' + elm$core$String$fromInt(maxImage + 1);
 };
+var author$project$Exposition$replaceImagesWithTools = F2(
+	function (md, mediaIds) {
+		return md;
+	});
 var author$project$Exposition$thumbUrl = function (data) {
 	return '/text-editor/simple-media-thumb?research=' + (elm$core$String$fromInt(data.expositionId) + ('&simple-media=' + (elm$core$String$fromInt(data.id) + '&width=132&height=132')));
 };
@@ -8882,6 +8886,7 @@ var author$project$Main$update = F2(
 					var result = msg.a;
 					if (result.$ === 'Ok') {
 						var importResult = result.a;
+						var _n27 = A2(elm$core$Debug$log, 'import result: ', importResult);
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -8889,13 +8894,16 @@ var author$project$Main$update = F2(
 									exposition: A2(
 										author$project$Exposition$withMd,
 										model.exposition,
-										_Utils_ap(model.exposition.markdownInput, importResult.markdown)),
+										A2(
+											author$project$Exposition$replaceImagesWithTools,
+											_Utils_ap(model.exposition.markdownInput, importResult.markdown),
+											importResult.media)),
 									importUploadStatus: author$project$Main$Ready
 								}),
 							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 					} else {
 						var e = result.a;
-						var _n27 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n28 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(
 							A2(
 								author$project$Main$addProblem,
