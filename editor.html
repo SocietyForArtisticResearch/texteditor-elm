@@ -97,6 +97,9 @@
         mode: "css"
     });
 
+    cmMarkdown.size(null, "100%"); // fill available vertical space ?
+    cmStyle.size(null, "100%");
+
     var textareaMarkdown = document.getElementById("textarea-markdown");
 
     var app = Elm.Main.init({
