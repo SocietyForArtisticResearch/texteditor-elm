@@ -2,6 +2,8 @@ module Problems exposing (Problem(..), splitResultList)
 
 -- problem idea comes from rtfeldman sp-application talk youtube
 
+import Http
+
 
 type Problem
     = WrongExpositionUrl
@@ -10,6 +12,7 @@ type Problem
     | CannotSave
     | CannotUpdateMedia
     | CannotFindMediaFieldInJson
+    | CannotImportFile Http.Error
 
 
 splitResultList : List (Result Problem a) -> ( List Problem, List a )

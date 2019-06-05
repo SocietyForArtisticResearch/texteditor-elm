@@ -359,7 +359,7 @@ asHtml media =
     case ( media.mediaType, media ) of
         ( RCImage, data ) ->
             objectDiv data <|
-                Html.figure []
+                Html.figure [ Attr.class "rcimage" ]
                     [ Html.img (addDimensions data.dimensions [ Attr.src (mediaUrl data), Attr.alt data.name ]) []
                     , Html.figcaption [] [ Html.text data.caption ]
                     ]
@@ -380,7 +380,7 @@ asHtml media =
 
         ( RCSvg, data ) ->
             objectDiv data <|
-                Html.figure []
+                Html.figure [ Attr.class "rcimage" ]
                     [ Html.object
                         (addDimensions data.dimensions
                             [ Attr.attribute "data" (mediaUrl data)
@@ -401,6 +401,7 @@ asHtml media =
                             , Attr.preload (preloadToString playerData.preload)
                             , Attr.autoplay playerData.autoplay
                             , Attr.loop playerData.loop
+                            , Attr.class "rcaudio"
                             ]
                         )
                         [ Html.source [ Attr.src (mediaUrl data) ] []
@@ -417,6 +418,7 @@ asHtml media =
                             , Attr.preload (preloadToString playerData.preload)
                             , Attr.autoplay playerData.autoplay
                             , Attr.loop playerData.loop
+                            , Attr.class "rcvideo"
                             ]
                         )
                         [ Html.source [ Attr.src (mediaUrl data), Attr.attribute "type" "video/mp4" ] []

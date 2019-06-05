@@ -571,12 +571,11 @@ update msg model =
                     )
 
                 Err e ->
-                    -- TODO: add problem
                     let
                         _ =
                             Debug.log "error uploading: " e
                     in
-                    ( model, Cmd.none )
+                    ( addProblem model (Problems.CannotImportFile e), Cmd.none )
 
         ConfirmMediaDelete object ->
             let
@@ -594,7 +593,7 @@ update msg model =
             ( { model | confirmDialog = ( Modal.shown, Just content, Just messages ) }, Cmd.none )
 
         CloseConfirmDialog ->
-            ( { model | confirmDialog = ( Modal.hidden, Nothing, Nothing ) }, Cmd.none )
+            ( { model | confirmDialog = ( Modal.hidden, Nothing, Nothing ) }, RCAPI.getMediaList model.research GotMediaList )
 
         SwitchTab tab ->
             ( { model | selectedEditor = tab }, enumTabState tab |> setEditor )

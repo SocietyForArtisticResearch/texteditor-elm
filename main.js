@@ -6747,7 +6747,10 @@ var author$project$Exposition$asHtml = function (media) {
 				data,
 				A2(
 					zwilias$elm_html_string$Html$String$figure,
-					_List_Nil,
+					_List_fromArray(
+						[
+							zwilias$elm_html_string$Html$String$Attributes$class('rcimage')
+						]),
 					_List_fromArray(
 						[
 							A2(
@@ -6812,7 +6815,10 @@ var author$project$Exposition$asHtml = function (media) {
 				data,
 				A2(
 					zwilias$elm_html_string$Html$String$figure,
-					_List_Nil,
+					_List_fromArray(
+						[
+							zwilias$elm_html_string$Html$String$Attributes$class('rcimage')
+						]),
 					_List_fromArray(
 						[
 							A2(
@@ -6860,7 +6866,8 @@ var author$project$Exposition$asHtml = function (media) {
 										zwilias$elm_html_string$Html$String$Attributes$preload(
 										author$project$Exposition$preloadToString(playerData.preload)),
 										zwilias$elm_html_string$Html$String$Attributes$autoplay(playerData.autoplay),
-										zwilias$elm_html_string$Html$String$Attributes$loop(playerData.loop)
+										zwilias$elm_html_string$Html$String$Attributes$loop(playerData.loop),
+										zwilias$elm_html_string$Html$String$Attributes$class('rcaudio')
 									])),
 							_List_fromArray(
 								[
@@ -6903,7 +6910,8 @@ var author$project$Exposition$asHtml = function (media) {
 										zwilias$elm_html_string$Html$String$Attributes$preload(
 										author$project$Exposition$preloadToString(playerData.preload)),
 										zwilias$elm_html_string$Html$String$Attributes$autoplay(playerData.autoplay),
-										zwilias$elm_html_string$Html$String$Attributes$loop(playerData.loop)
+										zwilias$elm_html_string$Html$String$Attributes$loop(playerData.loop),
+										zwilias$elm_html_string$Html$String$Attributes$class('rcvideo')
 									])),
 							_List_fromArray(
 								[
@@ -7946,6 +7954,9 @@ var elm$json$Json$Encode$int = _Json_wrap;
 var author$project$Main$setEditor = _Platform_outgoingPort('setEditor', elm$json$Json$Encode$int);
 var author$project$Main$setPreviewContent = _Platform_outgoingPort('setPreviewContent', elm$json$Json$Encode$string);
 var author$project$Problems$CannotFindMediaFieldInJson = {$: 'CannotFindMediaFieldInJson'};
+var author$project$Problems$CannotImportFile = function (a) {
+	return {$: 'CannotImportFile', a: a};
+};
 var author$project$Problems$CannotLoadMedia = function (a) {
 	return {$: 'CannotLoadMedia', a: a};
 };
@@ -8852,7 +8863,12 @@ var author$project$Main$update = F2(
 					} else {
 						var e = result.a;
 						var _n27 = A2(elm$core$Debug$log, 'error uploading: ', e);
-						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+						return _Utils_Tuple2(
+							A2(
+								author$project$Main$addProblem,
+								model,
+								author$project$Problems$CannotImportFile(e)),
+							elm$core$Platform$Cmd$none);
 					}
 				case 'ConfirmMediaDelete':
 					var object = msg.a;
@@ -8878,7 +8894,7 @@ var author$project$Main$update = F2(
 							{
 								confirmDialog: _Utils_Tuple3(rundis$elm_bootstrap$Bootstrap$Modal$hidden, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing)
 							}),
-						elm$core$Platform$Cmd$none);
+						A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 				default:
 					var tab = msg.a;
 					return _Utils_Tuple2(
