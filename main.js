@@ -7832,7 +7832,28 @@ var author$project$Exposition$mkMediaName = function (exp) {
 };
 var author$project$Exposition$replaceImagesWithTools = F2(
 	function (md, mediaIds) {
-		return md;
+		var r = elm$regex$Regex$fromString('![[^]]*](([^)]+)){[^}]+}');
+		if (r.$ === 'Nothing') {
+			return md;
+		} else {
+			var reg = r.a;
+			return A3(
+				elm$regex$Regex$replace,
+				reg,
+				function (m) {
+					var _n1 = m.submatches;
+					if (_n1.b && (_n1.a.$ === 'Just')) {
+						var sub = _n1.a.a;
+						var fname = elm$core$List$head(
+							elm$core$List$reverse(
+								A2(elm$core$String$split, '/', sub)));
+						return A2(elm$core$Maybe$withDefault, '', fname);
+					} else {
+						return '';
+					}
+				},
+				md);
+		}
 	});
 var author$project$Exposition$thumbUrl = function (data) {
 	return '/text-editor/simple-media-thumb?research=' + (elm$core$String$fromInt(data.expositionId) + ('&simple-media=' + (elm$core$String$fromInt(data.id) + '&width=132&height=132')));
