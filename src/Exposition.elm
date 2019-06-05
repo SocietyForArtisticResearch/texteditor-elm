@@ -1,4 +1,4 @@
-module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, mkMediaName, objectByNameOrId, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withCSS, withHtml, withMd)
+module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, mkMediaName, objectByNameOrId, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withCSS, withHtml, withMd, withoutMedia)
 
 import Dict
 import Html.String as Html
@@ -160,6 +160,25 @@ type alias TOC =
     List TOCEntry
 
 
+rcClass : RCMediaType -> String
+rcClass t =
+    case t of
+        RCVideo _ ->
+            "rcvideo"
+
+        RCAudio _ ->
+            "rcaudio"
+
+        RCSvg ->
+            "rcsvg"
+
+        RCPdf ->
+            "rcpdf"
+
+        RCImage ->
+            "rcimage"
+
+
 preloadToString : Preload -> String
 preloadToString p =
     case p of
@@ -224,6 +243,11 @@ addOrReplaceObject obj exp =
 
     else
         addObject obj exp
+
+
+withoutMedia : Int -> RCExposition -> RCExposition
+withoutMedia id exp =
+    { exp | media = List.filter (\o -> o.id /= id) exp.media }
 
 
 mediaUrl : RCMediaObject -> String
@@ -344,6 +368,7 @@ objectDiv obj child =
         , Attr.classList
             [ ( "rcobject", True )
             , ( obj.userClass, obj.userClass /= "" )
+            , ( rcClass obj.mediaType, True )
             ]
         ]
         [ child ]
@@ -401,6 +426,7 @@ asHtml media =
                             , Attr.preload (preloadToString playerData.preload)
                             , Attr.autoplay playerData.autoplay
                             , Attr.loop playerData.loop
+                            , Attr.class "rcaudio"
                             ]
                         )
                         [ Html.source [ Attr.src (mediaUrl data) ] []

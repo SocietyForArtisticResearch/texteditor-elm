@@ -490,7 +490,11 @@ update msg model =
                     ( addProblem model Problems.CannotUpdateMedia, Cmd.none )
 
         MediaDelete obj ->
-            ( model, Cmd.batch [ RCAPI.deleteMedia obj MediaDeleted, RCAPI.getMediaList model.research GotMediaList ] )
+            let
+                modelWithoutObj =
+                    { model | exposition = Exposition.withoutMedia obj.id model.exposition }
+            in
+            ( modelWithoutObj, Cmd.batch [ RCAPI.deleteMedia obj MediaDeleted, RCAPI.getMediaList model.research GotMediaList ] )
 
         MediaDeleted obj ->
             update CloseConfirmDialog model
@@ -575,12 +579,11 @@ update msg model =
                     )
 
                 Err e ->
-                    -- TODO: add problem
                     let
                         _ =
                             Debug.log "error uploading: " e
                     in
-                    ( model, Cmd.none )
+                    ( addProblem model (Problems.CannotImportFile e), Cmd.none )
 
         ConfirmMediaDelete object ->
             let

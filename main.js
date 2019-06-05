@@ -6619,6 +6619,20 @@ var author$project$Exposition$addDimensions = F2(
 var author$project$Exposition$mediaUrl = function (data) {
 	return '/text-editor/simple-media-resource?research=' + (elm$core$String$fromInt(data.expositionId) + ('&simple-media=' + elm$core$String$fromInt(data.id)));
 };
+var author$project$Exposition$rcClass = function (t) {
+	switch (t.$) {
+		case 'RCVideo':
+			return 'rcvideo';
+		case 'RCAudio':
+			return 'rcaudio';
+		case 'RCSvg':
+			return 'rcsvg';
+		case 'RCPdf':
+			return 'rcpdf';
+		default:
+			return 'rcimage';
+	}
+};
 var elm$core$Basics$neq = _Utils_notEqual;
 var zwilias$elm_html_string$Html$Types$Node = F3(
 	function (a, b, c) {
@@ -6684,7 +6698,10 @@ var author$project$Exposition$objectDiv = F2(
 					_List_fromArray(
 						[
 							_Utils_Tuple2('rcobject', true),
-							_Utils_Tuple2(obj.userClass, obj.userClass !== '')
+							_Utils_Tuple2(obj.userClass, obj.userClass !== ''),
+							_Utils_Tuple2(
+							author$project$Exposition$rcClass(obj.mediaType),
+							true)
 						]))
 				]),
 			_List_fromArray(
@@ -6863,7 +6880,8 @@ var author$project$Exposition$asHtml = function (media) {
 										zwilias$elm_html_string$Html$String$Attributes$preload(
 										author$project$Exposition$preloadToString(playerData.preload)),
 										zwilias$elm_html_string$Html$String$Attributes$autoplay(playerData.autoplay),
-										zwilias$elm_html_string$Html$String$Attributes$loop(playerData.loop)
+										zwilias$elm_html_string$Html$String$Attributes$loop(playerData.loop),
+										zwilias$elm_html_string$Html$String$Attributes$class('rcaudio')
 									])),
 							_List_fromArray(
 								[
@@ -7869,6 +7887,19 @@ var author$project$Exposition$withMd = F2(
 			exp,
 			{markdownInput: content});
 	});
+var author$project$Exposition$withoutMedia = F2(
+	function (id, exp) {
+		return _Utils_update(
+			exp,
+			{
+				media: A2(
+					elm$core$List$filter,
+					function (o) {
+						return !_Utils_eq(o.id, id);
+					},
+					exp.media)
+			});
+	});
 var author$project$Main$CloseConfirmDialog = {$: 'CloseConfirmDialog'};
 var author$project$Main$GotMediaList = function (a) {
 	return {$: 'GotMediaList', a: a};
@@ -7949,6 +7980,9 @@ var elm$json$Json$Encode$int = _Json_wrap;
 var author$project$Main$setEditor = _Platform_outgoingPort('setEditor', elm$json$Json$Encode$int);
 var author$project$Main$setPreviewContent = _Platform_outgoingPort('setPreviewContent', elm$json$Json$Encode$string);
 var author$project$Problems$CannotFindMediaFieldInJson = {$: 'CannotFindMediaFieldInJson'};
+var author$project$Problems$CannotImportFile = function (a) {
+	return {$: 'CannotImportFile', a: a};
+};
 var author$project$Problems$CannotLoadMedia = function (a) {
 	return {$: 'CannotLoadMedia', a: a};
 };
@@ -8744,8 +8778,13 @@ var author$project$Main$update = F2(
 					}
 				case 'MediaDelete':
 					var obj = msg.a;
-					return _Utils_Tuple2(
+					var modelWithoutObj = _Utils_update(
 						model,
+						{
+							exposition: A2(author$project$Exposition$withoutMedia, obj.id, model.exposition)
+						});
+					return _Utils_Tuple2(
+						modelWithoutObj,
 						elm$core$Platform$Cmd$batch(
 							_List_fromArray(
 								[
@@ -8855,7 +8894,12 @@ var author$project$Main$update = F2(
 					} else {
 						var e = result.a;
 						var _n27 = A2(elm$core$Debug$log, 'error uploading: ', e);
-						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+						return _Utils_Tuple2(
+							A2(
+								author$project$Main$addProblem,
+								model,
+								author$project$Problems$CannotImportFile(e)),
+							elm$core$Platform$Cmd$none);
 					}
 				case 'ConfirmMediaDelete':
 					var object = msg.a;
