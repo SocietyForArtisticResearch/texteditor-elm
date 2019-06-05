@@ -374,7 +374,7 @@ update msg model =
                             RCAPI.toRCExposition e model.research model.weave
 
                         _ =
-                            Debug.log "loaded html" newExposition.renderedHtml
+                            Debug.log "loaded: " newExposition
                     in
                     ( { model
                         | exposition = newExposition

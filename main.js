@@ -8723,7 +8723,7 @@ var author$project$Main$update = F2(
 					if (exp.$ === 'Ok') {
 						var e = exp.a;
 						var newExposition = A3(author$project$RCAPI$toRCExposition, e, model.research, model.weave);
-						var _n8 = A2(elm$core$Debug$log, 'loaded html', newExposition.renderedHtml);
+						var _n8 = A2(elm$core$Debug$log, 'loaded: ', newExposition);
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
