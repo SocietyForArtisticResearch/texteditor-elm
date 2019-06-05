@@ -566,10 +566,19 @@ update msg model =
         UploadedImport result ->
             case result of
                 Ok importResult ->
+                    let
+                        _ =
+                            Debug.log "import result: " importResult
+                    in
                     -- TODO: convert images to tools in markdown!
                     ( { model
                         | importUploadStatus = Ready
-                        , exposition = Exposition.withMd model.exposition (model.exposition.markdownInput ++ importResult.markdown)
+                        , exposition =
+                            Exposition.withMd model.exposition
+                                (Exposition.replaceImagesWithTools
+                                    (model.exposition.markdownInput ++ importResult.markdown)
+                                    importResult.media
+                                )
                       }
                     , RCAPI.getMediaList model.research GotMediaList
                     )
