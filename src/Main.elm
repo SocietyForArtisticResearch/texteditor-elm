@@ -1,10 +1,10 @@
 port module Main exposing (Msg(..), main, update, view)
 
+import Bootstrap.Alert as Alert
 import Bootstrap.Button as Button
 import Bootstrap.Form as Form
 import Bootstrap.Grid as Grid
 import Bootstrap.Modal as Modal
-import Bootstrap.Alert as Alert
 import Bootstrap.Utilities.Spacing as Spacing
 import Browser
 import Dict
@@ -80,7 +80,7 @@ emptyModel research weave =
     , exposition = Exposition.empty
     , mediaDialog = ( Modal.hidden, Nothing, Nothing )
     , confirmDialog = ( Modal.hidden, Nothing, Nothing )
-    , alertVisibility = Alert.shown 
+    , alertVisibility = Alert.shown
     , research = research
     , weave = weave
     , mediaUploadStatus = Ready
@@ -112,12 +112,12 @@ init flags =
 
 addProblem : Model -> Problems.Problem -> Model
 addProblem model problem =
-    { model | problems = problem :: model.problems }
+    { model | problems = problem :: model.problems , alertVisibility = Alert.shown }
 
 
 addProblems : Model -> List Problems.Problem -> Model
 addProblems model problems =
-    { model | problems = problems ++ model.problems }
+    { model | problems = problems ++ model.problems , alertVisibility = Alert.shown }
 
 
 main =
@@ -607,7 +607,7 @@ update msg model =
             ( { model | selectedEditor = tab }, enumTabState tab |> setEditor )
 
         AlertMsg visibility ->
-            ( { model | alertVisibility = visibility } , Cmd.none )
+            ( { model | alertVisibility = visibility }, Cmd.none )
 
 
 type Icon
@@ -708,26 +708,25 @@ viewTabs model =
 
 viewAlert : Model -> Html Msg
 viewAlert model =
-    case model.problems of
-        [] -> div [] []
+    let
+        message =
+            case model.problems of
+                [] ->
+                    "test - no problem :-)"
+                
+                problems ->
+                    String.join " " <|  List.map Problems.asString problems
+    in
+        Alert.config
+            |> Alert.info
+            |> Alert.dismissable AlertMsg
+            |> Alert.children
+               [ Alert.h4 [] [ text "there is a problem" ]
+               , text <| "this is the problem: " ++ message
+               ]
+            |> Alert.view model.alertVisibility
 
-        problems ->
-            let
-                problemStrings =
-                    List.map Problems.asString problems
 
-                problemAsString =
-                    String.join " " problemStrings 
-            in
-                Alert.config
-                 |> Alert.info
-                 |> Alert.dismissable AlertMsg
-                 |> Alert.children
-                    [ Alert.h4 [] [ text "there is a problem" ]
-                    , text <|  "this is the problem: " ++ problemAsString ]
-                 |> Alert.view model.alertVisibility
-    
-        
 view : Model -> Html Msg
 view model =
     let
@@ -767,6 +766,6 @@ view model =
         , viewUpload PlusIcon False UploadMediaFileSelect "Media" model.mediaUploadStatus
         , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
         , saveButton
-            , viewAlert model
+        , viewAlert model
         , mediaList
         ]
