@@ -12231,13 +12231,13 @@ var author$project$Main$view = function (model) {
 			]));
 	var mediaList = A2(author$project$RCMediaList$view, model.exposition.media, author$project$Main$makeTableMessages);
 	var mediaDialogHtml = function () {
-		var _n1 = model.mediaDialog;
-		if ((_n1.b.$ === 'Just') && (_n1.c.$ === 'Just')) {
-			var vis = _n1.a;
-			var _n2 = _n1.b.a;
-			var obj = _n2.a;
-			var objId = _n2.b;
-			var valid = _n1.c.a;
+		var _n2 = model.mediaDialog;
+		if ((_n2.b.$ === 'Just') && (_n2.c.$ === 'Just')) {
+			var vis = _n2.a;
+			var _n3 = _n2.b.a;
+			var obj = _n3.a;
+			var objId = _n3.b;
+			var valid = _n2.c.a;
 			return A4(
 				author$project$RCMediaEdit$viewMediaDialog,
 				author$project$Main$makeMediaEditFun,
@@ -12252,14 +12252,22 @@ var author$project$Main$view = function (model) {
 		}
 	}();
 	var confirmDialogHtml = function () {
-		var _n0 = model.confirmDialog;
-		if ((_n0.b.$ === 'Just') && (_n0.c.$ === 'Just')) {
-			var visibility = _n0.a;
-			var content = _n0.b.a;
-			var messages = _n0.c.a;
+		var _n1 = model.confirmDialog;
+		if ((_n1.b.$ === 'Just') && (_n1.c.$ === 'Just')) {
+			var visibility = _n1.a;
+			var content = _n1.b.a;
+			var messages = _n1.c.a;
 			return A3(author$project$UserConfirm$view, visibility, content, messages);
 		} else {
 			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
+		}
+	}();
+	var alert = function () {
+		var _n0 = model.problems;
+		if (!_n0.b) {
+			return A2(elm$html$Html$span, _List_Nil, _List_Nil);
+		} else {
+			return author$project$Main$viewAlert(model);
 		}
 	}();
 	return A2(
@@ -12275,7 +12283,7 @@ var author$project$Main$view = function (model) {
 				A4(author$project$Main$mkButton, author$project$Main$ImportIcon, true, author$project$Main$DownloadExport, 'Export doc'),
 				saveButton,
 				author$project$Main$viewEditorCheckbox(model.editorType),
-				author$project$Main$viewAlert(model),
+				alert,
 				mediaList
 			]));
 };

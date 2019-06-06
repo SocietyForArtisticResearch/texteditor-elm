@@ -838,6 +838,14 @@ view model =
 
         mediaList =
             RCMediaList.view model.exposition.media makeTableMessages
+
+        alert =
+            case model.problems of
+                [] ->
+                    span [] []
+
+                _ ->
+                    viewAlert model
     in
     div []
         [ viewTabs model
@@ -848,6 +856,6 @@ view model =
         , mkButton ImportIcon True DownloadExport "Export doc"
         , saveButton
         , viewEditorCheckbox model.editorType
-        , viewAlert model
+        , alert
         , mediaList
         ]
