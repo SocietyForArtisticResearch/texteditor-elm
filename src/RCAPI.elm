@@ -1,15 +1,19 @@
-module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, APIPandocImport, deleteMedia, getExposition, getMediaList, saveExposition, toMediaClassesDict, toRCExposition, toRCMediaObject, updateMedia, uploadImport, uploadMedia)
+module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, APIPandocImport, ConversionType(..), convertExposition, deleteMedia, getExposition, getMediaList, saveExposition, toMediaClassesDict, toRCExposition, toRCMediaObject, updateMedia, uploadImport, uploadMedia)
+
+--import Bytes.Decode
 
 import Bytes.Encode
 import Dict
 import Exposition exposing (OptionalDimensions, RCExposition, RCMediaObject, RCMediaType(..), defaultPlayerSettings)
 import File exposing (File)
+import File.Download
 import Html exposing (Html, span)
 import Http
 import Json.Decode exposing (..)
 import Json.Encode as E
 import Problems exposing (..)
 import Settings
+import Url.Builder
 
 
 
@@ -231,6 +235,69 @@ uploadImport researchId file expectMsg =
         , timeout = Nothing
         , tracker = Just "uploadImport"
         }
+
+
+type ConversionType
+    = Pdf
+    | Docx
+    | Odt
+    | Latex
+    | Html
+    | Md
+    | Epub
+
+
+typeEnding : ConversionType -> String
+typeEnding t =
+    case t of
+        Pdf ->
+            "pdf"
+
+        Docx ->
+            "docx"
+
+        Odt ->
+            "odt"
+
+        Latex ->
+            "tex"
+
+        Html ->
+            "html"
+
+        Md ->
+            "md"
+
+        Epub ->
+            "epub"
+
+
+convertExposition : ConversionType -> RCExposition -> Cmd msg
+convertExposition ctype expo =
+    -- TODO tools to images
+    let
+        path =
+            Url.Builder.relative [ "text-editor", "export" ]
+                [ Url.Builder.string "type" (typeEnding ctype)
+                , Url.Builder.string "markdown" expo.markdownInput
+                ]
+    in
+    File.Download.url path
+
+
+
+-- convertExposition : ConversionType -> RCExposition -> (Result Http.Error a -> msg) -> Cmd msg
+-- convertExposition ctype expo expectMsg =
+--     Http.post
+--         { url =
+--             "text-editor/export"
+--                 ++ "?type="
+--                 ++ typeEnding ctype
+--                 ++ "&markdown="
+--                 ++ expo.markdownInput
+--         , body = Http.emptyBody
+--         , expect = Http.expectBytes expectMsg Bytes.Decode.bytes
+--         }
 
 
 saveExposition exposition expect =

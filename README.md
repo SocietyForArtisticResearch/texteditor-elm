@@ -41,12 +41,12 @@ Casper:
 - "markdown plain" should be somewhere else, not a main tab
 - media file types in select dialog
 - display title of exposition somewhere
+- warnings when closing/reloading
 
 Luc:
 
 - auto save
 - why is css not used in preview?
-- multiple doc imports create duplicate media names
 - Check rendered html
 - Transcoding status type
 - Export (Pandoc calls)
@@ -95,3 +95,4 @@ Luc:
 - reload media list after deletion
 - Pandoc import working in principle
 - Generate preview html (final static html)
+- multiple doc imports create duplicate media names

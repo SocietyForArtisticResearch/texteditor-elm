@@ -208,6 +208,7 @@ type Msg
     | SwitchTab TabState
     | MediaDeleted (Result Http.Error ())
     | AlertMsg Alert.Visibility
+    | DownloadExport
 
 
 
@@ -550,6 +551,9 @@ update msg model =
             , RCAPI.uploadImport model.research file UploadedImport
             )
 
+        DownloadExport ->
+            ( model, RCAPI.convertExposition RCAPI.Docx model.exposition )
+
         GotMediaUploadProgress progress ->
             case progress of
                 Http.Sending p ->
@@ -671,8 +675,8 @@ renderIcon icon =
             iconImg "save.svg"
 
 
-viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg
-viewUpload icon needsOffset onClickMsg buttonText status =
+mkButton : Icon -> Bool -> Msg -> String -> Html Msg
+mkButton icon needsOffset onClickMsg buttonText =
     let
         spacing =
             if needsOffset then
@@ -681,15 +685,20 @@ viewUpload icon needsOffset onClickMsg buttonText status =
             else
                 []
     in
+    Button.button
+        [ Button.light
+        , Button.attrs <| List.append [ onClick onClickMsg ] spacing
+        ]
+        [ renderIcon icon
+        , text buttonText
+        ]
+
+
+viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg
+viewUpload icon needsOffset onClickMsg buttonText status =
     case status of
         Ready ->
-            Button.button
-                [ Button.light
-                , Button.attrs <| List.append [ onClick onClickMsg ] spacing
-                ]
-                [ renderIcon icon
-                , text buttonText
-                ]
+            mkButton icon needsOffset onClickMsg buttonText
 
         Uploading fraction ->
             div [] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
@@ -795,6 +804,7 @@ view model =
         , confirmDialogHtml
         , viewUpload PlusIcon False UploadMediaFileSelect "Media" model.mediaUploadStatus
         , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
+        , mkButton ImportIcon True DownloadExport "Export doc"
         , saveButton
         , viewAlert model
         , mediaList
