@@ -660,10 +660,10 @@ update msg model =
             in
             case editor of
                 Markdown ->
-                    update (SwitchTab CmMarkdownTab) newmodel
+                    update (SwitchTab CmMarkdownTab) newModel
 
                 PlainText ->
-                    update (SwitchTab TxtMarkdownTab) newmodel
+                    update (SwitchTab TxtMarkdownTab) newModel
 
 
 type Icon

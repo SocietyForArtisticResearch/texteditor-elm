@@ -9254,13 +9254,13 @@ var author$project$Main$update = F2(
 						{editorType: editor});
 					if (editor.$ === 'Markdown') {
 						var $temp$msg = author$project$Main$SwitchTab(author$project$Main$CmMarkdownTab),
-							$temp$model = model;
+							$temp$model = newModel;
 						msg = $temp$msg;
 						model = $temp$model;
 						continue update;
 					} else {
 						var $temp$msg = author$project$Main$SwitchTab(author$project$Main$TxtMarkdownTab),
-							$temp$model = model;
+							$temp$model = newModel;
 						msg = $temp$msg;
 						model = $temp$model;
 						continue update;
@@ -10109,7 +10109,7 @@ var author$project$Main$viewEditorCheckbox = function (editorType) {
 				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$checked(
 				_Utils_eq(editorType, author$project$Main$PlainText))
 			]),
-		'spellchecker');
+		'spellcheck');
 };
 var author$project$Main$MediaListTab = {$: 'MediaListTab'};
 var author$project$Main$StyleTab = {$: 'StyleTab'};
