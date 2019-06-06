@@ -789,6 +789,13 @@ viewEditorCheckbox editorType =
     let
         onToggle : Bool -> Msg
         onToggle checked =
+            let
+                _ =
+                    Debug.log "checked state" checked
+
+                _ =
+                    Debug.log "editortype" editorType
+            in
             if checked then
                 SwitchEditor Markdown
 

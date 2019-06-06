@@ -10096,6 +10096,8 @@ var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$onCheck = function (toMsg) {
 };
 var author$project$Main$viewEditorCheckbox = function (editorType) {
 	var onToggle = function (checked) {
+		var _n0 = A2(elm$core$Debug$log, 'checked state', checked);
+		var _n1 = A2(elm$core$Debug$log, 'editortype', editorType);
 		return checked ? author$project$Main$SwitchEditor(author$project$Main$Markdown) : author$project$Main$SwitchEditor(author$project$Main$PlainText);
 	};
 	return A2(
