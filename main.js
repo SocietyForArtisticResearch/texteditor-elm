@@ -5451,8 +5451,8 @@ var author$project$Main$decodeFlags = A3(
 	A2(elm$json$Json$Decode$field, 'research', elm$json$Json$Decode$int));
 var author$project$Settings$editorVersion = '2.0.0';
 var author$project$Exposition$empty = {authors: _List_Nil, contentVersion: 0, css: '', currentWeave: 0, editorVersion: author$project$Settings$editorVersion, id: 0, markdownInput: '', media: _List_Nil, renderedHtml: '', title: '', toc: _List_Nil};
-var author$project$Main$CmMarkdownTab = {$: 'CmMarkdownTab'};
-var author$project$Main$Markdown = {$: 'Markdown'};
+var author$project$Main$CodemirrorMarkdown = {$: 'CodemirrorMarkdown'};
+var author$project$Main$EditorMarkdown = {$: 'EditorMarkdown'};
 var author$project$Main$Ready = {$: 'Ready'};
 var elm$core$Basics$negate = function (n) {
 	return -n;
@@ -5469,7 +5469,7 @@ var author$project$Main$emptyModel = F2(
 			alertVisibility: rundis$elm_bootstrap$Bootstrap$Alert$closed,
 			confirmDialog: _Utils_Tuple3(rundis$elm_bootstrap$Bootstrap$Modal$hidden, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing),
 			editGeneration: _Utils_Tuple2(-1, -1),
-			editorType: author$project$Main$Markdown,
+			editor: _Utils_Tuple2(author$project$Main$EditorMarkdown, author$project$Main$CodemirrorMarkdown),
 			exposition: author$project$Exposition$empty,
 			importUploadStatus: author$project$Main$Ready,
 			mediaClassesDict: elm$core$Dict$empty,
@@ -5478,7 +5478,6 @@ var author$project$Main$emptyModel = F2(
 			problems: _List_Nil,
 			research: research,
 			saved: true,
-			selectedEditor: author$project$Main$CmMarkdownTab,
 			weave: weave
 		};
 	});
@@ -11338,7 +11337,6 @@ var author$project$Main$MediaDeleted = function (a) {
 var author$project$Main$MediaDialog = function (a) {
 	return {$: 'MediaDialog', a: a};
 };
-var author$project$Main$PlainText = {$: 'PlainText'};
 var author$project$Main$SaveExposition = {$: 'SaveExposition'};
 var author$project$Main$SaveMediaEdit = function (a) {
 	return {$: 'SaveMediaEdit', a: a};
@@ -11349,10 +11347,6 @@ var author$project$Main$SavedExposition = function (a) {
 var author$project$Main$SavedMediaEdit = function (a) {
 	return {$: 'SavedMediaEdit', a: a};
 };
-var author$project$Main$SwitchTab = function (a) {
-	return {$: 'SwitchTab', a: a};
-};
-var author$project$Main$TxtMarkdownTab = {$: 'TxtMarkdownTab'};
 var author$project$Main$UploadImportFileSelected = function (a) {
 	return {$: 'UploadImportFileSelected', a: a};
 };
@@ -11402,6 +11396,30 @@ var author$project$Main$getContent = _Platform_outgoingPort(
 	function ($) {
 		return elm$json$Json$Encode$null;
 	});
+var author$project$Main$CmMarkdownTab = {$: 'CmMarkdownTab'};
+var author$project$Main$MediaListTab = {$: 'MediaListTab'};
+var author$project$Main$StyleTab = {$: 'StyleTab'};
+var author$project$Main$TxtMarkdownTab = {$: 'TxtMarkdownTab'};
+var author$project$Main$getTabState = function (state) {
+	switch (state.a.$) {
+		case 'EditorMarkdown':
+			if (state.b.$ === 'CodemirrorMarkdown') {
+				var _n1 = state.a;
+				var _n2 = state.b;
+				return author$project$Main$CmMarkdownTab;
+			} else {
+				var _n3 = state.a;
+				var _n4 = state.b;
+				return author$project$Main$TxtMarkdownTab;
+			}
+		case 'EditorStyle':
+			var _n5 = state.a;
+			return author$project$Main$StyleTab;
+		default:
+			var _n6 = state.a;
+			return author$project$Main$MediaListTab;
+	}
+};
 var author$project$Main$setContent = _Platform_outgoingPort('setContent', elm$core$Basics$identity);
 var elm$json$Json$Encode$int = _Json_wrap;
 var author$project$Main$setEditor = _Platform_outgoingPort('setEditor', elm$json$Json$Encode$int);
@@ -12502,26 +12520,18 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				case 'SwitchTab':
 					var tab = msg.a;
-					var newModel = function () {
-						switch (tab.$) {
-							case 'CmMarkdownTab':
-								return _Utils_update(
-									model,
-									{editorType: author$project$Main$Markdown});
-							case 'TxtMarkdownTab':
-								return _Utils_update(
-									model,
-									{editorType: author$project$Main$PlainText});
-							default:
-								return model;
-						}
-					}();
+					var _n33 = model.editor;
+					var mdEditor = _n33.b;
+					var newModel = _Utils_update(
+						model,
+						{
+							editor: _Utils_Tuple2(tab, mdEditor)
+						});
 					return _Utils_Tuple2(
-						_Utils_update(
-							newModel,
-							{selectedEditor: tab}),
+						newModel,
 						author$project$Main$setEditor(
-							author$project$Main$enumTabState(tab)));
+							author$project$Main$enumTabState(
+								author$project$Main$getTabState(newModel.editor))));
 				case 'AlertMsg':
 					var visibility = msg.a;
 					return _Utils_Tuple2(
@@ -12531,22 +12541,17 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				default:
 					var editor = msg.a;
-					var newModel = _Utils_update(
-						model,
-						{editorType: editor});
-					if (editor.$ === 'Markdown') {
-						var $temp$msg = author$project$Main$SwitchTab(author$project$Main$CmMarkdownTab),
-							$temp$model = newModel;
-						msg = $temp$msg;
-						model = $temp$model;
-						continue update;
-					} else {
-						var $temp$msg = author$project$Main$SwitchTab(author$project$Main$TxtMarkdownTab),
-							$temp$model = newModel;
-						msg = $temp$msg;
-						model = $temp$model;
-						continue update;
-					}
+					var _n34 = model.editor;
+					var tab = _n34.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								editor: _Utils_Tuple2(tab, editor)
+							}),
+						author$project$Main$setEditor(
+							author$project$Main$enumTabState(
+								author$project$Main$getTabState(model.editor))));
 			}
 		}
 	});
@@ -13154,9 +13159,10 @@ var author$project$Main$viewAlert = function (model) {
 				author$project$Main$AlertMsg,
 				rundis$elm_bootstrap$Bootstrap$Alert$info(rundis$elm_bootstrap$Bootstrap$Alert$config))));
 };
-var author$project$Main$SwitchEditor = function (a) {
-	return {$: 'SwitchEditor', a: a};
+var author$project$Main$SwitchMarkdownEditor = function (a) {
+	return {$: 'SwitchMarkdownEditor', a: a};
 };
+var author$project$Main$TextareaMarkdown = {$: 'TextareaMarkdown'};
 var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Checkbox = function (a) {
 	return {$: 'Checkbox', a: a};
 };
@@ -13367,9 +13373,9 @@ var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$OnChecked = function (a) {
 var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$onCheck = function (toMsg) {
 	return rundis$elm_bootstrap$Bootstrap$Form$Checkbox$OnChecked(toMsg);
 };
-var author$project$Main$viewEditorCheckbox = function (editorType) {
+var author$project$Main$viewEditorCheckbox = function (markdownEditor) {
 	var onToggle = function (becomesChecked) {
-		return becomesChecked ? author$project$Main$SwitchEditor(author$project$Main$PlainText) : author$project$Main$SwitchEditor(author$project$Main$Markdown);
+		return becomesChecked ? author$project$Main$SwitchMarkdownEditor(author$project$Main$TextareaMarkdown) : author$project$Main$SwitchMarkdownEditor(author$project$Main$CodemirrorMarkdown);
 	};
 	return A2(
 		rundis$elm_bootstrap$Bootstrap$Form$Checkbox$checkbox,
@@ -13377,12 +13383,15 @@ var author$project$Main$viewEditorCheckbox = function (editorType) {
 			[
 				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$onCheck(onToggle),
 				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$checked(
-				_Utils_eq(editorType, author$project$Main$PlainText))
+				_Utils_eq(markdownEditor, author$project$Main$TextareaMarkdown))
 			]),
-		'spellcheck');
+		'plaintext');
 };
-var author$project$Main$MediaListTab = {$: 'MediaListTab'};
-var author$project$Main$StyleTab = {$: 'StyleTab'};
+var author$project$Main$EditorMedia = {$: 'EditorMedia'};
+var author$project$Main$EditorStyle = {$: 'EditorStyle'};
+var author$project$Main$SwitchTab = function (a) {
+	return {$: 'SwitchTab', a: a};
+};
 var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$li = _VirtualDom_node('li');
 var elm$html$Html$ul = _VirtualDom_node('ul');
@@ -13395,7 +13404,7 @@ var elm$html$Html$Attributes$href = function (url) {
 var author$project$Main$viewTabs = function (model) {
 	var tabLink = F2(
 		function (tab, title) {
-			var selectedClass = _Utils_eq(model.selectedEditor, tab) ? 'nav-link active' : 'nav-link';
+			var selectedClass = _Utils_eq(model.editor.a, tab) ? 'nav-link active' : 'nav-link';
 			return A2(
 				elm$html$Html$li,
 				_List_fromArray(
@@ -13427,9 +13436,9 @@ var author$project$Main$viewTabs = function (model) {
 			]),
 		_List_fromArray(
 			[
-				A2(tabLink, author$project$Main$CmMarkdownTab, 'Markdown'),
-				A2(tabLink, author$project$Main$MediaListTab, 'Media'),
-				A2(tabLink, author$project$Main$StyleTab, 'Style')
+				A2(tabLink, author$project$Main$EditorMarkdown, 'Markdown'),
+				A2(tabLink, author$project$Main$EditorMedia, 'Media'),
+				A2(tabLink, author$project$Main$EditorStyle, 'Style')
 			]));
 };
 var elm$core$Basics$round = _Basics_round;
@@ -15531,13 +15540,13 @@ var author$project$Main$view = function (model) {
 			]));
 	var mediaList = A2(author$project$RCMediaList$view, model.exposition.media, author$project$Main$makeTableMessages);
 	var mediaDialogHtml = function () {
-		var _n2 = model.mediaDialog;
-		if ((_n2.b.$ === 'Just') && (_n2.c.$ === 'Just')) {
-			var vis = _n2.a;
-			var _n3 = _n2.b.a;
-			var obj = _n3.a;
-			var objId = _n3.b;
-			var valid = _n2.c.a;
+		var _n4 = model.mediaDialog;
+		if ((_n4.b.$ === 'Just') && (_n4.c.$ === 'Just')) {
+			var vis = _n4.a;
+			var _n5 = _n4.b.a;
+			var obj = _n5.a;
+			var objId = _n5.b;
+			var valid = _n4.c.a;
 			return A4(
 				author$project$RCMediaEdit$viewMediaDialog,
 				author$project$Main$makeMediaEditFun,
@@ -15549,6 +15558,16 @@ var author$project$Main$view = function (model) {
 					valid));
 		} else {
 			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
+		}
+	}();
+	var editorCheckbox = function () {
+		var _n2 = model.editor;
+		if (_n2.a.$ === 'EditorMarkdown') {
+			var _n3 = _n2.a;
+			var markdownEditor = _n2.b;
+			return author$project$Main$viewEditorCheckbox(markdownEditor);
+		} else {
+			return A2(elm$html$Html$span, _List_Nil, _List_Nil);
 		}
 	}();
 	var confirmDialogHtml = function () {
@@ -15582,7 +15601,7 @@ var author$project$Main$view = function (model) {
 				A5(author$project$Main$viewUpload, author$project$Main$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
 				A4(author$project$Main$mkButton, author$project$Main$ImportIcon, true, author$project$Main$DownloadExport, 'Export doc'),
 				saveButton,
-				author$project$Main$viewEditorCheckbox(model.editorType),
+				editorCheckbox,
 				alert,
 				mediaList
 			]));

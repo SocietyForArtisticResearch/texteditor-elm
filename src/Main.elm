@@ -41,8 +41,7 @@ type alias Model =
     , problems : List Problems.Problem
     , mediaClassesDict : Dict.Dict Int String -- stores userclasses for media to be added to media list
     , saved : Bool
-    , selectedEditor : TabState -- Markdown plaintext style or media ?
-    , editorType : EditorType -- Markdown or plaintext (tracked separate because of checkbox)
+    , editor : ( EditorType, MarkdownEditor )
     }
 
 
@@ -51,7 +50,9 @@ type UploadStatus
     | Uploading Float
 
 
-type TabState
+type
+    TabState
+    -- to communicate with the port
     = CmMarkdownTab
     | TxtMarkdownTab
     | StyleTab
@@ -59,8 +60,30 @@ type TabState
 
 
 type EditorType
-    = Markdown
-    | PlainText
+    = EditorMarkdown
+    | EditorStyle
+    | EditorMedia
+
+
+type MarkdownEditor
+    = CodemirrorMarkdown
+    | TextareaMarkdown
+
+
+getTabState : ( EditorType, MarkdownEditor ) -> TabState
+getTabState state =
+    case state of
+        ( EditorMarkdown, CodemirrorMarkdown ) ->
+            CmMarkdownTab
+
+        ( EditorMarkdown, TextareaMarkdown ) ->
+            TxtMarkdownTab
+
+        ( EditorStyle, _ ) ->
+            StyleTab
+
+        ( EditorMedia, _ ) ->
+            MediaListTab
 
 
 type alias Flags =
@@ -86,8 +109,7 @@ emptyModel research weave =
     , problems = []
     , mediaClassesDict = Dict.empty
     , saved = True
-    , selectedEditor = CmMarkdownTab
-    , editorType = Markdown
+    , editor = ( EditorMarkdown, CodemirrorMarkdown )
     }
 
 
@@ -213,10 +235,10 @@ type Msg
     | SavedMediaEdit (Result Http.Error String)
     | ConfirmMediaDelete Exposition.RCMediaObject
     | CloseConfirmDialog
-    | SwitchTab TabState
+    | SwitchTab EditorType
     | MediaDeleted (Result Http.Error ())
     | AlertMsg Alert.Visibility
-    | SwitchEditor EditorType
+    | SwitchMarkdownEditor MarkdownEditor
     | DownloadExport
 
 
@@ -652,35 +674,24 @@ update msg model =
 
         SwitchTab tab ->
             let
+                ( _, mdEditor ) =
+                    model.editor
+
                 newModel =
-                    -- update editorType so that checkbox display correct state
-                    case tab of
-                        CmMarkdownTab ->
-                            { model | editorType = Markdown }
-
-                        TxtMarkdownTab ->
-                            { model | editorType = PlainText }
-
-                        _ ->
-                            model
+                    { model | editor = ( tab, mdEditor ) }
             in
-            ( { newModel | selectedEditor = tab }, enumTabState tab |> setEditor )
+            ( newModel, enumTabState (getTabState newModel.editor) |> setEditor )
 
         AlertMsg visibility ->
             ( { model | alertVisibility = visibility }, Cmd.none )
 
-        SwitchEditor editor ->
+        SwitchMarkdownEditor editor ->
             -- using the toggle
             let
-                newModel =
-                    { model | editorType = editor }
+                ( tab, _ ) =
+                    model.editor
             in
-            case editor of
-                Markdown ->
-                    update (SwitchTab CmMarkdownTab) newModel
-
-                PlainText ->
-                    update (SwitchTab TxtMarkdownTab) newModel
+            ( { model | editor = ( tab, editor ) }, enumTabState (getTabState model.editor) |> setEditor )
 
 
 type Icon
@@ -759,14 +770,15 @@ enumTabState t =
             3
 
 
+                
 viewTabs : Model -> Html Msg
 viewTabs model =
     let
-        tabLink : TabState -> String -> Html Msg
+        tabLink : EditorType -> String -> Html Msg
         tabLink tab title =
             let
                 selectedClass =
-                    if model.selectedEditor == tab then
+                    if Tuple.first model.editor == tab then
                         "nav-link active"
 
                     else
@@ -777,11 +789,11 @@ viewTabs model =
                 ]
     in
     ul [ class "nav nav-tabs" ]
-        [ tabLink CmMarkdownTab "Markdown"
+        [ tabLink EditorMarkdown "Markdown"
 
         --tabLink TxtMarkdownTab "Markdown plain"
-        , tabLink MediaListTab "Media"
-        , tabLink StyleTab "Style"
+        , tabLink EditorMedia "Media"
+        , tabLink EditorStyle "Style"
         ]
 
 
@@ -806,22 +818,22 @@ viewAlert model =
         |> Alert.view model.alertVisibility
 
 
-viewEditorCheckbox : EditorType -> Html Msg
-viewEditorCheckbox editorType =
+viewEditorCheckbox : MarkdownEditor -> Html Msg
+viewEditorCheckbox markdownEditor =
     let
         onToggle : Bool -> Msg
         onToggle becomesChecked =
             if becomesChecked then
-                SwitchEditor PlainText
+                SwitchMarkdownEditor TextareaMarkdown
 
             else
-                SwitchEditor Markdown
+                SwitchMarkdownEditor CodemirrorMarkdown
     in
     Checkbox.checkbox
         [ Checkbox.onCheck onToggle
-        , Checkbox.checked <| editorType == PlainText
+        , Checkbox.checked <| markdownEditor == TextareaMarkdown
         ]
-        "spellcheck"
+        "plaintext"
 
 
 view : Model -> Html Msg
@@ -863,6 +875,14 @@ view model =
 
                 _ ->
                     viewAlert model
+
+        editorCheckbox =
+            case model.editor of
+                ( EditorMarkdown, markdownEditor ) ->
+                    viewEditorCheckbox markdownEditor
+
+                _ ->
+                    span [] []
     in
     div []
         [ viewTabs model
@@ -872,7 +892,7 @@ view model =
         , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
         , mkButton ImportIcon True DownloadExport "Export doc"
         , saveButton
-        , viewEditorCheckbox model.editorType
+        , editorCheckbox
         , alert
         , mediaList
         ]
