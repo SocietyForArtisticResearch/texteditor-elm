@@ -824,10 +824,10 @@ viewEditorCheckbox markdownEditor =
         onToggle : Bool -> Msg
         onToggle becomesChecked =
             if becomesChecked then
-                SwitchMarkdownEditor TextareaMarkdown
+                SwitchMarkdownEditor CodemirrorMarkdown
 
             else
-                SwitchMarkdownEditor CodemirrorMarkdown
+                SwitchMarkdownEditor TextareaMarkdown
     in
     Checkbox.checkbox
         [ Checkbox.onCheck onToggle

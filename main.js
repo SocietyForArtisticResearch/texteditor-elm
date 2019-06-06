@@ -13375,7 +13375,7 @@ var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$onCheck = function (toMsg) {
 };
 var author$project$Main$viewEditorCheckbox = function (markdownEditor) {
 	var onToggle = function (becomesChecked) {
-		return becomesChecked ? author$project$Main$SwitchMarkdownEditor(author$project$Main$TextareaMarkdown) : author$project$Main$SwitchMarkdownEditor(author$project$Main$CodemirrorMarkdown);
+		return becomesChecked ? author$project$Main$SwitchMarkdownEditor(author$project$Main$CodemirrorMarkdown) : author$project$Main$SwitchMarkdownEditor(author$project$Main$TextareaMarkdown);
 	};
 	return A2(
 		rundis$elm_bootstrap$Bootstrap$Form$Checkbox$checkbox,
