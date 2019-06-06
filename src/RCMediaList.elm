@@ -5,8 +5,8 @@ import Bootstrap.Button as Button
 import Bootstrap.Table as Table
 import Bootstrap.Utilities.Spacing as Spacing
 import Exposition exposing (RCMediaObject)
-import Html exposing (Html, div, span, text)
-import Html.Attributes exposing (id, style)
+import Html exposing (Html, div, img, span, text)
+import Html.Attributes exposing (id, src, style)
 import Html.Events exposing (onClick)
 
 
@@ -66,7 +66,8 @@ view objectList messages =
                                 [ text "x" ]
                     in
                     Table.tr []
-                        [ Table.td [] [ text <| String.fromInt object.id ]
+                        [ Table.td [] [ viewThumbnail object ]
+                        , Table.td [] [ text <| String.fromInt object.id ]
                         , Table.td [] [ text object.name ]
                         , Table.td [] [ editButton, insertButton, removeButton ]
                         ]
@@ -82,3 +83,22 @@ view objectList messages =
                         Table.tbody [] rows
                     }
                 ]
+
+
+viewThumbnail : RCMediaObject -> Html msg
+viewThumbnail object =
+    case object.mediaType of
+        Exposition.RCImage ->
+            let
+                thumburl =
+                    Exposition.thumbUrl object
+            in
+            img
+                [ src thumburl
+                , style "width" "50"
+                , style "height" "50"
+                ]
+                []
+
+        _ ->
+            span [] [ text "no preview" ]

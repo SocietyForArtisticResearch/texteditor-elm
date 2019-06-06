@@ -11454,6 +11454,29 @@ var author$project$RCMediaEdit$viewMediaDialog = F4(
 							rundis$elm_bootstrap$Bootstrap$Modal$small(
 								rundis$elm_bootstrap$Bootstrap$Modal$config(closeMediaDialog)))))));
 	});
+var author$project$RCMediaList$viewThumbnail = function (object) {
+	var _n0 = object.mediaType;
+	if (_n0.$ === 'RCImage') {
+		var thumburl = author$project$Exposition$thumbUrl(object);
+		return A2(
+			elm$html$Html$img,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$src(thumburl),
+					A2(elm$html$Html$Attributes$style, 'width', '50'),
+					A2(elm$html$Html$Attributes$style, 'height', '50')
+				]),
+			_List_Nil);
+	} else {
+		return A2(
+			elm$html$Html$span,
+			_List_Nil,
+			_List_fromArray(
+				[
+					elm$html$Html$text('no preview')
+				]));
+	}
+};
 var rundis$elm_bootstrap$Bootstrap$Alert$attrs = F2(
 	function (attributes, _n0) {
 		var configRec = _n0.a;
@@ -12094,6 +12117,13 @@ var author$project$RCMediaList$view = F2(
 					_List_Nil,
 					_List_fromArray(
 						[
+							A2(
+							rundis$elm_bootstrap$Bootstrap$Table$td,
+							_List_Nil,
+							_List_fromArray(
+								[
+									author$project$RCMediaList$viewThumbnail(object)
+								])),
 							A2(
 							rundis$elm_bootstrap$Bootstrap$Table$td,
 							_List_Nil,
