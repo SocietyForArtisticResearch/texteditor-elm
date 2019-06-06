@@ -47,7 +47,14 @@
 	    height: 100%;
 	}
 
+	.editor-col {
+	    display: flex;
+	    flex-direction: column;
+	    height:100%;
+	}
+
 	.CodeMirror {
+	    flex: 1;
 	    height: 100%;
 	}
 
@@ -62,11 +69,7 @@
             overflow-y: scroll;
         }
 
-	@media only screen and (min-width: 600px) {
-	    /* .editor-col { */
-	    /* 	height: 100%; */
-	    /* } */
-	    
+	@media only screen and (min-width: 600px) {  
 	   .CodeMirror {
 		max-width:50vw; /* this should prevent codemirror from growing out of the page */
 	   }
