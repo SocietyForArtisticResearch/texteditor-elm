@@ -422,7 +422,8 @@ update msg model =
                             List.foldr Exposition.addOrReplaceObject modelWithProblems.exposition mediaEntries
 
                         expositionWithClasses =
-                            addMediaUserClasses expositionWithMedia model.mediaClassesDict
+                            Exposition.renameDuplicateMedia <|
+                                addMediaUserClasses expositionWithMedia model.mediaClassesDict
 
                         _ =
                             Debug.log "loaded exposition with media: " expositionWithClasses
@@ -431,7 +432,7 @@ update msg model =
                         | exposition = expositionWithClasses
                       }
                     , Cmd.batch
-                        [ setContent
+                        ([ setContent
                             (E.object
                                 [ ( "md"
                                   , E.string expositionWithClasses.markdownInput
@@ -439,12 +440,14 @@ update msg model =
                                 , ( "style", E.string expositionWithClasses.css )
                                 ]
                             )
-                        , setPreviewContent expositionWithClasses.renderedHtml
-                        ]
+                         , setPreviewContent expositionWithClasses.renderedHtml
+                         ]
+                            ++ List.map (\o -> RCAPI.updateMedia o (Http.expectString SavedMediaEdit))
+                                expositionWithClasses.media
+                        )
                     )
 
         MediaEdit ( objInModelName, objFromDialog ) ->
-            -- TODO: store in backend
             case Exposition.objectByNameOrId objInModelName model.exposition of
                 Nothing ->
                     let
@@ -587,12 +590,10 @@ update msg model =
                             { model
                                 | importUploadStatus = Ready
                                 , exposition =
-                                    Exposition.renameDuplicateMedia
-                                        (Exposition.withMd model.exposition
-                                            (Exposition.replaceImagesWithTools
-                                                (model.exposition.markdownInput ++ importResult.markdown)
-                                                importResult.media
-                                            )
+                                    Exposition.withMd model.exposition
+                                        (Exposition.replaceImagesWithTools
+                                            (model.exposition.markdownInput ++ importResult.markdown)
+                                            importResult.media
                                         )
                             }
                     in

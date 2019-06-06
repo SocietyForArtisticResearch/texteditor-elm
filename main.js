@@ -8851,28 +8851,39 @@ var author$project$Main$update = F2(
 						var mediaEntries = _n16.b;
 						var modelWithProblems = A2(author$project$Main$addProblems, model, problems);
 						var expositionWithMedia = A3(elm$core$List$foldr, author$project$Exposition$addOrReplaceObject, modelWithProblems.exposition, mediaEntries);
-						var expositionWithClasses = A2(author$project$Exposition$addMediaUserClasses, expositionWithMedia, model.mediaClassesDict);
+						var expositionWithClasses = author$project$Exposition$renameDuplicateMedia(
+							A2(author$project$Exposition$addMediaUserClasses, expositionWithMedia, model.mediaClassesDict));
 						var _n17 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithClasses);
 						return _Utils_Tuple2(
 							_Utils_update(
 								modelWithProblems,
 								{exposition: expositionWithClasses}),
 							elm$core$Platform$Cmd$batch(
-								_List_fromArray(
-									[
-										author$project$Main$setContent(
-										elm$json$Json$Encode$object(
-											_List_fromArray(
-												[
-													_Utils_Tuple2(
-													'md',
-													elm$json$Json$Encode$string(expositionWithClasses.markdownInput)),
-													_Utils_Tuple2(
-													'style',
-													elm$json$Json$Encode$string(expositionWithClasses.css))
-												]))),
-										author$project$Main$setPreviewContent(expositionWithClasses.renderedHtml)
-									])));
+								_Utils_ap(
+									_List_fromArray(
+										[
+											author$project$Main$setContent(
+											elm$json$Json$Encode$object(
+												_List_fromArray(
+													[
+														_Utils_Tuple2(
+														'md',
+														elm$json$Json$Encode$string(expositionWithClasses.markdownInput)),
+														_Utils_Tuple2(
+														'style',
+														elm$json$Json$Encode$string(expositionWithClasses.css))
+													]))),
+											author$project$Main$setPreviewContent(expositionWithClasses.renderedHtml)
+										]),
+									A2(
+										elm$core$List$map,
+										function (o) {
+											return A2(
+												author$project$RCAPI$updateMedia,
+												o,
+												elm$http$Http$expectString(author$project$Main$SavedMediaEdit));
+										},
+										expositionWithClasses.media))));
 					}
 				case 'MediaEdit':
 					var _n18 = msg.a;
@@ -9050,14 +9061,13 @@ var author$project$Main$update = F2(
 						var newModel = _Utils_update(
 							model,
 							{
-								exposition: author$project$Exposition$renameDuplicateMedia(
+								exposition: A2(
+									author$project$Exposition$withMd,
+									model.exposition,
 									A2(
-										author$project$Exposition$withMd,
-										model.exposition,
-										A2(
-											author$project$Exposition$replaceImagesWithTools,
-											_Utils_ap(model.exposition.markdownInput, importResult.markdown),
-											importResult.media))),
+										author$project$Exposition$replaceImagesWithTools,
+										_Utils_ap(model.exposition.markdownInput, importResult.markdown),
+										importResult.media)),
 								importUploadStatus: author$project$Main$Ready
 							});
 						var _n30 = A2(elm$core$Debug$log, 'import result: ', importResult);
