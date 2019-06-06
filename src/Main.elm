@@ -797,10 +797,10 @@ viewEditorCheckbox editorType =
                     Debug.log "editortype" editorType
             in
             if checked then
-                SwitchEditor Markdown
+                SwitchEditor PlainText
 
             else
-                SwitchEditor PlainText
+                SwitchEditor Markdown
     in
     Checkbox.checkbox
         [ Checkbox.onCheck onToggle
