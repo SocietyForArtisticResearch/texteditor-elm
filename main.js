@@ -12543,15 +12543,16 @@ var author$project$Main$update = F2(
 					var editor = msg.a;
 					var _n34 = model.editor;
 					var tab = _n34.a;
+					var newModel = _Utils_update(
+						model,
+						{
+							editor: _Utils_Tuple2(tab, editor)
+						});
 					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								editor: _Utils_Tuple2(tab, editor)
-							}),
+						newModel,
 						author$project$Main$setEditor(
 							author$project$Main$enumTabState(
-								author$project$Main$getTabState(model.editor))));
+								author$project$Main$getTabState(newModel.editor))));
 			}
 		}
 	});
@@ -13375,7 +13376,7 @@ var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$onCheck = function (toMsg) {
 };
 var author$project$Main$viewEditorCheckbox = function (markdownEditor) {
 	var onToggle = function (becomesChecked) {
-		return becomesChecked ? author$project$Main$SwitchMarkdownEditor(author$project$Main$CodemirrorMarkdown) : author$project$Main$SwitchMarkdownEditor(author$project$Main$TextareaMarkdown);
+		return becomesChecked ? author$project$Main$SwitchMarkdownEditor(author$project$Main$TextareaMarkdown) : author$project$Main$SwitchMarkdownEditor(author$project$Main$CodemirrorMarkdown);
 	};
 	return A2(
 		rundis$elm_bootstrap$Bootstrap$Form$Checkbox$checkbox,
