@@ -1,6 +1,7 @@
 module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, mkMediaName, objectByNameOrId, removeObjectWithID, renameDuplicateMedia, replaceImagesWithTools, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withCSS, withHtml, withMd)
 
 import Dict
+import Html.Parser as HtmlParser
 import Html.String as Html
 import Html.String.Attributes as Attr
 import Parser exposing ((|.), (|=))
@@ -171,17 +172,6 @@ type Preload
     | None
 
 
-type alias TOCEntry =
-    { level : Int
-    , title : String
-    , id : String
-    }
-
-
-type alias TOC =
-    List TOCEntry
-
-
 rcClass : RCMediaType -> String
 rcClass t =
     case t of
@@ -265,12 +255,6 @@ addOrReplaceObject obj exp =
 
     else
         addObject obj exp
-
-
-
--- withoutMedia : Int -> RCExposition -> RCExposition
--- withoutMedia id exp =
---     { exp | media = List.filter (\o -> o.id /= id) exp.media }
 
 
 mediaUrl : RCMediaObject -> String
@@ -485,12 +469,7 @@ htmlForMediaString expo mediaString =
 
 
 
--- render : RCExposition msg -> RCExposition msg
--- render exp =
---     { exp | renderedHtml = RCMD.rcToHtml (htmlForMediaString exp) exp.markdownInput }
--- withRenderedHtmlString : RCExposition msg -> String -> RCExposition msg
--- withRenderedHtmlString exp htmlString =
---     { exp | renderedHtmlString = htmlString }
+-- DEALING WITH TOOLS<->IMAGES
 
 
 insertToolHtml : String -> RCExposition -> String
@@ -601,6 +580,75 @@ replaceImagesWithTools md mediaIds =
                             ""
                 )
                 md
+
+
+
+-- TOC GENERATION
+
+
+type alias TOCEntry =
+    { level : Int
+    , title : String
+    , id : String
+    }
+
+
+type alias TOC =
+    List TOCEntry
+
+
+getText : List HtmlParser.Node -> String
+getText nodes =
+    case nodes of
+        (HtmlParser.Text t) :: rest ->
+            String.append t (getText rest)
+
+        (HtmlParser.Comment _) :: rest ->
+            getText rest
+
+        (HtmlParser.Element _ _ children) :: rest ->
+            String.append (getText children) (getText rest)
+
+        [] ->
+            ""
+
+
+getId : List HtmlParser.Attribute -> String
+getId attrs =
+    let
+        id =
+            List.filter (\( a, _ ) -> a == "id") attrs
+    in
+    Maybe.withDefault "" <| Maybe.map (\( _, val ) -> val) <| List.head id
+
+
+findHeaders : HtmlParser.Node -> List TOCEntry
+findHeaders node =
+    case node of
+        HtmlParser.Element "h1" attr children ->
+            [ TOCEntry 1 (getId attr) (getText children) ]
+
+        HtmlParser.Element "h2" attr children ->
+            [ TOCEntry 2 (getId attr) (getText children) ]
+
+        HtmlParser.Element "h3" attr children ->
+            [ TOCEntry 3 (getId attr) (getText children) ]
+
+        HtmlParser.Element _ _ children ->
+            List.concatMap findHeaders children
+
+        _ ->
+            []
+
+
+createToc : RCExposition -> TOC
+createToc expo =
+    case HtmlParser.run expo.renderedHtml of
+        Ok html ->
+            List.concatMap findHeaders html
+
+        Err _ ->
+            []
 
 
 
