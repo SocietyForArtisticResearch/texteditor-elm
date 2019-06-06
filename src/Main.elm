@@ -22,18 +22,9 @@ import RCAPI
 import RCMediaEdit
 import RCMediaList
 import Regex
+import Settings exposing (..)
 import String.Extra as Str
 import UserConfirm exposing (ConfirmDialogContent)
-
-
-baseUrl : String
-baseUrl =
-    "elm-editor/"
-
-
-iconUrl : String
-iconUrl =
-    baseUrl ++ "lib/icons/"
 
 
 type alias Model =
@@ -154,15 +145,6 @@ updateEditorContent model =
 
 
 port mediaDialog : (E.Value -> msg) -> Sub msg
-
-
-
--- -- code mirror style
--- port currentStyleGeneration : (E.Value -> msg) -> Sub msg
--- port cmStyleContent : (E.Value -> msg) -> Sub msg
--- port getStyleContent : () -> Cmd msg
--- port setStyleContent : String -> Cmd msg
---- editor selection
 
 
 port setEditor : Int -> Cmd msg
@@ -605,14 +587,15 @@ update msg model =
                             { model
                                 | importUploadStatus = Ready
                                 , exposition =
-                                    Exposition.withMd model.exposition
-                                        (Exposition.replaceImagesWithTools
-                                            (model.exposition.markdownInput ++ importResult.markdown)
-                                            importResult.media
+                                    Exposition.renameDuplicateMedia
+                                        (Exposition.withMd model.exposition
+                                            (Exposition.replaceImagesWithTools
+                                                (model.exposition.markdownInput ++ importResult.markdown)
+                                                importResult.media
+                                            )
                                         )
                             }
                     in
-                    -- TODO: convert images to tools in markdown!
                     ( newModel
                     , Cmd.batch
                         [ updateEditorContent newModel

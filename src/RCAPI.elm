@@ -49,6 +49,11 @@ type alias APIExposition =
     }
 
 
+mkExposition : Maybe String -> Maybe String -> Either String (List APIAdditionalMediaMetadata) -> Either String APIExpositionMetadata -> Maybe String -> String -> APIExposition
+mkExposition html md media meta style title =
+    APIExposition (Maybe.withDefault "" html) (Maybe.withDefault "" md) media meta (Maybe.withDefault "" style) title
+
+
 type alias APIMediaEntry =
     { id : Int, media : APIMedia, description : String, copyright : String, name : String }
 
@@ -72,14 +77,14 @@ type alias APIPandocImport =
 
 apiExposition : Decoder APIExposition
 apiExposition =
-    map6 APIExposition
-        (field "html" string)
-        (field "markdown" string)
+    map6 mkExposition
+        (maybe (field "html" string))
+        (maybe (field "markdown" string))
         (field "media" (oneOf [ eitherString, rightDecoder (list apiAdditionalMediaMetadata) ]))
         -- should work for both ways of encoding
         (field "metadata" (oneOf [ eitherString, rightDecoder apiExpositionMetadata ]))
         -- should work for both ways of encoding
-        (field "style" string)
+        (maybe (field "style" string))
         (field "title" string)
 
 

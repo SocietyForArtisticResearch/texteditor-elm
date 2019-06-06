@@ -5464,10 +5464,6 @@ var author$project$Main$emptyModel = F2(
 		};
 	});
 var author$project$Problems$WrongExpositionUrl = {$: 'WrongExpositionUrl'};
-var author$project$RCAPI$APIExposition = F6(
-	function (html, markdown, media, metadata, style, title) {
-		return {html: html, markdown: markdown, media: media, metadata: metadata, style: style, title: title};
-	});
 var author$project$RCAPI$APIAdditionalMediaMetadata = F3(
 	function (id, name, userClass) {
 		return {id: id, name: name, userClass: userClass};
@@ -5511,6 +5507,30 @@ var author$project$RCAPI$Left = function (a) {
 	return {$: 'Left', a: a};
 };
 var author$project$RCAPI$eitherString = A2(elm$json$Json$Decode$map, author$project$RCAPI$Left, elm$json$Json$Decode$string);
+var author$project$RCAPI$APIExposition = F6(
+	function (html, markdown, media, metadata, style, title) {
+		return {html: html, markdown: markdown, media: media, metadata: metadata, style: style, title: title};
+	});
+var elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
+var author$project$RCAPI$mkExposition = F6(
+	function (html, md, media, meta, style, title) {
+		return A6(
+			author$project$RCAPI$APIExposition,
+			A2(elm$core$Maybe$withDefault, '', html),
+			A2(elm$core$Maybe$withDefault, '', md),
+			media,
+			meta,
+			A2(elm$core$Maybe$withDefault, '', style),
+			title);
+	});
 var author$project$RCAPI$Right = function (a) {
 	return {$: 'Right', a: a};
 };
@@ -5521,9 +5541,11 @@ var elm$json$Json$Decode$list = _Json_decodeList;
 var elm$json$Json$Decode$map6 = _Json_map6;
 var author$project$RCAPI$apiExposition = A7(
 	elm$json$Json$Decode$map6,
-	author$project$RCAPI$APIExposition,
-	A2(elm$json$Json$Decode$field, 'html', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'markdown', elm$json$Json$Decode$string),
+	author$project$RCAPI$mkExposition,
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'html', elm$json$Json$Decode$string)),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'markdown', elm$json$Json$Decode$string)),
 	A2(
 		elm$json$Json$Decode$field,
 		'media',
@@ -5543,7 +5565,8 @@ var author$project$RCAPI$apiExposition = A7(
 					author$project$RCAPI$eitherString,
 					author$project$RCAPI$rightDecoder(author$project$RCAPI$apiExpositionMetadata)
 				]))),
-	A2(elm$json$Json$Decode$field, 'style', elm$json$Json$Decode$string),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'style', elm$json$Json$Decode$string)),
 	A2(elm$json$Json$Decode$field, 'title', elm$json$Json$Decode$string));
 var elm$core$Result$mapError = F2(
 	function (f, result) {
@@ -6993,15 +7016,6 @@ var elm$core$Maybe$map = F2(
 			return elm$core$Maybe$Nothing;
 		}
 	});
-var elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
 var elm$regex$Regex$Match = F4(
 	function (match, index, number, submatches) {
 		return {index: index, match: match, number: number, submatches: submatches};
@@ -7829,6 +7843,44 @@ var author$project$Exposition$mkMediaName = function (exp) {
 		0,
 		imageNames);
 	return 'media' + elm$core$String$fromInt(maxImage + 1);
+};
+var author$project$Exposition$renameDuplicateMedia = function (exp) {
+	var renameDuplicates = F2(
+		function (e, m) {
+			renameDuplicates:
+			while (true) {
+				if (!m.b) {
+					return e;
+				} else {
+					var h = m.a;
+					var t = m.b;
+					if (A2(
+						elm$core$List$any,
+						function (o) {
+							return _Utils_eq(o.name, h.name);
+						},
+						e.media)) {
+						var newOb = _Utils_update(
+							h,
+							{
+								name: author$project$Exposition$mkMediaName(e)
+							});
+						var $temp$e = A2(author$project$Exposition$replaceObject, newOb, e),
+							$temp$m = t;
+						e = $temp$e;
+						m = $temp$m;
+						continue renameDuplicates;
+					} else {
+						var $temp$e = e,
+							$temp$m = t;
+						e = $temp$e;
+						m = $temp$m;
+						continue renameDuplicates;
+					}
+				}
+			}
+		});
+	return A2(renameDuplicates, exp, exp.media);
 };
 var elm$core$List$drop = F2(
 	function (n, list) {
@@ -8998,13 +9050,14 @@ var author$project$Main$update = F2(
 						var newModel = _Utils_update(
 							model,
 							{
-								exposition: A2(
-									author$project$Exposition$withMd,
-									model.exposition,
+								exposition: author$project$Exposition$renameDuplicateMedia(
 									A2(
-										author$project$Exposition$replaceImagesWithTools,
-										_Utils_ap(model.exposition.markdownInput, importResult.markdown),
-										importResult.media)),
+										author$project$Exposition$withMd,
+										model.exposition,
+										A2(
+											author$project$Exposition$replaceImagesWithTools,
+											_Utils_ap(model.exposition.markdownInput, importResult.markdown),
+											importResult.media))),
 								importUploadStatus: author$project$Main$Ready
 							});
 						var _n30 = A2(elm$core$Debug$log, 'import result: ', importResult);
@@ -9118,8 +9171,8 @@ var author$project$Main$InsertTool = function (a) {
 	return {$: 'InsertTool', a: a};
 };
 var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$ConfirmMediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertTool};
-var author$project$Main$baseUrl = 'elm-editor/';
-var author$project$Main$iconUrl = author$project$Main$baseUrl + 'lib/icons/';
+var author$project$Settings$baseUrl = 'elm-editor/';
+var author$project$Settings$iconUrl = author$project$Settings$baseUrl + 'lib/icons/';
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	switch (handler.$) {
 		case 'Normal':
@@ -9168,7 +9221,7 @@ var author$project$Main$renderIcon = function (icon) {
 			_List_fromArray(
 				[
 					elm$html$Html$Attributes$src(
-					_Utils_ap(author$project$Main$iconUrl, url)),
+					_Utils_ap(author$project$Settings$iconUrl, url)),
 					elm$html$Html$Attributes$class('m-1'),
 					elm$html$Html$Attributes$width(15),
 					elm$html$Html$Attributes$height(15),

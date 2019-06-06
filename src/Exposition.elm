@@ -1,4 +1,4 @@
-module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, mkMediaName, objectByNameOrId, replaceImagesWithTools, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withCSS, withHtml, withMd, withoutMedia)
+module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, mkMediaName, objectByNameOrId, renameDuplicateMedia, replaceImagesWithTools, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withCSS, withHtml, withMd, withoutMedia)
 
 import Dict
 import Html.String as Html
@@ -102,6 +102,28 @@ mkMediaName exp =
                 imageNames
     in
     "media" ++ String.fromInt (maxImage + 1)
+
+
+renameDuplicateMedia : RCExposition -> RCExposition
+renameDuplicateMedia exp =
+    let
+        renameDuplicates e m =
+            case m of
+                [] ->
+                    e
+
+                h :: t ->
+                    if List.any (\o -> o.name == h.name) e.media then
+                        let
+                            newOb =
+                                { h | name = mkMediaName e }
+                        in
+                        renameDuplicates (replaceObject newOb e) t
+
+                    else
+                        renameDuplicates e t
+    in
+    renameDuplicates exp exp.media
 
 
 type alias OptionalDimensions =
