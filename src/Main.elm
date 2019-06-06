@@ -3,6 +3,7 @@ port module Main exposing (Msg(..), main, update, view)
 import Bootstrap.Alert as Alert
 import Bootstrap.Button as Button
 import Bootstrap.Form as Form
+import Bootstrap.Form.Checkbox as Checkbox
 import Bootstrap.Grid as Grid
 import Bootstrap.Modal as Modal
 import Bootstrap.Utilities.Spacing as Spacing
@@ -13,7 +14,7 @@ import File exposing (File)
 import File.Select as Select
 import Html exposing (Html, a, button, div, img, li, p, span, text, ul)
 import Html.Attributes exposing (attribute, class, for, href, id, src)
-import Html.Events exposing (on, onClick, onInput)
+import Html.Events exposing (on, onCheck, onClick, onInput)
 import Http
 import Json.Decode as D
 import Json.Encode as E
@@ -49,7 +50,8 @@ type alias Model =
     , problems : List Problems.Problem
     , mediaClassesDict : Dict.Dict Int String -- stores userclasses for media to be added to media list
     , saved : Bool
-    , selectedEditor : TabState
+    , selectedEditor : TabState -- Markdown plaintext style or media ?
+    , editorType : EditorType -- Markdown or plaintext (tracked separate because of checkbox)
     }
 
 
@@ -63,6 +65,11 @@ type TabState
     | TxtMarkdownTab
     | StyleTab
     | MediaListTab
+
+
+type EditorType
+    = Markdown
+    | PlainText
 
 
 type alias Flags =
@@ -89,6 +96,7 @@ emptyModel research weave =
     , mediaClassesDict = Dict.empty
     , saved = True
     , selectedEditor = CmMarkdownTab
+    , editorType = Markdown
     }
 
 
@@ -226,6 +234,7 @@ type Msg
     | SwitchTab TabState
     | MediaDeleted (Result Http.Error ())
     | AlertMsg Alert.Visibility
+    | SwitchEditor EditorType
 
 
 
@@ -651,6 +660,14 @@ update msg model =
         AlertMsg visibility ->
             ( { model | alertVisibility = visibility }, Cmd.none )
 
+        SwitchEditor editor ->
+            case editor of
+                Markdown ->
+                    update (SwitchTab CmMarkdownTab) model
+
+                PlainText ->
+                    update (SwitchTab TxtMarkdownTab) model
+
 
 type Icon
     = PlusIcon
@@ -742,7 +759,8 @@ viewTabs model =
     in
     ul [ class "nav nav-tabs" ]
         [ tabLink CmMarkdownTab "Markdown"
-        , tabLink TxtMarkdownTab "Markdown plain"
+
+        --tabLink TxtMarkdownTab "Markdown plain"
         , tabLink MediaListTab "Media"
         , tabLink StyleTab "Style"
         ]
@@ -767,6 +785,24 @@ viewAlert model =
             , text <| "this is the problem: " ++ message
             ]
         |> Alert.view model.alertVisibility
+
+
+viewEditorCheckbox : EditorType -> Html Msg
+viewEditorCheckbox editorType =
+    let
+        onToggle : Bool -> Msg
+        onToggle checked =
+            if checked then
+                SwitchEditor Markdown
+
+            else
+                SwitchEditor PlainText
+    in
+    Checkbox.checkbox
+        [ Checkbox.onCheck onToggle
+        , Checkbox.checked <| editorType == PlainText
+        ]
+        "spellchecker"
 
 
 view : Model -> Html Msg
@@ -808,6 +844,7 @@ view model =
         , viewUpload PlusIcon False UploadMediaFileSelect "Media" model.mediaUploadStatus
         , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
         , saveButton
+        , viewEditorCheckbox model.editorType
         , viewAlert model
         , mediaList
         ]

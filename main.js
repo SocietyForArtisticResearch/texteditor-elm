@@ -5435,6 +5435,7 @@ var author$project$Main$decodeFlags = A3(
 var author$project$Settings$editorVersion = '2.0.0';
 var author$project$Exposition$empty = {authors: _List_Nil, contentVersion: 0, css: '', currentWeave: 0, editorVersion: author$project$Settings$editorVersion, id: 0, markdownInput: '', media: _List_Nil, renderedHtml: '', title: ''};
 var author$project$Main$CmMarkdownTab = {$: 'CmMarkdownTab'};
+var author$project$Main$Markdown = {$: 'Markdown'};
 var author$project$Main$Ready = {$: 'Ready'};
 var elm$core$Basics$negate = function (n) {
 	return -n;
@@ -5451,6 +5452,7 @@ var author$project$Main$emptyModel = F2(
 			alertVisibility: rundis$elm_bootstrap$Bootstrap$Alert$closed,
 			confirmDialog: _Utils_Tuple3(rundis$elm_bootstrap$Bootstrap$Modal$hidden, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing),
 			editGeneration: _Utils_Tuple2(-1, -1),
+			editorType: author$project$Main$Markdown,
 			exposition: author$project$Exposition$empty,
 			importUploadStatus: author$project$Main$Ready,
 			mediaClassesDict: elm$core$Dict$empty,
@@ -8001,6 +8003,10 @@ var author$project$Main$SavedExposition = function (a) {
 var author$project$Main$SavedMediaEdit = function (a) {
 	return {$: 'SavedMediaEdit', a: a};
 };
+var author$project$Main$SwitchTab = function (a) {
+	return {$: 'SwitchTab', a: a};
+};
+var author$project$Main$TxtMarkdownTab = {$: 'TxtMarkdownTab'};
 var author$project$Main$UploadImportFileSelected = function (a) {
 	return {$: 'UploadImportFileSelected', a: a};
 };
@@ -9059,13 +9065,28 @@ var author$project$Main$update = F2(
 							{selectedEditor: tab}),
 						author$project$Main$setEditor(
 							author$project$Main$enumTabState(tab)));
-				default:
+				case 'AlertMsg':
 					var visibility = msg.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{alertVisibility: visibility}),
 						elm$core$Platform$Cmd$none);
+				default:
+					var editor = msg.a;
+					if (editor.$ === 'Markdown') {
+						var $temp$msg = author$project$Main$SwitchTab(author$project$Main$CmMarkdownTab),
+							$temp$model = model;
+						msg = $temp$msg;
+						model = $temp$model;
+						continue update;
+					} else {
+						var $temp$msg = author$project$Main$SwitchTab(author$project$Main$TxtMarkdownTab),
+							$temp$model = model;
+						msg = $temp$msg;
+						model = $temp$model;
+						continue update;
+					}
 			}
 		}
 	});
@@ -9494,12 +9515,245 @@ var author$project$Main$viewAlert = function (model) {
 				author$project$Main$AlertMsg,
 				rundis$elm_bootstrap$Bootstrap$Alert$info(rundis$elm_bootstrap$Bootstrap$Alert$config))));
 };
+var author$project$Main$PlainText = {$: 'PlainText'};
+var author$project$Main$SwitchEditor = function (a) {
+	return {$: 'SwitchEditor', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Checkbox = function (a) {
+	return {$: 'Checkbox', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$create = F2(
+	function (options, label) {
+		return rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Checkbox(
+			{label: label, options: options});
+	});
+var elm$html$Html$input = _VirtualDom_node('input');
+var elm$html$Html$label = _VirtualDom_node('label');
+var elm$html$Html$Attributes$for = elm$html$Html$Attributes$stringProperty('htmlFor');
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$applyModifier = F2(
+	function (modifier, options) {
+		switch (modifier.$) {
+			case 'Id':
+				var val = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						id: elm$core$Maybe$Just(val)
+					});
+			case 'Value':
+				var val = modifier.a;
+				return _Utils_update(
+					options,
+					{state: val});
+			case 'Inline':
+				return _Utils_update(
+					options,
+					{inline: true});
+			case 'OnChecked':
+				var toMsg = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						onChecked: elm$core$Maybe$Just(toMsg)
+					});
+			case 'Custom':
+				return _Utils_update(
+					options,
+					{custom: true});
+			case 'Disabled':
+				var val = modifier.a;
+				return _Utils_update(
+					options,
+					{disabled: val});
+			case 'Validation':
+				var validation = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						validation: elm$core$Maybe$Just(validation)
+					});
+			default:
+				var attrs_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						attributes: _Utils_ap(options.attributes, attrs_)
+					});
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Off = {$: 'Off'};
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$defaultOptions = {attributes: _List_Nil, custom: false, disabled: false, id: elm$core$Maybe$Nothing, inline: false, onChecked: elm$core$Maybe$Nothing, state: rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Off, validation: elm$core$Maybe$Nothing};
+var elm$json$Json$Encode$bool = _Json_wrap;
+var elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$bool(bool));
+	});
+var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
+var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
+var elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
+	});
+var elm$json$Json$Decode$bool = _Json_decodeBool;
+var elm$html$Html$Events$targetChecked = A2(
+	elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'checked']),
+	elm$json$Json$Decode$bool);
+var elm$html$Html$Events$onCheck = function (tagger) {
+	return A2(
+		elm$html$Html$Events$on,
+		'change',
+		A2(elm$json$Json$Decode$map, tagger, elm$html$Html$Events$targetChecked));
+};
+var elm$html$Html$Attributes$checked = elm$html$Html$Attributes$boolProperty('checked');
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$stateAttribute = function (state) {
+	switch (state.$) {
+		case 'On':
+			return elm$html$Html$Attributes$checked(true);
+		case 'Off':
+			return elm$html$Html$Attributes$checked(false);
+		default:
+			return A2(elm$html$Html$Attributes$attribute, 'indeterminate', 'true');
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Form$FormInternal$validationToString = function (validation) {
+	if (validation.$ === 'Success') {
+		return 'is-valid';
+	} else {
+		return 'is-invalid';
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$toAttributes = function (options) {
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$classList(
+				_List_fromArray(
+					[
+						_Utils_Tuple2('form-check-input', !options.custom),
+						_Utils_Tuple2('custom-control-input', options.custom)
+					])),
+				elm$html$Html$Attributes$type_('checkbox'),
+				elm$html$Html$Attributes$disabled(options.disabled),
+				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$stateAttribute(options.state)
+			]),
+		_Utils_ap(
+			A2(
+				elm$core$List$filterMap,
+				elm$core$Basics$identity,
+				_List_fromArray(
+					[
+						A2(elm$core$Maybe$map, elm$html$Html$Events$onCheck, options.onChecked),
+						A2(elm$core$Maybe$map, elm$html$Html$Attributes$id, options.id)
+					])),
+			_Utils_ap(
+				function () {
+					var _n0 = options.validation;
+					if (_n0.$ === 'Just') {
+						var v = _n0.a;
+						return _List_fromArray(
+							[
+								elm$html$Html$Attributes$class(
+								rundis$elm_bootstrap$Bootstrap$Form$FormInternal$validationToString(v))
+							]);
+					} else {
+						return _List_Nil;
+					}
+				}(),
+				options.attributes)));
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$view = function (_n0) {
+	var chk = _n0.a;
+	var opts = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Form$Checkbox$applyModifier, rundis$elm_bootstrap$Bootstrap$Form$Checkbox$defaultOptions, chk.options);
+	return A2(
+		elm$html$Html$div,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$classList(
+				_List_fromArray(
+					[
+						_Utils_Tuple2('form-check', !opts.custom),
+						_Utils_Tuple2('form-check-inline', (!opts.custom) && opts.inline),
+						_Utils_Tuple2('custom-control', opts.custom),
+						_Utils_Tuple2('custom-checkbox', opts.custom),
+						_Utils_Tuple2('custom-control-inline', opts.inline && opts.custom)
+					]))
+			]),
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$input,
+				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$toAttributes(opts),
+				_List_Nil),
+				A2(
+				elm$html$Html$label,
+				_Utils_ap(
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$classList(
+							_List_fromArray(
+								[
+									_Utils_Tuple2('form-check-label', !opts.custom),
+									_Utils_Tuple2('custom-control-label', opts.custom)
+								]))
+						]),
+					function () {
+						var _n1 = opts.id;
+						if (_n1.$ === 'Just') {
+							var v = _n1.a;
+							return _List_fromArray(
+								[
+									elm$html$Html$Attributes$for(v)
+								]);
+						} else {
+							return _List_Nil;
+						}
+					}()),
+				_List_fromArray(
+					[
+						elm$html$Html$text(chk.label)
+					]))
+			]));
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$checkbox = F2(
+	function (options, label) {
+		return rundis$elm_bootstrap$Bootstrap$Form$Checkbox$view(
+			A2(rundis$elm_bootstrap$Bootstrap$Form$Checkbox$create, options, label));
+	});
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$On = {$: 'On'};
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Value = function (a) {
+	return {$: 'Value', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$checked = function (isCheck) {
+	return rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Value(
+		isCheck ? rundis$elm_bootstrap$Bootstrap$Form$Checkbox$On : rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Off);
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$OnChecked = function (a) {
+	return {$: 'OnChecked', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$onCheck = function (toMsg) {
+	return rundis$elm_bootstrap$Bootstrap$Form$Checkbox$OnChecked(toMsg);
+};
+var author$project$Main$viewEditorCheckbox = function (editorType) {
+	var onToggle = function (checked) {
+		return checked ? author$project$Main$SwitchEditor(author$project$Main$Markdown) : author$project$Main$SwitchEditor(author$project$Main$PlainText);
+	};
+	return A2(
+		rundis$elm_bootstrap$Bootstrap$Form$Checkbox$checkbox,
+		_List_fromArray(
+			[
+				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$onCheck(onToggle),
+				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$checked(
+				_Utils_eq(editorType, author$project$Main$PlainText))
+			]),
+		'spellchecker');
+};
 var author$project$Main$MediaListTab = {$: 'MediaListTab'};
 var author$project$Main$StyleTab = {$: 'StyleTab'};
-var author$project$Main$SwitchTab = function (a) {
-	return {$: 'SwitchTab', a: a};
-};
-var author$project$Main$TxtMarkdownTab = {$: 'TxtMarkdownTab'};
 var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$li = _VirtualDom_node('li');
 var elm$html$Html$ul = _VirtualDom_node('ul');
@@ -9545,7 +9799,6 @@ var author$project$Main$viewTabs = function (model) {
 		_List_fromArray(
 			[
 				A2(tabLink, author$project$Main$CmMarkdownTab, 'Markdown'),
-				A2(tabLink, author$project$Main$TxtMarkdownTab, 'Markdown plain'),
 				A2(tabLink, author$project$Main$MediaListTab, 'Media'),
 				A2(tabLink, author$project$Main$StyleTab, 'Style')
 			]));
@@ -9566,15 +9819,6 @@ var elm$core$Maybe$andThen = F2(
 			return elm$core$Maybe$Nothing;
 		}
 	});
-var elm$json$Json$Encode$bool = _Json_wrap;
-var elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$bool(bool));
-	});
-var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
 var rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption = function (size) {
 	switch (size.$) {
 		case 'XS':
@@ -9786,10 +10030,6 @@ var elm$html$Html$Events$stopPropagationOn = F2(
 			event,
 			elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
 	});
-var elm$json$Json$Decode$at = F2(
-	function (fields, decoder) {
-		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
-	});
 var elm$html$Html$Events$targetValue = A2(
 	elm$json$Json$Decode$at,
 	_List_fromArray(
@@ -9834,7 +10074,6 @@ var rundis$elm_bootstrap$Bootstrap$Form$Select$create = F2(
 			{items: items, options: options});
 	});
 var elm$html$Html$select = _VirtualDom_node('select');
-var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var rundis$elm_bootstrap$Bootstrap$Form$Select$applyModifier = F2(
 	function (modifier, options) {
 		switch (modifier.$) {
@@ -9902,13 +10141,6 @@ var rundis$elm_bootstrap$Bootstrap$Form$Select$sizeAttribute = F2(
 			},
 			rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption(size_));
 	});
-var rundis$elm_bootstrap$Bootstrap$Form$FormInternal$validationToString = function (validation) {
-	if (validation.$ === 'Success') {
-		return 'is-valid';
-	} else {
-		return 'is-invalid';
-	}
-};
 var rundis$elm_bootstrap$Bootstrap$Form$Select$validationAttribute = function (validation_) {
 	return elm$html$Html$Attributes$class(
 		rundis$elm_bootstrap$Bootstrap$Form$FormInternal$validationToString(validation_));
@@ -9990,7 +10222,6 @@ var author$project$RCMediaEdit$viewClassesPicker = F4(
 				]),
 			A2(elm$core$List$map, selectItem, classList));
 	});
-var elm$html$Html$Attributes$for = elm$html$Html$Attributes$stringProperty('htmlFor');
 var elm$html$Html$Attributes$placeholder = elm$html$Html$Attributes$stringProperty('placeholder');
 var rundis$elm_bootstrap$Bootstrap$Form$applyModifier = F2(
 	function (modifier, options) {
@@ -10039,7 +10270,6 @@ var rundis$elm_bootstrap$Bootstrap$Form$invalidFeedback = F2(
 				attributes),
 			children);
 	});
-var elm$html$Html$label = _VirtualDom_node('label');
 var rundis$elm_bootstrap$Bootstrap$Form$label = F2(
 	function (attributes, children) {
 		return A2(
@@ -10085,7 +10315,6 @@ var rundis$elm_bootstrap$Bootstrap$Form$Input$create = F2(
 					options)
 			});
 	});
-var elm$html$Html$input = _VirtualDom_node('input');
 var elm$html$Html$Attributes$readonly = elm$html$Html$Attributes$boolProperty('readOnly');
 var rundis$elm_bootstrap$Bootstrap$Form$Input$applyModifier = F2(
 	function (modifier, options) {
@@ -11861,6 +12090,7 @@ var author$project$Main$view = function (model) {
 				A5(author$project$Main$viewUpload, author$project$Main$PlusIcon, false, author$project$Main$UploadMediaFileSelect, 'Media', model.mediaUploadStatus),
 				A5(author$project$Main$viewUpload, author$project$Main$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
 				saveButton,
+				author$project$Main$viewEditorCheckbox(model.editorType),
 				author$project$Main$viewAlert(model),
 				mediaList
 			]));
