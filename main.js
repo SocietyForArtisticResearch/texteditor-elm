@@ -11316,7 +11316,7 @@ var author$project$Exposition$withHtml = F2(
 	function (exp, content) {
 		return _Utils_update(
 			exp,
-			{renderedHtml: content});
+			{renderedHtml: '<div id=\"exposition\">' + (content + '</div>')});
 	});
 var author$project$Exposition$withMd = F2(
 	function (exp, content) {
@@ -11792,7 +11792,24 @@ var author$project$RCAPI$saveExposition = F2(
 							A2(
 								elm$json$Json$Encode$encode,
 								0,
-								elm$json$Json$Encode$object(_List_Nil)))
+								A2(
+									elm$json$Json$Encode$list,
+									function (te) {
+										return elm$json$Json$Encode$object(
+											_List_fromArray(
+												[
+													_Utils_Tuple2(
+													'level',
+													elm$json$Json$Encode$int(te.level)),
+													_Utils_Tuple2(
+													'title',
+													elm$json$Json$Encode$string(te.title)),
+													_Utils_Tuple2(
+													'id',
+													elm$json$Json$Encode$string(te.id))
+												]));
+									},
+									exposition.toc)))
 						])),
 				expect: elm$http$Http$expectString(expect),
 				headers: _List_Nil,

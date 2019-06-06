@@ -4,13 +4,13 @@ module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, APIPandocImport, 
 
 import Bytes.Encode
 import Dict
-import Exposition exposing (OptionalDimensions, RCExposition, RCMediaObject, RCMediaType(..), defaultPlayerSettings)
+import Exposition exposing (OptionalDimensions, RCExposition, RCMediaObject, RCMediaType(..), TOC, TOCEntry, defaultPlayerSettings)
 import File exposing (File)
 import File.Download
 import Html exposing (Html, span)
 import Http
 import Json.Decode exposing (..)
-import Json.Encode as E
+import Json.Encode as Encode
 import Problems exposing (..)
 import Settings
 import Url.Builder
@@ -323,27 +323,40 @@ saveExposition exposition expect =
                 , Http.stringPart "style" exposition.css
                 , Http.stringPart "title" exposition.title
                 , Http.stringPart "media"
-                    (E.encode 0
-                        (E.list
+                    (Encode.encode 0
+                        (Encode.list
                             (\m ->
-                                E.object
-                                    [ ( "id", E.int m.id )
-                                    , ( "userClass", E.string m.userClass )
+                                Encode.object
+                                    [ ( "id", Encode.int m.id )
+                                    , ( "userClass", Encode.string m.userClass )
                                     ]
                             )
                             exposition.media
                         )
                     )
                 , Http.stringPart "metadata"
-                    (E.encode
+                    (Encode.encode
                         0
-                        (E.object
-                            [ ( "editorVersion", E.string exposition.editorVersion )
-                            , ( "contentVersion", E.int exposition.contentVersion )
+                        (Encode.object
+                            [ ( "editorVersion", Encode.string exposition.editorVersion )
+                            , ( "contentVersion", Encode.int exposition.contentVersion )
                             ]
                         )
                     )
-                , Http.stringPart "toc" (E.encode 0 (E.object [])) -- TODO add actual toc
+                , Http.stringPart "toc"
+                    (Encode.encode 0 <|
+                        Encode.list
+                            (\te ->
+                                Encode.object
+                                    [ ( "level", Encode.int te.level )
+                                    , ( "title", Encode.string te.title )
+                                    , ( "id", Encode.string te.id )
+                                    ]
+                            )
+                            exposition.toc
+                    )
+
+                -- TODO add actual toc
                 ]
 
         --        , expect = Http.expectWhatever expect

@@ -70,7 +70,7 @@ withMd exp content =
 
 withHtml : RCExposition -> String -> RCExposition
 withHtml exp content =
-    { exp | renderedHtml = content }
+    { exp | renderedHtml = "<div id=\"exposition\">" ++ content ++ "</div>" }
 
 
 withCSS : RCExposition -> String -> RCExposition

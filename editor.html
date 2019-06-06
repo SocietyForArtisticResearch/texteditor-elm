@@ -295,9 +295,11 @@
      if (selectedEditor == editorCmMd) {
 	 cmMarkdown.replaceSelection(str);
 	 textareaMarkdown.value = cmMarkdown.getValue();
+	 cmMarkdown.focus();
      } else if (selectedEditor == editorTxtMd) {
 	 insertAtCursor(textareaMarkdown, str);
 	 cmMarkdown.setValue(textareaMarkdown.value);
+	 textareaMarkdown.focus();
      }
 
  });
