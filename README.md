@@ -49,7 +49,7 @@ Luc:
 - why is css not used in preview?
 - Check rendered html
 - Transcoding status type
-- Export (Pandoc calls)
+- Export (Pandoc calls) (works in principle, but needs longer uri allowed by server and pull down for file type selection)
 - TOC
 
 ## Postponed
