@@ -804,7 +804,7 @@ viewEditorCheckbox editorType =
     in
     Checkbox.checkbox
         [ Checkbox.onCheck onToggle
-        , Checkbox.checked <| editorType == PlainText
+        , Checkbox.checked <| editorType == Markdown
         ]
         "spellchecker"
 
