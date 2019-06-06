@@ -784,7 +784,7 @@ viewAlert model =
         |> Alert.dismissable AlertMsg
         |> Alert.children
             [ Alert.h4 [] [ text "there is a problem" ]
-            , text <| "this is the problem: " ++ message
+            , text <| message
             ]
         |> Alert.view model.alertVisibility
 
