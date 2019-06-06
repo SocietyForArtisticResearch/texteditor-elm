@@ -492,6 +492,10 @@ update msg model =
         SavedMediaEdit result ->
             case result of
                 Ok s ->
+                    let
+                        _ =
+                            Debug.log "saved media result: " s
+                    in
                     update SaveExposition model
 
                 Err s ->
