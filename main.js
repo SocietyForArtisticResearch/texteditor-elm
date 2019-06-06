@@ -7844,6 +7844,19 @@ var author$project$Exposition$mkMediaName = function (exp) {
 		imageNames);
 	return 'media' + elm$core$String$fromInt(maxImage + 1);
 };
+var author$project$Exposition$withoutMedia = F2(
+	function (id, exp) {
+		return _Utils_update(
+			exp,
+			{
+				media: A2(
+					elm$core$List$filter,
+					function (o) {
+						return !_Utils_eq(o.id, id);
+					},
+					exp.media)
+			});
+	});
 var author$project$Exposition$renameDuplicateMedia = function (exp) {
 	var renameDuplicates = F2(
 		function (e, m) {
@@ -7859,7 +7872,7 @@ var author$project$Exposition$renameDuplicateMedia = function (exp) {
 						function (o) {
 							return _Utils_eq(o.name, h.name);
 						},
-						e.media)) {
+						A2(author$project$Exposition$withoutMedia, h.id, e).media)) {
 						var newOb = _Utils_update(
 							h,
 							{
@@ -8016,19 +8029,6 @@ var author$project$Exposition$withMd = F2(
 		return _Utils_update(
 			exp,
 			{markdownInput: content});
-	});
-var author$project$Exposition$withoutMedia = F2(
-	function (id, exp) {
-		return _Utils_update(
-			exp,
-			{
-				media: A2(
-					elm$core$List$filter,
-					function (o) {
-						return !_Utils_eq(o.id, id);
-					},
-					exp.media)
-			});
 	});
 var author$project$Main$CloseConfirmDialog = {$: 'CloseConfirmDialog'};
 var author$project$Main$GotMediaList = function (a) {

@@ -113,7 +113,7 @@ renameDuplicateMedia exp =
                     e
 
                 h :: t ->
-                    if List.any (\o -> o.name == h.name) e.media then
+                    if List.any (\o -> o.name == h.name) (withoutMedia h.id e).media then
                         let
                             newOb =
                                 { h | name = mkMediaName e }
