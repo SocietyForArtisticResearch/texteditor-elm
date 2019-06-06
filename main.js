@@ -11739,7 +11739,29 @@ var elm$json$Json$Encode$list = F2(
 var author$project$RCAPI$saveExposition = F2(
 	function (exposition, expect) {
 		var url = 'text-editor/save' + ('?research=' + (elm$core$String$fromInt(exposition.id) + ('&weave=' + elm$core$String$fromInt(exposition.currentWeave))));
+		var encodedToc = A2(
+			elm$json$Json$Encode$encode,
+			0,
+			A2(
+				elm$json$Json$Encode$list,
+				function (te) {
+					return elm$json$Json$Encode$object(
+						_List_fromArray(
+							[
+								_Utils_Tuple2(
+								'level',
+								elm$json$Json$Encode$int(te.level)),
+								_Utils_Tuple2(
+								'title',
+								elm$json$Json$Encode$string(te.title)),
+								_Utils_Tuple2(
+								'id',
+								elm$json$Json$Encode$string(te.id))
+							]));
+				},
+				exposition.toc));
 		var _n0 = A2(elm$core$Debug$log, 'about to save exposition: ', exposition);
+		var _n1 = A2(elm$core$Debug$log, 'encoded toc: ', encodedToc);
 		return elm$http$Http$request(
 			{
 				body: elm$http$Http$multipartBody(
@@ -11786,30 +11808,7 @@ var author$project$RCAPI$saveExposition = F2(
 											'contentVersion',
 											elm$json$Json$Encode$int(exposition.contentVersion))
 										])))),
-							A2(
-							elm$http$Http$stringPart,
-							'toc',
-							A2(
-								elm$json$Json$Encode$encode,
-								0,
-								A2(
-									elm$json$Json$Encode$list,
-									function (te) {
-										return elm$json$Json$Encode$object(
-											_List_fromArray(
-												[
-													_Utils_Tuple2(
-													'level',
-													elm$json$Json$Encode$int(te.level)),
-													_Utils_Tuple2(
-													'title',
-													elm$json$Json$Encode$string(te.title)),
-													_Utils_Tuple2(
-													'id',
-													elm$json$Json$Encode$string(te.id))
-												]));
-									},
-									exposition.toc)))
+							A2(elm$http$Http$stringPart, 'toc', encodedToc)
 						])),
 				expect: elm$http$Http$expectString(expect),
 				headers: _List_Nil,

@@ -311,6 +311,21 @@ saveExposition exposition expect =
 
         _ =
             Debug.log "about to save exposition: " exposition
+
+        encodedToc =
+            Encode.encode 0 <|
+                Encode.list
+                    (\te ->
+                        Encode.object
+                            [ ( "level", Encode.int te.level )
+                            , ( "title", Encode.string te.title )
+                            , ( "id", Encode.string te.id )
+                            ]
+                    )
+                    exposition.toc
+
+        _ =
+            Debug.log "encoded toc: " encodedToc
     in
     Http.request
         { method = "POST"
@@ -343,18 +358,7 @@ saveExposition exposition expect =
                             ]
                         )
                     )
-                , Http.stringPart "toc"
-                    (Encode.encode 0 <|
-                        Encode.list
-                            (\te ->
-                                Encode.object
-                                    [ ( "level", Encode.int te.level )
-                                    , ( "title", Encode.string te.title )
-                                    , ( "id", Encode.string te.id )
-                                    ]
-                            )
-                            exposition.toc
-                    )
+                , Http.stringPart "toc" encodedToc
 
                 -- TODO add actual toc
                 ]
