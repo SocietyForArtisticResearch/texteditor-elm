@@ -7844,57 +7844,19 @@ var author$project$Exposition$mkMediaName = function (exp) {
 		imageNames);
 	return 'media' + elm$core$String$fromInt(maxImage + 1);
 };
-var author$project$Exposition$withoutMedia = F2(
+var author$project$Exposition$removeObjectWithID = F2(
 	function (id, exp) {
 		return _Utils_update(
 			exp,
 			{
 				media: A2(
 					elm$core$List$filter,
-					function (o) {
-						return !_Utils_eq(o.id, id);
+					function (m) {
+						return !_Utils_eq(m.id, id);
 					},
 					exp.media)
 			});
 	});
-var author$project$Exposition$renameDuplicateMedia = function (exp) {
-	var renameDuplicates = F2(
-		function (e, m) {
-			renameDuplicates:
-			while (true) {
-				if (!m.b) {
-					return e;
-				} else {
-					var h = m.a;
-					var t = m.b;
-					if (A2(
-						elm$core$List$any,
-						function (o) {
-							return _Utils_eq(o.name, h.name);
-						},
-						A2(author$project$Exposition$withoutMedia, h.id, e).media)) {
-						var newOb = _Utils_update(
-							h,
-							{
-								name: author$project$Exposition$mkMediaName(e)
-							});
-						var $temp$e = A2(author$project$Exposition$replaceObject, newOb, e),
-							$temp$m = t;
-						e = $temp$e;
-						m = $temp$m;
-						continue renameDuplicates;
-					} else {
-						var $temp$e = e,
-							$temp$m = t;
-						e = $temp$e;
-						m = $temp$m;
-						continue renameDuplicates;
-					}
-				}
-			}
-		});
-	return A2(renameDuplicates, exp, exp.media);
-};
 var elm$core$List$drop = F2(
 	function (n, list) {
 		drop:
@@ -8851,39 +8813,28 @@ var author$project$Main$update = F2(
 						var mediaEntries = _n16.b;
 						var modelWithProblems = A2(author$project$Main$addProblems, model, problems);
 						var expositionWithMedia = A3(elm$core$List$foldr, author$project$Exposition$addOrReplaceObject, modelWithProblems.exposition, mediaEntries);
-						var expositionWithClasses = author$project$Exposition$renameDuplicateMedia(
-							A2(author$project$Exposition$addMediaUserClasses, expositionWithMedia, model.mediaClassesDict));
+						var expositionWithClasses = A2(author$project$Exposition$addMediaUserClasses, expositionWithMedia, model.mediaClassesDict);
 						var _n17 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithClasses);
 						return _Utils_Tuple2(
 							_Utils_update(
 								modelWithProblems,
 								{exposition: expositionWithClasses}),
 							elm$core$Platform$Cmd$batch(
-								_Utils_ap(
-									_List_fromArray(
-										[
-											author$project$Main$setContent(
-											elm$json$Json$Encode$object(
-												_List_fromArray(
-													[
-														_Utils_Tuple2(
-														'md',
-														elm$json$Json$Encode$string(expositionWithClasses.markdownInput)),
-														_Utils_Tuple2(
-														'style',
-														elm$json$Json$Encode$string(expositionWithClasses.css))
-													]))),
-											author$project$Main$setPreviewContent(expositionWithClasses.renderedHtml)
-										]),
-									A2(
-										elm$core$List$map,
-										function (o) {
-											return A2(
-												author$project$RCAPI$updateMedia,
-												o,
-												elm$http$Http$expectString(author$project$Main$SavedMediaEdit));
-										},
-										expositionWithClasses.media))));
+								_List_fromArray(
+									[
+										author$project$Main$setContent(
+										elm$json$Json$Encode$object(
+											_List_fromArray(
+												[
+													_Utils_Tuple2(
+													'md',
+													elm$json$Json$Encode$string(expositionWithClasses.markdownInput)),
+													_Utils_Tuple2(
+													'style',
+													elm$json$Json$Encode$string(expositionWithClasses.css))
+												]))),
+										author$project$Main$setPreviewContent(expositionWithClasses.renderedHtml)
+									])));
 					}
 				case 'MediaEdit':
 					var _n18 = msg.a;
@@ -8959,7 +8910,7 @@ var author$project$Main$update = F2(
 					var modelWithoutObj = _Utils_update(
 						model,
 						{
-							exposition: A2(author$project$Exposition$withoutMedia, obj.id, model.exposition)
+							exposition: A2(author$project$Exposition$removeObjectWithID, obj.id, model.exposition)
 						});
 					return _Utils_Tuple2(
 						modelWithoutObj,

@@ -422,8 +422,8 @@ update msg model =
                             List.foldr Exposition.addOrReplaceObject modelWithProblems.exposition mediaEntries
 
                         expositionWithClasses =
-                            Exposition.renameDuplicateMedia <|
-                                addMediaUserClasses expositionWithMedia model.mediaClassesDict
+                            --                            Exposition.renameDuplicateMedia <|
+                            addMediaUserClasses expositionWithMedia model.mediaClassesDict
 
                         _ =
                             Debug.log "loaded exposition with media: " expositionWithClasses
@@ -432,7 +432,7 @@ update msg model =
                         | exposition = expositionWithClasses
                       }
                     , Cmd.batch
-                        ([ setContent
+                        [ setContent
                             (E.object
                                 [ ( "md"
                                   , E.string expositionWithClasses.markdownInput
@@ -440,11 +440,11 @@ update msg model =
                                 , ( "style", E.string expositionWithClasses.css )
                                 ]
                             )
-                         , setPreviewContent expositionWithClasses.renderedHtml
-                         ]
-                            ++ List.map (\o -> RCAPI.updateMedia o (Http.expectString SavedMediaEdit))
-                                expositionWithClasses.media
-                        )
+                        , setPreviewContent expositionWithClasses.renderedHtml
+                        ]
+                      --     ++ List.map (\o -> RCAPI.updateMedia o (Http.expectString SavedMediaEdit))
+                      --         expositionWithClasses.media
+                      -- )
                     )
 
         MediaEdit ( objInModelName, objFromDialog ) ->
@@ -504,7 +504,7 @@ update msg model =
         MediaDelete obj ->
             let
                 modelWithoutObj =
-                    { model | exposition = Exposition.withoutMedia obj.id model.exposition }
+                    { model | exposition = Exposition.removeObjectWithID obj.id model.exposition }
             in
             ( modelWithoutObj, Cmd.batch [ RCAPI.deleteMedia obj MediaDeleted, RCAPI.getMediaList model.research GotMediaList ] )
 
