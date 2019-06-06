@@ -35,12 +35,19 @@
         /*     overflow-y: scroll; */
         /*     width: 100%; */
         /*     height: 100%; */
-        /* } */
-
+      /* } */
         #preview-container {
             height: 100vh;
             overflow-y: scroll;
         }
+
+	@media only screen and (min-width: 600px) {
+	   .codemirror {
+		max-width:50vw; /* this should prevent codemirror from growing out of the page */
+	   }
+	}
+  }
+}
     </style>
 </head>
 
