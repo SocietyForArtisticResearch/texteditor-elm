@@ -31,6 +31,15 @@ rightDecoder decoder =
     map Right decoder
 
 
+withDefault : String -> String -> String
+withDefault default str =
+    if str == "" then
+        default
+
+    else
+        str
+
+
 type alias APIExpositionMetadata =
     { editorVersion : String, contentVersion : Int }
 
@@ -185,7 +194,7 @@ updateMedia mediaObject expect =
         , body =
             Http.multipartBody
                 [ Http.stringPart "name" mediaObject.name
-                , Http.stringPart "copyrightholder" mediaObject.copyright
+                , Http.stringPart "copyrightholder" (withDefault "copyright holder" mediaObject.copyright)
                 , Http.stringPart "description" mediaObject.description
                 , Http.stringPart "license" "all-rights-reserved"
                 ]

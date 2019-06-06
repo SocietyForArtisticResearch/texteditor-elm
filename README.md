@@ -27,6 +27,9 @@ be made outside of elm.
 
 # Todo
 
+General:
+- How do we get the author's name?
+
 Casper:
 
 - media list displays as "no objects" when there are no objects, also when media list tab has not been selected, i.e. id is wrong or something like that
@@ -41,6 +44,7 @@ Casper:
 
 Luc:
 
+- auto save
 - why is css not used in preview?
 - multiple doc imports create duplicate media names
 - Check rendered html

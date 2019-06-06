@@ -8474,6 +8474,10 @@ var author$project$RCAPI$toRCMediaObject = F2(
 				author$project$Problems$CannotLoadMedia(s));
 		}
 	});
+var author$project$RCAPI$withDefault = F2(
+	function (_default, str) {
+		return (str === '') ? _default : str;
+	});
 var author$project$RCAPI$updateMedia = F2(
 	function (mediaObject, expect) {
 		return elm$http$Http$request(
@@ -8482,7 +8486,10 @@ var author$project$RCAPI$updateMedia = F2(
 					_List_fromArray(
 						[
 							A2(elm$http$Http$stringPart, 'name', mediaObject.name),
-							A2(elm$http$Http$stringPart, 'copyrightholder', mediaObject.copyright),
+							A2(
+							elm$http$Http$stringPart,
+							'copyrightholder',
+							A2(author$project$RCAPI$withDefault, 'copyright holder', mediaObject.copyright)),
 							A2(elm$http$Http$stringPart, 'description', mediaObject.description),
 							A2(elm$http$Http$stringPart, 'license', 'all-rights-reserved')
 						])),
