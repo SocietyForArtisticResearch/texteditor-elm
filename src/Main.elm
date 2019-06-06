@@ -647,7 +647,20 @@ update msg model =
             ( { model | confirmDialog = ( Modal.hidden, Nothing, Nothing ) }, Cmd.none )
 
         SwitchTab tab ->
-            ( { model | selectedEditor = tab }, enumTabState tab |> setEditor )
+            let
+                newModel =
+                    -- update editorType so that checkbox display correct state
+                    case tab of
+                        CmMarkdownTab ->
+                            { model | editorType = Markdown }
+
+                        TxtMarkdownTab ->
+                            { model | editorType = PlainText }
+
+                        _ ->
+                            model
+            in
+            ( { newModel | selectedEditor = tab }, enumTabState tab |> setEditor )
 
         AlertMsg visibility ->
             ( { model | alertVisibility = visibility }, Cmd.none )

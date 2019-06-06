@@ -8062,6 +8062,7 @@ var author$project$Main$MediaDeleted = function (a) {
 var author$project$Main$MediaDialog = function (a) {
 	return {$: 'MediaDialog', a: a};
 };
+var author$project$Main$PlainText = {$: 'PlainText'};
 var author$project$Main$SaveExposition = {$: 'SaveExposition'};
 var author$project$Main$SaveMediaEdit = function (a) {
 	return {$: 'SaveMediaEdit', a: a};
@@ -9234,9 +9235,23 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				case 'SwitchTab':
 					var tab = msg.a;
+					var newModel = function () {
+						switch (tab.$) {
+							case 'CmMarkdownTab':
+								return _Utils_update(
+									model,
+									{editorType: author$project$Main$Markdown});
+							case 'TxtMarkdownTab':
+								return _Utils_update(
+									model,
+									{editorType: author$project$Main$PlainText});
+							default:
+								return model;
+						}
+					}();
 					return _Utils_Tuple2(
 						_Utils_update(
-							model,
+							newModel,
 							{selectedEditor: tab}),
 						author$project$Main$setEditor(
 							author$project$Main$enumTabState(tab)));
@@ -9876,14 +9891,13 @@ var author$project$Main$viewAlert = function (model) {
 						[
 							elm$html$Html$text('there is a problem')
 						])),
-					elm$html$Html$text('this is the problem: ' + message)
+					elm$html$Html$text(message)
 				]),
 			A2(
 				rundis$elm_bootstrap$Bootstrap$Alert$dismissable,
 				author$project$Main$AlertMsg,
 				rundis$elm_bootstrap$Bootstrap$Alert$info(rundis$elm_bootstrap$Bootstrap$Alert$config))));
 };
-var author$project$Main$PlainText = {$: 'PlainText'};
 var author$project$Main$SwitchEditor = function (a) {
 	return {$: 'SwitchEditor', a: a};
 };
