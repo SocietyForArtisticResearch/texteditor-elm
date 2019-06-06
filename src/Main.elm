@@ -652,7 +652,8 @@ update msg model =
         AlertMsg visibility ->
             ( { model | alertVisibility = visibility }, Cmd.none )
 
-        SwitchEditor editor -> -- using the toggle
+        SwitchEditor editor ->
+            -- using the toggle
             let
                 newModel =
                     { model | editorType = editor }
@@ -793,7 +794,6 @@ viewEditorCheckbox editorType =
     let
         onToggle : Bool -> Msg
         onToggle becomesChecked =
-            in
             if becomesChecked then
                 SwitchEditor PlainText
 

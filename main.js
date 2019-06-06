@@ -9249,6 +9249,9 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				default:
 					var editor = msg.a;
+					var newModel = _Utils_update(
+						model,
+						{editorType: editor});
 					if (editor.$ === 'Markdown') {
 						var $temp$msg = author$project$Main$SwitchTab(author$project$Main$CmMarkdownTab),
 							$temp$model = model;
@@ -10095,10 +10098,8 @@ var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$onCheck = function (toMsg) {
 	return rundis$elm_bootstrap$Bootstrap$Form$Checkbox$OnChecked(toMsg);
 };
 var author$project$Main$viewEditorCheckbox = function (editorType) {
-	var onToggle = function (checked) {
-		var _n0 = A2(elm$core$Debug$log, 'checked state', checked);
-		var _n1 = A2(elm$core$Debug$log, 'editortype', editorType);
-		return checked ? author$project$Main$SwitchEditor(author$project$Main$PlainText) : author$project$Main$SwitchEditor(author$project$Main$Markdown);
+	var onToggle = function (becomesChecked) {
+		return becomesChecked ? author$project$Main$SwitchEditor(author$project$Main$PlainText) : author$project$Main$SwitchEditor(author$project$Main$Markdown);
 	};
 	return A2(
 		rundis$elm_bootstrap$Bootstrap$Form$Checkbox$checkbox,
@@ -10106,7 +10107,7 @@ var author$project$Main$viewEditorCheckbox = function (editorType) {
 			[
 				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$onCheck(onToggle),
 				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$checked(
-				_Utils_eq(editorType, author$project$Main$Markdown))
+				_Utils_eq(editorType, author$project$Main$PlainText))
 			]),
 		'spellchecker');
 };
