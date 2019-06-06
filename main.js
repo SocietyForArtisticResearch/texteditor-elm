@@ -11420,6 +11420,7 @@ var author$project$Main$getTabState = function (state) {
 			return author$project$Main$MediaListTab;
 	}
 };
+var author$project$Main$insertMdString = _Platform_outgoingPort('insertMdString', elm$json$Json$Encode$string);
 var author$project$Main$setContent = _Platform_outgoingPort('setContent', elm$core$Basics$identity);
 var elm$json$Json$Encode$int = _Json_wrap;
 var author$project$Main$setEditor = _Platform_outgoingPort('setEditor', elm$json$Json$Encode$int);
@@ -12539,7 +12540,7 @@ var author$project$Main$update = F2(
 							model,
 							{alertVisibility: visibility}),
 						elm$core$Platform$Cmd$none);
-				default:
+				case 'SwitchMarkdownEditor':
 					var editor = msg.a;
 					var _n34 = model.editor;
 					var tab = _n34.a;
@@ -12553,12 +12554,38 @@ var author$project$Main$update = F2(
 						author$project$Main$setEditor(
 							author$project$Main$enumTabState(
 								author$project$Main$getTabState(newModel.editor))));
+				case 'InsertMediaAtCursor':
+					var obj = msg.a;
+					return _Utils_Tuple2(
+						model,
+						function () {
+							var _n35 = A2(
+								author$project$Exposition$objectByNameOrId,
+								elm$core$String$fromInt(obj.id),
+								model.exposition);
+							if (_n35.$ === 'Just') {
+								var o = _n35.a;
+								return author$project$Main$insertMdString('!{' + (o.name + '}'));
+							} else {
+								return elm$core$Platform$Cmd$none;
+							}
+						}());
+				default:
+					var _n36 = msg.a;
+					var str = _n36.a;
+					return _Utils_Tuple2(
+						model,
+						author$project$Main$insertMdString(str));
 			}
 		}
 	});
+var author$project$Main$BoldIcon = {$: 'BoldIcon'};
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
 var author$project$Main$DownloadExport = {$: 'DownloadExport'};
 var author$project$Main$ImportIcon = {$: 'ImportIcon'};
+var author$project$Main$InsertAtCursor = function (a) {
+	return {$: 'InsertAtCursor', a: a};
+};
 var author$project$Main$PlusIcon = {$: 'PlusIcon'};
 var author$project$Main$SaveIcon = {$: 'SaveIcon'};
 var author$project$Main$UploadImportFileSelect = {$: 'UploadImportFileSelect'};
@@ -12670,8 +12697,12 @@ var author$project$Main$renderIcon = function (icon) {
 			return iconImg('plus.svg');
 		case 'ImportIcon':
 			return iconImg('import-export.svg');
-		default:
+		case 'SaveIcon':
 			return iconImg('save.svg');
+		case 'ItalicIcon':
+			return iconImg('italic.svg');
+		default:
+			return iconImg('bold.svg');
 	}
 };
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
@@ -15457,6 +15488,31 @@ var author$project$RCMediaList$view = F2(
 					]));
 		}
 	});
+var author$project$Settings$Bold = {$: 'Bold'};
+var author$project$Settings$snippet = function (s) {
+	switch (s.$) {
+		case 'Bold':
+			return _Utils_Tuple2('****', -2);
+		case 'Italic':
+			return _Utils_Tuple2('__', -1);
+		case 'H1':
+			return _Utils_Tuple2('# Header 1', 0);
+		case 'H2':
+			return _Utils_Tuple2('## Header 2', 0);
+		case 'H3':
+			return _Utils_Tuple2('### Header 3', 0);
+		case 'H4':
+			return _Utils_Tuple2('#### Header 4', 0);
+		case 'Bullet':
+			return _Utils_Tuple2('* ', 0);
+		case 'Numbered':
+			return _Utils_Tuple2('1. ', 0);
+		case 'Quote':
+			return _Utils_Tuple2('> ', 0);
+		default:
+			return _Utils_Tuple2('[Link text](http://)', -1);
+	}
+};
 var rundis$elm_bootstrap$Bootstrap$Button$danger = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
 var rundis$elm_bootstrap$Bootstrap$Button$secondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
@@ -15603,6 +15659,13 @@ var author$project$Main$view = function (model) {
 				A4(author$project$Main$mkButton, author$project$Main$ImportIcon, true, author$project$Main$DownloadExport, 'Export doc'),
 				saveButton,
 				editorCheckbox,
+				A4(
+				author$project$Main$mkButton,
+				author$project$Main$BoldIcon,
+				true,
+				author$project$Main$InsertAtCursor(
+					author$project$Settings$snippet(author$project$Settings$Bold)),
+				''),
 				alert,
 				mediaList
 			]));

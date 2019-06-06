@@ -29,35 +29,50 @@ be made outside of elm.
 
 General:
 - How do we get the author's name?
+- What to do when people are logged out
+- how often render?
 
 Casper:
 
-- media list displays as "no objects" when there are no objects, also when media list tab has not been selected, i.e. id is wrong or something like that
 - what about "insert"?
   @Luc, I wanted this to insert on codemirror current position, probably we need a port for this?
   @Casper: It's possible, but does it make sense to insert if the user cannot see where he/she is? Shouldn't the media list appear on the right (instead of the preview)?
+  
+  @Casper concerning insert again (after talk 6.6.): "insert" should be removed from media list because there are two cursors in markdown (plain and codemirror), there is no way to ensure correct insert, or at least it gets complex.
+  
 - Buttons
 - Styling (editor sizes, double scrollbars, percentage when uploading)
 - "markdown plain" should be somewhere else, not a main tab
 - media file types in select dialog
 - display title of exposition somewhere
 - warnings when closing/reloading
+- preview and my profile buttons
 
 Luc:
 
+- stupid buttons (snippets): insert media, header (pull down h1,h2,h3), italic, bold, quote, link, bullet,numbered list
 - auto save
-- why is css not used in preview?
+- why is css not used in preview? -> id exposition
 - Check rendered html
-- Transcoding status type
+- Transcoding status type (reload media list every five seconds)
 - Export (Pandoc calls) (works in principle, but needs longer uri allowed by server and pull down for file type selection)
 - TOC
+- insert media message
+- reload media list message
+
+## To test
+- tables?
+- alignment
+- load existing text-based expositions
+- uploading docs
+- performance?
 
 ## Postponed
 
 - Drag and drop of media (postpone)
 - Real-time collaborative editing
 - autofocus on right hand side
-
+- wikipedia-style footnotes
 
 ## DONE
 - display Problems (as warnings etc)
@@ -96,3 +111,4 @@ Luc:
 - Pandoc import working in principle
 - Generate preview html (final static html)
 - multiple doc imports create duplicate media names
+- media list displays as "no objects" when there are no objects, also when media list tab has not been selected, i.e. id is wrong or something like that

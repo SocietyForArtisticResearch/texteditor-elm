@@ -180,6 +180,9 @@ port mediaDialog : (E.Value -> msg) -> Sub msg
 port setEditor : Int -> Cmd msg
 
 
+port insertMdString : String -> Cmd msg
+
+
 
 --- markdown conversion using marked
 
@@ -240,6 +243,8 @@ type Msg
     | AlertMsg Alert.Visibility
     | SwitchMarkdownEditor MarkdownEditor
     | DownloadExport
+    | InsertAtCursor ( String, Int ) -- string and cursor offest after insert
+    | InsertMediaAtCursor RCMediaObject
 
 
 
@@ -691,16 +696,32 @@ update msg model =
                 ( tab, _ ) =
                     model.editor
 
-
-                newModel =  { model | editor = ( tab, editor ) }
+                newModel =
+                    { model | editor = ( tab, editor ) }
             in
-            (newModel , enumTabState (getTabState newModel.editor) |> setEditor )
+            ( newModel, enumTabState (getTabState newModel.editor) |> setEditor )
+
+        InsertMediaAtCursor obj ->
+            ( model
+              -- this is simply to make sure the object is in the exposition media
+            , case Exposition.objectByNameOrId (String.fromInt obj.id) model.exposition of
+                Just o ->
+                    insertMdString ("!{" ++ o.name ++ "}")
+
+                Nothing ->
+                    Cmd.none
+            )
+
+        InsertAtCursor ( str, _ ) ->
+            ( model, insertMdString str )
 
 
 type Icon
     = PlusIcon
     | ImportIcon
     | SaveIcon
+    | ItalicIcon
+    | BoldIcon
 
 
 renderIcon : Icon -> Html Msg
@@ -726,6 +747,12 @@ renderIcon icon =
 
         SaveIcon ->
             iconImg "save.svg"
+
+        ItalicIcon ->
+            iconImg "italic.svg"
+
+        BoldIcon ->
+            iconImg "bold.svg"
 
 
 mkButton : Icon -> Bool -> Msg -> String -> Html Msg
@@ -773,7 +800,6 @@ enumTabState t =
             3
 
 
-                
 viewTabs : Model -> Html Msg
 viewTabs model =
     let
@@ -896,6 +922,7 @@ view model =
         , mkButton ImportIcon True DownloadExport "Export doc"
         , saveButton
         , editorCheckbox
+        , mkButton BoldIcon True (InsertAtCursor (Settings.snippet Settings.Bold)) ""
         , alert
         , mediaList
         ]
