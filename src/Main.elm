@@ -690,8 +690,11 @@ update msg model =
             let
                 ( tab, _ ) =
                     model.editor
+
+
+                newModel =  { model | editor = ( tab, editor ) }
             in
-            ( { model | editor = ( tab, editor ) }, enumTabState (getTabState model.editor) |> setEditor )
+            (newModel , enumTabState (getTabState newModel.editor) |> setEditor )
 
 
 type Icon
@@ -824,10 +827,10 @@ viewEditorCheckbox markdownEditor =
         onToggle : Bool -> Msg
         onToggle becomesChecked =
             if becomesChecked then
-                SwitchMarkdownEditor CodemirrorMarkdown
+                SwitchMarkdownEditor TextareaMarkdown
 
             else
-                SwitchMarkdownEditor TextareaMarkdown
+                SwitchMarkdownEditor CodemirrorMarkdown
     in
     Checkbox.checkbox
         [ Checkbox.onCheck onToggle
