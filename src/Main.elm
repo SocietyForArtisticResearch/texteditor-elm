@@ -660,10 +660,10 @@ update msg model =
             in
             case editor of
                 Markdown ->
-                    update (SwitchTab CmMarkdownTab) model
+                    update (SwitchTab CmMarkdownTab) newmodel
 
                 PlainText ->
-                    update (SwitchTab TxtMarkdownTab) model
+                    update (SwitchTab TxtMarkdownTab) newmodel
 
 
 type Icon
@@ -804,7 +804,7 @@ viewEditorCheckbox editorType =
         [ Checkbox.onCheck onToggle
         , Checkbox.checked <| editorType == PlainText
         ]
-        "spellchecker"
+        "spellcheck"
 
 
 view : Model -> Html Msg
