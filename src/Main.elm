@@ -23,18 +23,9 @@ import RCAPI
 import RCMediaEdit
 import RCMediaList
 import Regex
+import Settings exposing (..)
 import String.Extra as Str
 import UserConfirm exposing (ConfirmDialogContent)
-
-
-baseUrl : String
-baseUrl =
-    "elm-editor/"
-
-
-iconUrl : String
-iconUrl =
-    baseUrl ++ "lib/icons/"
 
 
 type alias Model =
@@ -164,15 +155,6 @@ updateEditorContent model =
 port mediaDialog : (E.Value -> msg) -> Sub msg
 
 
-
--- -- code mirror style
--- port currentStyleGeneration : (E.Value -> msg) -> Sub msg
--- port cmStyleContent : (E.Value -> msg) -> Sub msg
--- port getStyleContent : () -> Cmd msg
--- port setStyleContent : String -> Cmd msg
---- editor selection
-
-
 port setEditor : Int -> Cmd msg
 
 
@@ -235,6 +217,7 @@ type Msg
     | MediaDeleted (Result Http.Error ())
     | AlertMsg Alert.Visibility
     | SwitchEditor EditorType
+    | DownloadExport
 
 
 
@@ -449,7 +432,8 @@ update msg model =
                             List.foldr Exposition.addOrReplaceObject modelWithProblems.exposition mediaEntries
 
                         expositionWithClasses =
-                            addMediaUserClasses expositionWithMedia model.mediaClassesDict
+                            Exposition.renameDuplicateMedia <|
+                                addMediaUserClasses expositionWithMedia model.mediaClassesDict
 
                         _ =
                             Debug.log "loaded exposition with media: " expositionWithClasses
@@ -458,7 +442,7 @@ update msg model =
                         | exposition = expositionWithClasses
                       }
                     , Cmd.batch
-                        [ setContent
+                        ([ setContent
                             (E.object
                                 [ ( "md"
                                   , E.string expositionWithClasses.markdownInput
@@ -466,12 +450,14 @@ update msg model =
                                 , ( "style", E.string expositionWithClasses.css )
                                 ]
                             )
-                        , setPreviewContent expositionWithClasses.renderedHtml
-                        ]
+                         , setPreviewContent expositionWithClasses.renderedHtml
+                         ]
+                            ++ List.map (\o -> RCAPI.updateMedia o (Http.expectString SavedMediaEdit))
+                                expositionWithClasses.media
+                        )
                     )
 
         MediaEdit ( objInModelName, objFromDialog ) ->
-            -- TODO: store in backend
             case Exposition.objectByNameOrId objInModelName model.exposition of
                 Nothing ->
                     let
@@ -516,6 +502,10 @@ update msg model =
         SavedMediaEdit result ->
             case result of
                 Ok s ->
+                    let
+                        _ =
+                            Debug.log "saved media result: " s
+                    in
                     update SaveExposition model
 
                 Err s ->
@@ -528,7 +518,7 @@ update msg model =
         MediaDelete obj ->
             let
                 modelWithoutObj =
-                    { model | exposition = Exposition.withoutMedia obj.id model.exposition }
+                    { model | exposition = Exposition.removeObjectWithID obj.id model.exposition }
             in
             ( modelWithoutObj, Cmd.batch [ RCAPI.deleteMedia obj MediaDeleted, RCAPI.getMediaList model.research GotMediaList ] )
 
@@ -569,6 +559,9 @@ update msg model =
             ( model
             , RCAPI.uploadImport model.research file UploadedImport
             )
+
+        DownloadExport ->
+            ( model, RCAPI.convertExposition RCAPI.Docx model.exposition )
 
         GotMediaUploadProgress progress ->
             case progress of
@@ -621,7 +614,6 @@ update msg model =
                                         )
                             }
                     in
-                    -- TODO: convert images to tools in markdown!
                     ( newModel
                     , Cmd.batch
                         [ updateEditorContent newModel
@@ -700,8 +692,8 @@ renderIcon icon =
             iconImg "save.svg"
 
 
-viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg
-viewUpload icon needsOffset onClickMsg buttonText status =
+mkButton : Icon -> Bool -> Msg -> String -> Html Msg
+mkButton icon needsOffset onClickMsg buttonText =
     let
         spacing =
             if needsOffset then
@@ -710,15 +702,20 @@ viewUpload icon needsOffset onClickMsg buttonText status =
             else
                 []
     in
+    Button.button
+        [ Button.light
+        , Button.attrs <| List.append [ onClick onClickMsg ] spacing
+        ]
+        [ renderIcon icon
+        , text buttonText
+        ]
+
+
+viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg
+viewUpload icon needsOffset onClickMsg buttonText status =
     case status of
         Ready ->
-            Button.button
-                [ Button.light
-                , Button.attrs <| List.append [ onClick onClickMsg ] spacing
-                ]
-                [ renderIcon icon
-                , text buttonText
-                ]
+            mkButton icon needsOffset onClickMsg buttonText
 
         Uploading fraction ->
             div [] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
@@ -843,6 +840,7 @@ view model =
         , confirmDialogHtml
         , viewUpload PlusIcon False UploadMediaFileSelect "Media" model.mediaUploadStatus
         , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
+        , mkButton ImportIcon True DownloadExport "Export doc"
         , saveButton
         , viewEditorCheckbox model.editorType
         , viewAlert model

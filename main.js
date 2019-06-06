@@ -2934,6 +2934,23 @@ function _File_toUrl(blob)
 
 
 
+function _Url_percentEncode(string)
+{
+	return encodeURIComponent(string);
+}
+
+function _Url_percentDecode(string)
+{
+	try
+	{
+		return elm$core$Maybe$Just(decodeURIComponent(string));
+	}
+	catch (e)
+	{
+		return elm$core$Maybe$Nothing;
+	}
+}
+
 
 
 // HELPERS
@@ -5466,10 +5483,6 @@ var author$project$Main$emptyModel = F2(
 		};
 	});
 var author$project$Problems$WrongExpositionUrl = {$: 'WrongExpositionUrl'};
-var author$project$RCAPI$APIExposition = F6(
-	function (html, markdown, media, metadata, style, title) {
-		return {html: html, markdown: markdown, media: media, metadata: metadata, style: style, title: title};
-	});
 var author$project$RCAPI$APIAdditionalMediaMetadata = F3(
 	function (id, name, userClass) {
 		return {id: id, name: name, userClass: userClass};
@@ -5513,6 +5526,30 @@ var author$project$RCAPI$Left = function (a) {
 	return {$: 'Left', a: a};
 };
 var author$project$RCAPI$eitherString = A2(elm$json$Json$Decode$map, author$project$RCAPI$Left, elm$json$Json$Decode$string);
+var author$project$RCAPI$APIExposition = F6(
+	function (html, markdown, media, metadata, style, title) {
+		return {html: html, markdown: markdown, media: media, metadata: metadata, style: style, title: title};
+	});
+var elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
+var author$project$RCAPI$mkExposition = F6(
+	function (html, md, media, meta, style, title) {
+		return A6(
+			author$project$RCAPI$APIExposition,
+			A2(elm$core$Maybe$withDefault, '', html),
+			A2(elm$core$Maybe$withDefault, '', md),
+			media,
+			meta,
+			A2(elm$core$Maybe$withDefault, '', style),
+			title);
+	});
 var author$project$RCAPI$Right = function (a) {
 	return {$: 'Right', a: a};
 };
@@ -5523,9 +5560,11 @@ var elm$json$Json$Decode$list = _Json_decodeList;
 var elm$json$Json$Decode$map6 = _Json_map6;
 var author$project$RCAPI$apiExposition = A7(
 	elm$json$Json$Decode$map6,
-	author$project$RCAPI$APIExposition,
-	A2(elm$json$Json$Decode$field, 'html', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'markdown', elm$json$Json$Decode$string),
+	author$project$RCAPI$mkExposition,
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'html', elm$json$Json$Decode$string)),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'markdown', elm$json$Json$Decode$string)),
 	A2(
 		elm$json$Json$Decode$field,
 		'media',
@@ -5545,7 +5584,8 @@ var author$project$RCAPI$apiExposition = A7(
 					author$project$RCAPI$eitherString,
 					author$project$RCAPI$rightDecoder(author$project$RCAPI$apiExpositionMetadata)
 				]))),
-	A2(elm$json$Json$Decode$field, 'style', elm$json$Json$Decode$string),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'style', elm$json$Json$Decode$string)),
 	A2(elm$json$Json$Decode$field, 'title', elm$json$Json$Decode$string));
 var elm$core$Result$mapError = F2(
 	function (f, result) {
@@ -6995,15 +7035,6 @@ var elm$core$Maybe$map = F2(
 			return elm$core$Maybe$Nothing;
 		}
 	});
-var elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
 var elm$regex$Regex$Match = F4(
 	function (match, index, number, submatches) {
 		return {index: index, match: match, number: number, submatches: submatches};
@@ -7832,6 +7863,57 @@ var author$project$Exposition$mkMediaName = function (exp) {
 		imageNames);
 	return 'media' + elm$core$String$fromInt(maxImage + 1);
 };
+var author$project$Exposition$removeObjectWithID = F2(
+	function (id, exp) {
+		return _Utils_update(
+			exp,
+			{
+				media: A2(
+					elm$core$List$filter,
+					function (m) {
+						return !_Utils_eq(m.id, id);
+					},
+					exp.media)
+			});
+	});
+var author$project$Exposition$renameDuplicateMedia = function (exp) {
+	var renameDuplicates = F2(
+		function (e, m) {
+			renameDuplicates:
+			while (true) {
+				if (!m.b) {
+					return e;
+				} else {
+					var h = m.a;
+					var t = m.b;
+					if (A2(
+						elm$core$List$any,
+						function (o) {
+							return _Utils_eq(o.name, h.name);
+						},
+						A2(author$project$Exposition$removeObjectWithID, h.id, e).media)) {
+						var newOb = _Utils_update(
+							h,
+							{
+								name: author$project$Exposition$mkMediaName(e)
+							});
+						var $temp$e = A2(author$project$Exposition$replaceObject, newOb, e),
+							$temp$m = t;
+						e = $temp$e;
+						m = $temp$m;
+						continue renameDuplicates;
+					} else {
+						var $temp$e = e,
+							$temp$m = t;
+						e = $temp$e;
+						m = $temp$m;
+						continue renameDuplicates;
+					}
+				}
+			}
+		});
+	return A2(renameDuplicates, exp, exp.media);
+};
 var elm$core$List$drop = F2(
 	function (n, list) {
 		drop:
@@ -7966,19 +8048,6 @@ var author$project$Exposition$withMd = F2(
 		return _Utils_update(
 			exp,
 			{markdownInput: content});
-	});
-var author$project$Exposition$withoutMedia = F2(
-	function (id, exp) {
-		return _Utils_update(
-			exp,
-			{
-				media: A2(
-					elm$core$List$filter,
-					function (o) {
-						return !_Utils_eq(o.id, id);
-					},
-					exp.media)
-			});
 	});
 var author$project$Main$CloseConfirmDialog = {$: 'CloseConfirmDialog'};
 var author$project$Main$GotMediaList = function (a) {
@@ -8134,6 +8203,147 @@ var author$project$Problems$splitResultListAcc = F3(
 var author$project$Problems$splitResultList = function (results) {
 	return A3(author$project$Problems$splitResultListAcc, results, _List_Nil, _List_Nil);
 };
+var author$project$RCAPI$Docx = {$: 'Docx'};
+var author$project$RCAPI$typeEnding = function (t) {
+	switch (t.$) {
+		case 'Pdf':
+			return 'pdf';
+		case 'Docx':
+			return 'docx';
+		case 'Odt':
+			return 'odt';
+		case 'Latex':
+			return 'tex';
+		case 'Html':
+			return 'html';
+		case 'Md':
+			return 'md';
+		default:
+			return 'epub';
+	}
+};
+var elm$core$Basics$never = function (_n0) {
+	never:
+	while (true) {
+		var nvr = _n0.a;
+		var $temp$_n0 = nvr;
+		_n0 = $temp$_n0;
+		continue never;
+	}
+};
+var elm$core$Task$Perform = function (a) {
+	return {$: 'Perform', a: a};
+};
+var elm$core$Task$init = elm$core$Task$succeed(_Utils_Tuple0);
+var elm$core$Task$map = F2(
+	function (func, taskA) {
+		return A2(
+			elm$core$Task$andThen,
+			function (a) {
+				return elm$core$Task$succeed(
+					func(a));
+			},
+			taskA);
+	});
+var elm$core$Task$spawnCmd = F2(
+	function (router, _n0) {
+		var task = _n0.a;
+		return _Scheduler_spawn(
+			A2(
+				elm$core$Task$andThen,
+				elm$core$Platform$sendToApp(router),
+				task));
+	});
+var elm$core$Task$onEffects = F3(
+	function (router, commands, state) {
+		return A2(
+			elm$core$Task$map,
+			function (_n0) {
+				return _Utils_Tuple0;
+			},
+			elm$core$Task$sequence(
+				A2(
+					elm$core$List$map,
+					elm$core$Task$spawnCmd(router),
+					commands)));
+	});
+var elm$core$Task$onSelfMsg = F3(
+	function (_n0, _n1, _n2) {
+		return elm$core$Task$succeed(_Utils_Tuple0);
+	});
+var elm$core$Task$cmdMap = F2(
+	function (tagger, _n0) {
+		var task = _n0.a;
+		return elm$core$Task$Perform(
+			A2(elm$core$Task$map, tagger, task));
+	});
+_Platform_effectManagers['Task'] = _Platform_createManager(elm$core$Task$init, elm$core$Task$onEffects, elm$core$Task$onSelfMsg, elm$core$Task$cmdMap);
+var elm$core$Task$command = _Platform_leaf('Task');
+var elm$core$Task$perform = F2(
+	function (toMessage, task) {
+		return elm$core$Task$command(
+			elm$core$Task$Perform(
+				A2(elm$core$Task$map, toMessage, task)));
+	});
+var elm$time$Time$Posix = function (a) {
+	return {$: 'Posix', a: a};
+};
+var elm$time$Time$millisToPosix = elm$time$Time$Posix;
+var elm$file$File$Download$url = function (href) {
+	return A2(
+		elm$core$Task$perform,
+		elm$core$Basics$never,
+		_File_downloadUrl(href));
+};
+var elm$url$Url$Builder$toQueryPair = function (_n0) {
+	var key = _n0.a;
+	var value = _n0.b;
+	return key + ('=' + value);
+};
+var elm$url$Url$Builder$toQuery = function (parameters) {
+	if (!parameters.b) {
+		return '';
+	} else {
+		return '?' + A2(
+			elm$core$String$join,
+			'&',
+			A2(elm$core$List$map, elm$url$Url$Builder$toQueryPair, parameters));
+	}
+};
+var elm$url$Url$Builder$relative = F2(
+	function (pathSegments, parameters) {
+		return _Utils_ap(
+			A2(elm$core$String$join, '/', pathSegments),
+			elm$url$Url$Builder$toQuery(parameters));
+	});
+var elm$url$Url$percentEncode = _Url_percentEncode;
+var elm$url$Url$Builder$QueryParameter = F2(
+	function (a, b) {
+		return {$: 'QueryParameter', a: a, b: b};
+	});
+var elm$url$Url$Builder$string = F2(
+	function (key, value) {
+		return A2(
+			elm$url$Url$Builder$QueryParameter,
+			elm$url$Url$percentEncode(key),
+			elm$url$Url$percentEncode(value));
+	});
+var author$project$RCAPI$convertExposition = F2(
+	function (ctype, expo) {
+		var path = A2(
+			elm$url$Url$Builder$relative,
+			_List_fromArray(
+				['text-editor', 'export']),
+			_List_fromArray(
+				[
+					A2(
+					elm$url$Url$Builder$string,
+					'type',
+					author$project$RCAPI$typeEnding(ctype)),
+					A2(elm$url$Url$Builder$string, 'markdown', expo.markdownInput)
+				]));
+		return elm$file$File$Download$url(path);
+	});
 var elm$http$Http$expectBytesResponse = F2(
 	function (toMsg, toResult) {
 		return A3(
@@ -8466,6 +8676,10 @@ var author$project$RCAPI$toRCMediaObject = F2(
 				author$project$Problems$CannotLoadMedia(s));
 		}
 	});
+var author$project$RCAPI$withDefault = F2(
+	function (_default, str) {
+		return (str === '') ? _default : str;
+	});
 var author$project$RCAPI$updateMedia = F2(
 	function (mediaObject, expect) {
 		return elm$http$Http$request(
@@ -8474,7 +8688,10 @@ var author$project$RCAPI$updateMedia = F2(
 					_List_fromArray(
 						[
 							A2(elm$http$Http$stringPart, 'name', mediaObject.name),
-							A2(elm$http$Http$stringPart, 'copyrightholder', mediaObject.copyright),
+							A2(
+							elm$http$Http$stringPart,
+							'copyrightholder',
+							A2(author$project$RCAPI$withDefault, 'copyright holder', mediaObject.copyright)),
 							A2(elm$http$Http$stringPart, 'description', mediaObject.description),
 							A2(elm$http$Http$stringPart, 'license', 'all-rights-reserved')
 						])),
@@ -8539,64 +8756,6 @@ var author$project$RCAPI$uploadMedia = F4(
 				url: 'text-editor/simple-media-add' + ('?research=' + elm$core$String$fromInt(researchId))
 			});
 	});
-var elm$core$Task$Perform = function (a) {
-	return {$: 'Perform', a: a};
-};
-var elm$core$Task$init = elm$core$Task$succeed(_Utils_Tuple0);
-var elm$core$Task$map = F2(
-	function (func, taskA) {
-		return A2(
-			elm$core$Task$andThen,
-			function (a) {
-				return elm$core$Task$succeed(
-					func(a));
-			},
-			taskA);
-	});
-var elm$core$Task$spawnCmd = F2(
-	function (router, _n0) {
-		var task = _n0.a;
-		return _Scheduler_spawn(
-			A2(
-				elm$core$Task$andThen,
-				elm$core$Platform$sendToApp(router),
-				task));
-	});
-var elm$core$Task$onEffects = F3(
-	function (router, commands, state) {
-		return A2(
-			elm$core$Task$map,
-			function (_n0) {
-				return _Utils_Tuple0;
-			},
-			elm$core$Task$sequence(
-				A2(
-					elm$core$List$map,
-					elm$core$Task$spawnCmd(router),
-					commands)));
-	});
-var elm$core$Task$onSelfMsg = F3(
-	function (_n0, _n1, _n2) {
-		return elm$core$Task$succeed(_Utils_Tuple0);
-	});
-var elm$core$Task$cmdMap = F2(
-	function (tagger, _n0) {
-		var task = _n0.a;
-		return elm$core$Task$Perform(
-			A2(elm$core$Task$map, tagger, task));
-	});
-_Platform_effectManagers['Task'] = _Platform_createManager(elm$core$Task$init, elm$core$Task$onEffects, elm$core$Task$onSelfMsg, elm$core$Task$cmdMap);
-var elm$core$Task$command = _Platform_leaf('Task');
-var elm$core$Task$perform = F2(
-	function (toMessage, task) {
-		return elm$core$Task$command(
-			elm$core$Task$Perform(
-				A2(elm$core$Task$map, toMessage, task)));
-	});
-var elm$time$Time$Posix = function (a) {
-	return {$: 'Posix', a: a};
-};
-var elm$time$Time$millisToPosix = elm$time$Time$Posix;
 var elm$file$File$Select$file = F2(
 	function (mimes, toMsg) {
 		return A2(
@@ -8805,28 +8964,39 @@ var author$project$Main$update = F2(
 						var mediaEntries = _n16.b;
 						var modelWithProblems = A2(author$project$Main$addProblems, model, problems);
 						var expositionWithMedia = A3(elm$core$List$foldr, author$project$Exposition$addOrReplaceObject, modelWithProblems.exposition, mediaEntries);
-						var expositionWithClasses = A2(author$project$Exposition$addMediaUserClasses, expositionWithMedia, model.mediaClassesDict);
+						var expositionWithClasses = author$project$Exposition$renameDuplicateMedia(
+							A2(author$project$Exposition$addMediaUserClasses, expositionWithMedia, model.mediaClassesDict));
 						var _n17 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithClasses);
 						return _Utils_Tuple2(
 							_Utils_update(
 								modelWithProblems,
 								{exposition: expositionWithClasses}),
 							elm$core$Platform$Cmd$batch(
-								_List_fromArray(
-									[
-										author$project$Main$setContent(
-										elm$json$Json$Encode$object(
-											_List_fromArray(
-												[
-													_Utils_Tuple2(
-													'md',
-													elm$json$Json$Encode$string(expositionWithClasses.markdownInput)),
-													_Utils_Tuple2(
-													'style',
-													elm$json$Json$Encode$string(expositionWithClasses.css))
-												]))),
-										author$project$Main$setPreviewContent(expositionWithClasses.renderedHtml)
-									])));
+								_Utils_ap(
+									_List_fromArray(
+										[
+											author$project$Main$setContent(
+											elm$json$Json$Encode$object(
+												_List_fromArray(
+													[
+														_Utils_Tuple2(
+														'md',
+														elm$json$Json$Encode$string(expositionWithClasses.markdownInput)),
+														_Utils_Tuple2(
+														'style',
+														elm$json$Json$Encode$string(expositionWithClasses.css))
+													]))),
+											author$project$Main$setPreviewContent(expositionWithClasses.renderedHtml)
+										]),
+									A2(
+										elm$core$List$map,
+										function (o) {
+											return A2(
+												author$project$RCAPI$updateMedia,
+												o,
+												elm$http$Http$expectString(author$project$Main$SavedMediaEdit));
+										},
+										expositionWithClasses.media))));
 					}
 				case 'MediaEdit':
 					var _n18 = msg.a;
@@ -8885,6 +9055,7 @@ var author$project$Main$update = F2(
 					var result = msg.a;
 					if (result.$ === 'Ok') {
 						var s = result.a;
+						var _n23 = A2(elm$core$Debug$log, 'saved media result: ', s);
 						var $temp$msg = author$project$Main$SaveExposition,
 							$temp$model = model;
 						msg = $temp$msg;
@@ -8892,7 +9063,7 @@ var author$project$Main$update = F2(
 						continue update;
 					} else {
 						var s = result.a;
-						var _n23 = A2(elm$core$Debug$log, 'update media error: ', s);
+						var _n24 = A2(elm$core$Debug$log, 'update media error: ', s);
 						return _Utils_Tuple2(
 							A2(author$project$Main$addProblem, model, author$project$Problems$CannotUpdateMedia),
 							elm$core$Platform$Cmd$none);
@@ -8902,7 +9073,7 @@ var author$project$Main$update = F2(
 					var modelWithoutObj = _Utils_update(
 						model,
 						{
-							exposition: A2(author$project$Exposition$withoutMedia, obj.id, model.exposition)
+							exposition: A2(author$project$Exposition$removeObjectWithID, obj.id, model.exposition)
 						});
 					return _Utils_Tuple2(
 						modelWithoutObj,
@@ -8953,6 +9124,10 @@ var author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						model,
 						A3(author$project$RCAPI$uploadImport, model.research, file, author$project$Main$UploadedImport));
+				case 'DownloadExport':
+					return _Utils_Tuple2(
+						model,
+						A2(author$project$RCAPI$convertExposition, author$project$RCAPI$Docx, model.exposition));
 				case 'GotMediaUploadProgress':
 					var progress = msg.a;
 					if (progress.$ === 'Sending') {
@@ -8986,7 +9161,7 @@ var author$project$Main$update = F2(
 				case 'Uploaded':
 					var result = msg.a;
 					if (result.$ === 'Ok') {
-						var _n27 = A2(elm$core$Debug$log, 'uploaded result: ', result);
+						var _n28 = A2(elm$core$Debug$log, 'uploaded result: ', result);
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -8994,7 +9169,7 @@ var author$project$Main$update = F2(
 							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 					} else {
 						var e = result.a;
-						var _n28 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n29 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
 				case 'UploadedImport':
@@ -9013,7 +9188,7 @@ var author$project$Main$update = F2(
 										importResult.media)),
 								importUploadStatus: author$project$Main$Ready
 							});
-						var _n30 = A2(elm$core$Debug$log, 'import result: ', importResult);
+						var _n31 = A2(elm$core$Debug$log, 'import result: ', importResult);
 						return _Utils_Tuple2(
 							newModel,
 							elm$core$Platform$Cmd$batch(
@@ -9024,7 +9199,7 @@ var author$project$Main$update = F2(
 									])));
 					} else {
 						var e = result.a;
-						var _n31 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n32 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(
 							A2(
 								author$project$Main$addProblem,
@@ -9091,6 +9266,7 @@ var author$project$Main$update = F2(
 		}
 	});
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
+var author$project$Main$DownloadExport = {$: 'DownloadExport'};
 var author$project$Main$ImportIcon = {$: 'ImportIcon'};
 var author$project$Main$PlusIcon = {$: 'PlusIcon'};
 var author$project$Main$SaveIcon = {$: 'SaveIcon'};
@@ -9139,8 +9315,8 @@ var author$project$Main$InsertTool = function (a) {
 	return {$: 'InsertTool', a: a};
 };
 var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$ConfirmMediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertTool};
-var author$project$Main$baseUrl = 'elm-editor/';
-var author$project$Main$iconUrl = author$project$Main$baseUrl + 'lib/icons/';
+var author$project$Settings$baseUrl = 'elm-editor/';
+var author$project$Settings$iconUrl = author$project$Settings$baseUrl + 'lib/icons/';
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	switch (handler.$) {
 		case 'Normal':
@@ -9189,7 +9365,7 @@ var author$project$Main$renderIcon = function (icon) {
 			_List_fromArray(
 				[
 					elm$html$Html$Attributes$src(
-					_Utils_ap(author$project$Main$iconUrl, url)),
+					_Utils_ap(author$project$Settings$iconUrl, url)),
 					elm$html$Html$Attributes$class('m-1'),
 					elm$html$Html$Attributes$width(15),
 					elm$html$Html$Attributes$height(15),
@@ -9207,6 +9383,233 @@ var author$project$Main$renderIcon = function (icon) {
 			return iconImg('save.svg');
 	}
 };
+var elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
+		}
+	});
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
+	return {$: 'Attrs', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Button$attrs = function (attrs_) {
+	return rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs(attrs_);
+};
+var elm$html$Html$button = _VirtualDom_node('button');
+var elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (maybeValue.$ === 'Just') {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return elm$core$Maybe$Nothing;
+		}
+	});
+var elm$html$Html$Attributes$classList = function (classes) {
+	return elm$html$Html$Attributes$class(
+		A2(
+			elm$core$String$join,
+			' ',
+			A2(
+				elm$core$List$map,
+				elm$core$Tuple$first,
+				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
+};
+var elm$json$Json$Encode$bool = _Json_wrap;
+var elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$bool(bool));
+	});
+var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
+var rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption = function (size) {
+	switch (size.$) {
+		case 'XS':
+			return elm$core$Maybe$Nothing;
+		case 'SM':
+			return elm$core$Maybe$Just('sm');
+		case 'MD':
+			return elm$core$Maybe$Just('md');
+		case 'LG':
+			return elm$core$Maybe$Just('lg');
+		default:
+			return elm$core$Maybe$Just('xl');
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier = F2(
+	function (modifier, options) {
+		switch (modifier.$) {
+			case 'Size':
+				var size = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						size: elm$core$Maybe$Just(size)
+					});
+			case 'Coloring':
+				var coloring = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						coloring: elm$core$Maybe$Just(coloring)
+					});
+			case 'Block':
+				return _Utils_update(
+					options,
+					{block: true});
+			case 'Disabled':
+				var val = modifier.a;
+				return _Utils_update(
+					options,
+					{disabled: val});
+			default:
+				var attrs = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						attributes: _Utils_ap(options.attributes, attrs)
+					});
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions = {attributes: _List_Nil, block: false, coloring: elm$core$Maybe$Nothing, disabled: false, size: elm$core$Maybe$Nothing};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass = function (role) {
+	switch (role.$) {
+		case 'Primary':
+			return 'primary';
+		case 'Secondary':
+			return 'secondary';
+		case 'Success':
+			return 'success';
+		case 'Info':
+			return 'info';
+		case 'Warning':
+			return 'warning';
+		case 'Danger':
+			return 'danger';
+		case 'Dark':
+			return 'dark';
+		case 'Light':
+			return 'light';
+		default:
+			return 'link';
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes = function (modifiers) {
+	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier, rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions, modifiers);
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$classList(
+				_List_fromArray(
+					[
+						_Utils_Tuple2('btn', true),
+						_Utils_Tuple2('btn-block', options.block),
+						_Utils_Tuple2('disabled', options.disabled)
+					])),
+				elm$html$Html$Attributes$disabled(options.disabled)
+			]),
+		_Utils_ap(
+			function () {
+				var _n0 = A2(elm$core$Maybe$andThen, rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption, options.size);
+				if (_n0.$ === 'Just') {
+					var s = _n0.a;
+					return _List_fromArray(
+						[
+							elm$html$Html$Attributes$class('btn-' + s)
+						]);
+				} else {
+					return _List_Nil;
+				}
+			}(),
+			_Utils_ap(
+				function () {
+					var _n1 = options.coloring;
+					if (_n1.$ === 'Just') {
+						if (_n1.a.$ === 'Roled') {
+							var role = _n1.a.a;
+							return _List_fromArray(
+								[
+									elm$html$Html$Attributes$class(
+									'btn-' + rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
+								]);
+						} else {
+							var role = _n1.a.a;
+							return _List_fromArray(
+								[
+									elm$html$Html$Attributes$class(
+									'btn-outline-' + rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
+								]);
+						}
+					} else {
+						return _List_Nil;
+					}
+				}(),
+				options.attributes)));
+};
+var rundis$elm_bootstrap$Bootstrap$Button$button = F2(
+	function (options, children) {
+		return A2(
+			elm$html$Html$button,
+			rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes(options),
+			children);
+	});
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
+	return {$: 'Coloring', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Light = {$: 'Light'};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
+	return {$: 'Roled', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Button$light = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Light));
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1 = elm$html$Html$Attributes$class('m-1');
+var author$project$Main$mkButton = F4(
+	function (icon, needsOffset, onClickMsg, buttonText) {
+		var spacing = needsOffset ? _List_fromArray(
+			[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1]) : _List_Nil;
+		return A2(
+			rundis$elm_bootstrap$Bootstrap$Button$button,
+			_List_fromArray(
+				[
+					rundis$elm_bootstrap$Bootstrap$Button$light,
+					rundis$elm_bootstrap$Bootstrap$Button$attrs(
+					A2(
+						elm$core$List$append,
+						_List_fromArray(
+							[
+								elm$html$Html$Events$onClick(onClickMsg)
+							]),
+						spacing))
+				]),
+			_List_fromArray(
+				[
+					author$project$Main$renderIcon(icon),
+					elm$html$Html$text(buttonText)
+				]));
+	});
 var author$project$Main$AlertMsg = function (a) {
 	return {$: 'AlertMsg', a: a};
 };
@@ -9229,8 +9632,6 @@ var author$project$Problems$asString = function (problem) {
 			return 'import http error';
 	}
 };
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var rundis$elm_bootstrap$Bootstrap$Alert$Config = function (a) {
 	return {$: 'Config', a: a};
 };
@@ -9283,7 +9684,6 @@ var rundis$elm_bootstrap$Bootstrap$Alert$info = function (conf) {
 	return A2(rundis$elm_bootstrap$Bootstrap$Alert$role, rundis$elm_bootstrap$Bootstrap$Internal$Role$Info, conf);
 };
 var elm$html$Html$div = _VirtualDom_node('div');
-var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$span = _VirtualDom_node('span');
 var elm$virtual_dom$VirtualDom$attribute = F2(
 	function (key, value) {
@@ -9294,23 +9694,6 @@ var elm$virtual_dom$VirtualDom$attribute = F2(
 	});
 var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
 var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
-var elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		elm$html$Html$Events$on,
-		'click',
-		elm$json$Json$Decode$succeed(msg));
-};
 var rundis$elm_bootstrap$Bootstrap$Alert$StartClose = {$: 'StartClose'};
 var rundis$elm_bootstrap$Bootstrap$Alert$clickHandler = F2(
 	function (visibility, configRec) {
@@ -9381,26 +9764,8 @@ var rundis$elm_bootstrap$Bootstrap$Alert$maybeAddDismissButton = F3(
 					])),
 			children_) : children_;
 	});
-var elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
-		}
-	});
 var elm$core$List$concat = function (lists) {
 	return A3(elm$core$List$foldr, elm$core$List$append, _List_Nil, lists);
-};
-var elm$html$Html$Attributes$classList = function (classes) {
-	return elm$html$Html$Attributes$class(
-		A2(
-			elm$core$String$join,
-			' ',
-			A2(
-				elm$core$List$map,
-				elm$core$Tuple$first,
-				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
 };
 var rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass = F2(
 	function (prefix, role) {
@@ -9583,15 +9948,6 @@ var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$applyModifier = F2(
 	});
 var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Off = {$: 'Off'};
 var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$defaultOptions = {attributes: _List_Nil, custom: false, disabled: false, id: elm$core$Maybe$Nothing, inline: false, onChecked: elm$core$Maybe$Nothing, state: rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Off, validation: elm$core$Maybe$Nothing};
-var elm$json$Json$Encode$bool = _Json_wrap;
-var elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$bool(bool));
-	});
-var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
 var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var elm$json$Json$Decode$at = F2(
 	function (fields, decoder) {
@@ -9804,186 +10160,10 @@ var author$project$Main$viewTabs = function (model) {
 			]));
 };
 var elm$core$Basics$round = _Basics_round;
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
-	return {$: 'Attrs', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Button$attrs = function (attrs_) {
-	return rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs(attrs_);
-};
-var elm$core$Maybe$andThen = F2(
-	function (callback, maybeValue) {
-		if (maybeValue.$ === 'Just') {
-			var value = maybeValue.a;
-			return callback(value);
-		} else {
-			return elm$core$Maybe$Nothing;
-		}
-	});
-var rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption = function (size) {
-	switch (size.$) {
-		case 'XS':
-			return elm$core$Maybe$Nothing;
-		case 'SM':
-			return elm$core$Maybe$Just('sm');
-		case 'MD':
-			return elm$core$Maybe$Just('md');
-		case 'LG':
-			return elm$core$Maybe$Just('lg');
-		default:
-			return elm$core$Maybe$Just('xl');
-	}
-};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier = F2(
-	function (modifier, options) {
-		switch (modifier.$) {
-			case 'Size':
-				var size = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						size: elm$core$Maybe$Just(size)
-					});
-			case 'Coloring':
-				var coloring = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						coloring: elm$core$Maybe$Just(coloring)
-					});
-			case 'Block':
-				return _Utils_update(
-					options,
-					{block: true});
-			case 'Disabled':
-				var val = modifier.a;
-				return _Utils_update(
-					options,
-					{disabled: val});
-			default:
-				var attrs = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						attributes: _Utils_ap(options.attributes, attrs)
-					});
-		}
-	});
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions = {attributes: _List_Nil, block: false, coloring: elm$core$Maybe$Nothing, disabled: false, size: elm$core$Maybe$Nothing};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass = function (role) {
-	switch (role.$) {
-		case 'Primary':
-			return 'primary';
-		case 'Secondary':
-			return 'secondary';
-		case 'Success':
-			return 'success';
-		case 'Info':
-			return 'info';
-		case 'Warning':
-			return 'warning';
-		case 'Danger':
-			return 'danger';
-		case 'Dark':
-			return 'dark';
-		case 'Light':
-			return 'light';
-		default:
-			return 'link';
-	}
-};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes = function (modifiers) {
-	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier, rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions, modifiers);
-	return _Utils_ap(
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$classList(
-				_List_fromArray(
-					[
-						_Utils_Tuple2('btn', true),
-						_Utils_Tuple2('btn-block', options.block),
-						_Utils_Tuple2('disabled', options.disabled)
-					])),
-				elm$html$Html$Attributes$disabled(options.disabled)
-			]),
-		_Utils_ap(
-			function () {
-				var _n0 = A2(elm$core$Maybe$andThen, rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption, options.size);
-				if (_n0.$ === 'Just') {
-					var s = _n0.a;
-					return _List_fromArray(
-						[
-							elm$html$Html$Attributes$class('btn-' + s)
-						]);
-				} else {
-					return _List_Nil;
-				}
-			}(),
-			_Utils_ap(
-				function () {
-					var _n1 = options.coloring;
-					if (_n1.$ === 'Just') {
-						if (_n1.a.$ === 'Roled') {
-							var role = _n1.a.a;
-							return _List_fromArray(
-								[
-									elm$html$Html$Attributes$class(
-									'btn-' + rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
-								]);
-						} else {
-							var role = _n1.a.a;
-							return _List_fromArray(
-								[
-									elm$html$Html$Attributes$class(
-									'btn-outline-' + rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
-								]);
-						}
-					} else {
-						return _List_Nil;
-					}
-				}(),
-				options.attributes)));
-};
-var rundis$elm_bootstrap$Bootstrap$Button$button = F2(
-	function (options, children) {
-		return A2(
-			elm$html$Html$button,
-			rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes(options),
-			children);
-	});
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
-	return {$: 'Coloring', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Light = {$: 'Light'};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
-	return {$: 'Roled', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Button$light = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Light));
-var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1 = elm$html$Html$Attributes$class('m-1');
 var author$project$Main$viewUpload = F5(
 	function (icon, needsOffset, onClickMsg, buttonText, status) {
-		var spacing = needsOffset ? _List_fromArray(
-			[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1]) : _List_Nil;
 		if (status.$ === 'Ready') {
-			return A2(
-				rundis$elm_bootstrap$Bootstrap$Button$button,
-				_List_fromArray(
-					[
-						rundis$elm_bootstrap$Bootstrap$Button$light,
-						rundis$elm_bootstrap$Bootstrap$Button$attrs(
-						A2(
-							elm$core$List$append,
-							_List_fromArray(
-								[
-									elm$html$Html$Events$onClick(onClickMsg)
-								]),
-							spacing))
-					]),
-				_List_fromArray(
-					[
-						author$project$Main$renderIcon(icon),
-						elm$html$Html$text(buttonText)
-					]));
+			return A4(author$project$Main$mkButton, icon, needsOffset, onClickMsg, buttonText);
 		} else {
 			var fraction = status.a;
 			return A2(
@@ -12089,6 +12269,7 @@ var author$project$Main$view = function (model) {
 				confirmDialogHtml,
 				A5(author$project$Main$viewUpload, author$project$Main$PlusIcon, false, author$project$Main$UploadMediaFileSelect, 'Media', model.mediaUploadStatus),
 				A5(author$project$Main$viewUpload, author$project$Main$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
+				A4(author$project$Main$mkButton, author$project$Main$ImportIcon, true, author$project$Main$DownloadExport, 'Export doc'),
 				saveButton,
 				author$project$Main$viewEditorCheckbox(model.editorType),
 				author$project$Main$viewAlert(model),
@@ -12103,15 +12284,6 @@ var elm$browser$Browser$Internal = function (a) {
 };
 var elm$browser$Browser$Dom$NotFound = function (a) {
 	return {$: 'NotFound', a: a};
-};
-var elm$core$Basics$never = function (_n0) {
-	never:
-	while (true) {
-		var nvr = _n0.a;
-		var $temp$_n0 = nvr;
-		_n0 = $temp$_n0;
-		continue never;
-	}
 };
 var elm$core$String$dropLeft = F2(
 	function (n, string) {

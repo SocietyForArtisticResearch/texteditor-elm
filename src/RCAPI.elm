@@ -1,15 +1,19 @@
-module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, APIPandocImport, deleteMedia, getExposition, getMediaList, saveExposition, toMediaClassesDict, toRCExposition, toRCMediaObject, updateMedia, uploadImport, uploadMedia)
+module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, APIPandocImport, ConversionType(..), convertExposition, deleteMedia, getExposition, getMediaList, saveExposition, toMediaClassesDict, toRCExposition, toRCMediaObject, updateMedia, uploadImport, uploadMedia)
+
+--import Bytes.Decode
 
 import Bytes.Encode
 import Dict
 import Exposition exposing (OptionalDimensions, RCExposition, RCMediaObject, RCMediaType(..), defaultPlayerSettings)
 import File exposing (File)
+import File.Download
 import Html exposing (Html, span)
 import Http
 import Json.Decode exposing (..)
 import Json.Encode as E
 import Problems exposing (..)
 import Settings
+import Url.Builder
 
 
 
@@ -31,6 +35,15 @@ rightDecoder decoder =
     map Right decoder
 
 
+withDefault : String -> String -> String
+withDefault default str =
+    if str == "" then
+        default
+
+    else
+        str
+
+
 type alias APIExpositionMetadata =
     { editorVersion : String, contentVersion : Int }
 
@@ -47,6 +60,11 @@ type alias APIExposition =
     , style : String
     , title : String
     }
+
+
+mkExposition : Maybe String -> Maybe String -> Either String (List APIAdditionalMediaMetadata) -> Either String APIExpositionMetadata -> Maybe String -> String -> APIExposition
+mkExposition html md media meta style title =
+    APIExposition (Maybe.withDefault "" html) (Maybe.withDefault "" md) media meta (Maybe.withDefault "" style) title
 
 
 type alias APIMediaEntry =
@@ -72,14 +90,14 @@ type alias APIPandocImport =
 
 apiExposition : Decoder APIExposition
 apiExposition =
-    map6 APIExposition
-        (field "html" string)
-        (field "markdown" string)
+    map6 mkExposition
+        (maybe (field "html" string))
+        (maybe (field "markdown" string))
         (field "media" (oneOf [ eitherString, rightDecoder (list apiAdditionalMediaMetadata) ]))
         -- should work for both ways of encoding
         (field "metadata" (oneOf [ eitherString, rightDecoder apiExpositionMetadata ]))
         -- should work for both ways of encoding
-        (field "style" string)
+        (maybe (field "style" string))
         (field "title" string)
 
 
@@ -180,7 +198,7 @@ updateMedia mediaObject expect =
         , body =
             Http.multipartBody
                 [ Http.stringPart "name" mediaObject.name
-                , Http.stringPart "copyrightholder" mediaObject.copyright
+                , Http.stringPart "copyrightholder" (withDefault "copyright holder" mediaObject.copyright)
                 , Http.stringPart "description" mediaObject.description
                 , Http.stringPart "license" "all-rights-reserved"
                 ]
@@ -217,6 +235,69 @@ uploadImport researchId file expectMsg =
         , timeout = Nothing
         , tracker = Just "uploadImport"
         }
+
+
+type ConversionType
+    = Pdf
+    | Docx
+    | Odt
+    | Latex
+    | Html
+    | Md
+    | Epub
+
+
+typeEnding : ConversionType -> String
+typeEnding t =
+    case t of
+        Pdf ->
+            "pdf"
+
+        Docx ->
+            "docx"
+
+        Odt ->
+            "odt"
+
+        Latex ->
+            "tex"
+
+        Html ->
+            "html"
+
+        Md ->
+            "md"
+
+        Epub ->
+            "epub"
+
+
+convertExposition : ConversionType -> RCExposition -> Cmd msg
+convertExposition ctype expo =
+    -- TODO tools to images
+    let
+        path =
+            Url.Builder.relative [ "text-editor", "export" ]
+                [ Url.Builder.string "type" (typeEnding ctype)
+                , Url.Builder.string "markdown" expo.markdownInput
+                ]
+    in
+    File.Download.url path
+
+
+
+-- convertExposition : ConversionType -> RCExposition -> (Result Http.Error a -> msg) -> Cmd msg
+-- convertExposition ctype expo expectMsg =
+--     Http.post
+--         { url =
+--             "text-editor/export"
+--                 ++ "?type="
+--                 ++ typeEnding ctype
+--                 ++ "&markdown="
+--                 ++ expo.markdownInput
+--         , body = Http.emptyBody
+--         , expect = Http.expectBytes expectMsg Bytes.Decode.bytes
+--         }
 
 
 saveExposition exposition expect =

@@ -1,4 +1,4 @@
-module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, mkMediaName, objectByNameOrId, replaceImagesWithTools, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withCSS, withHtml, withMd, withoutMedia)
+module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, mkMediaName, objectByNameOrId, removeObjectWithID, renameDuplicateMedia, replaceImagesWithTools, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withCSS, withHtml, withMd)
 
 import Dict
 import Html.String as Html
@@ -102,6 +102,28 @@ mkMediaName exp =
                 imageNames
     in
     "media" ++ String.fromInt (maxImage + 1)
+
+
+renameDuplicateMedia : RCExposition -> RCExposition
+renameDuplicateMedia exp =
+    let
+        renameDuplicates e m =
+            case m of
+                [] ->
+                    e
+
+                h :: t ->
+                    if List.any (\o -> o.name == h.name) (removeObjectWithID h.id e).media then
+                        let
+                            newOb =
+                                { h | name = mkMediaName e }
+                        in
+                        renameDuplicates (replaceObject newOb e) t
+
+                    else
+                        renameDuplicates e t
+    in
+    renameDuplicates exp exp.media
 
 
 type alias OptionalDimensions =
@@ -245,9 +267,10 @@ addOrReplaceObject obj exp =
         addObject obj exp
 
 
-withoutMedia : Int -> RCExposition -> RCExposition
-withoutMedia id exp =
-    { exp | media = List.filter (\o -> o.id /= id) exp.media }
+
+-- withoutMedia : Int -> RCExposition -> RCExposition
+-- withoutMedia id exp =
+--     { exp | media = List.filter (\o -> o.id /= id) exp.media }
 
 
 mediaUrl : RCMediaObject -> String
