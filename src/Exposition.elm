@@ -1,4 +1,4 @@
-module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, mkMediaName, objectByNameOrId, removeObjectWithID, renameDuplicateMedia, replaceImagesWithTools, replaceObject, replaceToolsWithImages, thumbUrl, validateMediaObject, withCSS, withHtml, withMd)
+module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, mkMediaName, objectByNameOrId, removeObjectWithID, renameDuplicateMedia, replaceImagesWithTools, replaceObject, replaceToolsWithImages, thumbUrl, updateToc, validateMediaObject, withCSS, withHtml, withMd)
 
 import Dict
 import Html.Parser as HtmlParser
@@ -20,6 +20,7 @@ type alias RCExposition =
     , media : List RCMediaObject
     , editorVersion : String
     , contentVersion : Int
+    , toc : TOC
     }
 
 
@@ -35,6 +36,7 @@ empty =
     , media = []
     , editorVersion = Settings.editorVersion
     , contentVersion = 0
+    , toc = []
     }
 
 
@@ -649,6 +651,11 @@ createToc expo =
 
         Err _ ->
             []
+
+
+updateToc : RCExposition -> RCExposition
+updateToc expo =
+    { expo | toc = createToc expo }
 
 
 

@@ -310,7 +310,7 @@ saveExposition exposition expect =
                 ++ String.fromInt exposition.currentWeave
 
         _ =
-            Debug.log "about to save html: " exposition
+            Debug.log "about to save exposition: " exposition
     in
     Http.request
         { method = "POST"
@@ -416,17 +416,19 @@ toRCExposition apiExpo id weave =
         exp =
             decodeMetadata (decodeMedia apiExpo)
     in
-    { css = apiExpo.style
-    , title = apiExpo.title
-    , authors = []
-    , id = id
-    , currentWeave = weave
-    , renderedHtml = apiExpo.html
-    , markdownInput = apiExpo.markdown
-    , media = []
-    , editorVersion = (getMetadata exp).editorVersion
-    , contentVersion = (getMetadata exp).contentVersion
-    }
+    Exposition.updateToc
+        { css = apiExpo.style
+        , title = apiExpo.title
+        , authors = []
+        , id = id
+        , currentWeave = weave
+        , renderedHtml = apiExpo.html
+        , markdownInput = apiExpo.markdown
+        , media = []
+        , editorVersion = (getMetadata exp).editorVersion
+        , contentVersion = (getMetadata exp).contentVersion
+        , toc = []
+        }
 
 
 toMediaClassesDict : APIExposition -> Dict.Dict Int String

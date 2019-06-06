@@ -386,7 +386,11 @@ update msg model =
                     ( model, Cmd.none )
 
         SaveExposition ->
-            ( model, RCAPI.saveExposition model.exposition SavedExposition )
+            let
+                modelWithToc =
+                    { model | exposition = Exposition.updateToc model.exposition }
+            in
+            ( modelWithToc, RCAPI.saveExposition modelWithToc.exposition SavedExposition )
 
         SavedExposition result ->
             case result of
