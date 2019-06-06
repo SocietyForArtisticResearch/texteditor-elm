@@ -291,12 +291,12 @@
      input.selectionStart = input.selectionEnd = start + textToInsert.length;
  }
  
- app.ports.insertMdString.subscribe(fucntion(str) {
+ app.ports.insertMdString.subscribe(function(str) {
      if (selectedEditor == editorCmMd) {
 	 cmMarkdown.replaceSelection(str);
 	 textareaMarkdown.value = cmMarkdown.getValue();
      } else if (selectedEditor == editorTxtMd) {
-	 insertAtCursor(textareaMarkdown, str):
+	 insertAtCursor(textareaMarkdown, str);
 	 cmMarkdown.setValue(textareaMarkdown.value);
      }
 
