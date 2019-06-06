@@ -652,7 +652,11 @@ update msg model =
         AlertMsg visibility ->
             ( { model | alertVisibility = visibility }, Cmd.none )
 
-        SwitchEditor editor ->
+        SwitchEditor editor -> -- using the toggle
+            let
+                newModel =
+                    { model | editorType = editor }
+            in
             case editor of
                 Markdown ->
                     update (SwitchTab CmMarkdownTab) model
@@ -788,15 +792,9 @@ viewEditorCheckbox : EditorType -> Html Msg
 viewEditorCheckbox editorType =
     let
         onToggle : Bool -> Msg
-        onToggle checked =
-            let
-                _ =
-                    Debug.log "checked state" checked
-
-                _ =
-                    Debug.log "editortype" editorType
+        onToggle becomesChecked =
             in
-            if checked then
+            if becomesChecked then
                 SwitchEditor PlainText
 
             else
@@ -804,7 +802,7 @@ viewEditorCheckbox editorType =
     in
     Checkbox.checkbox
         [ Checkbox.onCheck onToggle
-        , Checkbox.checked <| editorType == Markdown
+        , Checkbox.checked <| editorType == PlainText
         ]
         "spellchecker"
 
