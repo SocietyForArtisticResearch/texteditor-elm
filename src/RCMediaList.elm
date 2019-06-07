@@ -158,12 +158,10 @@ viewThumbnail object =
         Exposition.RCImage ->
             let
                 thumburl =
-                    Exposition.thumbUrl object
+                    Exposition.customThumbUrl 20 object
             in
             img
                 [ src thumburl
-                , style "width" "15"
-                , style "height" "15"
                 , style "object-fit" "cover"
                 ]
                 []

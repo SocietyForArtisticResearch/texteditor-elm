@@ -14783,17 +14783,20 @@ var author$project$RCMediaEdit$viewMediaDialog = F4(
 							rundis$elm_bootstrap$Bootstrap$Modal$small(
 								rundis$elm_bootstrap$Bootstrap$Modal$config(closeMediaDialog)))))));
 	});
+var author$project$Exposition$customThumbUrl = F2(
+	function (size, data) {
+		var sizeStr = elm$core$String$fromInt(size);
+		return '/text-editor/simple-media-thumb?research=' + (elm$core$String$fromInt(data.expositionId) + ('&simple-media=' + (elm$core$String$fromInt(data.id) + ('&width=' + (sizeStr + ('&height=' + sizeStr))))));
+	});
 var author$project$RCMediaList$viewThumbnail = function (object) {
 	var _n0 = object.mediaType;
 	if (_n0.$ === 'RCImage') {
-		var thumburl = author$project$Exposition$thumbUrl(object);
+		var thumburl = A2(author$project$Exposition$customThumbUrl, 20, object);
 		return A2(
 			elm$html$Html$img,
 			_List_fromArray(
 				[
 					elm$html$Html$Attributes$src(thumburl),
-					A2(elm$html$Html$Attributes$style, 'width', '15'),
-					A2(elm$html$Html$Attributes$style, 'height', '15'),
 					A2(elm$html$Html$Attributes$style, 'object-fit', 'cover')
 				]),
 			_List_Nil);
