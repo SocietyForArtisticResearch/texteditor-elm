@@ -158,7 +158,7 @@ viewThumbnail object =
         Exposition.RCImage ->
             let
                 thumburl =
-                    Exposition.customThumbUrl 20 object
+                    Exposition.customThumbUrl 30 object
             in
             img
                 [ src thumburl
