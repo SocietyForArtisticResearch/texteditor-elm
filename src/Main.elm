@@ -33,6 +33,7 @@ type alias Model =
     , editGeneration : ( Int, Int )
     , mediaDialog : ( Modal.Visibility, Maybe ( RCMediaObject, Int ), Maybe RCMediaObjectViewState )
     , confirmDialog : ( Modal.Visibility, Maybe ConfirmDialogContent, Maybe (UserConfirm.Messages Msg) )
+    , mediaPickerDialog : Modal.Visibility
     , alertVisibility : Alert.Visibility
     , weave : Int
     , research : Int
@@ -101,6 +102,7 @@ emptyModel research weave =
     , exposition = Exposition.empty
     , mediaDialog = ( Modal.hidden, Nothing, Nothing )
     , confirmDialog = ( Modal.hidden, Nothing, Nothing )
+    , mediaPickerDialog = Modal.hidden
     , alertVisibility = Alert.closed
     , research = research
     , weave = weave
@@ -245,6 +247,8 @@ type Msg
     | DownloadExport
     | InsertAtCursor ( String, Int ) -- string and cursor offest after insert
     | InsertMediaAtCursor RCMediaObject
+    | OpenMediaPicker
+    | CloseMediaPicker
 
 
 
@@ -272,6 +276,13 @@ makeTableMessages =
     { editObject = MediaDialog
     , deleteObject = ConfirmMediaDelete
     , insertObject = InsertTool
+    }
+
+
+makePickerMessages : RCMediaList.PickerMessages Msg
+makePickerMessages =
+    { insertObject = InsertTool
+    , closeModal = CloseMediaPicker
     }
 
 
@@ -715,6 +726,12 @@ update msg model =
         InsertAtCursor ( str, _ ) ->
             ( model, insertMdString str )
 
+        OpenMediaPicker ->
+            ( { model | mediaPickerDialog = Modal.shown }, Cmd.none )
+
+        CloseMediaPicker ->
+            ( { model | mediaPickerDialog = Modal.hidden }, Cmd.none )
+
 
 type Icon
     = PlusIcon
@@ -917,6 +934,7 @@ view model =
         [ viewTabs model
         , mediaDialogHtml
         , confirmDialogHtml
+        , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
         , viewUpload PlusIcon False UploadMediaFileSelect "Media" model.mediaUploadStatus
         , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
         , mkButton ImportIcon True DownloadExport "Export doc"
