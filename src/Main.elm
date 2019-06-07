@@ -929,13 +929,21 @@ view model =
 
                 _ ->
                     span [] []
+
+        mediaPickerButton =
+            Button.button
+                [ Button.light
+                , Button.attrs [ onClick OpenMediaPicker ]
+                ]
+                [ text "insert media" ]
     in
     div []
         [ viewTabs model
         , mediaDialogHtml
         , confirmDialogHtml
         , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
-        , viewUpload PlusIcon False UploadMediaFileSelect "Media" model.mediaUploadStatus
+        , viewUpload PlusIcon False UploadMediaFileSelect "Upload" model.mediaUploadStatus
+        , mediaPickerButton
         , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
         , mkButton ImportIcon True DownloadExport "Export doc"
         , saveButton

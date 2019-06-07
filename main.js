@@ -12615,6 +12615,7 @@ var author$project$Main$ImportIcon = {$: 'ImportIcon'};
 var author$project$Main$InsertAtCursor = function (a) {
 	return {$: 'InsertAtCursor', a: a};
 };
+var author$project$Main$OpenMediaPicker = {$: 'OpenMediaPicker'};
 var author$project$Main$PlusIcon = {$: 'PlusIcon'};
 var author$project$Main$SaveIcon = {$: 'SaveIcon'};
 var author$project$Main$UploadImportFileSelect = {$: 'UploadImportFileSelect'};
@@ -15771,6 +15772,21 @@ var author$project$Main$view = function (model) {
 				author$project$Main$renderIcon(author$project$Main$SaveIcon),
 				elm$html$Html$text(saveButtonText)
 			]));
+	var mediaPickerButton = A2(
+		rundis$elm_bootstrap$Bootstrap$Button$button,
+		_List_fromArray(
+			[
+				rundis$elm_bootstrap$Bootstrap$Button$light,
+				rundis$elm_bootstrap$Bootstrap$Button$attrs(
+				_List_fromArray(
+					[
+						elm$html$Html$Events$onClick(author$project$Main$OpenMediaPicker)
+					]))
+			]),
+		_List_fromArray(
+			[
+				elm$html$Html$text('insert media')
+			]));
 	var mediaList = A2(author$project$RCMediaList$view, model.exposition.media, author$project$Main$makeTableMessages);
 	var mediaDialogHtml = function () {
 		var _n4 = model.mediaDialog;
@@ -15831,7 +15847,8 @@ var author$project$Main$view = function (model) {
 				mediaDialogHtml,
 				confirmDialogHtml,
 				A3(author$project$RCMediaList$viewModalMediaPicker, model.mediaPickerDialog, model.exposition.media, author$project$Main$makePickerMessages),
-				A5(author$project$Main$viewUpload, author$project$Main$PlusIcon, false, author$project$Main$UploadMediaFileSelect, 'Media', model.mediaUploadStatus),
+				A5(author$project$Main$viewUpload, author$project$Main$PlusIcon, false, author$project$Main$UploadMediaFileSelect, 'Upload', model.mediaUploadStatus),
+				mediaPickerButton,
 				A5(author$project$Main$viewUpload, author$project$Main$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
 				A4(author$project$Main$mkButton, author$project$Main$ImportIcon, true, author$project$Main$DownloadExport, 'Export doc'),
 				saveButton,
