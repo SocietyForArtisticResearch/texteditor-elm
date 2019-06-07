@@ -12615,6 +12615,7 @@ var author$project$Main$ImportIcon = {$: 'ImportIcon'};
 var author$project$Main$InsertAtCursor = function (a) {
 	return {$: 'InsertAtCursor', a: a};
 };
+var author$project$Main$ListIcon = {$: 'ListIcon'};
 var author$project$Main$OpenMediaPicker = {$: 'OpenMediaPicker'};
 var author$project$Main$PlusIcon = {$: 'PlusIcon'};
 var author$project$Main$SaveIcon = {$: 'SaveIcon'};
@@ -12733,8 +12734,10 @@ var author$project$Main$renderIcon = function (icon) {
 			return iconImg('save.svg');
 		case 'ItalicIcon':
 			return iconImg('italic.svg');
-		default:
+		case 'BoldIcon':
 			return iconImg('bold.svg');
+		default:
+			return iconImg('list-unordered.svg');
 	}
 };
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
@@ -15865,7 +15868,7 @@ var author$project$Main$view = function (model) {
 				confirmDialogHtml,
 				A3(author$project$RCMediaList$viewModalMediaPicker, model.mediaPickerDialog, model.exposition.media, author$project$Main$makePickerMessages),
 				A5(author$project$Main$viewUpload, author$project$Main$PlusIcon, false, author$project$Main$UploadMediaFileSelect, 'Upload', model.mediaUploadStatus),
-				A4(author$project$Main$mkButton, author$project$Main$PlusIcon, true, author$project$Main$OpenMediaPicker, 'Insert media'),
+				A4(author$project$Main$mkButton, author$project$Main$ListIcon, true, author$project$Main$OpenMediaPicker, 'Insert'),
 				A5(author$project$Main$viewUpload, author$project$Main$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
 				A4(author$project$Main$mkButton, author$project$Main$ImportIcon, true, author$project$Main$DownloadExport, 'Export doc'),
 				saveButton,
