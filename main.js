@@ -14794,13 +14794,15 @@ var author$project$Exposition$customThumbUrl = F2(
 var author$project$RCMediaList$viewThumbnail = function (object) {
 	var _n0 = object.mediaType;
 	if (_n0.$ === 'RCImage') {
-		var thumburl = A2(author$project$Exposition$customThumbUrl, 30, object);
+		var thumburl = A2(author$project$Exposition$customThumbUrl, 40, object);
 		return A2(
 			elm$html$Html$img,
 			_List_fromArray(
 				[
 					elm$html$Html$Attributes$src(thumburl),
-					A2(elm$html$Html$Attributes$style, 'object-fit', 'cover')
+					A2(elm$html$Html$Attributes$style, 'object-fit', 'cover'),
+					A2(elm$html$Html$Attributes$style, 'width', '25px'),
+					A2(elm$html$Html$Attributes$style, 'height', '25px')
 				]),
 			_List_Nil);
 	} else {
