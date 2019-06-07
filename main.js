@@ -14792,8 +14792,8 @@ var author$project$RCMediaList$viewThumbnail = function (object) {
 			_List_fromArray(
 				[
 					elm$html$Html$Attributes$src(thumburl),
-					A2(elm$html$Html$Attributes$style, 'width', '30'),
-					A2(elm$html$Html$Attributes$style, 'height', '30'),
+					A2(elm$html$Html$Attributes$style, 'width', '15'),
+					A2(elm$html$Html$Attributes$style, 'height', '15'),
 					A2(elm$html$Html$Attributes$style, 'object-fit', 'cover')
 				]),
 			_List_Nil);

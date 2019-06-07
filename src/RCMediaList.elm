@@ -162,8 +162,8 @@ viewThumbnail object =
             in
             img
                 [ src thumburl
-                , style "width" "30"
-                , style "height" "30"
+                , style "width" "15"
+                , style "height" "15"
                 , style "object-fit" "cover"
                 ]
                 []
