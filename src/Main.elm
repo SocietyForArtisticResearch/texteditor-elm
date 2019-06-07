@@ -909,7 +909,11 @@ view model =
                 "Not Saved"
 
         saveButton =
-            Button.button [ Button.light, Button.attrs [ onClick SaveExposition ] ] [ renderIcon SaveIcon, text saveButtonText ]
+            Button.button
+                [ Button.light
+                , Button.attrs [ onClick SaveExposition ]
+                ]
+                [ renderIcon SaveIcon, text saveButtonText ]
 
         mediaList =
             RCMediaList.view model.exposition.media makeTableMessages
@@ -929,13 +933,6 @@ view model =
 
                 _ ->
                     span [] []
-
-        mediaPickerButton =
-            Button.button
-                [ Button.light
-                , Button.attrs [ onClick OpenMediaPicker ]
-                ]
-                [ text "insert media" ]
     in
     div []
         [ viewTabs model
@@ -943,7 +940,7 @@ view model =
         , confirmDialogHtml
         , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
         , viewUpload PlusIcon False UploadMediaFileSelect "Upload" model.mediaUploadStatus
-        , mediaPickerButton
+        , mkButton PlusIcon True OpenMediaPicker "Insert media"
         , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
         , mkButton ImportIcon True DownloadExport "Export doc"
         , saveButton
