@@ -739,6 +739,7 @@ type Icon
     | SaveIcon
     | ItalicIcon
     | BoldIcon
+    | ListIcon
 
 
 renderIcon : Icon -> Html Msg
@@ -770,6 +771,9 @@ renderIcon icon =
 
         BoldIcon ->
             iconImg "bold.svg"
+
+        ListIcon ->
+            iconImg "list-unordered.svg"
 
 
 mkButton : Icon -> Bool -> Msg -> String -> Html Msg
@@ -940,7 +944,7 @@ view model =
         , confirmDialogHtml
         , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
         , viewUpload PlusIcon False UploadMediaFileSelect "Upload" model.mediaUploadStatus
-        , mkButton PlusIcon True OpenMediaPicker "Insert media"
+        , mkButton ListIcon True OpenMediaPicker "Insert"
         , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
         , mkButton ImportIcon True DownloadExport "Export doc"
         , saveButton
