@@ -138,7 +138,7 @@ viewModalMediaPicker visibility objectList messages =
                         }
     in
     Modal.config messages.closeModal
-        |> Modal.small
+        |> Modal.large
         |> Modal.hideOnBackdropClick True
         |> Modal.h1 [] [ text "select a media to insert" ]
         |> Modal.body [] [ tableList ]

@@ -15525,6 +15525,21 @@ var rundis$elm_bootstrap$Bootstrap$Button$secondary = rundis$elm_bootstrap$Boots
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
 var elm$html$Html$h1 = _VirtualDom_node('h1');
 var rundis$elm_bootstrap$Bootstrap$Modal$h1 = rundis$elm_bootstrap$Bootstrap$Modal$titledHeader(elm$html$Html$h1);
+var rundis$elm_bootstrap$Bootstrap$General$Internal$LG = {$: 'LG'};
+var rundis$elm_bootstrap$Bootstrap$Modal$large = function (_n0) {
+	var conf = _n0.a;
+	var options = conf.options;
+	return rundis$elm_bootstrap$Bootstrap$Modal$Config(
+		_Utils_update(
+			conf,
+			{
+				options: _Utils_update(
+					options,
+					{
+						modalSize: elm$core$Maybe$Just(rundis$elm_bootstrap$Bootstrap$General$Internal$LG)
+					})
+			}));
+};
 var author$project$RCMediaList$viewModalMediaPicker = F3(
 	function (visibility, objectList, messages) {
 		var tableList = function () {
@@ -15664,7 +15679,7 @@ var author$project$RCMediaList$viewModalMediaPicker = F3(
 						A2(
 							rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
 							true,
-							rundis$elm_bootstrap$Bootstrap$Modal$small(
+							rundis$elm_bootstrap$Bootstrap$Modal$large(
 								rundis$elm_bootstrap$Bootstrap$Modal$config(messages.closeModal)))))));
 	});
 var author$project$Settings$Bold = {$: 'Bold'};
