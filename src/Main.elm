@@ -740,6 +740,8 @@ type Icon
     | ItalicIcon
     | BoldIcon
     | ListIcon
+    | ArrowDown
+    | UploadCloud
 
 
 renderIcon : Icon -> Html Msg
@@ -774,6 +776,12 @@ renderIcon icon =
 
         ListIcon ->
             iconImg "list-unordered.svg"
+
+        ArrowDown ->
+            iconImg "arrow-down.svg"
+
+        UploadCloud ->
+            iconImg "cloud-upload.svg"
 
 
 mkButton : Icon -> Bool -> Msg -> String -> Html Msg
@@ -943,8 +951,8 @@ view model =
         , mediaDialogHtml
         , confirmDialogHtml
         , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
-        , viewUpload PlusIcon False UploadMediaFileSelect "Upload" model.mediaUploadStatus
-        , mkButton ListIcon True OpenMediaPicker "Insert"
+        , viewUpload UploadCloud False UploadMediaFileSelect "Upload" model.mediaUploadStatus
+        , mkButton ArrowDown True OpenMediaPicker "Insert"
         , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
         , mkButton ImportIcon True DownloadExport "Export doc"
         , saveButton
