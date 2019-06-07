@@ -40,7 +40,8 @@ view objectList messages =
             let
                 head =
                     Table.simpleThead
-                        [ Table.th [] [ text "id" ]
+                        [ Table.th [] [ text "preview" ]
+                        , Table.th [] [ text "id" ]
                         , Table.th [] [ text "name" ]
                         , Table.th [] [ text "edit" ]
                         ]
@@ -104,7 +105,8 @@ viewModalMediaPicker visibility objectList messages =
                     let
                         head =
                             Table.simpleThead
-                                [ Table.th [] [ text "id" ]
+                                [ Table.th [] [ text "preview" ]
+                                , Table.th [] [ text "id" ]
                                 , Table.th [] [ text "name" ]
                                 , Table.th [] [ text "insert" ]
                                 ]

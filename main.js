@@ -15485,6 +15485,13 @@ var author$project$RCMediaList$view = F2(
 						_List_Nil,
 						_List_fromArray(
 							[
+								elm$html$Html$text('preview')
+							])),
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Table$th,
+						_List_Nil,
+						_List_fromArray(
+							[
 								elm$html$Html$text('id')
 							])),
 						A2(
@@ -15609,6 +15616,13 @@ var author$project$RCMediaList$viewModalMediaPicker = F3(
 				var head = rundis$elm_bootstrap$Bootstrap$Table$simpleThead(
 					_List_fromArray(
 						[
+							A2(
+							rundis$elm_bootstrap$Bootstrap$Table$th,
+							_List_Nil,
+							_List_fromArray(
+								[
+									elm$html$Html$text('preview')
+								])),
 							A2(
 							rundis$elm_bootstrap$Bootstrap$Table$th,
 							_List_Nil,
