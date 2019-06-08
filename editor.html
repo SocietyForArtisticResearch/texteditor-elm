@@ -37,6 +37,7 @@
         #editors {
             width: 100%;
             height: 100%;
+	    overflow-y:scroll;
         }
 
 	.main-row {
@@ -50,6 +51,12 @@
 	.editor-col {
 	    display: flex;
 	    flex-direction: column;
+	    height: 100vh;
+	}
+
+	#preview-container {
+	    height:100vh;
+	    overflow-y:scroll;
 	}
 
 	.CodeMirror {
@@ -62,7 +69,11 @@
 	    flex: 1;
 	    width: 100%;
             height: 100%;
-        } 
+        }
+
+	.modal {
+	    overflow-y : scroll;
+	}
 
 	@media only screen and (min-width: 600px) {  
 	   .CodeMirror {

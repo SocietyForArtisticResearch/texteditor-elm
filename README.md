@@ -33,16 +33,9 @@ General:
 - how often render?
 
 Casper:
-
-- what about "insert"?
-  @Luc, I wanted this to insert on codemirror current position, probably we need a port for this?
-  @Casper: It's possible, but does it make sense to insert if the user cannot see where he/she is? Shouldn't the media list appear on the right (instead of the preview)?
-  
-  @Casper concerning insert again (after talk 6.6.): "insert" should be removed from media list because there are two cursors in markdown (plain and codemirror), there is no way to ensure correct insert, or at least it gets complex.
-  
-- Buttons
+ 
+- Buttons (more economic use of space)
 - Styling (editor sizes, double scrollbars, percentage when uploading)
-- "markdown plain" should be somewhere else, not a main tab
 - media file types in select dialog
 - display title of exposition somewhere
 - warnings when closing/reloading
@@ -50,13 +43,14 @@ Casper:
 
 Luc:
 
-- stupid buttons (snippets): insert media, header (pull down h1,h2,h3), italic, bold, quote, link, bullet,numbered list
+- 'stupid' buttons (snippets): insert media, header (pull down h1,h2,h3), italic, bold, quote, link, bullet,numbered list
+- insert media message
 - auto save
 - why is css not used in preview? -> id exposition
 - Check rendered html
 - Transcoding status type (reload media list every five seconds)
 - Export (Pandoc calls) (works in principle, but needs longer uri allowed by server and pull down for file type selection)
-- reload media list message
+
 
 ## To test
 - tables?
@@ -73,6 +67,7 @@ Luc:
 - wikipedia-style footnotes
 
 ## DONE
+- there is an insert popover dialog now
 - display Problems (as warnings etc)
 - Why can the user not change the object name/copyright/ ?
 - Validation display
@@ -112,3 +107,4 @@ Luc:
 - media list displays as "no objects" when there are no objects, also when media list tab has not been selected, i.e. id is wrong or something like that
 - TOC
 - insert media message
+- reload media list message

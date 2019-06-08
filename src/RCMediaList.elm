@@ -1,7 +1,8 @@
-module RCMediaList exposing (TableMessages, view)
+module RCMediaList exposing (PickerMessages, TableMessages, view, viewModalMediaPicker)
 
 import Bootstrap.Alert as Alert
 import Bootstrap.Button as Button
+import Bootstrap.Modal as Modal
 import Bootstrap.Table as Table
 import Bootstrap.Utilities.Spacing as Spacing
 import Exposition exposing (RCMediaObject)
@@ -14,6 +15,12 @@ type alias TableMessages msg =
     { editObject : String -> msg
     , deleteObject : RCMediaObject -> msg
     , insertObject : RCMediaObject -> msg
+    }
+
+
+type alias PickerMessages msg =
+    { insertObject : RCMediaObject -> msg
+    , closeModal : msg
     }
 
 
@@ -33,7 +40,8 @@ view objectList messages =
             let
                 head =
                     Table.simpleThead
-                        [ Table.th [] [ text "id" ]
+                        [ Table.th [] [ text "preview" ]
+                        , Table.th [] [ text "id" ]
                         , Table.th [] [ text "name" ]
                         , Table.th [] [ text "edit" ]
                         ]
@@ -49,13 +57,13 @@ view objectList messages =
                                 ]
                                 [ text "edit" ]
 
-                        insertButton =
-                            Button.button
-                                [ Button.small
-                                , Button.outlineSuccess
-                                , Button.attrs [ Spacing.ml1, onClick <| messages.insertObject object ]
-                                ]
-                                [ text "insert" ]
+                        -- insertButton =
+                        --     Button.button
+                        --         [ Button.small
+                        --         , Button.outlineSuccess
+                        --         , Button.attrs [ Spacing.ml1, onClick <| messages.insertObject object ]
+                        --         ]
+                        --         [ text "insert" ]
 
                         removeButton =
                             Button.button
@@ -69,7 +77,7 @@ view objectList messages =
                         [ Table.td [] [ viewThumbnail object ]
                         , Table.td [] [ text <| String.fromInt object.id ]
                         , Table.td [] [ text object.name ]
-                        , Table.td [] [ editButton, insertButton, removeButton ]
+                        , Table.td [] [ editButton, removeButton ]
                         ]
 
                 rows =
@@ -85,18 +93,78 @@ view objectList messages =
                 ]
 
 
+viewModalMediaPicker : Modal.Visibility -> List RCMediaObject -> PickerMessages msg -> Html msg
+viewModalMediaPicker visibility objectList messages =
+    let
+        tableList =
+            case objectList of
+                [] ->
+                    Alert.simpleInfo [] [ text "no objects yet, add by using + Media button" ]
+
+                _ ->
+                    let
+                        head =
+                            Table.simpleThead
+                                [ Table.th [] [ text "preview" ]
+                                , Table.th [] [ text "id" ]
+                                , Table.th [] [ text "name" ]
+                                , Table.th [] [ text "insert" ]
+                                ]
+
+                        rowFromRCObject : RCMediaObject -> Table.Row msg
+                        rowFromRCObject object =
+                            let
+                                insertButton =
+                                    Button.button
+                                        [ Button.small
+                                        , Button.outlineSuccess
+                                        , Button.attrs [ Spacing.ml1, onClick <| messages.insertObject object ]
+                                        ]
+                                        [ text "insert" ]
+                            in
+                            Table.tr []
+                                [ Table.td [] [ viewThumbnail object ]
+                                , Table.td [] [ text <| String.fromInt object.id ]
+                                , Table.td [] [ text object.name ]
+                                , Table.td [] [ insertButton ]
+                                ]
+
+                        rows =
+                            List.map rowFromRCObject objectList
+                    in
+                    Table.table
+                        { options = [ Table.hover, Table.striped, Table.small ]
+                        , thead = head
+                        , tbody =
+                            Table.tbody [] rows
+                        }
+    in
+    Modal.config messages.closeModal
+        |> Modal.large
+        |> Modal.hideOnBackdropClick True
+        |> Modal.h1 [] [ text "select a media to insert" ]
+        |> Modal.body [] [ tableList ]
+        |> Modal.footer []
+            [ Button.button
+                [ Button.secondary, Button.attrs [ onClick messages.closeModal ] ]
+                [ text "cancel" ]
+            ]
+        |> Modal.view visibility
+
+
 viewThumbnail : RCMediaObject -> Html msg
 viewThumbnail object =
     case object.mediaType of
         Exposition.RCImage ->
             let
                 thumburl =
-                    Exposition.thumbUrl object
+                    Exposition.customThumbUrl 40 object
             in
             img
                 [ src thumburl
-                , style "width" "50"
-                , style "height" "50"
+                , style "object-fit" "cover"
+                , style "width" "25px"
+                , style "height" "25px"
                 ]
                 []
 
