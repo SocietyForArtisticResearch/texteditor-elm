@@ -117,6 +117,8 @@
  var urlParams = new URLSearchParams(window.location.search);
 
  var toRender = false;
+
+ var mdToRender = "";
  
  var styleElem = document.createElement('style');
  styleElem.type = 'text/css';
@@ -319,6 +321,7 @@
 
 
  app.ports.convertMarkdown.subscribe(function(md) {
+     mdToRender = md;
      toRender = true;
  });
 
@@ -340,7 +343,7 @@
  
  setInterval(function () {
      if (toRender) {
-	 app.ports.getHtml.send(marked(md));
+	 app.ports.getHtml.send(marked(mdToRender));
 	 toRender = false
      } }, 300);
  
