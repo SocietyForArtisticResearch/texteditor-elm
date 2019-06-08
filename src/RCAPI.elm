@@ -323,9 +323,6 @@ saveExposition exposition expect =
                             ]
                     )
                     exposition.toc
-
-        _ =
-            Debug.log "encoded toc: " encodedToc
     in
     Http.request
         { method = "POST"
@@ -359,8 +356,6 @@ saveExposition exposition expect =
                         )
                     )
                 , Http.stringPart "toc" encodedToc
-
-                -- TODO add actual toc
                 ]
 
         --        , expect = Http.expectWhatever expect
@@ -525,8 +520,3 @@ toRCMediaObject researchId mediaEntry =
 
         Err s ->
             Err (CannotLoadMedia s)
-
-
-
--- TODO
--- pandoc import/export

@@ -56,8 +56,6 @@ Luc:
 - Check rendered html
 - Transcoding status type (reload media list every five seconds)
 - Export (Pandoc calls) (works in principle, but needs longer uri allowed by server and pull down for file type selection)
-- TOC
-- insert media message
 - reload media list message
 
 ## To test
@@ -112,3 +110,5 @@ Luc:
 - Generate preview html (final static html)
 - multiple doc imports create duplicate media names
 - media list displays as "no objects" when there are no objects, also when media list tab has not been selected, i.e. id is wrong or something like that
+- TOC
+- insert media message

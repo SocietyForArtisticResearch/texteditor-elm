@@ -656,18 +656,3 @@ createToc expo =
 updateToc : RCExposition -> RCExposition
 updateToc expo =
     { expo | toc = createToc expo }
-
-
-
--- toc : RCExposition -> List TOCEntry
--- toc exp =
---     List.map
---         (\( level, title, id ) ->
---             { level = level
---             , title = title
---             , id = id
---             }
---         )
---         (RCMD.toc exp.markdownInput)
--- TODO
--- toc
