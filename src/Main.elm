@@ -222,7 +222,6 @@ type Msg
     | GotConvertedHtml String
     | MediaEdit ( String, Exposition.RCMediaObject )
     | MediaDelete Exposition.RCMediaObject
-    | InsertTool Exposition.RCMediaObject
     | CloseMediaDialog
     | GotExposition (Result Http.Error RCAPI.APIExposition)
     | GotMediaList (Result Http.Error (List RCAPI.APIMediaEntry))
@@ -275,13 +274,13 @@ makeTableMessages : RCMediaList.TableMessages Msg
 makeTableMessages =
     { editObject = MediaDialog
     , deleteObject = ConfirmMediaDelete
-    , insertObject = InsertTool
+    , insertObject = InsertMediaAtCursor
     }
 
 
 makePickerMessages : RCMediaList.PickerMessages Msg
 makePickerMessages =
-    { insertObject = InsertTool
+    { insertObject = InsertMediaAtCursor
     , closeModal = CloseMediaPicker
     }
 
@@ -566,10 +565,6 @@ update msg model =
 
         MediaDeleted obj ->
             update CloseConfirmDialog model
-
-        InsertTool obj ->
-            -- not implemented
-            ( model, Cmd.none )
 
         UploadMediaFileSelect ->
             ( model

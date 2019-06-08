@@ -11762,7 +11762,6 @@ var author$project$RCAPI$saveExposition = F2(
 				},
 				exposition.toc));
 		var _n0 = A2(elm$core$Debug$log, 'about to save exposition: ', exposition);
-		var _n1 = A2(elm$core$Debug$log, 'encoded toc: ', encodedToc);
 		return elm$http$Http$request(
 			{
 				body: elm$http$Http$multipartBody(
@@ -12394,9 +12393,6 @@ var author$project$Main$update = F2(
 					msg = $temp$msg;
 					model = $temp$model;
 					continue update;
-				case 'InsertTool':
-					var obj = msg.a;
-					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				case 'UploadMediaFileSelect':
 					return _Utils_Tuple2(
 						model,
@@ -12658,14 +12654,14 @@ var author$project$Main$makeMediaEditFun = F4(
 		}
 	});
 var author$project$Main$CloseMediaPicker = {$: 'CloseMediaPicker'};
-var author$project$Main$InsertTool = function (a) {
-	return {$: 'InsertTool', a: a};
+var author$project$Main$InsertMediaAtCursor = function (a) {
+	return {$: 'InsertMediaAtCursor', a: a};
 };
-var author$project$Main$makePickerMessages = {closeModal: author$project$Main$CloseMediaPicker, insertObject: author$project$Main$InsertTool};
+var author$project$Main$makePickerMessages = {closeModal: author$project$Main$CloseMediaPicker, insertObject: author$project$Main$InsertMediaAtCursor};
 var author$project$Main$ConfirmMediaDelete = function (a) {
 	return {$: 'ConfirmMediaDelete', a: a};
 };
-var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$ConfirmMediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertTool};
+var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$ConfirmMediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertMediaAtCursor};
 var author$project$Settings$baseUrl = 'elm-editor/';
 var author$project$Settings$iconUrl = author$project$Settings$baseUrl + 'lib/icons/';
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
