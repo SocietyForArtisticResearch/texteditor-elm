@@ -45,7 +45,6 @@ Casper:
 
 Luc:
 
-- 'stupid' buttons (snippets): insert media, header (pull down h1,h2,h3), italic, bold, quote, link, bullet,numbered list
 - auto save
 - Check rendered html
 - Transcoding status type (reload media list every five seconds)
@@ -109,3 +108,4 @@ Luc:
 - insert media message
 - reload media list message
 - why is css not used in preview? -> id exposition
+- 'stupid' buttons (snippets): insert media, header (pull down h1,h2,h3), italic, bold, quote, link, bullet,numbered list
