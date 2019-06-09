@@ -16945,7 +16945,7 @@ var author$project$Main$view = function (model) {
 				confirmDialogHtml,
 				A3(author$project$RCMediaList$viewModalMediaPicker, model.mediaPickerDialog, model.exposition.media, author$project$Main$makePickerMessages),
 				A2(
-				elm$html$Html$p,
+				elm$html$Html$div,
 				_List_Nil,
 				_List_fromArray(
 					[
@@ -16954,7 +16954,7 @@ var author$project$Main$view = function (model) {
 						A4(author$project$View$mkButton, author$project$View$ArrowDown, true, author$project$Main$OpenMediaPicker, 'Insert')
 					])),
 				A2(
-				elm$html$Html$p,
+				elm$html$Html$div,
 				_List_Nil,
 				_List_fromArray(
 					[
