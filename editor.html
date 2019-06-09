@@ -312,10 +312,10 @@
  app.ports.insertMdString.subscribe(function(insertTuple) {
      var [str, offset] = insertTuple;
      if (selectedEditor == editorCmMd) {
-	 let cursor = cmMarkdown.getCursor();
 	 cmMarkdown.replaceSelection(str);
 	 textareaMarkdown.value = cmMarkdown.getValue();
 	 cmMarkdown.focus();
+	 let cursor = cmMarkdown.getCursor();
 	 cmMarkdown.setCursor({line: cursor.line, ch: Math.max(0, cursor.ch + offset)});
      } else if (selectedEditor == editorTxtMd) {
 	 insertAtCursor(textareaMarkdown, str);
