@@ -16944,37 +16944,51 @@ var author$project$Main$view = function (model) {
 				mediaDialogHtml,
 				confirmDialogHtml,
 				A3(author$project$RCMediaList$viewModalMediaPicker, model.mediaPickerDialog, model.exposition.media, author$project$Main$makePickerMessages),
-				A5(author$project$Main$viewUpload, author$project$View$UploadCloud, false, author$project$Main$UploadMediaFileSelect, 'Upload', model.mediaUploadStatus),
-				A4(author$project$View$mkButton, author$project$View$ArrowDown, true, author$project$Main$OpenMediaPicker, 'Insert'),
-				A5(author$project$Main$viewUpload, author$project$View$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
-				A4(
-				author$project$View$mkDropdown,
-				model.exportDropState,
-				author$project$Main$ExportDropMsg,
-				'Export',
+				A2(
+				elm$html$Html$p,
+				_List_Nil,
 				_List_fromArray(
 					[
-						_Utils_Tuple2(
-						'doc',
-						author$project$Main$DownloadExport(author$project$RCAPI$Docx)),
-						_Utils_Tuple2(
-						'pdf',
-						author$project$Main$DownloadExport(author$project$RCAPI$Pdf)),
-						_Utils_Tuple2(
-						'epub',
-						author$project$Main$DownloadExport(author$project$RCAPI$Epub)),
-						_Utils_Tuple2(
-						'odt',
-						author$project$Main$DownloadExport(author$project$RCAPI$Odt)),
-						_Utils_Tuple2(
-						'latex',
-						author$project$Main$DownloadExport(author$project$RCAPI$Latex)),
-						_Utils_Tuple2(
-						'html',
-						author$project$Main$DownloadExport(author$project$RCAPI$Html)),
-						_Utils_Tuple2(
-						'markdown',
-						author$project$Main$DownloadExport(author$project$RCAPI$Md))
+						elm$html$Html$text('media'),
+						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, false, author$project$Main$UploadMediaFileSelect, 'Upload', model.mediaUploadStatus),
+						A4(author$project$View$mkButton, author$project$View$ArrowDown, true, author$project$Main$OpenMediaPicker, 'Insert')
+					])),
+				A2(
+				elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$text('external'),
+						A5(author$project$Main$viewUpload, author$project$View$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
+						A4(
+						author$project$View$mkDropdown,
+						model.exportDropState,
+						author$project$Main$ExportDropMsg,
+						'Export',
+						_List_fromArray(
+							[
+								_Utils_Tuple2(
+								'doc',
+								author$project$Main$DownloadExport(author$project$RCAPI$Docx)),
+								_Utils_Tuple2(
+								'pdf',
+								author$project$Main$DownloadExport(author$project$RCAPI$Pdf)),
+								_Utils_Tuple2(
+								'epub',
+								author$project$Main$DownloadExport(author$project$RCAPI$Epub)),
+								_Utils_Tuple2(
+								'odt',
+								author$project$Main$DownloadExport(author$project$RCAPI$Odt)),
+								_Utils_Tuple2(
+								'latex',
+								author$project$Main$DownloadExport(author$project$RCAPI$Latex)),
+								_Utils_Tuple2(
+								'html',
+								author$project$Main$DownloadExport(author$project$RCAPI$Html)),
+								_Utils_Tuple2(
+								'markdown',
+								author$project$Main$DownloadExport(author$project$RCAPI$Md))
+							]))
 					])),
 				saveButton,
 				editorCheckbox,
