@@ -12569,23 +12569,24 @@ var author$project$Main$update = F2(
 								author$project$Main$getTabState(newModel.editor))));
 				case 'InsertMediaAtCursor':
 					var obj = msg.a;
+					var foundObj = A2(
+						author$project$Exposition$objectByNameOrId,
+						elm$core$String$fromInt(obj.id),
+						model.exposition);
+					var _n35 = A2(elm$core$Debug$log, 'trying to insert:', foundObj);
 					return _Utils_Tuple2(
 						model,
 						function () {
-							var _n35 = A2(
-								author$project$Exposition$objectByNameOrId,
-								elm$core$String$fromInt(obj.id),
-								model.exposition);
-							if (_n35.$ === 'Just') {
-								var o = _n35.a;
+							if (foundObj.$ === 'Just') {
+								var o = foundObj.a;
 								return author$project$Main$insertMdString('!{' + (o.name + '}'));
 							} else {
 								return elm$core$Platform$Cmd$none;
 							}
 						}());
 				case 'InsertAtCursor':
-					var _n36 = msg.a;
-					var str = _n36.a;
+					var _n37 = msg.a;
+					var str = _n37.a;
 					return _Utils_Tuple2(
 						model,
 						author$project$Main$insertMdString(str));

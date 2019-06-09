@@ -708,9 +708,16 @@ update msg model =
             ( newModel, enumTabState (getTabState newModel.editor) |> setEditor )
 
         InsertMediaAtCursor obj ->
+            let
+                foundObj =
+                    Exposition.objectByNameOrId (String.fromInt obj.id) model.exposition
+
+                _ =
+                    Debug.log "trying to insert:" foundObj
+            in
             ( model
               -- this is simply to make sure the object is in the exposition media
-            , case Exposition.objectByNameOrId (String.fromInt obj.id) model.exposition of
+            , case foundObj of
                 Just o ->
                     insertMdString ("!{" ++ o.name ++ "}")
 
@@ -843,8 +850,6 @@ viewTabs model =
     in
     ul [ class "nav nav-tabs" ]
         [ tabLink EditorMarkdown "Markdown"
-
-        --tabLink TxtMarkdownTab "Markdown plain"
         , tabLink EditorMedia "Media"
         , tabLink EditorStyle "Style"
         ]
