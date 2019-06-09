@@ -2,6 +2,7 @@ port module Main exposing (Msg(..), main, update, view)
 
 import Bootstrap.Alert as Alert
 import Bootstrap.Button as Button
+import Bootstrap.Dropdown as Dropdown
 import Bootstrap.Form as Form
 import Bootstrap.Form.Checkbox as Checkbox
 import Bootstrap.Grid as Grid
@@ -43,6 +44,7 @@ type alias Model =
     , mediaClassesDict : Dict.Dict Int String -- stores userclasses for media to be added to media list
     , saved : Bool
     , editor : ( EditorType, MarkdownEditor )
+    , exportDropState : Dropdown.State
     }
 
 
@@ -112,6 +114,7 @@ emptyModel research weave =
     , mediaClassesDict = Dict.empty
     , saved = True
     , editor = ( EditorMarkdown, CodemirrorMarkdown )
+    , exportDropState = Dropdown.initialState
     }
 
 
@@ -207,6 +210,7 @@ subscriptions model =
         , mediaDialog CMOpenMediaDialog
         , Http.track "uploadMedia" GotMediaUploadProgress
         , Http.track "uploadImport" GotImportUploadProgress
+        , Dropdown.subscriptions model.exportDropState ExportDropMsg
         ]
 
 
@@ -243,11 +247,12 @@ type Msg
     | MediaDeleted (Result Http.Error ())
     | AlertMsg Alert.Visibility
     | SwitchMarkdownEditor MarkdownEditor
-    | DownloadExport
+    | DownloadExport RCAPI.ConversionType
     | InsertAtCursor ( String, Int ) -- string and cursor offest after insert
     | InsertMediaAtCursor RCMediaObject
     | OpenMediaPicker
     | CloseMediaPicker
+    | ExportDropMsg Dropdown.State
 
 
 
@@ -597,8 +602,8 @@ update msg model =
             , RCAPI.uploadImport model.research file UploadedImport
             )
 
-        DownloadExport ->
-            ( model, RCAPI.convertExposition RCAPI.Docx model.exposition )
+        DownloadExport ctype ->
+            ( model, RCAPI.convertExposition ctype model.exposition )
 
         GotMediaUploadProgress progress ->
             case progress of
@@ -734,6 +739,11 @@ update msg model =
         CloseMediaPicker ->
             ( { model | mediaPickerDialog = Modal.hidden }, Cmd.none )
 
+        ExportDropMsg state ->
+            ( { model | exportDropState = state }
+            , Cmd.none
+            )
+
 
 type Icon
     = PlusIcon
@@ -813,6 +823,25 @@ viewUpload icon needsOffset onClickMsg buttonText status =
 
         Uploading fraction ->
             div [] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
+
+
+mkDropdown : Dropdown.State -> (Dropdown.State -> Msg) -> String -> List ( String, Msg ) -> Html Msg
+mkDropdown modelState openMsg mainTxt itemMsgLst =
+    div []
+        [ Dropdown.dropdown
+            modelState
+            { options = []
+            , toggleMsg = openMsg
+            , toggleButton =
+                Dropdown.toggle [ Button.primary ] [ text mainTxt ]
+            , items =
+                List.map
+                    (\( buttonTxt, clickMsg ) ->
+                        Dropdown.buttonItem [ onClick clickMsg ] [ text buttonTxt ]
+                    )
+                    itemMsgLst
+            }
+        ]
 
 
 enumTabState : TabState -> Int
@@ -954,7 +983,19 @@ view model =
         , viewUpload UploadCloud False UploadMediaFileSelect "Upload" model.mediaUploadStatus
         , mkButton ArrowDown True OpenMediaPicker "Insert"
         , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
-        , mkButton ImportIcon True DownloadExport "Export doc"
+
+        --        , mkButton ImportIcon True DownloadExport "Export doc"
+        , mkDropdown model.exportDropState
+            ExportDropMsg
+            "Export"
+            [ ( "doc", DownloadExport RCAPI.Docx )
+            , ( "pdf", DownloadExport RCAPI.Pdf )
+            , ( "epub", DownloadExport RCAPI.Epub )
+            , ( "odt", DownloadExport RCAPI.Odt )
+            , ( "latex", DownloadExport RCAPI.Latex )
+            , ( "html", DownloadExport RCAPI.Html )
+            , ( "markdown", DownloadExport RCAPI.Md )
+            ]
         , saveButton
         , editorCheckbox
         , mkButton BoldIcon True (InsertAtCursor (Settings.snippet Settings.Bold)) ""

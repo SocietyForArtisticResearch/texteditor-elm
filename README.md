@@ -37,6 +37,8 @@ Casper:
 - Buttons (more economic use of space)
 - Styling (editor sizes, double scrollbars, percentage when uploading)
 - media file types in select dialog
+- Insert media dialog selection could be easier: double click, larger preview and auto close
+- double scrollbars in editor when content larger than editor
 - display title of exposition somewhere
 - warnings when closing/reloading
 - preview and my profile buttons

@@ -279,7 +279,7 @@ convertExposition ctype expo =
         path =
             Url.Builder.relative [ "text-editor", "export" ]
                 [ Url.Builder.string "type" (typeEnding ctype)
-                , Url.Builder.string "markdown" expo.markdownInput
+                , Url.Builder.string "markdown" (Exposition.replaceToolsWithImages expo Nothing)
                 ]
     in
     File.Download.url path
