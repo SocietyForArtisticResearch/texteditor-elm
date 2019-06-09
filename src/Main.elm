@@ -833,7 +833,7 @@ mkDropdown modelState openMsg mainTxt itemMsgLst =
             { options = []
             , toggleMsg = openMsg
             , toggleButton =
-                Dropdown.toggle [ Button.primary ] [ text mainTxt ]
+                Dropdown.toggle [ Button.light ] [ text mainTxt ]
             , items =
                 List.map
                     (\( buttonTxt, clickMsg ) ->
