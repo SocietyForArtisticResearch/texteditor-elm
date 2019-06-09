@@ -101,7 +101,7 @@ mkButton icon needsOffset onClickMsg buttonText =
 
 mkDropdown : Dropdown.State -> (Dropdown.State -> msg) -> String -> List ( String, msg ) -> Html msg
 mkDropdown modelState openMsg mainTxt itemMsgLst =
-    div []
+    div [ class "d-{inline-block}" ]
         [ Dropdown.dropdown
             modelState
             { options = [ Dropdown.attrs [ Spacing.m1 ] ]

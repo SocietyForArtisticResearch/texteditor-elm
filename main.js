@@ -16835,7 +16835,10 @@ var author$project$View$mkDropdown = F4(
 	function (modelState, openMsg, mainTxt, itemMsgLst) {
 		return A2(
 			elm$html$Html$div,
-			_List_Nil,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('d-{inline-block}')
+				]),
 			_List_fromArray(
 				[
 					A2(
