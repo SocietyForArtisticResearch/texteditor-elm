@@ -13896,7 +13896,7 @@ var author$project$Main$viewTabs = function (model) {
 		_List_fromArray(
 			[
 				A2(tabLink, author$project$Main$EditorMarkdown, 'Markdown'),
-				A2(tabLink, author$project$Main$EditorMedia, 'Media'),
+				A2(tabLink, author$project$Main$EditorMedia, 'Media browser'),
 				A2(tabLink, author$project$Main$EditorStyle, 'Style')
 			]));
 };
@@ -16957,7 +16957,10 @@ var author$project$Main$view = function (model) {
 				A3(author$project$RCMediaList$viewModalMediaPicker, model.mediaPickerDialog, model.exposition.media, author$project$Main$makePickerMessages),
 				A2(
 				elm$html$Html$div,
-				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('d-{inline-block}')
+					]),
 				_List_fromArray(
 					[
 						elm$html$Html$text('media'),
@@ -16966,7 +16969,10 @@ var author$project$Main$view = function (model) {
 					])),
 				A2(
 				elm$html$Html$div,
-				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('d-{inline-block}')
+					]),
 				_List_fromArray(
 					[
 						elm$html$Html$text('external'),

@@ -791,7 +791,7 @@ viewTabs model =
     in
     ul [ class "nav nav-tabs" ]
         [ tabLink EditorMarkdown "Markdown"
-        , tabLink EditorMedia "Media"
+        , tabLink EditorMedia "Media browser"
         , tabLink EditorStyle "Style"
         ]
 
@@ -892,12 +892,12 @@ view model =
         , mediaDialogHtml
         , confirmDialogHtml
         , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
-        , div []
+        , div [ class "d-{inline-block}" ]
             [ text "media"
             , viewUpload UploadCloud False UploadMediaFileSelect "Upload" model.mediaUploadStatus
             , mkButton ArrowDown True OpenMediaPicker "Insert"
             ]
-        , div []
+        , div [ class "d-{inline-block}" ]
             [ text "external"
             , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
             , mkDropdown model.exportDropState
