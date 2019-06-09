@@ -12064,9 +12064,31 @@ var author$project$Main$getTabState = function (state) {
 			return author$project$Main$MediaListTab;
 	}
 };
-var author$project$Main$insertMdString = _Platform_outgoingPort('insertMdString', elm$json$Json$Encode$string);
-var author$project$Main$setContent = _Platform_outgoingPort('setContent', elm$core$Basics$identity);
 var elm$json$Json$Encode$int = _Json_wrap;
+var elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(_Utils_Tuple0),
+				entries));
+	});
+var author$project$Main$insertMdString = _Platform_outgoingPort(
+	'insertMdString',
+	function ($) {
+		var a = $.a;
+		var b = $.b;
+		return A2(
+			elm$json$Json$Encode$list,
+			elm$core$Basics$identity,
+			_List_fromArray(
+				[
+					elm$json$Json$Encode$string(a),
+					elm$json$Json$Encode$int(b)
+				]));
+	});
+var author$project$Main$setContent = _Platform_outgoingPort('setContent', elm$core$Basics$identity);
 var author$project$Main$setEditor = _Platform_outgoingPort('setEditor', elm$json$Json$Encode$int);
 var author$project$Main$setPreviewContent = _Platform_outgoingPort('setPreviewContent', elm$json$Json$Encode$string);
 var elm$json$Json$Encode$object = function (pairs) {
@@ -12349,15 +12371,6 @@ var elm$http$Http$multipartBody = function (parts) {
 		_Http_toFormData(parts));
 };
 var elm$http$Http$stringPart = _Http_pair;
-var elm$json$Json$Encode$list = F2(
-	function (func, entries) {
-		return _Json_wrap(
-			A3(
-				elm$core$List$foldl,
-				_Json_addEntry(func),
-				_Json_emptyArray(_Utils_Tuple0),
-				entries));
-	});
 var author$project$RCAPI$saveExposition = F2(
 	function (exposition, expect) {
 		var url = 'text-editor/save' + ('?research=' + (elm$core$String$fromInt(exposition.id) + ('&weave=' + elm$core$String$fromInt(exposition.currentWeave))));
@@ -13201,7 +13214,8 @@ var author$project$Main$update = F2(
 						function () {
 							if (foundObj.$ === 'Just') {
 								var o = foundObj.a;
-								return author$project$Main$insertMdString('!{' + (o.name + '}'));
+								return author$project$Main$insertMdString(
+									_Utils_Tuple2('!{' + (o.name + '}'), 0));
 							} else {
 								return elm$core$Platform$Cmd$none;
 							}
@@ -13209,9 +13223,11 @@ var author$project$Main$update = F2(
 				case 'InsertAtCursor':
 					var _n37 = msg.a;
 					var str = _n37.a;
+					var offset = _n37.b;
 					return _Utils_Tuple2(
 						model,
-						author$project$Main$insertMdString(str));
+						author$project$Main$insertMdString(
+							_Utils_Tuple2(str, offset)));
 				case 'OpenMediaPicker':
 					return _Utils_Tuple2(
 						_Utils_update(
@@ -13580,9 +13596,6 @@ var author$project$Main$mkButton = F4(
 				]));
 	});
 var elm$html$Html$div = _VirtualDom_node('div');
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
-var rundis$elm_bootstrap$Bootstrap$Button$primary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
 var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
 var rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownItem = function (a) {
 	return {$: 'DropdownItem', a: a};
@@ -14021,7 +14034,7 @@ var author$project$Main$mkDropdown = F4(
 						toggleButton: A2(
 							rundis$elm_bootstrap$Bootstrap$Dropdown$toggle,
 							_List_fromArray(
-								[rundis$elm_bootstrap$Bootstrap$Button$primary]),
+								[rundis$elm_bootstrap$Bootstrap$Button$light]),
 							_List_fromArray(
 								[
 									elm$html$Html$text(mainTxt)
@@ -15358,6 +15371,7 @@ var elm$html$Html$p = _VirtualDom_node('p');
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
 	return {$: 'Outlined', a: a};
 };
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
 var rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {

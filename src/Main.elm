@@ -185,7 +185,7 @@ port mediaDialog : (E.Value -> msg) -> Sub msg
 port setEditor : Int -> Cmd msg
 
 
-port insertMdString : String -> Cmd msg
+port insertMdString : ( String, Int ) -> Cmd msg
 
 
 
@@ -724,14 +724,14 @@ update msg model =
               -- this is simply to make sure the object is in the exposition media
             , case foundObj of
                 Just o ->
-                    insertMdString ("!{" ++ o.name ++ "}")
+                    insertMdString ( "!{" ++ o.name ++ "}", 0 )
 
                 Nothing ->
                     Cmd.none
             )
 
-        InsertAtCursor ( str, _ ) ->
-            ( model, insertMdString str )
+        InsertAtCursor ( str, offset ) ->
+            ( model, insertMdString ( str, offset ) )
 
         OpenMediaPicker ->
             ( { model | mediaPickerDialog = Modal.shown }, Cmd.none )

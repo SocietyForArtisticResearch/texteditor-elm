@@ -21,10 +21,10 @@
 	 <script src="lib/morphdom-umd.js"></script>
 	 <script src="main.js"></script>
     -->
-    <!-- 
-	 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -->
     
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style type="text/css">
@@ -309,11 +309,14 @@
      input.selectionStart = input.selectionEnd = start + textToInsert.length;
  }
  
- app.ports.insertMdString.subscribe(function(str) {
+ app.ports.insertMdString.subscribe(function(insertTuple) {
+     var [str, offset] = insertTuple;
      if (selectedEditor == editorCmMd) {
+	 let cursor = cmMarkdown.getCursor();
 	 cmMarkdown.replaceSelection(str);
 	 textareaMarkdown.value = cmMarkdown.getValue();
 	 cmMarkdown.focus();
+	 cmMarkdown.setCursor({line: cursor.line, ch: max(0, cursor.ch + offset)});
      } else if (selectedEditor == editorTxtMd) {
 	 insertAtCursor(textareaMarkdown, str);
 	 cmMarkdown.setValue(textareaMarkdown.value);
