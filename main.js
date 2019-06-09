@@ -13938,6 +13938,8 @@ var author$project$View$renderIcon = function (icon) {
 			_List_Nil);
 	};
 	switch (icon.$) {
+		case 'NoIcon':
+			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
 		case 'PlusIcon':
 			return iconImg('plus.svg');
 		case 'ImportIcon':
@@ -16420,11 +16422,11 @@ var author$project$UserConfirm$view = F3(
 	});
 var author$project$View$ArrowDown = {$: 'ArrowDown'};
 var author$project$View$BoldIcon = {$: 'BoldIcon'};
-var author$project$View$HeaderIcon = {$: 'HeaderIcon'};
 var author$project$View$ImportIcon = {$: 'ImportIcon'};
 var author$project$View$ItalicIcon = {$: 'ItalicIcon'};
 var author$project$View$LinkIcon = {$: 'LinkIcon'};
 var author$project$View$ListIcon = {$: 'ListIcon'};
+var author$project$View$NoIcon = {$: 'NoIcon'};
 var author$project$View$NumberedIcon = {$: 'NumberedIcon'};
 var author$project$View$QuoteIcon = {$: 'QuoteIcon'};
 var author$project$View$SaveIcon = {$: 'SaveIcon'};
@@ -16978,21 +16980,21 @@ var author$project$Main$view = function (model) {
 				editorCheckbox,
 				A4(
 				author$project$View$mkButton,
-				author$project$View$HeaderIcon,
+				author$project$View$NoIcon,
 				true,
 				author$project$Main$InsertAtCursor(
 					author$project$Settings$snippet(author$project$Settings$H1)),
 				'H1'),
 				A4(
 				author$project$View$mkButton,
-				author$project$View$HeaderIcon,
+				author$project$View$NoIcon,
 				true,
 				author$project$Main$InsertAtCursor(
 					author$project$Settings$snippet(author$project$Settings$H2)),
 				'H2'),
 				A4(
 				author$project$View$mkButton,
-				author$project$View$HeaderIcon,
+				author$project$View$NoIcon,
 				true,
 				author$project$Main$InsertAtCursor(
 					author$project$Settings$snippet(author$project$Settings$H3)),

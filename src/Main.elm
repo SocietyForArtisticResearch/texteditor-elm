@@ -910,9 +910,9 @@ view model =
             ]
         , saveButton
         , editorCheckbox
-        , mkButton HeaderIcon True (InsertAtCursor (Settings.snippet Settings.H1)) "H1"
-        , mkButton HeaderIcon True (InsertAtCursor (Settings.snippet Settings.H2)) "H2"
-        , mkButton HeaderIcon True (InsertAtCursor (Settings.snippet Settings.H3)) "H3"
+        , mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H1)) "H1"
+        , mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H2)) "H2"
+        , mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H3)) "H3"
         , mkButton BoldIcon True (InsertAtCursor (Settings.snippet Settings.Bold)) ""
         , mkButton ItalicIcon True (InsertAtCursor (Settings.snippet Settings.Italic)) ""
         , mkButton ListIcon True (InsertAtCursor (Settings.snippet Settings.Bullet)) ""

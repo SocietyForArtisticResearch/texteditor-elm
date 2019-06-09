@@ -22,6 +22,7 @@ type Icon
     | NumberedIcon
     | ArrowDown
     | UploadCloud
+    | NoIcon
 
 
 renderIcon : Icon -> Html msg
@@ -39,6 +40,9 @@ renderIcon icon =
                 []
     in
     case icon of
+        NoIcon ->
+            div [] []
+
         PlusIcon ->
             iconImg "plus.svg"
 
