@@ -892,12 +892,12 @@ view model =
         , mediaDialogHtml
         , confirmDialogHtml
         , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
-        , div [ class "d-{inline-block}" ]
+        , div [ class "d-inline-block" ]
             [ text "media"
             , viewUpload UploadCloud False UploadMediaFileSelect "Upload" model.mediaUploadStatus
             , mkButton ArrowDown True OpenMediaPicker "Insert"
             ]
-        , div [ class "d-{inline-block}" ]
+        , div [ class "d-inline-block" ]
             [ text "external"
             , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
             , mkDropdown model.exportDropState

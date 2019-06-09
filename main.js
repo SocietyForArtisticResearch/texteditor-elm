@@ -16837,7 +16837,7 @@ var author$project$View$mkDropdown = F4(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
-					elm$html$Html$Attributes$class('d-{inline-block}')
+					elm$html$Html$Attributes$class('d-inline-block')
 				]),
 			_List_fromArray(
 				[
@@ -16962,7 +16962,7 @@ var author$project$Main$view = function (model) {
 				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$class('d-{inline-block}')
+						elm$html$Html$Attributes$class('d-inline-block')
 					]),
 				_List_fromArray(
 					[
@@ -16974,7 +16974,7 @@ var author$project$Main$view = function (model) {
 				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$class('d-{inline-block}')
+						elm$html$Html$Attributes$class('d-inline-block')
 					]),
 				_List_fromArray(
 					[
