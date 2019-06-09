@@ -316,7 +316,7 @@
 	 cmMarkdown.replaceSelection(str);
 	 textareaMarkdown.value = cmMarkdown.getValue();
 	 cmMarkdown.focus();
-	 cmMarkdown.setCursor({line: cursor.line, ch: max(0, cursor.ch + offset)});
+	 cmMarkdown.setCursor({line: cursor.line, ch: Math.max(0, cursor.ch + offset)});
      } else if (selectedEditor == editorTxtMd) {
 	 insertAtCursor(textareaMarkdown, str);
 	 cmMarkdown.setValue(textareaMarkdown.value);
