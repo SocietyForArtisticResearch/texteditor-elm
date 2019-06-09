@@ -104,7 +104,7 @@ mkDropdown modelState openMsg mainTxt itemMsgLst =
     div []
         [ Dropdown.dropdown
             modelState
-            { options = []
+            { options = [ Dropdown.attrs [ Spacing.m1 ] ]
             , toggleMsg = openMsg
             , toggleButton =
                 Dropdown.toggle [ Button.light ] [ text mainTxt ]

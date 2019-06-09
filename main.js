@@ -16431,6 +16431,12 @@ var author$project$View$NumberedIcon = {$: 'NumberedIcon'};
 var author$project$View$QuoteIcon = {$: 'QuoteIcon'};
 var author$project$View$SaveIcon = {$: 'SaveIcon'};
 var author$project$View$UploadCloud = {$: 'UploadCloud'};
+var rundis$elm_bootstrap$Bootstrap$Dropdown$Attrs = function (a) {
+	return {$: 'Attrs', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Dropdown$attrs = function (attrs_) {
+	return rundis$elm_bootstrap$Bootstrap$Dropdown$Attrs(attrs_);
+};
 var rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownItem = function (a) {
 	return {$: 'DropdownItem', a: a};
 };
@@ -16853,7 +16859,12 @@ var author$project$View$mkDropdown = F4(
 										]));
 							},
 							itemMsgLst),
-						options: _List_Nil,
+						options: _List_fromArray(
+							[
+								rundis$elm_bootstrap$Bootstrap$Dropdown$attrs(
+								_List_fromArray(
+									[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1]))
+							]),
 						toggleButton: A2(
 							rundis$elm_bootstrap$Bootstrap$Dropdown$toggle,
 							_List_fromArray(
