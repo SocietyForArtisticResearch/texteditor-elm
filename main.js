@@ -13221,13 +13221,10 @@ var author$project$Main$update = F2(
 							}
 						}());
 				case 'InsertAtCursor':
-					var _n37 = msg.a;
-					var str = _n37.a;
-					var offset = _n37.b;
+					var insertTuple = msg.a;
 					return _Utils_Tuple2(
 						model,
-						author$project$Main$insertMdString(
-							_Utils_Tuple2(str, offset)));
+						author$project$Main$insertMdString(insertTuple));
 				case 'OpenMediaPicker':
 					return _Utils_Tuple2(
 						_Utils_update(
@@ -13250,19 +13247,14 @@ var author$project$Main$update = F2(
 			}
 		}
 	});
-var author$project$Main$ArrowDown = {$: 'ArrowDown'};
-var author$project$Main$BoldIcon = {$: 'BoldIcon'};
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
 var author$project$Main$DownloadExport = function (a) {
 	return {$: 'DownloadExport', a: a};
 };
-var author$project$Main$ImportIcon = {$: 'ImportIcon'};
 var author$project$Main$InsertAtCursor = function (a) {
 	return {$: 'InsertAtCursor', a: a};
 };
 var author$project$Main$OpenMediaPicker = {$: 'OpenMediaPicker'};
-var author$project$Main$SaveIcon = {$: 'SaveIcon'};
-var author$project$Main$UploadCloud = {$: 'UploadCloud'};
 var author$project$Main$UploadImportFileSelect = {$: 'UploadImportFileSelect'};
 var author$project$Main$UploadMediaFileSelect = {$: 'UploadMediaFileSelect'};
 var author$project$Main$MediaEdit = function (a) {
@@ -13310,739 +13302,6 @@ var author$project$Main$ConfirmMediaDelete = function (a) {
 	return {$: 'ConfirmMediaDelete', a: a};
 };
 var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$ConfirmMediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertMediaAtCursor};
-var author$project$Settings$baseUrl = 'elm-editor/';
-var author$project$Settings$iconUrl = author$project$Settings$baseUrl + 'lib/icons/';
-var elm$html$Html$img = _VirtualDom_node('img');
-var elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$string(string));
-	});
-var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
-var elm$html$Html$Attributes$height = function (n) {
-	return A2(
-		_VirtualDom_attribute,
-		'height',
-		elm$core$String$fromInt(n));
-};
-var elm$html$Html$Attributes$src = function (url) {
-	return A2(
-		elm$html$Html$Attributes$stringProperty,
-		'src',
-		_VirtualDom_noJavaScriptOrHtmlUri(url));
-};
-var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
-var elm$html$Html$Attributes$width = function (n) {
-	return A2(
-		_VirtualDom_attribute,
-		'width',
-		elm$core$String$fromInt(n));
-};
-var author$project$Main$renderIcon = function (icon) {
-	var iconImg = function (url) {
-		return A2(
-			elm$html$Html$img,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$src(
-					_Utils_ap(author$project$Settings$iconUrl, url)),
-					elm$html$Html$Attributes$class('m-1'),
-					elm$html$Html$Attributes$width(15),
-					elm$html$Html$Attributes$height(15),
-					A2(elm$html$Html$Attributes$style, 'position', 'relative'),
-					A2(elm$html$Html$Attributes$style, 'top', '-2px')
-				]),
-			_List_Nil);
-	};
-	switch (icon.$) {
-		case 'PlusIcon':
-			return iconImg('plus.svg');
-		case 'ImportIcon':
-			return iconImg('import-export.svg');
-		case 'SaveIcon':
-			return iconImg('save.svg');
-		case 'ItalicIcon':
-			return iconImg('italic.svg');
-		case 'BoldIcon':
-			return iconImg('bold.svg');
-		case 'ListIcon':
-			return iconImg('list-unordered.svg');
-		case 'ArrowDown':
-			return iconImg('arrow-down.svg');
-		default:
-			return iconImg('cloud-upload.svg');
-	}
-};
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		elm$html$Html$Events$on,
-		'click',
-		elm$json$Json$Decode$succeed(msg));
-};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
-	return {$: 'Attrs', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Button$attrs = function (attrs_) {
-	return rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs(attrs_);
-};
-var elm$html$Html$button = _VirtualDom_node('button');
-var elm$core$Maybe$andThen = F2(
-	function (callback, maybeValue) {
-		if (maybeValue.$ === 'Just') {
-			var value = maybeValue.a;
-			return callback(value);
-		} else {
-			return elm$core$Maybe$Nothing;
-		}
-	});
-var elm$html$Html$Attributes$classList = function (classes) {
-	return elm$html$Html$Attributes$class(
-		A2(
-			elm$core$String$join,
-			' ',
-			A2(
-				elm$core$List$map,
-				elm$core$Tuple$first,
-				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
-};
-var elm$json$Json$Encode$bool = _Json_wrap;
-var elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$bool(bool));
-	});
-var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
-var rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption = function (size) {
-	switch (size.$) {
-		case 'XS':
-			return elm$core$Maybe$Nothing;
-		case 'SM':
-			return elm$core$Maybe$Just('sm');
-		case 'MD':
-			return elm$core$Maybe$Just('md');
-		case 'LG':
-			return elm$core$Maybe$Just('lg');
-		default:
-			return elm$core$Maybe$Just('xl');
-	}
-};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier = F2(
-	function (modifier, options) {
-		switch (modifier.$) {
-			case 'Size':
-				var size = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						size: elm$core$Maybe$Just(size)
-					});
-			case 'Coloring':
-				var coloring = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						coloring: elm$core$Maybe$Just(coloring)
-					});
-			case 'Block':
-				return _Utils_update(
-					options,
-					{block: true});
-			case 'Disabled':
-				var val = modifier.a;
-				return _Utils_update(
-					options,
-					{disabled: val});
-			default:
-				var attrs = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						attributes: _Utils_ap(options.attributes, attrs)
-					});
-		}
-	});
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions = {attributes: _List_Nil, block: false, coloring: elm$core$Maybe$Nothing, disabled: false, size: elm$core$Maybe$Nothing};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass = function (role) {
-	switch (role.$) {
-		case 'Primary':
-			return 'primary';
-		case 'Secondary':
-			return 'secondary';
-		case 'Success':
-			return 'success';
-		case 'Info':
-			return 'info';
-		case 'Warning':
-			return 'warning';
-		case 'Danger':
-			return 'danger';
-		case 'Dark':
-			return 'dark';
-		case 'Light':
-			return 'light';
-		default:
-			return 'link';
-	}
-};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes = function (modifiers) {
-	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier, rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions, modifiers);
-	return _Utils_ap(
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$classList(
-				_List_fromArray(
-					[
-						_Utils_Tuple2('btn', true),
-						_Utils_Tuple2('btn-block', options.block),
-						_Utils_Tuple2('disabled', options.disabled)
-					])),
-				elm$html$Html$Attributes$disabled(options.disabled)
-			]),
-		_Utils_ap(
-			function () {
-				var _n0 = A2(elm$core$Maybe$andThen, rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption, options.size);
-				if (_n0.$ === 'Just') {
-					var s = _n0.a;
-					return _List_fromArray(
-						[
-							elm$html$Html$Attributes$class('btn-' + s)
-						]);
-				} else {
-					return _List_Nil;
-				}
-			}(),
-			_Utils_ap(
-				function () {
-					var _n1 = options.coloring;
-					if (_n1.$ === 'Just') {
-						if (_n1.a.$ === 'Roled') {
-							var role = _n1.a.a;
-							return _List_fromArray(
-								[
-									elm$html$Html$Attributes$class(
-									'btn-' + rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
-								]);
-						} else {
-							var role = _n1.a.a;
-							return _List_fromArray(
-								[
-									elm$html$Html$Attributes$class(
-									'btn-outline-' + rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
-								]);
-						}
-					} else {
-						return _List_Nil;
-					}
-				}(),
-				options.attributes)));
-};
-var rundis$elm_bootstrap$Bootstrap$Button$button = F2(
-	function (options, children) {
-		return A2(
-			elm$html$Html$button,
-			rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes(options),
-			children);
-	});
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
-	return {$: 'Coloring', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Light = {$: 'Light'};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
-	return {$: 'Roled', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Button$light = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Light));
-var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1 = elm$html$Html$Attributes$class('m-1');
-var author$project$Main$mkButton = F4(
-	function (icon, needsOffset, onClickMsg, buttonText) {
-		var spacing = needsOffset ? _List_fromArray(
-			[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1]) : _List_Nil;
-		return A2(
-			rundis$elm_bootstrap$Bootstrap$Button$button,
-			_List_fromArray(
-				[
-					rundis$elm_bootstrap$Bootstrap$Button$light,
-					rundis$elm_bootstrap$Bootstrap$Button$attrs(
-					A2(
-						elm$core$List$append,
-						_List_fromArray(
-							[
-								elm$html$Html$Events$onClick(onClickMsg)
-							]),
-						spacing))
-				]),
-			_List_fromArray(
-				[
-					author$project$Main$renderIcon(icon),
-					elm$html$Html$text(buttonText)
-				]));
-	});
-var elm$html$Html$div = _VirtualDom_node('div');
-var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
-var rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownItem = function (a) {
-	return {$: 'DropdownItem', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Dropdown$buttonItem = F2(
-	function (attributes, children) {
-		return rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownItem(
-			A2(
-				elm$html$Html$button,
-				_Utils_ap(
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$type_('button'),
-							elm$html$Html$Attributes$class('dropdown-item')
-						]),
-					attributes),
-				children));
-	});
-var rundis$elm_bootstrap$Bootstrap$Dropdown$dropDir = function (maybeDir) {
-	var toAttrs = function (dir) {
-		return _List_fromArray(
-			[
-				elm$html$Html$Attributes$class(
-				'drop' + function () {
-					if (dir.$ === 'Dropleft') {
-						return 'left';
-					} else {
-						return 'right';
-					}
-				}())
-			]);
-	};
-	return A2(
-		elm$core$Maybe$withDefault,
-		_List_Nil,
-		A2(elm$core$Maybe$map, toAttrs, maybeDir));
-};
-var rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownAttributes = F2(
-	function (status, config) {
-		return _Utils_ap(
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$classList(
-					_List_fromArray(
-						[
-							_Utils_Tuple2('btn-group', true),
-							_Utils_Tuple2(
-							'show',
-							!_Utils_eq(status, rundis$elm_bootstrap$Bootstrap$Dropdown$Closed)),
-							_Utils_Tuple2('dropup', config.isDropUp)
-						]))
-				]),
-			_Utils_ap(
-				rundis$elm_bootstrap$Bootstrap$Dropdown$dropDir(config.dropDirection),
-				config.attributes));
-	});
-var elm$core$String$fromFloat = _String_fromNumber;
-var rundis$elm_bootstrap$Bootstrap$Dropdown$menuStyles = F2(
-	function (_n0, config) {
-		var status = _n0.a.status;
-		var toggleSize = _n0.a.toggleSize;
-		var menuSize = _n0.a.menuSize;
-		var px = function (n) {
-			return elm$core$String$fromFloat(n) + 'px';
-		};
-		var translate = F3(
-			function (x, y, z) {
-				return 'translate3d(' + (px(x) + (',' + (px(y) + (',' + (px(z) + ')')))));
-			});
-		var _default = _List_fromArray(
-			[
-				A2(elm$html$Html$Attributes$style, 'top', '0'),
-				A2(elm$html$Html$Attributes$style, 'left', '0')
-			]);
-		var _n1 = _Utils_Tuple2(config.isDropUp, config.dropDirection);
-		_n1$0:
-		while (true) {
-			if (_n1.b.$ === 'Just') {
-				if (_n1.b.a.$ === 'Dropright') {
-					if (_n1.a) {
-						break _n1$0;
-					} else {
-						var _n2 = _n1.b.a;
-						return _default;
-					}
-				} else {
-					if (_n1.a) {
-						break _n1$0;
-					} else {
-						var _n3 = _n1.b.a;
-						return _Utils_ap(
-							_default,
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$Attributes$style,
-									'transform',
-									A3(translate, (-toggleSize.width) - menuSize.width, 0, 0))
-								]));
-					}
-				}
-			} else {
-				if (_n1.a) {
-					break _n1$0;
-				} else {
-					return _Utils_ap(
-						_default,
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$Attributes$style,
-								'transform',
-								A3(translate, -toggleSize.width, toggleSize.height, 0))
-							]));
-				}
-			}
-		}
-		return _Utils_ap(
-			_default,
-			_List_fromArray(
-				[
-					A2(
-					elm$html$Html$Attributes$style,
-					'transform',
-					A3(translate, -toggleSize.width, -menuSize.height, 0))
-				]));
-	});
-var rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownMenu = F3(
-	function (state, config, items) {
-		var status = state.a.status;
-		var menuSize = state.a.menuSize;
-		var wrapperStyles = _Utils_eq(status, rundis$elm_bootstrap$Bootstrap$Dropdown$Closed) ? _List_fromArray(
-			[
-				A2(elm$html$Html$Attributes$style, 'height', '0'),
-				A2(elm$html$Html$Attributes$style, 'overflow', 'hidden'),
-				A2(elm$html$Html$Attributes$style, 'position', 'relative')
-			]) : _List_fromArray(
-			[
-				A2(elm$html$Html$Attributes$style, 'position', 'relative')
-			]);
-		return A2(
-			elm$html$Html$div,
-			wrapperStyles,
-			_List_fromArray(
-				[
-					A2(
-					elm$html$Html$div,
-					_Utils_ap(
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$classList(
-								_List_fromArray(
-									[
-										_Utils_Tuple2('dropdown-menu', true),
-										_Utils_Tuple2('dropdown-menu-right', config.hasMenuRight),
-										_Utils_Tuple2('show', true)
-									]))
-							]),
-						_Utils_ap(
-							A2(rundis$elm_bootstrap$Bootstrap$Dropdown$menuStyles, state, config),
-							config.menuAttrs)),
-					A2(
-						elm$core$List$map,
-						function (_n0) {
-							var x = _n0.a;
-							return x;
-						},
-						items))
-				]));
-	});
-var rundis$elm_bootstrap$Bootstrap$Dropdown$applyModifier = F2(
-	function (option, options) {
-		switch (option.$) {
-			case 'AlignMenuRight':
-				return _Utils_update(
-					options,
-					{hasMenuRight: true});
-			case 'Dropup':
-				return _Utils_update(
-					options,
-					{isDropUp: true});
-			case 'Attrs':
-				var attrs_ = option.a;
-				return _Utils_update(
-					options,
-					{attributes: attrs_});
-			case 'DropToDir':
-				var dir = option.a;
-				return _Utils_update(
-					options,
-					{
-						dropDirection: elm$core$Maybe$Just(dir)
-					});
-			default:
-				var attrs_ = option.a;
-				return _Utils_update(
-					options,
-					{menuAttrs: attrs_});
-		}
-	});
-var rundis$elm_bootstrap$Bootstrap$Dropdown$defaultOptions = {attributes: _List_Nil, dropDirection: elm$core$Maybe$Nothing, hasMenuRight: false, isDropUp: false, menuAttrs: _List_Nil};
-var rundis$elm_bootstrap$Bootstrap$Dropdown$toConfig = function (options) {
-	return A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Dropdown$applyModifier, rundis$elm_bootstrap$Bootstrap$Dropdown$defaultOptions, options);
-};
-var rundis$elm_bootstrap$Bootstrap$Dropdown$dropdown = F2(
-	function (state, _n0) {
-		var status = state.a.status;
-		var toggleMsg = _n0.toggleMsg;
-		var toggleButton = _n0.toggleButton;
-		var items = _n0.items;
-		var options = _n0.options;
-		var config = rundis$elm_bootstrap$Bootstrap$Dropdown$toConfig(options);
-		var _n1 = toggleButton;
-		var buttonFn = _n1.a;
-		return A2(
-			elm$html$Html$div,
-			A2(rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownAttributes, status, config),
-			_List_fromArray(
-				[
-					A2(buttonFn, toggleMsg, state),
-					A3(rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownMenu, state, config, items)
-				]));
-	});
-var rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownToggle = function (a) {
-	return {$: 'DropdownToggle', a: a};
-};
-var elm$json$Json$Decode$andThen = _Json_andThen;
-var rundis$elm_bootstrap$Bootstrap$Dropdown$Open = {$: 'Open'};
-var rundis$elm_bootstrap$Bootstrap$Dropdown$nextStatus = function (status) {
-	switch (status.$) {
-		case 'Open':
-			return rundis$elm_bootstrap$Bootstrap$Dropdown$Closed;
-		case 'ListenClicks':
-			return rundis$elm_bootstrap$Bootstrap$Dropdown$Closed;
-		default:
-			return rundis$elm_bootstrap$Bootstrap$Dropdown$Open;
-	}
-};
-var elm$json$Json$Decode$at = F2(
-	function (fields, decoder) {
-		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
-	});
-var elm$json$Json$Decode$fail = _Json_fail;
-var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$className = A2(
-	elm$json$Json$Decode$at,
-	_List_fromArray(
-		['className']),
-	elm$json$Json$Decode$string);
-var rundis$elm_bootstrap$Bootstrap$Dropdown$isToggle = A2(
-	elm$json$Json$Decode$andThen,
-	function (_class) {
-		return A2(elm$core$String$contains, 'dropdown-toggle', _class) ? elm$json$Json$Decode$succeed(true) : elm$json$Json$Decode$succeed(false);
-	},
-	rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$className);
-var rundis$elm_bootstrap$Bootstrap$Dropdown$toggler = F2(
-	function (path, decoder) {
-		return elm$json$Json$Decode$oneOf(
-			_List_fromArray(
-				[
-					A2(
-					elm$json$Json$Decode$andThen,
-					function (res) {
-						return res ? A2(elm$json$Json$Decode$at, path, decoder) : elm$json$Json$Decode$fail('');
-					},
-					A2(elm$json$Json$Decode$at, path, rundis$elm_bootstrap$Bootstrap$Dropdown$isToggle)),
-					A2(
-					elm$json$Json$Decode$andThen,
-					function (_n0) {
-						return A2(
-							rundis$elm_bootstrap$Bootstrap$Dropdown$toggler,
-							_Utils_ap(
-								path,
-								_List_fromArray(
-									['parentElement'])),
-							decoder);
-					},
-					A2(
-						elm$json$Json$Decode$at,
-						_Utils_ap(
-							path,
-							_List_fromArray(
-								['parentElement'])),
-						rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$className)),
-					elm$json$Json$Decode$fail('No toggler found')
-				]));
-	});
-var elm$json$Json$Decode$float = _Json_decodeFloat;
-var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetHeight = A2(elm$json$Json$Decode$field, 'offsetHeight', elm$json$Json$Decode$float);
-var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetWidth = A2(elm$json$Json$Decode$field, 'offsetWidth', elm$json$Json$Decode$float);
-var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetLeft = A2(elm$json$Json$Decode$field, 'offsetLeft', elm$json$Json$Decode$float);
-var elm$json$Json$Decode$null = _Json_decodeNull;
-var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetParent = F2(
-	function (x, decoder) {
-		return elm$json$Json$Decode$oneOf(
-			_List_fromArray(
-				[
-					A2(
-					elm$json$Json$Decode$field,
-					'offsetParent',
-					elm$json$Json$Decode$null(x)),
-					A2(elm$json$Json$Decode$field, 'offsetParent', decoder)
-				]));
-	});
-var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetTop = A2(elm$json$Json$Decode$field, 'offsetTop', elm$json$Json$Decode$float);
-var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$scrollLeft = A2(elm$json$Json$Decode$field, 'scrollLeft', elm$json$Json$Decode$float);
-var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$scrollTop = A2(elm$json$Json$Decode$field, 'scrollTop', elm$json$Json$Decode$float);
-var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$position = F2(
-	function (x, y) {
-		return A2(
-			elm$json$Json$Decode$andThen,
-			function (_n0) {
-				var x_ = _n0.a;
-				var y_ = _n0.b;
-				return A2(
-					rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetParent,
-					_Utils_Tuple2(x_, y_),
-					A2(rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$position, x_, y_));
-			},
-			A5(
-				elm$json$Json$Decode$map4,
-				F4(
-					function (scrollLeft_, scrollTop_, offsetLeft_, offsetTop_) {
-						return _Utils_Tuple2((x + offsetLeft_) - scrollLeft_, (y + offsetTop_) - scrollTop_);
-					}),
-				rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$scrollLeft,
-				rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$scrollTop,
-				rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetLeft,
-				rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetTop));
-	});
-var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$boundingArea = A4(
-	elm$json$Json$Decode$map3,
-	F3(
-		function (_n0, width, height) {
-			var x = _n0.a;
-			var y = _n0.b;
-			return {height: height, left: x, top: y, width: width};
-		}),
-	A2(rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$position, 0, 0),
-	rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetWidth,
-	rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetHeight);
-var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$childNode = function (idx) {
-	return elm$json$Json$Decode$at(
-		_List_fromArray(
-			[
-				'childNodes',
-				elm$core$String$fromInt(idx)
-			]));
-};
-var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$nextSibling = function (decoder) {
-	return A2(elm$json$Json$Decode$field, 'nextSibling', decoder);
-};
-var rundis$elm_bootstrap$Bootstrap$Dropdown$sizeDecoder = A3(
-	elm$json$Json$Decode$map2,
-	elm$core$Tuple$pair,
-	A2(
-		rundis$elm_bootstrap$Bootstrap$Dropdown$toggler,
-		_List_fromArray(
-			['target']),
-		rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$boundingArea),
-	A2(
-		rundis$elm_bootstrap$Bootstrap$Dropdown$toggler,
-		_List_fromArray(
-			['target']),
-		rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$nextSibling(
-			A2(rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$childNode, 0, rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$boundingArea))));
-var rundis$elm_bootstrap$Bootstrap$Dropdown$clickHandler = F2(
-	function (toMsg, state) {
-		var status = state.a.status;
-		return A2(
-			elm$json$Json$Decode$andThen,
-			function (_n0) {
-				var b = _n0.a;
-				var m = _n0.b;
-				return elm$json$Json$Decode$succeed(
-					toMsg(
-						rundis$elm_bootstrap$Bootstrap$Dropdown$State(
-							{
-								menuSize: m,
-								status: rundis$elm_bootstrap$Bootstrap$Dropdown$nextStatus(status),
-								toggleSize: b
-							})));
-			},
-			rundis$elm_bootstrap$Bootstrap$Dropdown$sizeDecoder);
-	});
-var rundis$elm_bootstrap$Bootstrap$Dropdown$togglePrivate = F4(
-	function (buttonOptions, children, toggleMsg, state) {
-		return A2(
-			elm$html$Html$button,
-			_Utils_ap(
-				rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes(buttonOptions),
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('dropdown-toggle'),
-						elm$html$Html$Attributes$type_('button'),
-						A2(
-						elm$html$Html$Events$on,
-						'click',
-						A2(rundis$elm_bootstrap$Bootstrap$Dropdown$clickHandler, toggleMsg, state))
-					])),
-			children);
-	});
-var rundis$elm_bootstrap$Bootstrap$Dropdown$toggle = F2(
-	function (buttonOptions, children) {
-		return rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownToggle(
-			A2(rundis$elm_bootstrap$Bootstrap$Dropdown$togglePrivate, buttonOptions, children));
-	});
-var author$project$Main$mkDropdown = F4(
-	function (modelState, openMsg, mainTxt, itemMsgLst) {
-		return A2(
-			elm$html$Html$div,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A2(
-					rundis$elm_bootstrap$Bootstrap$Dropdown$dropdown,
-					modelState,
-					{
-						items: A2(
-							elm$core$List$map,
-							function (_n0) {
-								var buttonTxt = _n0.a;
-								var clickMsg = _n0.b;
-								return A2(
-									rundis$elm_bootstrap$Bootstrap$Dropdown$buttonItem,
-									_List_fromArray(
-										[
-											elm$html$Html$Events$onClick(clickMsg)
-										]),
-									_List_fromArray(
-										[
-											elm$html$Html$text(buttonTxt)
-										]));
-							},
-							itemMsgLst),
-						options: _List_Nil,
-						toggleButton: A2(
-							rundis$elm_bootstrap$Bootstrap$Dropdown$toggle,
-							_List_fromArray(
-								[rundis$elm_bootstrap$Bootstrap$Button$light]),
-							_List_fromArray(
-								[
-									elm$html$Html$text(mainTxt)
-								])),
-						toggleMsg: openMsg
-					})
-				]));
-	});
 var author$project$Main$AlertMsg = function (a) {
 	return {$: 'AlertMsg', a: a};
 };
@@ -14065,6 +13324,8 @@ var author$project$Problems$asString = function (problem) {
 			return 'import http error';
 	}
 };
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var rundis$elm_bootstrap$Bootstrap$Alert$Config = function (a) {
 	return {$: 'Config', a: a};
 };
@@ -14090,6 +13351,14 @@ var rundis$elm_bootstrap$Bootstrap$Alert$dismissable = F2(
 				}));
 	});
 var elm$html$Html$h4 = _VirtualDom_node('h4');
+var elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$string(string));
+	});
+var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
 var rundis$elm_bootstrap$Bootstrap$Alert$headingPrivate = F3(
 	function (elemFn, attributes, children_) {
 		return A2(
@@ -14116,6 +13385,8 @@ var rundis$elm_bootstrap$Bootstrap$Internal$Role$Info = {$: 'Info'};
 var rundis$elm_bootstrap$Bootstrap$Alert$info = function (conf) {
 	return A2(rundis$elm_bootstrap$Bootstrap$Alert$role, rundis$elm_bootstrap$Bootstrap$Internal$Role$Info, conf);
 };
+var elm$html$Html$div = _VirtualDom_node('div');
+var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$span = _VirtualDom_node('span');
 var elm$virtual_dom$VirtualDom$attribute = F2(
 	function (key, value) {
@@ -14125,6 +13396,24 @@ var elm$virtual_dom$VirtualDom$attribute = F2(
 			_VirtualDom_noJavaScriptOrHtmlUri(value));
 	});
 var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
+var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
 var rundis$elm_bootstrap$Bootstrap$Alert$StartClose = {$: 'StartClose'};
 var rundis$elm_bootstrap$Bootstrap$Alert$clickHandler = F2(
 	function (visibility, configRec) {
@@ -14195,6 +13484,18 @@ var rundis$elm_bootstrap$Bootstrap$Alert$maybeAddDismissButton = F3(
 					])),
 			children_) : children_;
 	});
+var elm$html$Html$Attributes$classList = function (classes) {
+	return elm$html$Html$Attributes$class(
+		A2(
+			elm$core$String$join,
+			' ',
+			A2(
+				elm$core$List$map,
+				elm$core$Tuple$first,
+				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
+};
+var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
 var rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass = F2(
 	function (prefix, role) {
 		return elm$html$Html$Attributes$class(
@@ -14376,7 +13677,20 @@ var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$applyModifier = F2(
 	});
 var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Off = {$: 'Off'};
 var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$defaultOptions = {attributes: _List_Nil, custom: false, disabled: false, id: elm$core$Maybe$Nothing, inline: false, onChecked: elm$core$Maybe$Nothing, state: rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Off, validation: elm$core$Maybe$Nothing};
+var elm$json$Json$Encode$bool = _Json_wrap;
+var elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$bool(bool));
+	});
+var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
 var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
+var elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
+	});
 var elm$json$Json$Decode$bool = _Json_decodeBool;
 var elm$html$Html$Events$targetChecked = A2(
 	elm$json$Json$Decode$at,
@@ -14586,11 +13900,255 @@ var author$project$Main$viewTabs = function (model) {
 				A2(tabLink, author$project$Main$EditorStyle, 'Style')
 			]));
 };
+var author$project$Settings$baseUrl = 'elm-editor/';
+var author$project$Settings$iconUrl = author$project$Settings$baseUrl + 'lib/icons/';
+var elm$html$Html$img = _VirtualDom_node('img');
+var elm$html$Html$Attributes$height = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'height',
+		elm$core$String$fromInt(n));
+};
+var elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var elm$html$Html$Attributes$width = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'width',
+		elm$core$String$fromInt(n));
+};
+var author$project$View$renderIcon = function (icon) {
+	var iconImg = function (url) {
+		return A2(
+			elm$html$Html$img,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$src(
+					_Utils_ap(author$project$Settings$iconUrl, url)),
+					elm$html$Html$Attributes$class('m-1'),
+					elm$html$Html$Attributes$width(15),
+					elm$html$Html$Attributes$height(15),
+					A2(elm$html$Html$Attributes$style, 'position', 'relative'),
+					A2(elm$html$Html$Attributes$style, 'top', '-2px')
+				]),
+			_List_Nil);
+	};
+	switch (icon.$) {
+		case 'PlusIcon':
+			return iconImg('plus.svg');
+		case 'ImportIcon':
+			return iconImg('import-export.svg');
+		case 'SaveIcon':
+			return iconImg('save.svg');
+		case 'ItalicIcon':
+			return iconImg('italic.svg');
+		case 'LinkIcon':
+			return iconImg('link-intact.svg');
+		case 'BoldIcon':
+			return iconImg('bold.svg');
+		case 'ListIcon':
+			return iconImg('list-unordered.svg');
+		case 'NumberedIcon':
+			return iconImg('list-ordered.svg');
+		case 'HeaderIcon':
+			return iconImg('header.svg');
+		case 'QuoteIcon':
+			return iconImg('double-quote-sans-left.svg');
+		case 'ArrowDown':
+			return iconImg('arrow-down.svg');
+		default:
+			return iconImg('cloud-upload.svg');
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
+	return {$: 'Attrs', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Button$attrs = function (attrs_) {
+	return rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs(attrs_);
+};
+var elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (maybeValue.$ === 'Just') {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return elm$core$Maybe$Nothing;
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption = function (size) {
+	switch (size.$) {
+		case 'XS':
+			return elm$core$Maybe$Nothing;
+		case 'SM':
+			return elm$core$Maybe$Just('sm');
+		case 'MD':
+			return elm$core$Maybe$Just('md');
+		case 'LG':
+			return elm$core$Maybe$Just('lg');
+		default:
+			return elm$core$Maybe$Just('xl');
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier = F2(
+	function (modifier, options) {
+		switch (modifier.$) {
+			case 'Size':
+				var size = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						size: elm$core$Maybe$Just(size)
+					});
+			case 'Coloring':
+				var coloring = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						coloring: elm$core$Maybe$Just(coloring)
+					});
+			case 'Block':
+				return _Utils_update(
+					options,
+					{block: true});
+			case 'Disabled':
+				var val = modifier.a;
+				return _Utils_update(
+					options,
+					{disabled: val});
+			default:
+				var attrs = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						attributes: _Utils_ap(options.attributes, attrs)
+					});
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions = {attributes: _List_Nil, block: false, coloring: elm$core$Maybe$Nothing, disabled: false, size: elm$core$Maybe$Nothing};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass = function (role) {
+	switch (role.$) {
+		case 'Primary':
+			return 'primary';
+		case 'Secondary':
+			return 'secondary';
+		case 'Success':
+			return 'success';
+		case 'Info':
+			return 'info';
+		case 'Warning':
+			return 'warning';
+		case 'Danger':
+			return 'danger';
+		case 'Dark':
+			return 'dark';
+		case 'Light':
+			return 'light';
+		default:
+			return 'link';
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes = function (modifiers) {
+	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier, rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions, modifiers);
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$classList(
+				_List_fromArray(
+					[
+						_Utils_Tuple2('btn', true),
+						_Utils_Tuple2('btn-block', options.block),
+						_Utils_Tuple2('disabled', options.disabled)
+					])),
+				elm$html$Html$Attributes$disabled(options.disabled)
+			]),
+		_Utils_ap(
+			function () {
+				var _n0 = A2(elm$core$Maybe$andThen, rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption, options.size);
+				if (_n0.$ === 'Just') {
+					var s = _n0.a;
+					return _List_fromArray(
+						[
+							elm$html$Html$Attributes$class('btn-' + s)
+						]);
+				} else {
+					return _List_Nil;
+				}
+			}(),
+			_Utils_ap(
+				function () {
+					var _n1 = options.coloring;
+					if (_n1.$ === 'Just') {
+						if (_n1.a.$ === 'Roled') {
+							var role = _n1.a.a;
+							return _List_fromArray(
+								[
+									elm$html$Html$Attributes$class(
+									'btn-' + rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
+								]);
+						} else {
+							var role = _n1.a.a;
+							return _List_fromArray(
+								[
+									elm$html$Html$Attributes$class(
+									'btn-outline-' + rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
+								]);
+						}
+					} else {
+						return _List_Nil;
+					}
+				}(),
+				options.attributes)));
+};
+var rundis$elm_bootstrap$Bootstrap$Button$button = F2(
+	function (options, children) {
+		return A2(
+			elm$html$Html$button,
+			rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes(options),
+			children);
+	});
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
+	return {$: 'Coloring', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Light = {$: 'Light'};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
+	return {$: 'Roled', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Button$light = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Light));
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1 = elm$html$Html$Attributes$class('m-1');
+var author$project$View$mkButton = F4(
+	function (icon, needsOffset, onClickMsg, buttonText) {
+		var spacing = needsOffset ? _List_fromArray(
+			[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1]) : _List_Nil;
+		return A2(
+			rundis$elm_bootstrap$Bootstrap$Button$button,
+			_List_fromArray(
+				[
+					rundis$elm_bootstrap$Bootstrap$Button$light,
+					rundis$elm_bootstrap$Bootstrap$Button$attrs(
+					A2(
+						elm$core$List$append,
+						_List_fromArray(
+							[
+								elm$html$Html$Events$onClick(onClickMsg)
+							]),
+						spacing))
+				]),
+			_List_fromArray(
+				[
+					author$project$View$renderIcon(icon),
+					elm$html$Html$text(buttonText)
+				]));
+	});
 var elm$core$Basics$round = _Basics_round;
 var author$project$Main$viewUpload = F5(
 	function (icon, needsOffset, onClickMsg, buttonText, status) {
 		if (status.$ === 'Ready') {
-			return A4(author$project$Main$mkButton, icon, needsOffset, onClickMsg, buttonText);
+			return A4(author$project$View$mkButton, icon, needsOffset, onClickMsg, buttonText);
 		} else {
 			var fraction = status.a;
 			return A2(
@@ -15570,6 +15128,13 @@ var rundis$elm_bootstrap$Bootstrap$Modal$backdrop = F2(
 				A2(elm$html$Html$div, attributes, _List_Nil)
 			]);
 	});
+var elm$json$Json$Decode$andThen = _Json_andThen;
+var elm$json$Json$Decode$fail = _Json_fail;
+var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$className = A2(
+	elm$json$Json$Decode$at,
+	_List_fromArray(
+		['className']),
+	elm$json$Json$Decode$string);
 var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$target = function (decoder) {
 	return A2(elm$json$Json$Decode$field, 'target', decoder);
 };
@@ -16759,6 +16324,14 @@ var author$project$RCMediaList$viewModalMediaPicker = F3(
 								rundis$elm_bootstrap$Bootstrap$Modal$config(messages.closeModal)))))));
 	});
 var author$project$Settings$Bold = {$: 'Bold'};
+var author$project$Settings$Bullet = {$: 'Bullet'};
+var author$project$Settings$H1 = {$: 'H1'};
+var author$project$Settings$H2 = {$: 'H2'};
+var author$project$Settings$H3 = {$: 'H3'};
+var author$project$Settings$Italic = {$: 'Italic'};
+var author$project$Settings$Link = {$: 'Link'};
+var author$project$Settings$Numbered = {$: 'Numbered'};
+var author$project$Settings$Quote = {$: 'Quote'};
 var author$project$Settings$snippet = function (s) {
 	switch (s.$) {
 		case 'Bold':
@@ -16845,6 +16418,452 @@ var author$project$UserConfirm$view = F3(
 						rundis$elm_bootstrap$Bootstrap$Modal$small(
 							rundis$elm_bootstrap$Bootstrap$Modal$config(messages.reject))))));
 	});
+var author$project$View$ArrowDown = {$: 'ArrowDown'};
+var author$project$View$BoldIcon = {$: 'BoldIcon'};
+var author$project$View$HeaderIcon = {$: 'HeaderIcon'};
+var author$project$View$ImportIcon = {$: 'ImportIcon'};
+var author$project$View$ItalicIcon = {$: 'ItalicIcon'};
+var author$project$View$LinkIcon = {$: 'LinkIcon'};
+var author$project$View$ListIcon = {$: 'ListIcon'};
+var author$project$View$NumberedIcon = {$: 'NumberedIcon'};
+var author$project$View$QuoteIcon = {$: 'QuoteIcon'};
+var author$project$View$SaveIcon = {$: 'SaveIcon'};
+var author$project$View$UploadCloud = {$: 'UploadCloud'};
+var rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownItem = function (a) {
+	return {$: 'DropdownItem', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Dropdown$buttonItem = F2(
+	function (attributes, children) {
+		return rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownItem(
+			A2(
+				elm$html$Html$button,
+				_Utils_ap(
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$type_('button'),
+							elm$html$Html$Attributes$class('dropdown-item')
+						]),
+					attributes),
+				children));
+	});
+var rundis$elm_bootstrap$Bootstrap$Dropdown$dropDir = function (maybeDir) {
+	var toAttrs = function (dir) {
+		return _List_fromArray(
+			[
+				elm$html$Html$Attributes$class(
+				'drop' + function () {
+					if (dir.$ === 'Dropleft') {
+						return 'left';
+					} else {
+						return 'right';
+					}
+				}())
+			]);
+	};
+	return A2(
+		elm$core$Maybe$withDefault,
+		_List_Nil,
+		A2(elm$core$Maybe$map, toAttrs, maybeDir));
+};
+var rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownAttributes = F2(
+	function (status, config) {
+		return _Utils_ap(
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$classList(
+					_List_fromArray(
+						[
+							_Utils_Tuple2('btn-group', true),
+							_Utils_Tuple2(
+							'show',
+							!_Utils_eq(status, rundis$elm_bootstrap$Bootstrap$Dropdown$Closed)),
+							_Utils_Tuple2('dropup', config.isDropUp)
+						]))
+				]),
+			_Utils_ap(
+				rundis$elm_bootstrap$Bootstrap$Dropdown$dropDir(config.dropDirection),
+				config.attributes));
+	});
+var elm$core$String$fromFloat = _String_fromNumber;
+var rundis$elm_bootstrap$Bootstrap$Dropdown$menuStyles = F2(
+	function (_n0, config) {
+		var status = _n0.a.status;
+		var toggleSize = _n0.a.toggleSize;
+		var menuSize = _n0.a.menuSize;
+		var px = function (n) {
+			return elm$core$String$fromFloat(n) + 'px';
+		};
+		var translate = F3(
+			function (x, y, z) {
+				return 'translate3d(' + (px(x) + (',' + (px(y) + (',' + (px(z) + ')')))));
+			});
+		var _default = _List_fromArray(
+			[
+				A2(elm$html$Html$Attributes$style, 'top', '0'),
+				A2(elm$html$Html$Attributes$style, 'left', '0')
+			]);
+		var _n1 = _Utils_Tuple2(config.isDropUp, config.dropDirection);
+		_n1$0:
+		while (true) {
+			if (_n1.b.$ === 'Just') {
+				if (_n1.b.a.$ === 'Dropright') {
+					if (_n1.a) {
+						break _n1$0;
+					} else {
+						var _n2 = _n1.b.a;
+						return _default;
+					}
+				} else {
+					if (_n1.a) {
+						break _n1$0;
+					} else {
+						var _n3 = _n1.b.a;
+						return _Utils_ap(
+							_default,
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$Attributes$style,
+									'transform',
+									A3(translate, (-toggleSize.width) - menuSize.width, 0, 0))
+								]));
+					}
+				}
+			} else {
+				if (_n1.a) {
+					break _n1$0;
+				} else {
+					return _Utils_ap(
+						_default,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$Attributes$style,
+								'transform',
+								A3(translate, -toggleSize.width, toggleSize.height, 0))
+							]));
+				}
+			}
+		}
+		return _Utils_ap(
+			_default,
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$Attributes$style,
+					'transform',
+					A3(translate, -toggleSize.width, -menuSize.height, 0))
+				]));
+	});
+var rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownMenu = F3(
+	function (state, config, items) {
+		var status = state.a.status;
+		var menuSize = state.a.menuSize;
+		var wrapperStyles = _Utils_eq(status, rundis$elm_bootstrap$Bootstrap$Dropdown$Closed) ? _List_fromArray(
+			[
+				A2(elm$html$Html$Attributes$style, 'height', '0'),
+				A2(elm$html$Html$Attributes$style, 'overflow', 'hidden'),
+				A2(elm$html$Html$Attributes$style, 'position', 'relative')
+			]) : _List_fromArray(
+			[
+				A2(elm$html$Html$Attributes$style, 'position', 'relative')
+			]);
+		return A2(
+			elm$html$Html$div,
+			wrapperStyles,
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$div,
+					_Utils_ap(
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$classList(
+								_List_fromArray(
+									[
+										_Utils_Tuple2('dropdown-menu', true),
+										_Utils_Tuple2('dropdown-menu-right', config.hasMenuRight),
+										_Utils_Tuple2('show', true)
+									]))
+							]),
+						_Utils_ap(
+							A2(rundis$elm_bootstrap$Bootstrap$Dropdown$menuStyles, state, config),
+							config.menuAttrs)),
+					A2(
+						elm$core$List$map,
+						function (_n0) {
+							var x = _n0.a;
+							return x;
+						},
+						items))
+				]));
+	});
+var rundis$elm_bootstrap$Bootstrap$Dropdown$applyModifier = F2(
+	function (option, options) {
+		switch (option.$) {
+			case 'AlignMenuRight':
+				return _Utils_update(
+					options,
+					{hasMenuRight: true});
+			case 'Dropup':
+				return _Utils_update(
+					options,
+					{isDropUp: true});
+			case 'Attrs':
+				var attrs_ = option.a;
+				return _Utils_update(
+					options,
+					{attributes: attrs_});
+			case 'DropToDir':
+				var dir = option.a;
+				return _Utils_update(
+					options,
+					{
+						dropDirection: elm$core$Maybe$Just(dir)
+					});
+			default:
+				var attrs_ = option.a;
+				return _Utils_update(
+					options,
+					{menuAttrs: attrs_});
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Dropdown$defaultOptions = {attributes: _List_Nil, dropDirection: elm$core$Maybe$Nothing, hasMenuRight: false, isDropUp: false, menuAttrs: _List_Nil};
+var rundis$elm_bootstrap$Bootstrap$Dropdown$toConfig = function (options) {
+	return A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Dropdown$applyModifier, rundis$elm_bootstrap$Bootstrap$Dropdown$defaultOptions, options);
+};
+var rundis$elm_bootstrap$Bootstrap$Dropdown$dropdown = F2(
+	function (state, _n0) {
+		var status = state.a.status;
+		var toggleMsg = _n0.toggleMsg;
+		var toggleButton = _n0.toggleButton;
+		var items = _n0.items;
+		var options = _n0.options;
+		var config = rundis$elm_bootstrap$Bootstrap$Dropdown$toConfig(options);
+		var _n1 = toggleButton;
+		var buttonFn = _n1.a;
+		return A2(
+			elm$html$Html$div,
+			A2(rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownAttributes, status, config),
+			_List_fromArray(
+				[
+					A2(buttonFn, toggleMsg, state),
+					A3(rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownMenu, state, config, items)
+				]));
+	});
+var rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownToggle = function (a) {
+	return {$: 'DropdownToggle', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Dropdown$Open = {$: 'Open'};
+var rundis$elm_bootstrap$Bootstrap$Dropdown$nextStatus = function (status) {
+	switch (status.$) {
+		case 'Open':
+			return rundis$elm_bootstrap$Bootstrap$Dropdown$Closed;
+		case 'ListenClicks':
+			return rundis$elm_bootstrap$Bootstrap$Dropdown$Closed;
+		default:
+			return rundis$elm_bootstrap$Bootstrap$Dropdown$Open;
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Dropdown$isToggle = A2(
+	elm$json$Json$Decode$andThen,
+	function (_class) {
+		return A2(elm$core$String$contains, 'dropdown-toggle', _class) ? elm$json$Json$Decode$succeed(true) : elm$json$Json$Decode$succeed(false);
+	},
+	rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$className);
+var rundis$elm_bootstrap$Bootstrap$Dropdown$toggler = F2(
+	function (path, decoder) {
+		return elm$json$Json$Decode$oneOf(
+			_List_fromArray(
+				[
+					A2(
+					elm$json$Json$Decode$andThen,
+					function (res) {
+						return res ? A2(elm$json$Json$Decode$at, path, decoder) : elm$json$Json$Decode$fail('');
+					},
+					A2(elm$json$Json$Decode$at, path, rundis$elm_bootstrap$Bootstrap$Dropdown$isToggle)),
+					A2(
+					elm$json$Json$Decode$andThen,
+					function (_n0) {
+						return A2(
+							rundis$elm_bootstrap$Bootstrap$Dropdown$toggler,
+							_Utils_ap(
+								path,
+								_List_fromArray(
+									['parentElement'])),
+							decoder);
+					},
+					A2(
+						elm$json$Json$Decode$at,
+						_Utils_ap(
+							path,
+							_List_fromArray(
+								['parentElement'])),
+						rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$className)),
+					elm$json$Json$Decode$fail('No toggler found')
+				]));
+	});
+var elm$json$Json$Decode$float = _Json_decodeFloat;
+var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetHeight = A2(elm$json$Json$Decode$field, 'offsetHeight', elm$json$Json$Decode$float);
+var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetWidth = A2(elm$json$Json$Decode$field, 'offsetWidth', elm$json$Json$Decode$float);
+var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetLeft = A2(elm$json$Json$Decode$field, 'offsetLeft', elm$json$Json$Decode$float);
+var elm$json$Json$Decode$null = _Json_decodeNull;
+var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetParent = F2(
+	function (x, decoder) {
+		return elm$json$Json$Decode$oneOf(
+			_List_fromArray(
+				[
+					A2(
+					elm$json$Json$Decode$field,
+					'offsetParent',
+					elm$json$Json$Decode$null(x)),
+					A2(elm$json$Json$Decode$field, 'offsetParent', decoder)
+				]));
+	});
+var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetTop = A2(elm$json$Json$Decode$field, 'offsetTop', elm$json$Json$Decode$float);
+var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$scrollLeft = A2(elm$json$Json$Decode$field, 'scrollLeft', elm$json$Json$Decode$float);
+var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$scrollTop = A2(elm$json$Json$Decode$field, 'scrollTop', elm$json$Json$Decode$float);
+var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$position = F2(
+	function (x, y) {
+		return A2(
+			elm$json$Json$Decode$andThen,
+			function (_n0) {
+				var x_ = _n0.a;
+				var y_ = _n0.b;
+				return A2(
+					rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetParent,
+					_Utils_Tuple2(x_, y_),
+					A2(rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$position, x_, y_));
+			},
+			A5(
+				elm$json$Json$Decode$map4,
+				F4(
+					function (scrollLeft_, scrollTop_, offsetLeft_, offsetTop_) {
+						return _Utils_Tuple2((x + offsetLeft_) - scrollLeft_, (y + offsetTop_) - scrollTop_);
+					}),
+				rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$scrollLeft,
+				rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$scrollTop,
+				rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetLeft,
+				rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetTop));
+	});
+var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$boundingArea = A4(
+	elm$json$Json$Decode$map3,
+	F3(
+		function (_n0, width, height) {
+			var x = _n0.a;
+			var y = _n0.b;
+			return {height: height, left: x, top: y, width: width};
+		}),
+	A2(rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$position, 0, 0),
+	rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetWidth,
+	rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetHeight);
+var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$childNode = function (idx) {
+	return elm$json$Json$Decode$at(
+		_List_fromArray(
+			[
+				'childNodes',
+				elm$core$String$fromInt(idx)
+			]));
+};
+var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$nextSibling = function (decoder) {
+	return A2(elm$json$Json$Decode$field, 'nextSibling', decoder);
+};
+var rundis$elm_bootstrap$Bootstrap$Dropdown$sizeDecoder = A3(
+	elm$json$Json$Decode$map2,
+	elm$core$Tuple$pair,
+	A2(
+		rundis$elm_bootstrap$Bootstrap$Dropdown$toggler,
+		_List_fromArray(
+			['target']),
+		rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$boundingArea),
+	A2(
+		rundis$elm_bootstrap$Bootstrap$Dropdown$toggler,
+		_List_fromArray(
+			['target']),
+		rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$nextSibling(
+			A2(rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$childNode, 0, rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$boundingArea))));
+var rundis$elm_bootstrap$Bootstrap$Dropdown$clickHandler = F2(
+	function (toMsg, state) {
+		var status = state.a.status;
+		return A2(
+			elm$json$Json$Decode$andThen,
+			function (_n0) {
+				var b = _n0.a;
+				var m = _n0.b;
+				return elm$json$Json$Decode$succeed(
+					toMsg(
+						rundis$elm_bootstrap$Bootstrap$Dropdown$State(
+							{
+								menuSize: m,
+								status: rundis$elm_bootstrap$Bootstrap$Dropdown$nextStatus(status),
+								toggleSize: b
+							})));
+			},
+			rundis$elm_bootstrap$Bootstrap$Dropdown$sizeDecoder);
+	});
+var rundis$elm_bootstrap$Bootstrap$Dropdown$togglePrivate = F4(
+	function (buttonOptions, children, toggleMsg, state) {
+		return A2(
+			elm$html$Html$button,
+			_Utils_ap(
+				rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes(buttonOptions),
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('dropdown-toggle'),
+						elm$html$Html$Attributes$type_('button'),
+						A2(
+						elm$html$Html$Events$on,
+						'click',
+						A2(rundis$elm_bootstrap$Bootstrap$Dropdown$clickHandler, toggleMsg, state))
+					])),
+			children);
+	});
+var rundis$elm_bootstrap$Bootstrap$Dropdown$toggle = F2(
+	function (buttonOptions, children) {
+		return rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownToggle(
+			A2(rundis$elm_bootstrap$Bootstrap$Dropdown$togglePrivate, buttonOptions, children));
+	});
+var author$project$View$mkDropdown = F4(
+	function (modelState, openMsg, mainTxt, itemMsgLst) {
+		return A2(
+			elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Dropdown$dropdown,
+					modelState,
+					{
+						items: A2(
+							elm$core$List$map,
+							function (_n0) {
+								var buttonTxt = _n0.a;
+								var clickMsg = _n0.b;
+								return A2(
+									rundis$elm_bootstrap$Bootstrap$Dropdown$buttonItem,
+									_List_fromArray(
+										[
+											elm$html$Html$Events$onClick(clickMsg)
+										]),
+									_List_fromArray(
+										[
+											elm$html$Html$text(buttonTxt)
+										]));
+							},
+							itemMsgLst),
+						options: _List_Nil,
+						toggleButton: A2(
+							rundis$elm_bootstrap$Bootstrap$Dropdown$toggle,
+							_List_fromArray(
+								[rundis$elm_bootstrap$Bootstrap$Button$light]),
+							_List_fromArray(
+								[
+									elm$html$Html$text(mainTxt)
+								])),
+						toggleMsg: openMsg
+					})
+				]));
+	});
 var author$project$Main$view = function (model) {
 	var saveButtonText = model.saved ? 'Saved' : 'Not Saved';
 	var saveButton = A2(
@@ -16860,7 +16879,7 @@ var author$project$Main$view = function (model) {
 			]),
 		_List_fromArray(
 			[
-				author$project$Main$renderIcon(author$project$Main$SaveIcon),
+				author$project$View$renderIcon(author$project$View$SaveIcon),
 				elm$html$Html$text(saveButtonText)
 			]));
 	var mediaList = A2(author$project$RCMediaList$view, model.exposition.media, author$project$Main$makeTableMessages);
@@ -16923,11 +16942,11 @@ var author$project$Main$view = function (model) {
 				mediaDialogHtml,
 				confirmDialogHtml,
 				A3(author$project$RCMediaList$viewModalMediaPicker, model.mediaPickerDialog, model.exposition.media, author$project$Main$makePickerMessages),
-				A5(author$project$Main$viewUpload, author$project$Main$UploadCloud, false, author$project$Main$UploadMediaFileSelect, 'Upload', model.mediaUploadStatus),
-				A4(author$project$Main$mkButton, author$project$Main$ArrowDown, true, author$project$Main$OpenMediaPicker, 'Insert'),
-				A5(author$project$Main$viewUpload, author$project$Main$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
+				A5(author$project$Main$viewUpload, author$project$View$UploadCloud, false, author$project$Main$UploadMediaFileSelect, 'Upload', model.mediaUploadStatus),
+				A4(author$project$View$mkButton, author$project$View$ArrowDown, true, author$project$Main$OpenMediaPicker, 'Insert'),
+				A5(author$project$Main$viewUpload, author$project$View$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
 				A4(
-				author$project$Main$mkDropdown,
+				author$project$View$mkDropdown,
 				model.exportDropState,
 				author$project$Main$ExportDropMsg,
 				'Export',
@@ -16958,11 +16977,67 @@ var author$project$Main$view = function (model) {
 				saveButton,
 				editorCheckbox,
 				A4(
-				author$project$Main$mkButton,
-				author$project$Main$BoldIcon,
+				author$project$View$mkButton,
+				author$project$View$HeaderIcon,
+				true,
+				author$project$Main$InsertAtCursor(
+					author$project$Settings$snippet(author$project$Settings$H1)),
+				'H1'),
+				A4(
+				author$project$View$mkButton,
+				author$project$View$HeaderIcon,
+				true,
+				author$project$Main$InsertAtCursor(
+					author$project$Settings$snippet(author$project$Settings$H2)),
+				'H2'),
+				A4(
+				author$project$View$mkButton,
+				author$project$View$HeaderIcon,
+				true,
+				author$project$Main$InsertAtCursor(
+					author$project$Settings$snippet(author$project$Settings$H3)),
+				'H3'),
+				A4(
+				author$project$View$mkButton,
+				author$project$View$BoldIcon,
 				true,
 				author$project$Main$InsertAtCursor(
 					author$project$Settings$snippet(author$project$Settings$Bold)),
+				''),
+				A4(
+				author$project$View$mkButton,
+				author$project$View$ItalicIcon,
+				true,
+				author$project$Main$InsertAtCursor(
+					author$project$Settings$snippet(author$project$Settings$Italic)),
+				''),
+				A4(
+				author$project$View$mkButton,
+				author$project$View$ListIcon,
+				true,
+				author$project$Main$InsertAtCursor(
+					author$project$Settings$snippet(author$project$Settings$Bullet)),
+				''),
+				A4(
+				author$project$View$mkButton,
+				author$project$View$NumberedIcon,
+				true,
+				author$project$Main$InsertAtCursor(
+					author$project$Settings$snippet(author$project$Settings$Numbered)),
+				''),
+				A4(
+				author$project$View$mkButton,
+				author$project$View$LinkIcon,
+				true,
+				author$project$Main$InsertAtCursor(
+					author$project$Settings$snippet(author$project$Settings$Link)),
+				''),
+				A4(
+				author$project$View$mkButton,
+				author$project$View$QuoteIcon,
+				true,
+				author$project$Main$InsertAtCursor(
+					author$project$Settings$snippet(author$project$Settings$Quote)),
 				''),
 				alert,
 				mediaList

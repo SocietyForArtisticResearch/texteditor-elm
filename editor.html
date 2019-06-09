@@ -321,6 +321,9 @@
 	 insertAtCursor(textareaMarkdown, str);
 	 cmMarkdown.setValue(textareaMarkdown.value);
 	 textareaMarkdown.focus();
+	 let sel = textareaMarkdown.selectionStart;
+	 textareaMarkdown.selectionStart = sel + offset;
+	 textareaMarkdown.selectionEnd = sel + offset;
      }
 
  });

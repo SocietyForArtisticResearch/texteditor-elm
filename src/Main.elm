@@ -27,6 +27,7 @@ import Regex
 import Settings exposing (..)
 import String.Extra as Str
 import UserConfirm exposing (ConfirmDialogContent)
+import View exposing (..)
 
 
 type alias Model =
@@ -730,8 +731,8 @@ update msg model =
                     Cmd.none
             )
 
-        InsertAtCursor ( str, offset ) ->
-            ( model, insertMdString ( str, offset ) )
+        InsertAtCursor insertTuple ->
+            ( model, insertMdString insertTuple )
 
         OpenMediaPicker ->
             ( { model | mediaPickerDialog = Modal.shown }, Cmd.none )
@@ -745,76 +746,6 @@ update msg model =
             )
 
 
-type Icon
-    = PlusIcon
-    | ImportIcon
-    | SaveIcon
-    | ItalicIcon
-    | BoldIcon
-    | ListIcon
-    | ArrowDown
-    | UploadCloud
-
-
-renderIcon : Icon -> Html Msg
-renderIcon icon =
-    let
-        iconImg url =
-            img
-                [ src (iconUrl ++ url)
-                , class "m-1"
-                , Html.Attributes.width 15
-                , Html.Attributes.height 15
-                , Html.Attributes.style "position" "relative"
-                , Html.Attributes.style "top" "-2px"
-                ]
-                []
-    in
-    case icon of
-        PlusIcon ->
-            iconImg "plus.svg"
-
-        ImportIcon ->
-            iconImg "import-export.svg"
-
-        SaveIcon ->
-            iconImg "save.svg"
-
-        ItalicIcon ->
-            iconImg "italic.svg"
-
-        BoldIcon ->
-            iconImg "bold.svg"
-
-        ListIcon ->
-            iconImg "list-unordered.svg"
-
-        ArrowDown ->
-            iconImg "arrow-down.svg"
-
-        UploadCloud ->
-            iconImg "cloud-upload.svg"
-
-
-mkButton : Icon -> Bool -> Msg -> String -> Html Msg
-mkButton icon needsOffset onClickMsg buttonText =
-    let
-        spacing =
-            if needsOffset then
-                [ Spacing.m1 ]
-
-            else
-                []
-    in
-    Button.button
-        [ Button.light
-        , Button.attrs <| List.append [ onClick onClickMsg ] spacing
-        ]
-        [ renderIcon icon
-        , text buttonText
-        ]
-
-
 viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg
 viewUpload icon needsOffset onClickMsg buttonText status =
     case status of
@@ -823,25 +754,6 @@ viewUpload icon needsOffset onClickMsg buttonText status =
 
         Uploading fraction ->
             div [] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
-
-
-mkDropdown : Dropdown.State -> (Dropdown.State -> Msg) -> String -> List ( String, Msg ) -> Html Msg
-mkDropdown modelState openMsg mainTxt itemMsgLst =
-    div []
-        [ Dropdown.dropdown
-            modelState
-            { options = []
-            , toggleMsg = openMsg
-            , toggleButton =
-                Dropdown.toggle [ Button.light ] [ text mainTxt ]
-            , items =
-                List.map
-                    (\( buttonTxt, clickMsg ) ->
-                        Dropdown.buttonItem [ onClick clickMsg ] [ text buttonTxt ]
-                    )
-                    itemMsgLst
-            }
-        ]
 
 
 enumTabState : TabState -> Int
@@ -998,7 +910,15 @@ view model =
             ]
         , saveButton
         , editorCheckbox
+        , mkButton HeaderIcon True (InsertAtCursor (Settings.snippet Settings.H1)) "H1"
+        , mkButton HeaderIcon True (InsertAtCursor (Settings.snippet Settings.H2)) "H2"
+        , mkButton HeaderIcon True (InsertAtCursor (Settings.snippet Settings.H3)) "H3"
         , mkButton BoldIcon True (InsertAtCursor (Settings.snippet Settings.Bold)) ""
+        , mkButton ItalicIcon True (InsertAtCursor (Settings.snippet Settings.Italic)) ""
+        , mkButton ListIcon True (InsertAtCursor (Settings.snippet Settings.Bullet)) ""
+        , mkButton NumberedIcon True (InsertAtCursor (Settings.snippet Settings.Numbered)) ""
+        , mkButton LinkIcon True (InsertAtCursor (Settings.snippet Settings.Link)) ""
+        , mkButton QuoteIcon True (InsertAtCursor (Settings.snippet Settings.Quote)) ""
         , alert
         , mediaList
         ]
