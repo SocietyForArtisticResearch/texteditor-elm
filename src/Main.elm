@@ -26,6 +26,7 @@ import RCMediaList
 import Regex
 import Settings exposing (..)
 import String.Extra as Str
+import Time
 import UserConfirm exposing (ConfirmDialogContent)
 import View exposing (..)
 
@@ -212,6 +213,7 @@ subscriptions model =
         , Http.track "uploadMedia" GotMediaUploadProgress
         , Http.track "uploadImport" GotImportUploadProgress
         , Dropdown.subscriptions model.exportDropState ExportDropMsg
+        , Time.every 4000 (\_ -> SaveExposition)
         ]
 
 
@@ -433,7 +435,11 @@ update msg model =
                 modelWithToc =
                     { model | exposition = Exposition.updateToc model.exposition }
             in
-            ( modelWithToc, RCAPI.saveExposition modelWithToc.exposition SavedExposition )
+            if not model.saved then
+                ( modelWithToc, RCAPI.saveExposition modelWithToc.exposition SavedExposition )
+
+            else
+                ( modelWithToc, Cmd.none )
 
         SavedExposition result ->
             case result of
@@ -697,7 +703,7 @@ update msg model =
                 newModel =
                     { model | editor = ( tab, mdEditor ) }
             in
-            ( newModel, enumTabState (getTabState newModel.editor) |> setEditor )
+            ( newModel, Cmd.batch [ RCAPI.getMediaList model.research GotMediaList, enumTabState (getTabState newModel.editor) |> setEditor ] )
 
         AlertMsg visibility ->
             ( { model | alertVisibility = visibility }, Cmd.none )

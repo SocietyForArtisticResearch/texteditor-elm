@@ -47,7 +47,6 @@ Luc:
 
 - auto save
 - Check rendered html
-- Transcoding status type (reload media list every five seconds)
 - Export (Pandoc calls) (works in principle, but needs longer uri allowed by server and pull down for file type selection)
 
 
@@ -109,3 +108,4 @@ Luc:
 - reload media list message
 - why is css not used in preview? -> id exposition
 - 'stupid' buttons (snippets): insert media, header (pull down h1,h2,h3), italic, bold, quote, link, bullet,numbered list
+- Transcoding status type 
