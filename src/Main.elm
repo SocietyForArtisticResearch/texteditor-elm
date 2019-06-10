@@ -914,7 +914,6 @@ view model =
                 ]
             ]
         , saveButton
-        , editorCheckbox
         , div [ class "toolbar" ]
             [ mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H1)) "H1"
             , mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H2)) "H2"
@@ -925,6 +924,7 @@ view model =
             , mkButton NumberedIcon True (InsertAtCursor (Settings.snippet Settings.Numbered)) ""
             , mkButton LinkIcon True (InsertAtCursor (Settings.snippet Settings.Link)) ""
             , mkButton QuoteIcon True (InsertAtCursor (Settings.snippet Settings.Quote)) ""
+            , editorCheckbox
             ]
         , alert
         , mediaList

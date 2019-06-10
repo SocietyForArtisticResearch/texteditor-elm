@@ -17013,7 +17013,6 @@ var author$project$Main$view = function (model) {
 							]))
 					])),
 				saveButton,
-				editorCheckbox,
 				A2(
 				elm$html$Html$div,
 				_List_fromArray(
@@ -17084,7 +17083,8 @@ var author$project$Main$view = function (model) {
 						true,
 						author$project$Main$InsertAtCursor(
 							author$project$Settings$snippet(author$project$Settings$Quote)),
-						'')
+						''),
+						editorCheckbox
 					])),
 				alert,
 				mediaList
