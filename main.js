@@ -12457,6 +12457,7 @@ var author$project$RCAPI$typeEnding = function (t) {
 			return 'epub';
 	}
 };
+var author$project$Settings$baseDomain = 'https://dev.researchcatalogue.net';
 var elm$file$File$Download$url = function (href) {
 	return A2(
 		elm$core$Task$perform,
@@ -12511,7 +12512,10 @@ var author$project$RCAPI$convertExposition = F2(
 					A2(
 					elm$url$Url$Builder$string,
 					'markdown',
-					A2(author$project$Exposition$replaceToolsWithImages, expo, elm$core$Maybe$Nothing))
+					A2(
+						author$project$Exposition$replaceToolsWithImages,
+						expo,
+						elm$core$Maybe$Just(author$project$Settings$baseDomain)))
 				]));
 		return elm$file$File$Download$url(path);
 	});
