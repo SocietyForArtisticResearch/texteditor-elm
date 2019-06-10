@@ -13615,6 +13615,12 @@ var author$project$Main$SwitchMarkdownEditor = function (a) {
 	return {$: 'SwitchMarkdownEditor', a: a};
 };
 var author$project$Main$TextareaMarkdown = {$: 'TextareaMarkdown'};
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Attrs = function (a) {
+	return {$: 'Attrs', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$attrs = function (attrs_) {
+	return rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Attrs(attrs_);
+};
 var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Checkbox = function (a) {
 	return {$: 'Checkbox', a: a};
 };
@@ -13844,7 +13850,12 @@ var author$project$Main$viewEditorCheckbox = function (markdownEditor) {
 			[
 				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$onCheck(onToggle),
 				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$checked(
-				_Utils_eq(markdownEditor, author$project$Main$TextareaMarkdown))
+				_Utils_eq(markdownEditor, author$project$Main$TextareaMarkdown)),
+				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$attrs(
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('editor-checkbox')
+					]))
 			]),
 		'plaintext');
 };

@@ -832,6 +832,7 @@ viewEditorCheckbox markdownEditor =
     Checkbox.checkbox
         [ Checkbox.onCheck onToggle
         , Checkbox.checked <| markdownEditor == TextareaMarkdown
+        , Checkbox.attrs [ class "editor-checkbox" ]
         ]
         "plaintext"
 
