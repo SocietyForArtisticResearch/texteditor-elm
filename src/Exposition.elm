@@ -545,7 +545,13 @@ replaceToolsWithImages exp urlPrefix =
                                     (\s ->
                                         let
                                             _ =
-                                                Debug.log "object found" s
+                                                Debug.log "media string"
+                                                    ("!["
+                                                        ++ s.name
+                                                        ++ "]("
+                                                        ++ withPrefix urlPrefix (mediaUrl s)
+                                                        ++ ")"
+                                                    )
                                         in
                                         "!["
                                             ++ s.name

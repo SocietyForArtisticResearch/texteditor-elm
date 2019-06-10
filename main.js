@@ -12419,7 +12419,13 @@ var author$project$Exposition$replaceToolsWithImages = F2(
 							A2(
 								elm$core$Maybe$map,
 								function (s) {
-									var _n3 = A2(elm$core$Debug$log, 'object found', s);
+									var _n3 = A2(
+										elm$core$Debug$log,
+										'media string',
+										'![' + (s.name + ('](' + (A2(
+											author$project$Exposition$withPrefix,
+											urlPrefix,
+											author$project$Exposition$mediaUrl(s)) + ')'))));
 									return '![' + (s.name + ('](' + (A2(
 										author$project$Exposition$withPrefix,
 										urlPrefix,
