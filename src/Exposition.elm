@@ -536,23 +536,9 @@ replaceToolsWithImages exp urlPrefix =
                 (\m ->
                     case m.submatches of
                         (Just sub) :: _ ->
-                            let
-                                _ =
-                                    Debug.log "submatch" sub
-                            in
                             Maybe.withDefault "default...media" <|
                                 Maybe.map
                                     (\s ->
-                                        let
-                                            _ =
-                                                Debug.log "media string"
-                                                    ("!["
-                                                        ++ s.name
-                                                        ++ "]("
-                                                        ++ withPrefix urlPrefix (mediaUrl s)
-                                                        ++ ")"
-                                                    )
-                                        in
                                         "!["
                                             ++ s.name
                                             ++ "]("
