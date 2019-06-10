@@ -11969,6 +11969,7 @@ var author$project$Exposition$withMd = F2(
 			{markdownInput: content});
 	});
 var author$project$Main$CloseConfirmDialog = {$: 'CloseConfirmDialog'};
+var author$project$Main$CloseMediaPicker = {$: 'CloseMediaPicker'};
 var author$project$Main$GotMediaList = function (a) {
 	return {$: 'GotMediaList', a: a};
 };
@@ -13209,6 +13210,7 @@ var author$project$Main$update = F2(
 						elm$core$String$fromInt(obj.id),
 						model.exposition);
 					var _n35 = A2(elm$core$Debug$log, 'trying to insert:', foundObj);
+					var newModel = A2(author$project$Main$update, author$project$Main$CloseMediaPicker, model);
 					return _Utils_Tuple2(
 						model,
 						function () {
@@ -13293,7 +13295,6 @@ var author$project$Main$makeMediaEditFun = F4(
 							{copyright: input})));
 		}
 	});
-var author$project$Main$CloseMediaPicker = {$: 'CloseMediaPicker'};
 var author$project$Main$InsertMediaAtCursor = function (a) {
 	return {$: 'InsertMediaAtCursor', a: a};
 };
