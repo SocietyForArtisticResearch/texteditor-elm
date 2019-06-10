@@ -12413,13 +12413,13 @@ var author$project$Exposition$replaceToolsWithImages = F2(
 					if (_n1.b && (_n1.a.$ === 'Just')) {
 						var sub = _n1.a.a;
 						var _n2 = A2(elm$core$Debug$log, 'submatch', sub);
-						var _n3 = A4(elm$core$Debug$log, 'object found', author$project$Exposition$objectByNameOrId, sub, exp);
 						return A2(
 							elm$core$Maybe$withDefault,
 							'default...media',
 							A2(
 								elm$core$Maybe$map,
 								function (s) {
+									var _n3 = A2(elm$core$Debug$log, 'object found', s);
 									return '![' + (s.name + ('](' + (A2(
 										author$project$Exposition$withPrefix,
 										urlPrefix,
