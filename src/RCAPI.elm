@@ -309,9 +309,8 @@ saveExposition exposition expect =
                 ++ "&weave="
                 ++ String.fromInt exposition.currentWeave
 
-        _ =
-            Debug.log "about to save exposition: " exposition
-
+        -- _ =
+        --     Debug.log "about to save exposition: " exposition
         encodedToc =
             Encode.encode 0 <|
                 Encode.list

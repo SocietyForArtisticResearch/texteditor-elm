@@ -12412,9 +12412,11 @@ var author$project$Exposition$replaceToolsWithImages = F2(
 					var _n1 = m.submatches;
 					if (_n1.b && (_n1.a.$ === 'Just')) {
 						var sub = _n1.a.a;
+						var _n2 = A2(elm$core$Debug$log, 'submatch', sub);
+						var _n3 = A4(elm$core$Debug$log, 'object found', author$project$Exposition$objectByNameOrId, sub, exp);
 						return A2(
 							elm$core$Maybe$withDefault,
-							'',
+							'default...media',
 							A2(
 								elm$core$Maybe$map,
 								function (s) {
@@ -12622,7 +12624,6 @@ var author$project$RCAPI$saveExposition = F2(
 							]));
 				},
 				exposition.toc));
-		var _n0 = A2(elm$core$Debug$log, 'about to save exposition: ', exposition);
 		return elm$http$Http$request(
 			{
 				body: elm$http$Http$multipartBody(
