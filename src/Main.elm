@@ -915,15 +915,17 @@ view model =
             ]
         , saveButton
         , editorCheckbox
-        , mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H1)) "H1"
-        , mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H2)) "H2"
-        , mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H3)) "H3"
-        , mkButton BoldIcon True (InsertAtCursor (Settings.snippet Settings.Bold)) ""
-        , mkButton ItalicIcon True (InsertAtCursor (Settings.snippet Settings.Italic)) ""
-        , mkButton ListIcon True (InsertAtCursor (Settings.snippet Settings.Bullet)) ""
-        , mkButton NumberedIcon True (InsertAtCursor (Settings.snippet Settings.Numbered)) ""
-        , mkButton LinkIcon True (InsertAtCursor (Settings.snippet Settings.Link)) ""
-        , mkButton QuoteIcon True (InsertAtCursor (Settings.snippet Settings.Quote)) ""
+        , div [ class "toolbar" ]
+            [ mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H1)) "H1"
+            , mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H2)) "H2"
+            , mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H3)) "H3"
+            , mkButton BoldIcon True (InsertAtCursor (Settings.snippet Settings.Bold)) ""
+            , mkButton ItalicIcon True (InsertAtCursor (Settings.snippet Settings.Italic)) ""
+            , mkButton ListIcon True (InsertAtCursor (Settings.snippet Settings.Bullet)) ""
+            , mkButton NumberedIcon True (InsertAtCursor (Settings.snippet Settings.Numbered)) ""
+            , mkButton LinkIcon True (InsertAtCursor (Settings.snippet Settings.Link)) ""
+            , mkButton QuoteIcon True (InsertAtCursor (Settings.snippet Settings.Quote)) ""
+            ]
         , alert
         , mediaList
         ]
