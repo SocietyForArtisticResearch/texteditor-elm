@@ -157,7 +157,9 @@ viewThumbnail object =
         Exposition.RCImage ->
             let
                 thumburl =
-                    Exposition.customThumbUrl 60 object
+                    Exposition.customThumbUrl 120 object
+
+                -- double for high-res screens
             in
             img
                 [ src thumburl

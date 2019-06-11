@@ -15838,7 +15838,7 @@ var author$project$Exposition$customThumbUrl = F2(
 var author$project$RCMediaList$viewThumbnail = function (object) {
 	var _n0 = object.mediaType;
 	if (_n0.$ === 'RCImage') {
-		var thumburl = A2(author$project$Exposition$customThumbUrl, 60, object);
+		var thumburl = A2(author$project$Exposition$customThumbUrl, 120, object);
 		return A2(
 			elm$html$Html$img,
 			_List_fromArray(
