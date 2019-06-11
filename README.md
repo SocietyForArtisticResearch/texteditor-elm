@@ -65,6 +65,7 @@ Luc:
 - wikipedia-style footnotes
 
 ## DONE
+- auto close dialog
 - there is an insert popover dialog now
 - display Problems (as warnings etc)
 - Why can the user not change the object name/copyright/ ?

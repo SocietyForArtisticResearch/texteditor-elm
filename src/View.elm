@@ -22,6 +22,7 @@ type Icon
     | NumberedIcon
     | ArrowDown
     | UploadCloud
+    | EyeIcon
     | NoIcon
 
 
@@ -78,6 +79,9 @@ renderIcon icon =
 
         UploadCloud ->
             iconImg "cloud-upload.svg"
+
+        EyeIcon ->
+            iconImg "eye.svg"
 
 
 mkButton : Icon -> Bool -> msg -> String -> Bool -> List (Html.Attribute msg) -> Html msg

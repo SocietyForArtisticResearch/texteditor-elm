@@ -908,6 +908,24 @@ view model =
 
                 _ ->
                     span [] []
+
+        previewButton =
+            let
+                researchId =
+                    model.exposition.id
+
+                weave =
+                    model.exposition.currentWeave
+
+                previewUrl =
+                    String.join "/" [ String.fromInt researchId, String.fromInt weave ]
+            in
+            a
+                [ href previewUrl
+                , Html.Attributes.target "_blank"
+                ]
+                [ renderIcon EyeIcon
+                ]
     in
     div []
         [ viewTabs model
@@ -940,6 +958,8 @@ view model =
             List.append
                 editorToolbar
                 [ editorCheckbox ]
+        , saveButton
+        , previewButton
         , alert
         , mediaList
         ]
