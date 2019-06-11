@@ -14539,7 +14539,7 @@ var author$project$Main$viewUpload = F5(
 				needsOffset,
 				onClickMsg,
 				buttonText,
-				false,
+				true,
 				_List_fromArray(
 					[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1, rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1, rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1]));
 		} else {

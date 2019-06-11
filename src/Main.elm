@@ -757,7 +757,7 @@ viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg
 viewUpload icon needsOffset onClickMsg buttonText status =
     case status of
         Ready ->
-            mkButton icon needsOffset onClickMsg buttonText False [ Spacing.mb1, Spacing.mt1, Spacing.mr1 ]
+            mkButton icon needsOffset onClickMsg buttonText True [ Spacing.mb1, Spacing.mt1, Spacing.mr1 ]
 
         Uploading fraction ->
             div [] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
