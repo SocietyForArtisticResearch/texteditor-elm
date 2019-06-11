@@ -17256,6 +17256,7 @@ var author$project$Main$view = function (model) {
 			'/',
 			_List_fromArray(
 				[
+					'view',
 					elm$core$String$fromInt(researchId),
 					elm$core$String$fromInt(weave)
 				]));
@@ -17264,7 +17265,8 @@ var author$project$Main$view = function (model) {
 			_List_fromArray(
 				[
 					elm$html$Html$Attributes$href(previewUrl),
-					elm$html$Html$Attributes$target('_blank')
+					elm$html$Html$Attributes$target('_blank'),
+					elm$html$Html$Attributes$class('btn btn-outline-dark')
 				]),
 			_List_fromArray(
 				[
