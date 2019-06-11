@@ -17373,8 +17373,7 @@ var author$project$Main$view = function (model) {
 								_Utils_Tuple2(
 								'markdown',
 								author$project$Main$DownloadExport(author$project$RCAPI$Md))
-							])),
-						saveButton
+							]))
 					])),
 				A2(
 				elm$html$Html$div,

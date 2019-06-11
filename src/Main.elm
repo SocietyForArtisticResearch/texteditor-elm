@@ -953,7 +953,6 @@ view model =
                 , ( "html", DownloadExport RCAPI.Html )
                 , ( "markdown", DownloadExport RCAPI.Md )
                 ]
-            , saveButton
             ]
         , div [ class "toolbar" ] <|
             List.append
