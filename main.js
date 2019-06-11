@@ -14472,20 +14472,34 @@ var author$project$Main$viewEditorCheckbox = function (markdownEditor) {
 			]),
 		'Plain text');
 };
-var author$project$Main$EditorMedia = {$: 'EditorMedia'};
-var author$project$Main$EditorStyle = {$: 'EditorStyle'};
-var author$project$Main$SwitchTab = function (a) {
-	return {$: 'SwitchTab', a: a};
-};
 var elm$html$Html$a = _VirtualDom_node('a');
-var elm$html$Html$li = _VirtualDom_node('li');
-var elm$html$Html$ul = _VirtualDom_node('ul');
 var elm$html$Html$Attributes$href = function (url) {
 	return A2(
 		elm$html$Html$Attributes$stringProperty,
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
+var author$project$Main$viewLink = F2(
+	function (name, url) {
+		return A2(
+			elm$html$Html$a,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$href('url'),
+					elm$html$Html$Attributes$class('btn btn-link ml-1')
+				]),
+			_List_fromArray(
+				[
+					elm$html$Html$text(name)
+				]));
+	});
+var author$project$Main$EditorMedia = {$: 'EditorMedia'};
+var author$project$Main$EditorStyle = {$: 'EditorStyle'};
+var author$project$Main$SwitchTab = function (a) {
+	return {$: 'SwitchTab', a: a};
+};
+var elm$html$Html$li = _VirtualDom_node('li');
+var elm$html$Html$ul = _VirtualDom_node('ul');
 var author$project$Main$viewTabs = function (model) {
 	var tabLink = F2(
 		function (tab, title) {
@@ -14546,7 +14560,10 @@ var author$project$Main$viewUpload = F5(
 			var fraction = status.a;
 			return A2(
 				elm$html$Html$div,
-				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('upload-percentage')
+					]),
 				_List_fromArray(
 					[
 						elm$html$Html$text(
@@ -15821,15 +15838,15 @@ var author$project$Exposition$customThumbUrl = F2(
 var author$project$RCMediaList$viewThumbnail = function (object) {
 	var _n0 = object.mediaType;
 	if (_n0.$ === 'RCImage') {
-		var thumburl = A2(author$project$Exposition$customThumbUrl, 40, object);
+		var thumburl = A2(author$project$Exposition$customThumbUrl, 60, object);
 		return A2(
 			elm$html$Html$img,
 			_List_fromArray(
 				[
 					elm$html$Html$Attributes$src(thumburl),
 					A2(elm$html$Html$Attributes$style, 'object-fit', 'cover'),
-					A2(elm$html$Html$Attributes$style, 'width', '25px'),
-					A2(elm$html$Html$Attributes$style, 'height', '25px')
+					A2(elm$html$Html$Attributes$style, 'width', '60px'),
+					A2(elm$html$Html$Attributes$style, 'height', '60px')
 				]),
 			_List_Nil);
 	} else {
@@ -17387,9 +17404,20 @@ var author$project$Main$view = function (model) {
 					_List_fromArray(
 						[editorCheckbox]))),
 				saveButton,
-				previewButton,
 				alert,
-				mediaList
+				mediaList,
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('navigation-links')
+					]),
+				_List_fromArray(
+					[
+						previewButton,
+						A2(author$project$Main$viewLink, 'profile', 'profile'),
+						A2(author$project$Main$viewLink, 'logout', 'session/logout')
+					]))
 			]));
 };
 var elm$browser$Browser$element = _Browser_element;
