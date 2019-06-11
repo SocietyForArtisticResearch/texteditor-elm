@@ -14485,7 +14485,7 @@ var author$project$Main$viewLink = F2(
 			elm$html$Html$a,
 			_List_fromArray(
 				[
-					elm$html$Html$Attributes$href('url'),
+					elm$html$Html$Attributes$href(url),
 					elm$html$Html$Attributes$class('btn btn-link ml-1')
 				]),
 			_List_fromArray(

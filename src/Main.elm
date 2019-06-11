@@ -846,7 +846,7 @@ viewEditorCheckbox markdownEditor =
 viewLink : String -> String -> Html Msg
 viewLink name url =
     a
-        [ href "url"
+        [ href url
         , class "btn btn-link ml-1"
         ]
         [ text name ]
