@@ -1,4 +1,4 @@
-module Settings exposing (Snippet(..), baseUrl, editorVersion, iconUrl, snippet)
+module Settings exposing (Snippet(..), baseDomain, baseUrl, editorVersion, iconUrl, snippet)
 
 
 editorVersion : String
@@ -9,6 +9,11 @@ editorVersion =
 baseUrl : String
 baseUrl =
     "elm-editor/"
+
+
+baseDomain : String
+baseDomain =
+    "https://dev.researchcatalogue.net"
 
 
 iconUrl : String

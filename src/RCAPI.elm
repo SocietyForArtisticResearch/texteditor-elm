@@ -279,7 +279,7 @@ convertExposition ctype expo =
         path =
             Url.Builder.relative [ "text-editor", "export" ]
                 [ Url.Builder.string "type" (typeEnding ctype)
-                , Url.Builder.string "markdown" (Exposition.replaceToolsWithImages expo Nothing)
+                , Url.Builder.string "markdown" (Exposition.replaceToolsWithImages expo (Just Settings.baseDomain))
                 ]
     in
     File.Download.url path
@@ -309,9 +309,8 @@ saveExposition exposition expect =
                 ++ "&weave="
                 ++ String.fromInt exposition.currentWeave
 
-        _ =
-            Debug.log "about to save exposition: " exposition
-
+        -- _ =
+        --     Debug.log "about to save exposition: " exposition
         encodedToc =
             Encode.encode 0 <|
                 Encode.list

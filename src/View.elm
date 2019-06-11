@@ -84,8 +84,8 @@ renderIcon icon =
             iconImg "eye.svg"
 
 
-mkButton : Icon -> Bool -> msg -> String -> Html msg
-mkButton icon needsOffset onClickMsg buttonText =
+mkButton : Icon -> Bool -> msg -> String -> Bool -> Html msg
+mkButton icon needsOffset onClickMsg buttonText primary =
     let
         spacing =
             if needsOffset then
@@ -95,7 +95,11 @@ mkButton icon needsOffset onClickMsg buttonText =
                 []
     in
     Button.button
-        [ Button.light
+        [ if primary then
+            Button.outlineDark
+
+          else
+            Button.light
         , Button.attrs <| List.append [ onClick onClickMsg ] spacing
         ]
         [ renderIcon icon
@@ -111,7 +115,7 @@ mkDropdown modelState openMsg mainTxt itemMsgLst =
             { options = [ Dropdown.attrs [ Spacing.m1 ] ]
             , toggleMsg = openMsg
             , toggleButton =
-                Dropdown.toggle [ Button.light ] [ text mainTxt ]
+                Dropdown.toggle [ Button.outlineDark ] [ text mainTxt ]
             , items =
                 List.map
                     (\( buttonTxt, clickMsg ) ->

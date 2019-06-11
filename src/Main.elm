@@ -26,6 +26,7 @@ import RCMediaList
 import Regex
 import Settings exposing (..)
 import String.Extra as Str
+import Time
 import UserConfirm exposing (ConfirmDialogContent)
 import View exposing (..)
 
@@ -212,6 +213,7 @@ subscriptions model =
         , Http.track "uploadMedia" GotMediaUploadProgress
         , Http.track "uploadImport" GotImportUploadProgress
         , Dropdown.subscriptions model.exportDropState ExportDropMsg
+        , Time.every 4000 (\_ -> SaveExposition)
         ]
 
 
@@ -433,7 +435,11 @@ update msg model =
                 modelWithToc =
                     { model | exposition = Exposition.updateToc model.exposition }
             in
-            ( modelWithToc, RCAPI.saveExposition modelWithToc.exposition SavedExposition )
+            if not model.saved then
+                ( modelWithToc, RCAPI.saveExposition modelWithToc.exposition SavedExposition )
+
+            else
+                ( modelWithToc, Cmd.none )
 
         SavedExposition result ->
             case result of
@@ -697,7 +703,7 @@ update msg model =
                 newModel =
                     { model | editor = ( tab, mdEditor ) }
             in
-            ( newModel, enumTabState (getTabState newModel.editor) |> setEditor )
+            ( newModel, Cmd.batch [ RCAPI.getMediaList model.research GotMediaList, enumTabState (getTabState newModel.editor) |> setEditor ] )
 
         AlertMsg visibility ->
             ( { model | alertVisibility = visibility }, Cmd.none )
@@ -751,7 +757,7 @@ viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg
 viewUpload icon needsOffset onClickMsg buttonText status =
     case status of
         Ready ->
-            mkButton icon needsOffset onClickMsg buttonText
+            mkButton icon needsOffset onClickMsg buttonText True
 
         Uploading fraction ->
             div [] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
@@ -834,7 +840,7 @@ viewEditorCheckbox markdownEditor =
         , Checkbox.checked <| markdownEditor == TextareaMarkdown
         , Checkbox.attrs [ class "editor-checkbox" ]
         ]
-        "plaintext"
+        "Plain text"
 
 
 view : Model -> Html Msg
@@ -912,17 +918,17 @@ view model =
         , mediaDialogHtml
         , confirmDialogHtml
         , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
-        , div [ class "d-inline-block" ]
-            [ text "media"
-            , viewUpload UploadCloud False UploadMediaFileSelect "Upload" model.mediaUploadStatus
-            , mkButton ArrowDown True OpenMediaPicker "Insert"
-            ]
-        , div [ class "d-inline-block" ]
-            [ text "external"
+        , div [ class "btn-toolbar", attribute "role" "toolbar" ]
+            [ viewUpload UploadCloud True UploadMediaFileSelect "Upload media" model.mediaUploadStatus
+            , mkButton ArrowDown
+                True
+                OpenMediaPicker
+                "Insert media"
+                True
             , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
             , mkDropdown model.exportDropState
                 ExportDropMsg
-                "Export"
+                "Export doc"
                 [ ( "doc", DownloadExport RCAPI.Docx )
                 , ( "pdf", DownloadExport RCAPI.Pdf )
                 , ( "epub", DownloadExport RCAPI.Epub )
@@ -931,19 +937,20 @@ view model =
                 , ( "html", DownloadExport RCAPI.Html )
                 , ( "markdown", DownloadExport RCAPI.Md )
                 ]
+            , saveButton
             ]
         , saveButton
         , previewButton
         , div [ class "toolbar" ]
-            [ mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H1)) "H1"
-            , mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H2)) "H2"
-            , mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H3)) "H3"
-            , mkButton BoldIcon True (InsertAtCursor (Settings.snippet Settings.Bold)) ""
-            , mkButton ItalicIcon True (InsertAtCursor (Settings.snippet Settings.Italic)) ""
-            , mkButton ListIcon True (InsertAtCursor (Settings.snippet Settings.Bullet)) ""
-            , mkButton NumberedIcon True (InsertAtCursor (Settings.snippet Settings.Numbered)) ""
-            , mkButton LinkIcon True (InsertAtCursor (Settings.snippet Settings.Link)) ""
-            , mkButton QuoteIcon True (InsertAtCursor (Settings.snippet Settings.Quote)) ""
+            [ mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H1)) "H1" False
+            , mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H2)) "H2" False
+            , mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H3)) "H3" False
+            , mkButton BoldIcon True (InsertAtCursor (Settings.snippet Settings.Bold)) "" False
+            , mkButton ItalicIcon True (InsertAtCursor (Settings.snippet Settings.Italic)) "" False
+            , mkButton ListIcon True (InsertAtCursor (Settings.snippet Settings.Bullet)) "" False
+            , mkButton NumberedIcon True (InsertAtCursor (Settings.snippet Settings.Numbered)) "" False
+            , mkButton LinkIcon True (InsertAtCursor (Settings.snippet Settings.Link)) "" False
+            , mkButton QuoteIcon True (InsertAtCursor (Settings.snippet Settings.Quote)) "" False
             , editorCheckbox
             ]
         , alert

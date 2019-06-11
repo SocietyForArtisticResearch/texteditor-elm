@@ -40,7 +40,7 @@
         #editors {
             width: 100%;
             height: 100%;
-	    overflow-y:scroll;
+	    overflow-y:hidden;
         }
 
 	.main-row {
@@ -78,10 +78,10 @@
 	    overflow-y : scroll;
 	}
 
-	.btn {
-	    padding: 0.5em 0.1em;
+     /* .btn {
+	padding: 0.5em 0.1em;
 	}
-
+      */
 	.toolbar {
 	    display: block;
 	}
@@ -370,7 +370,7 @@
      if (toRender) {
 	 app.ports.getHtml.send(marked(mdToRender));
 	 toRender = false
-     } }, 400);
+     } }, 250);
  
 </script>
 
