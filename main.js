@@ -17122,7 +17122,7 @@ var author$project$View$mkDropdown = F4(
 						toggleButton: A2(
 							rundis$elm_bootstrap$Bootstrap$Dropdown$toggle,
 							_List_fromArray(
-								[rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary]),
+								[rundis$elm_bootstrap$Bootstrap$Button$outlineDark]),
 							_List_fromArray(
 								[
 									elm$html$Html$text(mainTxt)
@@ -17218,7 +17218,7 @@ var author$project$Main$view = function (model) {
 					]),
 				_List_fromArray(
 					[
-						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, false, author$project$Main$UploadMediaFileSelect, 'Upload media', model.mediaUploadStatus),
+						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, true, author$project$Main$UploadMediaFileSelect, 'Upload media', model.mediaUploadStatus),
 						A5(author$project$View$mkButton, author$project$View$ArrowDown, true, author$project$Main$OpenMediaPicker, 'Insert media', true),
 						A5(author$project$Main$viewUpload, author$project$View$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
 						A4(
@@ -17249,9 +17249,9 @@ var author$project$Main$view = function (model) {
 								_Utils_Tuple2(
 								'markdown',
 								author$project$Main$DownloadExport(author$project$RCAPI$Md))
-							]))
+							])),
+						saveButton
 					])),
-				saveButton,
 				A2(
 				elm$html$Html$div,
 				_List_fromArray(

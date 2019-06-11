@@ -901,7 +901,7 @@ view model =
         , confirmDialogHtml
         , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
         , div [ class "btn-toolbar", attribute "role" "toolbar" ]
-            [ viewUpload UploadCloud False UploadMediaFileSelect "Upload media" model.mediaUploadStatus
+            [ viewUpload UploadCloud True UploadMediaFileSelect "Upload media" model.mediaUploadStatus
             , mkButton ArrowDown
                 True
                 OpenMediaPicker
@@ -919,8 +919,8 @@ view model =
                 , ( "html", DownloadExport RCAPI.Html )
                 , ( "markdown", DownloadExport RCAPI.Md )
                 ]
+            , saveButton
             ]
-        , saveButton
         , div [ class "toolbar" ]
             [ mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H1)) "H1" False
             , mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H2)) "H2" False

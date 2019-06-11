@@ -111,7 +111,7 @@ mkDropdown modelState openMsg mainTxt itemMsgLst =
             { options = [ Dropdown.attrs [ Spacing.m1 ] ]
             , toggleMsg = openMsg
             , toggleButton =
-                Dropdown.toggle [ Button.outlinePrimary ] [ text mainTxt ]
+                Dropdown.toggle [ Button.outlineDark ] [ text mainTxt ]
             , items =
                 List.map
                     (\( buttonTxt, clickMsg ) ->
