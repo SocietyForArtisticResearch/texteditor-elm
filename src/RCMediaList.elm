@@ -64,7 +64,6 @@ view objectList messages =
                         --         , Button.attrs [ Spacing.ml1, onClick <| messages.insertObject object ]
                         --         ]
                         --         [ text "insert" ]
-
                         removeButton =
                             Button.button
                                 [ Button.small
@@ -158,13 +157,13 @@ viewThumbnail object =
         Exposition.RCImage ->
             let
                 thumburl =
-                    Exposition.customThumbUrl 40 object
+                    Exposition.customThumbUrl 60 object
             in
             img
                 [ src thumburl
                 , style "object-fit" "cover"
-                , style "width" "25px"
-                , style "height" "25px"
+                , style "width" "60px"
+                , style "height" "60px"
                 ]
                 []
 
