@@ -13263,7 +13263,7 @@ var author$project$Main$update = F2(
 						A2(
 							elm$file$File$Select$file,
 							_List_fromArray(
-								['image/jpeg', 'image/png']),
+								['image/jpeg', 'image/png', 'audio/aif', 'audio/mp3', 'video/mp4', 'audio/wav', 'video/mpeg', 'audio/ogg', 'video/ogv', 'image/svg+xml']),
 							author$project$Main$UploadMediaFileSelected));
 				case 'UploadMediaFileSelected':
 					var file = msg.a;
