@@ -14369,12 +14369,12 @@ var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
 };
 var rundis$elm_bootstrap$Bootstrap$Button$light = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Light));
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark = {$: 'Dark'};
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
 	return {$: 'Outlined', a: a};
 };
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
-var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
+var rundis$elm_bootstrap$Bootstrap$Button$outlineDark = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark));
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1 = elm$html$Html$Attributes$class('m-1');
 var author$project$View$mkButton = F5(
 	function (icon, needsOffset, onClickMsg, buttonText, primary) {
@@ -14384,7 +14384,7 @@ var author$project$View$mkButton = F5(
 			rundis$elm_bootstrap$Bootstrap$Button$button,
 			_List_fromArray(
 				[
-					primary ? rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary : rundis$elm_bootstrap$Bootstrap$Button$light,
+					primary ? rundis$elm_bootstrap$Bootstrap$Button$outlineDark : rundis$elm_bootstrap$Bootstrap$Button$light,
 					rundis$elm_bootstrap$Bootstrap$Button$attrs(
 					A2(
 						elm$core$List$append,
@@ -15182,6 +15182,9 @@ var author$project$RCMediaEdit$viewBody = F3(
 				]));
 	});
 var elm$html$Html$p = _VirtualDom_node('p');
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
+var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
 var rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {
 	return {$: 'Body', a: a};
 };
@@ -17215,57 +17218,37 @@ var author$project$Main$view = function (model) {
 					]),
 				_List_fromArray(
 					[
-						A2(
-						elm$html$Html$div,
+						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, false, author$project$Main$UploadMediaFileSelect, 'Upload media', model.mediaUploadStatus),
+						A5(author$project$View$mkButton, author$project$View$ArrowDown, true, author$project$Main$OpenMediaPicker, 'Insert media', true),
+						A5(author$project$Main$viewUpload, author$project$View$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
+						A4(
+						author$project$View$mkDropdown,
+						model.exportDropState,
+						author$project$Main$ExportDropMsg,
+						'Export doc',
 						_List_fromArray(
 							[
-								elm$html$Html$Attributes$class('btn-group mr-2'),
-								A2(elm$html$Html$Attributes$attribute, 'role', 'group')
-							]),
-						_List_fromArray(
-							[
-								A5(author$project$Main$viewUpload, author$project$View$UploadCloud, false, author$project$Main$UploadMediaFileSelect, 'Upload media', model.mediaUploadStatus),
-								A5(author$project$View$mkButton, author$project$View$ArrowDown, true, author$project$Main$OpenMediaPicker, 'Insert media', true)
-							])),
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('btn-group mr-2'),
-								A2(elm$html$Html$Attributes$attribute, 'role', 'group')
-							]),
-						_List_fromArray(
-							[
-								A5(author$project$Main$viewUpload, author$project$View$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
-								A4(
-								author$project$View$mkDropdown,
-								model.exportDropState,
-								author$project$Main$ExportDropMsg,
-								'Export doc',
-								_List_fromArray(
-									[
-										_Utils_Tuple2(
-										'doc',
-										author$project$Main$DownloadExport(author$project$RCAPI$Docx)),
-										_Utils_Tuple2(
-										'pdf',
-										author$project$Main$DownloadExport(author$project$RCAPI$Pdf)),
-										_Utils_Tuple2(
-										'epub',
-										author$project$Main$DownloadExport(author$project$RCAPI$Epub)),
-										_Utils_Tuple2(
-										'odt',
-										author$project$Main$DownloadExport(author$project$RCAPI$Odt)),
-										_Utils_Tuple2(
-										'latex',
-										author$project$Main$DownloadExport(author$project$RCAPI$Latex)),
-										_Utils_Tuple2(
-										'html',
-										author$project$Main$DownloadExport(author$project$RCAPI$Html)),
-										_Utils_Tuple2(
-										'markdown',
-										author$project$Main$DownloadExport(author$project$RCAPI$Md))
-									]))
+								_Utils_Tuple2(
+								'doc',
+								author$project$Main$DownloadExport(author$project$RCAPI$Docx)),
+								_Utils_Tuple2(
+								'pdf',
+								author$project$Main$DownloadExport(author$project$RCAPI$Pdf)),
+								_Utils_Tuple2(
+								'epub',
+								author$project$Main$DownloadExport(author$project$RCAPI$Epub)),
+								_Utils_Tuple2(
+								'odt',
+								author$project$Main$DownloadExport(author$project$RCAPI$Odt)),
+								_Utils_Tuple2(
+								'latex',
+								author$project$Main$DownloadExport(author$project$RCAPI$Latex)),
+								_Utils_Tuple2(
+								'html',
+								author$project$Main$DownloadExport(author$project$RCAPI$Html)),
+								_Utils_Tuple2(
+								'markdown',
+								author$project$Main$DownloadExport(author$project$RCAPI$Md))
 							]))
 					])),
 				saveButton,

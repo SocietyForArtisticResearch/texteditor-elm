@@ -901,23 +901,23 @@ view model =
         , confirmDialogHtml
         , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
         , div [ class "btn-toolbar", attribute "role" "toolbar" ]
-            [ div [ class "btn-group mr-2", attribute "role" "group" ]
-                [ viewUpload UploadCloud False UploadMediaFileSelect "Upload media" model.mediaUploadStatus
-                , mkButton ArrowDown True OpenMediaPicker "Insert media" True
-                ]
-            , div [ class "btn-group mr-2", attribute "role" "group" ]
-                [ viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
-                , mkDropdown model.exportDropState
-                    ExportDropMsg
-                    "Export doc"
-                    [ ( "doc", DownloadExport RCAPI.Docx )
-                    , ( "pdf", DownloadExport RCAPI.Pdf )
-                    , ( "epub", DownloadExport RCAPI.Epub )
-                    , ( "odt", DownloadExport RCAPI.Odt )
-                    , ( "latex", DownloadExport RCAPI.Latex )
-                    , ( "html", DownloadExport RCAPI.Html )
-                    , ( "markdown", DownloadExport RCAPI.Md )
-                    ]
+            [ viewUpload UploadCloud False UploadMediaFileSelect "Upload media" model.mediaUploadStatus
+            , mkButton ArrowDown
+                True
+                OpenMediaPicker
+                "Insert media"
+                True
+            , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
+            , mkDropdown model.exportDropState
+                ExportDropMsg
+                "Export doc"
+                [ ( "doc", DownloadExport RCAPI.Docx )
+                , ( "pdf", DownloadExport RCAPI.Pdf )
+                , ( "epub", DownloadExport RCAPI.Epub )
+                , ( "odt", DownloadExport RCAPI.Odt )
+                , ( "latex", DownloadExport RCAPI.Latex )
+                , ( "html", DownloadExport RCAPI.Html )
+                , ( "markdown", DownloadExport RCAPI.Md )
                 ]
             ]
         , saveButton

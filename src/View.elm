@@ -92,7 +92,7 @@ mkButton icon needsOffset onClickMsg buttonText primary =
     in
     Button.button
         [ if primary then
-            Button.outlinePrimary
+            Button.outlineDark
 
           else
             Button.light
