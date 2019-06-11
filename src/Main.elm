@@ -760,7 +760,7 @@ viewUpload icon needsOffset onClickMsg buttonText status =
             mkButton icon needsOffset onClickMsg buttonText True [ Spacing.mb1, Spacing.mt1, Spacing.mr1 ]
 
         Uploading fraction ->
-            div [] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
+            div [ class "upload-percentage" ] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
 
 
 enumTabState : TabState -> Int
@@ -841,6 +841,15 @@ viewEditorCheckbox markdownEditor =
         , Checkbox.attrs [ class "editor-checkbox" ]
         ]
         "Plain text"
+
+
+viewLink : String -> String -> Html Msg
+viewLink name url =
+    a
+        [ href "url"
+        , class "btn btn-link ml-1"
+        ]
+        [ text name ]
 
 
 editorToolbar : List (Html Msg)
@@ -959,7 +968,11 @@ view model =
                 editorToolbar
                 [ editorCheckbox ]
         , saveButton
-        , previewButton
         , alert
         , mediaList
+        , div [ class "navigation-links" ]
+            [ previewButton
+            , viewLink "profile" "profile"
+            , viewLink "logout" "session/logout"
+            ]
         ]
