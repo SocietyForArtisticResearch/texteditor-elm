@@ -17279,11 +17279,8 @@ var author$project$Main$view = function (model) {
 							])),
 						saveButton
 					])),
-<<<<<<< HEAD
 				saveButton,
 				previewButton,
-=======
->>>>>>> f4130ecd0984bcacef83cbd4de661b166d2947ff
 				A2(
 				elm$html$Html$div,
 				_List_fromArray(
