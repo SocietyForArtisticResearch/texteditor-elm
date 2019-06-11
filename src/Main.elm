@@ -757,7 +757,7 @@ viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg
 viewUpload icon needsOffset onClickMsg buttonText status =
     case status of
         Ready ->
-            mkButton icon needsOffset onClickMsg buttonText True
+            mkButton icon needsOffset onClickMsg buttonText False [ Spacing.mb1, Spacing.mt1, Spacing.mr1 ]
 
         Uploading fraction ->
             div [] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
@@ -843,6 +843,20 @@ viewEditorCheckbox markdownEditor =
         "Plain text"
 
 
+editorToolbar : List (Html Msg)
+editorToolbar =
+    [ mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H1)) "H1" False []
+    , mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H2)) "H2" False []
+    , mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H3)) "H3" False []
+    , mkButton BoldIcon False (InsertAtCursor (Settings.snippet Settings.Bold)) "" False []
+    , mkButton ItalicIcon False (InsertAtCursor (Settings.snippet Settings.Italic)) "" False []
+    , mkButton ListIcon False (InsertAtCursor (Settings.snippet Settings.Bullet)) "" False []
+    , mkButton NumberedIcon False (InsertAtCursor (Settings.snippet Settings.Numbered)) "" False []
+    , mkButton LinkIcon False (InsertAtCursor (Settings.snippet Settings.Link)) "" False []
+    , mkButton QuoteIcon False (InsertAtCursor (Settings.snippet Settings.Quote)) "" False []
+    ]
+
+
 view : Model -> Html Msg
 view model =
     let
@@ -926,6 +940,7 @@ view model =
                 OpenMediaPicker
                 "Insert media"
                 True
+                []
             , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
             , mkDropdown model.exportDropState
                 ExportDropMsg
@@ -940,20 +955,12 @@ view model =
                 ]
             , saveButton
             ]
+        , div [ class "toolbar" ] <|
+            List.append
+                editorToolbar
+                [ editorCheckbox ]
         , saveButton
         , previewButton
-        , div [ class "toolbar" ]
-            [ mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H1)) "H1" False
-            , mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H2)) "H2" False
-            , mkButton NoIcon True (InsertAtCursor (Settings.snippet Settings.H3)) "H3" False
-            , mkButton BoldIcon True (InsertAtCursor (Settings.snippet Settings.Bold)) "" False
-            , mkButton ItalicIcon True (InsertAtCursor (Settings.snippet Settings.Italic)) "" False
-            , mkButton ListIcon True (InsertAtCursor (Settings.snippet Settings.Bullet)) "" False
-            , mkButton NumberedIcon True (InsertAtCursor (Settings.snippet Settings.Numbered)) "" False
-            , mkButton LinkIcon True (InsertAtCursor (Settings.snippet Settings.Link)) "" False
-            , mkButton QuoteIcon True (InsertAtCursor (Settings.snippet Settings.Quote)) "" False
-            , editorCheckbox
-            ]
         , alert
         , mediaList
         ]

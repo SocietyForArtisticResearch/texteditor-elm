@@ -84,8 +84,8 @@ renderIcon icon =
             iconImg "eye.svg"
 
 
-mkButton : Icon -> Bool -> msg -> String -> Bool -> Html msg
-mkButton icon needsOffset onClickMsg buttonText primary =
+mkButton : Icon -> Bool -> msg -> String -> Bool -> List (Html.Attribute msg) -> Html msg
+mkButton icon needsOffset onClickMsg buttonText primary otherAttrs =
     let
         spacing =
             if needsOffset then
@@ -100,7 +100,7 @@ mkButton icon needsOffset onClickMsg buttonText primary =
 
           else
             Button.light
-        , Button.attrs <| List.append [ onClick onClickMsg ] spacing
+        , Button.attrs <| List.append [ onClick onClickMsg ] (List.append spacing otherAttrs)
         ]
         [ renderIcon icon
         , text buttonText
