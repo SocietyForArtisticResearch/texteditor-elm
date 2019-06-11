@@ -31,22 +31,22 @@ General:
 - How do we get the author's name?
 - What to do when people are logged out
 - how often render?
+- Uploading Audio doesn't work (does not appear in list)
 
 Casper:
  
-- Buttons (more economic use of space)
-- Styling (editor sizes, double scrollbars, percentage when uploading)
-- media file types in select dialog
-- Insert media dialog selection could be easier: double click, larger preview and auto close
-- double scrollbars in editor when content larger than editor
+- percentage when uploading
+- double click to insert media
 - display title of exposition somewhere
 - warnings when closing/reloading
-- preview and my profile buttons
 
 Luc:
 
 
 - Check rendered html
+- Css userclass (big, small, medium etc), doesn't work in Preview or rendered HTML 
+- Caption text not parsed:  ![caption]{media1}
+
 
 
 
@@ -65,6 +65,10 @@ Luc:
 - wikipedia-style footnotes
 
 ## DONE
+
+
+- added more media types, user can select to filter 
+- larger preview thumbnails
 - auto close dialog
 - there is an insert popover dialog now
 - display Problems (as warnings etc)
