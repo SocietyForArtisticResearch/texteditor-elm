@@ -12412,20 +12412,12 @@ var author$project$Exposition$replaceToolsWithImages = F2(
 					var _n1 = m.submatches;
 					if (_n1.b && (_n1.a.$ === 'Just')) {
 						var sub = _n1.a.a;
-						var _n2 = A2(elm$core$Debug$log, 'submatch', sub);
 						return A2(
 							elm$core$Maybe$withDefault,
 							'default...media',
 							A2(
 								elm$core$Maybe$map,
 								function (s) {
-									var _n3 = A2(
-										elm$core$Debug$log,
-										'media string',
-										'![' + (s.name + ('](' + (A2(
-											author$project$Exposition$withPrefix,
-											urlPrefix,
-											author$project$Exposition$mediaUrl(s)) + ')'))));
 									return '![' + (s.name + ('](' + (A2(
 										author$project$Exposition$withPrefix,
 										urlPrefix,
@@ -14100,7 +14092,7 @@ var author$project$Main$viewEditorCheckbox = function (markdownEditor) {
 						elm$html$Html$Attributes$class('editor-checkbox')
 					]))
 			]),
-		'plaintext');
+		'Plain text');
 };
 var author$project$Main$EditorMedia = {$: 'EditorMedia'};
 var author$project$Main$EditorStyle = {$: 'EditorStyle'};
@@ -14377,16 +14369,22 @@ var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
 };
 var rundis$elm_bootstrap$Bootstrap$Button$light = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Light));
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
+	return {$: 'Outlined', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
+var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1 = elm$html$Html$Attributes$class('m-1');
-var author$project$View$mkButton = F4(
-	function (icon, needsOffset, onClickMsg, buttonText) {
+var author$project$View$mkButton = F5(
+	function (icon, needsOffset, onClickMsg, buttonText, primary) {
 		var spacing = needsOffset ? _List_fromArray(
 			[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1]) : _List_Nil;
 		return A2(
 			rundis$elm_bootstrap$Bootstrap$Button$button,
 			_List_fromArray(
 				[
-					rundis$elm_bootstrap$Bootstrap$Button$light,
+					primary ? rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary : rundis$elm_bootstrap$Bootstrap$Button$light,
 					rundis$elm_bootstrap$Bootstrap$Button$attrs(
 					A2(
 						elm$core$List$append,
@@ -14406,7 +14404,7 @@ var elm$core$Basics$round = _Basics_round;
 var author$project$Main$viewUpload = F5(
 	function (icon, needsOffset, onClickMsg, buttonText, status) {
 		if (status.$ === 'Ready') {
-			return A4(author$project$View$mkButton, icon, needsOffset, onClickMsg, buttonText);
+			return A5(author$project$View$mkButton, icon, needsOffset, onClickMsg, buttonText, true);
 		} else {
 			var fraction = status.a;
 			return A2(
@@ -15184,12 +15182,6 @@ var author$project$RCMediaEdit$viewBody = F3(
 				]));
 	});
 var elm$html$Html$p = _VirtualDom_node('p');
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
-	return {$: 'Outlined', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
-var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
 var rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {
 	return {$: 'Body', a: a};
 };
@@ -17127,7 +17119,7 @@ var author$project$View$mkDropdown = F4(
 						toggleButton: A2(
 							rundis$elm_bootstrap$Bootstrap$Dropdown$toggle,
 							_List_fromArray(
-								[rundis$elm_bootstrap$Bootstrap$Button$light]),
+								[rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary]),
 							_List_fromArray(
 								[
 									elm$html$Html$text(mainTxt)
@@ -17218,52 +17210,62 @@ var author$project$Main$view = function (model) {
 				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$class('d-inline-block')
+						elm$html$Html$Attributes$class('btn-toolbar'),
+						A2(elm$html$Html$Attributes$attribute, 'role', 'toolbar')
 					]),
 				_List_fromArray(
 					[
-						elm$html$Html$text('media'),
-						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, false, author$project$Main$UploadMediaFileSelect, 'Upload', model.mediaUploadStatus),
-						A4(author$project$View$mkButton, author$project$View$ArrowDown, true, author$project$Main$OpenMediaPicker, 'Insert')
-					])),
-				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('d-inline-block')
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text('external'),
-						A5(author$project$Main$viewUpload, author$project$View$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
-						A4(
-						author$project$View$mkDropdown,
-						model.exportDropState,
-						author$project$Main$ExportDropMsg,
-						'Export',
+						A2(
+						elm$html$Html$div,
 						_List_fromArray(
 							[
-								_Utils_Tuple2(
-								'doc',
-								author$project$Main$DownloadExport(author$project$RCAPI$Docx)),
-								_Utils_Tuple2(
-								'pdf',
-								author$project$Main$DownloadExport(author$project$RCAPI$Pdf)),
-								_Utils_Tuple2(
-								'epub',
-								author$project$Main$DownloadExport(author$project$RCAPI$Epub)),
-								_Utils_Tuple2(
-								'odt',
-								author$project$Main$DownloadExport(author$project$RCAPI$Odt)),
-								_Utils_Tuple2(
-								'latex',
-								author$project$Main$DownloadExport(author$project$RCAPI$Latex)),
-								_Utils_Tuple2(
-								'html',
-								author$project$Main$DownloadExport(author$project$RCAPI$Html)),
-								_Utils_Tuple2(
-								'markdown',
-								author$project$Main$DownloadExport(author$project$RCAPI$Md))
+								elm$html$Html$Attributes$class('btn-group mr-2'),
+								A2(elm$html$Html$Attributes$attribute, 'role', 'group')
+							]),
+						_List_fromArray(
+							[
+								A5(author$project$Main$viewUpload, author$project$View$UploadCloud, false, author$project$Main$UploadMediaFileSelect, 'Upload media', model.mediaUploadStatus),
+								A5(author$project$View$mkButton, author$project$View$ArrowDown, true, author$project$Main$OpenMediaPicker, 'Insert media', true)
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('btn-group mr-2'),
+								A2(elm$html$Html$Attributes$attribute, 'role', 'group')
+							]),
+						_List_fromArray(
+							[
+								A5(author$project$Main$viewUpload, author$project$View$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
+								A4(
+								author$project$View$mkDropdown,
+								model.exportDropState,
+								author$project$Main$ExportDropMsg,
+								'Export doc',
+								_List_fromArray(
+									[
+										_Utils_Tuple2(
+										'doc',
+										author$project$Main$DownloadExport(author$project$RCAPI$Docx)),
+										_Utils_Tuple2(
+										'pdf',
+										author$project$Main$DownloadExport(author$project$RCAPI$Pdf)),
+										_Utils_Tuple2(
+										'epub',
+										author$project$Main$DownloadExport(author$project$RCAPI$Epub)),
+										_Utils_Tuple2(
+										'odt',
+										author$project$Main$DownloadExport(author$project$RCAPI$Odt)),
+										_Utils_Tuple2(
+										'latex',
+										author$project$Main$DownloadExport(author$project$RCAPI$Latex)),
+										_Utils_Tuple2(
+										'html',
+										author$project$Main$DownloadExport(author$project$RCAPI$Html)),
+										_Utils_Tuple2(
+										'markdown',
+										author$project$Main$DownloadExport(author$project$RCAPI$Md))
+									]))
 							]))
 					])),
 				saveButton,
@@ -17275,69 +17277,78 @@ var author$project$Main$view = function (model) {
 					]),
 				_List_fromArray(
 					[
-						A4(
+						A5(
 						author$project$View$mkButton,
 						author$project$View$NoIcon,
 						true,
 						author$project$Main$InsertAtCursor(
 							author$project$Settings$snippet(author$project$Settings$H1)),
-						'H1'),
-						A4(
+						'H1',
+						false),
+						A5(
 						author$project$View$mkButton,
 						author$project$View$NoIcon,
 						true,
 						author$project$Main$InsertAtCursor(
 							author$project$Settings$snippet(author$project$Settings$H2)),
-						'H2'),
-						A4(
+						'H2',
+						false),
+						A5(
 						author$project$View$mkButton,
 						author$project$View$NoIcon,
 						true,
 						author$project$Main$InsertAtCursor(
 							author$project$Settings$snippet(author$project$Settings$H3)),
-						'H3'),
-						A4(
+						'H3',
+						false),
+						A5(
 						author$project$View$mkButton,
 						author$project$View$BoldIcon,
 						true,
 						author$project$Main$InsertAtCursor(
 							author$project$Settings$snippet(author$project$Settings$Bold)),
-						''),
-						A4(
+						'',
+						false),
+						A5(
 						author$project$View$mkButton,
 						author$project$View$ItalicIcon,
 						true,
 						author$project$Main$InsertAtCursor(
 							author$project$Settings$snippet(author$project$Settings$Italic)),
-						''),
-						A4(
+						'',
+						false),
+						A5(
 						author$project$View$mkButton,
 						author$project$View$ListIcon,
 						true,
 						author$project$Main$InsertAtCursor(
 							author$project$Settings$snippet(author$project$Settings$Bullet)),
-						''),
-						A4(
+						'',
+						false),
+						A5(
 						author$project$View$mkButton,
 						author$project$View$NumberedIcon,
 						true,
 						author$project$Main$InsertAtCursor(
 							author$project$Settings$snippet(author$project$Settings$Numbered)),
-						''),
-						A4(
+						'',
+						false),
+						A5(
 						author$project$View$mkButton,
 						author$project$View$LinkIcon,
 						true,
 						author$project$Main$InsertAtCursor(
 							author$project$Settings$snippet(author$project$Settings$Link)),
-						''),
-						A4(
+						'',
+						false),
+						A5(
 						author$project$View$mkButton,
 						author$project$View$QuoteIcon,
 						true,
 						author$project$Main$InsertAtCursor(
 							author$project$Settings$snippet(author$project$Settings$Quote)),
-						''),
+						'',
+						false),
 						editorCheckbox
 					])),
 				alert,
