@@ -13975,8 +13975,10 @@ var author$project$View$renderIcon = function (icon) {
 			return iconImg('double-quote-sans-left.svg');
 		case 'ArrowDown':
 			return iconImg('arrow-down.svg');
-		default:
+		case 'UploadCloud':
 			return iconImg('cloud-upload.svg');
+		default:
+			return iconImg('eye.svg');
 	}
 };
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
@@ -16435,6 +16437,7 @@ var author$project$UserConfirm$view = F3(
 	});
 var author$project$View$ArrowDown = {$: 'ArrowDown'};
 var author$project$View$BoldIcon = {$: 'BoldIcon'};
+var author$project$View$EyeIcon = {$: 'EyeIcon'};
 var author$project$View$ImportIcon = {$: 'ImportIcon'};
 var author$project$View$ItalicIcon = {$: 'ItalicIcon'};
 var author$project$View$LinkIcon = {$: 'LinkIcon'};
@@ -16893,6 +16896,7 @@ var author$project$View$mkDropdown = F4(
 					})
 				]));
 	});
+var elm$html$Html$Attributes$target = elm$html$Html$Attributes$stringProperty('target');
 var author$project$Main$view = function (model) {
 	var saveButtonText = model.saved ? 'Saved' : 'Not Saved';
 	var saveButton = A2(
@@ -16911,6 +16915,29 @@ var author$project$Main$view = function (model) {
 				author$project$View$renderIcon(author$project$View$SaveIcon),
 				elm$html$Html$text(saveButtonText)
 			]));
+	var previewButton = function () {
+		var weave = model.exposition.currentWeave;
+		var researchId = model.exposition.id;
+		var previewUrl = A2(
+			elm$core$String$join,
+			'/',
+			_List_fromArray(
+				[
+					elm$core$String$fromInt(researchId),
+					elm$core$String$fromInt(weave)
+				]));
+		return A2(
+			elm$html$Html$a,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$href(previewUrl),
+					elm$html$Html$Attributes$target('_blank')
+				]),
+			_List_fromArray(
+				[
+					author$project$View$renderIcon(author$project$View$EyeIcon)
+				]));
+	}();
 	var mediaList = A2(author$project$RCMediaList$view, model.exposition.media, author$project$Main$makeTableMessages);
 	var mediaDialogHtml = function () {
 		var _n4 = model.mediaDialog;
@@ -17024,6 +17051,7 @@ var author$project$Main$view = function (model) {
 							]))
 					])),
 				saveButton,
+				previewButton,
 				A2(
 				elm$html$Html$div,
 				_List_fromArray(
