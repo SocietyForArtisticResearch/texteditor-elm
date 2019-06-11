@@ -904,11 +904,12 @@ view model =
                     model.exposition.currentWeave
 
                 previewUrl =
-                    String.join "/" [ String.fromInt researchId, String.fromInt weave ]
+                    String.join "/" [ "view", String.fromInt researchId, String.fromInt weave ]
             in
             a
                 [ href previewUrl
                 , Html.Attributes.target "_blank"
+                , class "btn btn-outline-dark"
                 ]
                 [ renderIcon EyeIcon
                 ]
