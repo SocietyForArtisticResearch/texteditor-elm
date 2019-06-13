@@ -256,6 +256,7 @@ type Msg
     | OpenMediaPicker
     | CloseMediaPicker
     | ExportDropMsg Dropdown.State
+    | BadUploadFileType String
 
 
 
@@ -580,12 +581,24 @@ update msg model =
 
         UploadMediaFileSelect ->
             ( model
-            , Select.file [ "image/jpeg", "image/png" ] UploadMediaFileSelected
+            , Select.file
+                [ "image/jpeg"
+                , "image/png"
+                , "image/gif"
+                , "image/tiff"
+                , "image/svg+xml"
+                , "audio/mp3"
+                , "audio/wav"
+                , "audio/aiff"
+                , "application/pdf"
+                , "audio/ogg"
+                ]
+                UploadMediaFileSelected
             )
 
         UploadMediaFileSelected file ->
             ( model
-            , RCAPI.uploadMedia model.research (Exposition.mkMediaName model.exposition) file (Http.expectString Uploaded)
+            , RCAPI.uploadMedia model.research (Exposition.mkMediaName model.exposition) file (Http.expectString Uploaded) BadUploadFileType
             )
 
         UploadImportFileSelect ->
@@ -751,6 +764,9 @@ update msg model =
             ( { model | exportDropState = state }
             , Cmd.none
             )
+
+        BadUploadFileType str ->
+            ( addProblem model (Problems.UnkownUploadFileType str), Cmd.none )
 
 
 viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg

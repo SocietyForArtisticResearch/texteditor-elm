@@ -13,6 +13,8 @@ import Json.Decode exposing (..)
 import Json.Encode as Encode
 import Problems exposing (..)
 import Settings
+import Task
+import Time
 import Url.Builder
 
 
@@ -162,26 +164,99 @@ getExposition researchId weave msg =
         }
 
 
-uploadMedia : Int -> String -> File -> Http.Expect msg -> Cmd msg
-uploadMedia researchId mediaName file expect =
-    Http.request
-        { method = "POST"
-        , url = "text-editor/simple-media-add" ++ "?research=" ++ String.fromInt researchId
-        , headers = []
-        , body =
-            Http.multipartBody
-                [ Http.stringPart "mediatype" "image"
-                , Http.stringPart "name" mediaName
-                , Http.stringPart "copyrightholder" "copyright holder"
-                , Http.stringPart "description" "description"
-                , Http.stringPart "license" "all-rights-reserved"
-                , Http.filePart "media" file
-                , Http.stringPart "thumb" ""
-                ]
-        , expect = expect
-        , timeout = Nothing
-        , tracker = Just "uploadMedia"
-        }
+type UploadMediaType
+    = MAudio
+    | MVideo
+    | MImage
+    | MPdf
+    | MSvg
+
+
+stringOfUploadMediaType : UploadMediaType -> String
+stringOfUploadMediaType t =
+    case t of
+        MAudio ->
+            "audio"
+
+        MVideo ->
+            "video"
+
+        MImage ->
+            "image"
+
+        MPdf ->
+            "pdf"
+
+        MSvg ->
+            "image"
+
+
+mediaType : File -> Maybe UploadMediaType
+mediaType f =
+    case File.mime f of
+        "image/gif" ->
+            Just MImage
+
+        "image/jpg" ->
+            Just MImage
+
+        "image/png" ->
+            Just MImage
+
+        "image/tiff" ->
+            Just MImage
+
+        "image/svg+xml" ->
+            Just MImage
+
+        "audio/mp3" ->
+            Just MAudio
+
+        "audio/wav" ->
+            Just MAudio
+
+        "audio/ogg" ->
+            Just MAudio
+
+        "audio/aiff" ->
+            Just MAudio
+
+        "application/pdf" ->
+            Just MPdf
+
+        _ ->
+            Nothing
+
+
+uploadMedia : Int -> String -> File -> Http.Expect msg -> (String -> msg) -> Cmd msg
+uploadMedia researchId mediaName file expect badFileTypeMsg =
+    let
+        mediaT =
+            mediaType file
+    in
+    case mediaT of
+        Nothing ->
+            Task.perform (\_ -> badFileTypeMsg (File.mime file)) Time.now
+
+        Just m ->
+            Http.request
+                { method = "POST"
+                , url = "text-editor/simple-media-add" ++ "?research=" ++ String.fromInt researchId
+                , headers = []
+                , body =
+                    Http.multipartBody
+                        [ Http.stringPart "mediatype" (stringOfUploadMediaType m)
+                        , Http.stringPart "name" mediaName
+                        , Http.stringPart "copyrightholder" "copyright holder"
+                        , Http.stringPart "description" "description"
+                        , Http.stringPart "license" "all-rights-reserved"
+                        , Http.filePart "media" file
+                        , Http.stringPart "thumb" ""
+                        ]
+                , expect = expect
+                , timeout = Nothing
+                , tracker = Just "uploadMedia"
+                }
 
 
 updateMedia : RCMediaObject -> Http.Expect msg -> Cmd msg
@@ -498,10 +573,10 @@ getType media =
 toRCMediaObject : Int -> APIMediaEntry -> Result Problem RCMediaObject
 toRCMediaObject researchId mediaEntry =
     let
-        mediaType =
+        mediaT =
             getType mediaEntry.media
     in
-    case mediaType of
+    case mediaT of
         Ok mtype ->
             Ok
                 { userClass = ""

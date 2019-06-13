@@ -1,4 +1,4 @@
-module Problems exposing (Problem(..), splitResultList, asString)
+module Problems exposing (Problem(..), asString, splitResultList)
 
 -- problem idea comes from rtfeldman sp-application talk youtube
 
@@ -13,6 +13,7 @@ type Problem
     | CannotUpdateMedia
     | CannotFindMediaFieldInJson
     | CannotImportFile Http.Error
+    | UnkownUploadFileType String
 
 
 splitResultList : List (Result Problem a) -> ( List Problem, List a )
@@ -31,6 +32,7 @@ splitResultListAcc results problems oks =
 
         (Err p) :: rest ->
             splitResultListAcc rest (p :: problems) oks
+
 
 asString : Problem -> String
 asString problem =
@@ -53,8 +55,8 @@ asString problem =
         CannotFindMediaFieldInJson ->
             "unkown media field in the json"
 
-        CannotImportFile _  ->
+        CannotImportFile _ ->
             "import http error"
 
- 
-               
+        UnkownUploadFileType s ->
+            "unkown upload file type: " ++ s

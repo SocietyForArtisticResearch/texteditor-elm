@@ -12196,6 +12196,9 @@ var author$project$Exposition$withMd = F2(
 			exp,
 			{markdownInput: content});
 	});
+var author$project$Main$BadUploadFileType = function (a) {
+	return {$: 'BadUploadFileType', a: a};
+};
 var author$project$Main$CloseConfirmDialog = {$: 'CloseConfirmDialog'};
 var author$project$Main$GotMediaList = function (a) {
 	return {$: 'GotMediaList', a: a};
@@ -12354,6 +12357,9 @@ var author$project$Problems$CannotLoadMedia = function (a) {
 var author$project$Problems$CannotSave = {$: 'CannotSave'};
 var author$project$Problems$CannotUpdateMedia = {$: 'CannotUpdateMedia'};
 var author$project$Problems$NoMediaWithNameOrId = {$: 'NoMediaWithNameOrId'};
+var author$project$Problems$UnkownUploadFileType = function (a) {
+	return {$: 'UnkownUploadFileType', a: a};
+};
 var author$project$Problems$splitResultListAcc = F3(
 	function (results, problems, oks) {
 		splitResultListAcc:
@@ -12815,9 +12821,9 @@ var author$project$RCAPI$getType = function (media) {
 };
 var author$project$RCAPI$toRCMediaObject = F2(
 	function (researchId, mediaEntry) {
-		var mediaType = author$project$RCAPI$getType(mediaEntry.media);
-		if (mediaType.$ === 'Ok') {
-			var mtype = mediaType.a;
+		var mediaT = author$project$RCAPI$getType(mediaEntry.media);
+		if (mediaT.$ === 'Ok') {
+			var mtype = mediaT.a;
 			return elm$core$Result$Ok(
 				{
 					caption: '',
@@ -12833,7 +12839,7 @@ var author$project$RCAPI$toRCMediaObject = F2(
 					version: 0
 				});
 		} else {
-			var s = mediaType.a;
+			var s = mediaT.a;
 			return elm$core$Result$Err(
 				author$project$Problems$CannotLoadMedia(s));
 		}
@@ -12895,28 +12901,88 @@ var author$project$RCAPI$uploadImport = F3(
 				url: 'text-editor/import' + ('?research=' + elm$core$String$fromInt(researchId))
 			});
 	});
-var author$project$RCAPI$uploadMedia = F4(
-	function (researchId, mediaName, file, expect) {
-		return elm$http$Http$request(
-			{
-				body: elm$http$Http$multipartBody(
-					_List_fromArray(
-						[
-							A2(elm$http$Http$stringPart, 'mediatype', 'image'),
-							A2(elm$http$Http$stringPart, 'name', mediaName),
-							A2(elm$http$Http$stringPart, 'copyrightholder', 'copyright holder'),
-							A2(elm$http$Http$stringPart, 'description', 'description'),
-							A2(elm$http$Http$stringPart, 'license', 'all-rights-reserved'),
-							A2(elm$http$Http$filePart, 'media', file),
-							A2(elm$http$Http$stringPart, 'thumb', '')
-						])),
-				expect: expect,
-				headers: _List_Nil,
-				method: 'POST',
-				timeout: elm$core$Maybe$Nothing,
-				tracker: elm$core$Maybe$Just('uploadMedia'),
-				url: 'text-editor/simple-media-add' + ('?research=' + elm$core$String$fromInt(researchId))
-			});
+var author$project$RCAPI$MAudio = {$: 'MAudio'};
+var author$project$RCAPI$MImage = {$: 'MImage'};
+var author$project$RCAPI$MPdf = {$: 'MPdf'};
+var elm$file$File$mime = _File_mime;
+var author$project$RCAPI$mediaType = function (f) {
+	var _n0 = elm$file$File$mime(f);
+	switch (_n0) {
+		case 'image/gif':
+			return elm$core$Maybe$Just(author$project$RCAPI$MImage);
+		case 'image/jpg':
+			return elm$core$Maybe$Just(author$project$RCAPI$MImage);
+		case 'image/png':
+			return elm$core$Maybe$Just(author$project$RCAPI$MImage);
+		case 'image/tiff':
+			return elm$core$Maybe$Just(author$project$RCAPI$MImage);
+		case 'image/svg+xml':
+			return elm$core$Maybe$Just(author$project$RCAPI$MImage);
+		case 'audio/mp3':
+			return elm$core$Maybe$Just(author$project$RCAPI$MAudio);
+		case 'audio/wav':
+			return elm$core$Maybe$Just(author$project$RCAPI$MAudio);
+		case 'audio/ogg':
+			return elm$core$Maybe$Just(author$project$RCAPI$MAudio);
+		case 'audio/aiff':
+			return elm$core$Maybe$Just(author$project$RCAPI$MAudio);
+		case 'application/pdf':
+			return elm$core$Maybe$Just(author$project$RCAPI$MPdf);
+		default:
+			return elm$core$Maybe$Nothing;
+	}
+};
+var author$project$RCAPI$stringOfUploadMediaType = function (t) {
+	switch (t.$) {
+		case 'MAudio':
+			return 'audio';
+		case 'MVideo':
+			return 'video';
+		case 'MImage':
+			return 'image';
+		case 'MPdf':
+			return 'pdf';
+		default:
+			return 'image';
+	}
+};
+var author$project$RCAPI$uploadMedia = F5(
+	function (researchId, mediaName, file, expect, badFileTypeMsg) {
+		var mediaT = author$project$RCAPI$mediaType(file);
+		if (mediaT.$ === 'Nothing') {
+			return A2(
+				elm$core$Task$perform,
+				function (_n1) {
+					return badFileTypeMsg(
+						elm$file$File$mime(file));
+				},
+				elm$time$Time$now);
+		} else {
+			var m = mediaT.a;
+			return elm$http$Http$request(
+				{
+					body: elm$http$Http$multipartBody(
+						_List_fromArray(
+							[
+								A2(
+								elm$http$Http$stringPart,
+								'mediatype',
+								author$project$RCAPI$stringOfUploadMediaType(m)),
+								A2(elm$http$Http$stringPart, 'name', mediaName),
+								A2(elm$http$Http$stringPart, 'copyrightholder', 'copyright holder'),
+								A2(elm$http$Http$stringPart, 'description', 'description'),
+								A2(elm$http$Http$stringPart, 'license', 'all-rights-reserved'),
+								A2(elm$http$Http$filePart, 'media', file),
+								A2(elm$http$Http$stringPart, 'thumb', '')
+							])),
+					expect: expect,
+					headers: _List_Nil,
+					method: 'POST',
+					timeout: elm$core$Maybe$Nothing,
+					tracker: elm$core$Maybe$Just('uploadMedia'),
+					url: 'text-editor/simple-media-add' + ('?research=' + elm$core$String$fromInt(researchId))
+				});
+		}
 	});
 var elm$file$File$Select$file = F2(
 	function (mimes, toMsg) {
@@ -13263,18 +13329,19 @@ var author$project$Main$update = F2(
 						A2(
 							elm$file$File$Select$file,
 							_List_fromArray(
-								['image/jpeg', 'image/png']),
+								['image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/svg+xml', 'audio/mp3', 'audio/wav', 'audio/aiff', 'application/pdf', 'audio/ogg']),
 							author$project$Main$UploadMediaFileSelected));
 				case 'UploadMediaFileSelected':
 					var file = msg.a;
 					return _Utils_Tuple2(
 						model,
-						A4(
+						A5(
 							author$project$RCAPI$uploadMedia,
 							model.research,
 							author$project$Exposition$mkMediaName(model.exposition),
 							file,
-							elm$http$Http$expectString(author$project$Main$Uploaded)));
+							elm$http$Http$expectString(author$project$Main$Uploaded),
+							author$project$Main$BadUploadFileType));
 				case 'UploadImportFileSelect':
 					return _Utils_Tuple2(
 						model,
@@ -13474,12 +13541,20 @@ var author$project$Main$update = F2(
 							model,
 							{mediaPickerDialog: rundis$elm_bootstrap$Bootstrap$Modal$hidden}),
 						elm$core$Platform$Cmd$none);
-				default:
+				case 'ExportDropMsg':
 					var state = msg.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{exportDropState: state}),
+						elm$core$Platform$Cmd$none);
+				default:
+					var str = msg.a;
+					return _Utils_Tuple2(
+						A2(
+							author$project$Main$addProblem,
+							model,
+							author$project$Problems$UnkownUploadFileType(str)),
 						elm$core$Platform$Cmd$none);
 			}
 		}
@@ -13985,8 +14060,11 @@ var author$project$Problems$asString = function (problem) {
 			return 'problem updaing media';
 		case 'CannotFindMediaFieldInJson':
 			return 'unkown media field in the json';
-		default:
+		case 'CannotImportFile':
 			return 'import http error';
+		default:
+			var s = problem.a;
+			return 'unkown upload file type: ' + s;
 	}
 };
 var rundis$elm_bootstrap$Bootstrap$Alert$Config = function (a) {
