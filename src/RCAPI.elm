@@ -221,6 +221,15 @@ mediaType f =
         "audio/aiff" ->
             Just MAudio
 
+        "video/mp4" ->
+            Just MVideo
+
+        "video/mpeg" ->
+            Just MVideo
+
+        "video/ogv" ->
+            Just MVideo
+
         "application/pdf" ->
             Just MPdf
 

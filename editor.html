@@ -58,7 +58,7 @@
 	}
 
 	#preview-container {
-	    height:100vh;
+	    height:calc(100vh-50px);
 	    overflow-y:scroll;
 	}
 
@@ -95,11 +95,15 @@
 	}
 
 	.navigation-links {
-	    float:right;
+	    position:fixed;
 	    background-color:white;
 	    top:0;
 	    right:0;
 	    z-index:1000000; /* should be on top */
+	}
+
+	.upload-percentage {
+	    width: 60px;
 	}
 
 	@media only screen and (min-width: 600px) {  
@@ -133,6 +137,7 @@
 
             </div>
             <div class="col" id="preview-container">
+	      <h1>Preview</h1>
                 <div class="exposition exposition-content" id="preview">
                 </div>
             </div>

@@ -12904,6 +12904,7 @@ var author$project$RCAPI$uploadImport = F3(
 var author$project$RCAPI$MAudio = {$: 'MAudio'};
 var author$project$RCAPI$MImage = {$: 'MImage'};
 var author$project$RCAPI$MPdf = {$: 'MPdf'};
+var author$project$RCAPI$MVideo = {$: 'MVideo'};
 var elm$file$File$mime = _File_mime;
 var author$project$RCAPI$mediaType = function (f) {
 	var _n0 = elm$file$File$mime(f);
@@ -12926,6 +12927,12 @@ var author$project$RCAPI$mediaType = function (f) {
 			return elm$core$Maybe$Just(author$project$RCAPI$MAudio);
 		case 'audio/aiff':
 			return elm$core$Maybe$Just(author$project$RCAPI$MAudio);
+		case 'video/mp4':
+			return elm$core$Maybe$Just(author$project$RCAPI$MVideo);
+		case 'video/mpeg':
+			return elm$core$Maybe$Just(author$project$RCAPI$MVideo);
+		case 'video/ogv':
+			return elm$core$Maybe$Just(author$project$RCAPI$MVideo);
 		case 'application/pdf':
 			return elm$core$Maybe$Just(author$project$RCAPI$MPdf);
 		default:
@@ -13329,7 +13336,7 @@ var author$project$Main$update = F2(
 						A2(
 							elm$file$File$Select$file,
 							_List_fromArray(
-								['image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/svg+xml', 'audio/mp3', 'audio/wav', 'audio/aiff', 'application/pdf', 'audio/ogg']),
+								['image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/svg+xml', 'audio/mp3', 'audio/wav', 'audio/aiff', 'application/pdf', 'audio/ogg', 'audio/aif', 'video/mp4', 'video/mpeg', 'video/ogv']),
 							author$project$Main$UploadMediaFileSelected));
 				case 'UploadMediaFileSelected':
 					var file = msg.a;
@@ -15916,7 +15923,7 @@ var author$project$Exposition$customThumbUrl = F2(
 var author$project$RCMediaList$viewThumbnail = function (object) {
 	var _n0 = object.mediaType;
 	if (_n0.$ === 'RCImage') {
-		var thumburl = A2(author$project$Exposition$customThumbUrl, 60, object);
+		var thumburl = A2(author$project$Exposition$customThumbUrl, 120, object);
 		return A2(
 			elm$html$Html$img,
 			_List_fromArray(

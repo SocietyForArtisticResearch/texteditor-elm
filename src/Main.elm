@@ -580,6 +580,7 @@ update msg model =
             update CloseConfirmDialog model
 
         UploadMediaFileSelect ->
+            -- alowed media types:
             ( model
             , Select.file
                 [ "image/jpeg"
@@ -592,6 +593,10 @@ update msg model =
                 , "audio/aiff"
                 , "application/pdf"
                 , "audio/ogg"
+                , "audio/aif"
+                , "video/mp4"
+                , "video/mpeg"
+                , "video/ogv"
                 ]
                 UploadMediaFileSelected
             )
