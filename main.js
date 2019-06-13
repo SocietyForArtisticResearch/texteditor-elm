@@ -12557,8 +12557,10 @@ var author$project$RCAPI$apiMedia = A5(
 	author$project$RCAPI$APIMedia,
 	A2(elm$json$Json$Decode$field, 'type', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'status', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'width', elm$json$Json$Decode$int),
-	A2(elm$json$Json$Decode$field, 'height', elm$json$Json$Decode$int));
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'width', elm$json$Json$Decode$int)),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'height', elm$json$Json$Decode$int)));
 var author$project$RCAPI$APIMediaEntry = F5(
 	function (id, media, description, copyright, name) {
 		return {copyright: copyright, description: description, id: id, media: media, name: name};
@@ -12788,8 +12790,15 @@ var author$project$RCAPI$toRCExposition = F3(
 			});
 	});
 var author$project$RCAPI$getDimensions = function (media) {
-	return elm$core$Maybe$Just(
-		_Utils_Tuple2(media.width, media.height));
+	var _n0 = _Utils_Tuple2(media.width, media.height);
+	if ((_n0.a.$ === 'Just') && (_n0.b.$ === 'Just')) {
+		var w = _n0.a.a;
+		var h = _n0.b.a;
+		return elm$core$Maybe$Just(
+			_Utils_Tuple2(w, h));
+	} else {
+		return elm$core$Maybe$Nothing;
+	}
 };
 var author$project$Exposition$RCAudio = function (a) {
 	return {$: 'RCAudio', a: a};
@@ -12922,6 +12931,10 @@ var author$project$RCAPI$mediaType = function (f) {
 		case 'audio/mp3':
 			return elm$core$Maybe$Just(author$project$RCAPI$MAudio);
 		case 'audio/wav':
+			return elm$core$Maybe$Just(author$project$RCAPI$MAudio);
+		case 'audio/x-wav':
+			return elm$core$Maybe$Just(author$project$RCAPI$MAudio);
+		case 'audio/mpeg':
 			return elm$core$Maybe$Just(author$project$RCAPI$MAudio);
 		case 'audio/ogg':
 			return elm$core$Maybe$Just(author$project$RCAPI$MAudio);

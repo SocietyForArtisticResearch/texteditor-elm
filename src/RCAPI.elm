@@ -79,7 +79,7 @@ mkMediaEntry id media description copyright name =
 
 
 type alias APIMedia =
-    { mediaType : String, status : String, width : Int, height : Int }
+    { mediaType : String, status : String, width : Maybe Int, height : Maybe Int }
 
 
 type alias APIPandocImport =
@@ -134,8 +134,8 @@ apiMedia =
     map4 APIMedia
         (field "type" string)
         (field "status" string)
-        (field "width" int)
-        (field "height" int)
+        (maybe (field "width" int))
+        (maybe (field "height" int))
 
 
 apiPandocImport : Decoder APIPandocImport
@@ -213,6 +213,12 @@ mediaType f =
             Just MAudio
 
         "audio/wav" ->
+            Just MAudio
+
+        "audio/x-wav" ->
+            Just MAudio
+
+        "audio/mpeg" ->
             Just MAudio
 
         "audio/ogg" ->
@@ -557,7 +563,12 @@ toMediaClassesDict apiExpo =
 
 getDimensions : APIMedia -> OptionalDimensions
 getDimensions media =
-    Just ( media.width, media.height )
+    case ( media.width, media.height ) of
+        ( Just w, Just h ) ->
+            Just ( w, h )
+
+        _ ->
+            Nothing
 
 
 getType : APIMedia -> Result String RCMediaType
