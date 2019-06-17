@@ -8,7 +8,7 @@ import Bootstrap.Utilities.Spacing as Spacing
 import Exposition exposing (RCMediaObject)
 import Html exposing (Html, div, img, span, text)
 import Html.Attributes exposing (id, src, style)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onClick, onDoubleClick)
 
 
 type alias TableMessages msg =
@@ -121,7 +121,7 @@ viewModalMediaPicker visibility objectList messages =
                                         ]
                                         [ text "insert" ]
                             in
-                            Table.tr []
+                            Table.tr [ Table.rowAttr <| onDoubleClick <| messages.insertObject object ]
                                 [ Table.td [] [ viewThumbnail object ]
                                 , Table.td [] [ text <| String.fromInt object.id ]
                                 , Table.td [] [ text object.name ]

@@ -16657,6 +16657,12 @@ var author$project$RCMediaList$view = F2(
 					]));
 		}
 	});
+var elm$html$Html$Events$onDoubleClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'dblclick',
+		elm$json$Json$Decode$succeed(msg));
+};
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Success = {$: 'Success'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Success));
@@ -16678,6 +16684,12 @@ var rundis$elm_bootstrap$Bootstrap$Modal$large = function (_n0) {
 						modalSize: elm$core$Maybe$Just(rundis$elm_bootstrap$Bootstrap$General$Internal$LG)
 					})
 			}));
+};
+var rundis$elm_bootstrap$Bootstrap$Table$RowAttr = function (a) {
+	return {$: 'RowAttr', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Table$rowAttr = function (attr_) {
+	return rundis$elm_bootstrap$Bootstrap$Table$RowAttr(attr_);
 };
 var author$project$RCMediaList$viewModalMediaPicker = F3(
 	function (visibility, objectList, messages) {
@@ -16712,7 +16724,12 @@ var author$project$RCMediaList$viewModalMediaPicker = F3(
 							]));
 					return A2(
 						rundis$elm_bootstrap$Bootstrap$Table$tr,
-						_List_Nil,
+						_List_fromArray(
+							[
+								rundis$elm_bootstrap$Bootstrap$Table$rowAttr(
+								elm$html$Html$Events$onDoubleClick(
+									messages.insertObject(object)))
+							]),
 						_List_fromArray(
 							[
 								A2(
