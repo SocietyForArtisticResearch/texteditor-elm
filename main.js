@@ -12188,7 +12188,7 @@ var author$project$Exposition$withHtml = F2(
 	function (exp, content) {
 		return _Utils_update(
 			exp,
-			{renderedHtml: '<div id=\"exposition\">' + (content + '</div>')});
+			{renderedHtml: '<div class=\"exposition\">' + (content + '</div>')});
 	});
 var author$project$Exposition$withMd = F2(
 	function (exp, content) {
@@ -13893,6 +13893,12 @@ var rundis$elm_bootstrap$Bootstrap$Button$button = F2(
 			rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes(options),
 			children);
 	});
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Disabled = function (a) {
+	return {$: 'Disabled', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Button$disabled = function (disabled_) {
+	return rundis$elm_bootstrap$Bootstrap$Internal$Button$Disabled(disabled_);
+};
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
 	return {$: 'Coloring', a: a};
 };
@@ -13909,8 +13915,8 @@ var rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
 var rundis$elm_bootstrap$Bootstrap$Button$outlineDark = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark));
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1 = elm$html$Html$Attributes$class('m-1');
-var author$project$View$mkButton = F6(
-	function (icon, needsOffset, onClickMsg, buttonText, primary, otherAttrs) {
+var author$project$View$mkButton = F7(
+	function (icon, needsOffset, onClickMsg, buttonText, primary, otherAttrs, disabled) {
 		var spacing = needsOffset ? _List_fromArray(
 			[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1]) : _List_Nil;
 		return A2(
@@ -13925,7 +13931,8 @@ var author$project$View$mkButton = F6(
 							[
 								elm$html$Html$Events$onClick(onClickMsg)
 							]),
-						A2(elm$core$List$append, spacing, otherAttrs)))
+						A2(elm$core$List$append, spacing, otherAttrs))),
+					rundis$elm_bootstrap$Bootstrap$Button$disabled(disabled)
 				]),
 			_List_fromArray(
 				[
@@ -13935,7 +13942,7 @@ var author$project$View$mkButton = F6(
 	});
 var author$project$Main$editorToolbar = _List_fromArray(
 	[
-		A6(
+		A7(
 		author$project$View$mkButton,
 		author$project$View$NoIcon,
 		false,
@@ -13943,8 +13950,9 @@ var author$project$Main$editorToolbar = _List_fromArray(
 			author$project$Settings$snippet(author$project$Settings$H1)),
 		'H1',
 		false,
-		_List_Nil),
-		A6(
+		_List_Nil,
+		false),
+		A7(
 		author$project$View$mkButton,
 		author$project$View$NoIcon,
 		false,
@@ -13952,8 +13960,9 @@ var author$project$Main$editorToolbar = _List_fromArray(
 			author$project$Settings$snippet(author$project$Settings$H2)),
 		'H2',
 		false,
-		_List_Nil),
-		A6(
+		_List_Nil,
+		false),
+		A7(
 		author$project$View$mkButton,
 		author$project$View$NoIcon,
 		false,
@@ -13961,8 +13970,9 @@ var author$project$Main$editorToolbar = _List_fromArray(
 			author$project$Settings$snippet(author$project$Settings$H3)),
 		'H3',
 		false,
-		_List_Nil),
-		A6(
+		_List_Nil,
+		false),
+		A7(
 		author$project$View$mkButton,
 		author$project$View$BoldIcon,
 		false,
@@ -13970,8 +13980,9 @@ var author$project$Main$editorToolbar = _List_fromArray(
 			author$project$Settings$snippet(author$project$Settings$Bold)),
 		'',
 		false,
-		_List_Nil),
-		A6(
+		_List_Nil,
+		false),
+		A7(
 		author$project$View$mkButton,
 		author$project$View$ItalicIcon,
 		false,
@@ -13979,8 +13990,9 @@ var author$project$Main$editorToolbar = _List_fromArray(
 			author$project$Settings$snippet(author$project$Settings$Italic)),
 		'',
 		false,
-		_List_Nil),
-		A6(
+		_List_Nil,
+		false),
+		A7(
 		author$project$View$mkButton,
 		author$project$View$ListIcon,
 		false,
@@ -13988,8 +14000,9 @@ var author$project$Main$editorToolbar = _List_fromArray(
 			author$project$Settings$snippet(author$project$Settings$Bullet)),
 		'',
 		false,
-		_List_Nil),
-		A6(
+		_List_Nil,
+		false),
+		A7(
 		author$project$View$mkButton,
 		author$project$View$NumberedIcon,
 		false,
@@ -13997,8 +14010,9 @@ var author$project$Main$editorToolbar = _List_fromArray(
 			author$project$Settings$snippet(author$project$Settings$Numbered)),
 		'',
 		false,
-		_List_Nil),
-		A6(
+		_List_Nil,
+		false),
+		A7(
 		author$project$View$mkButton,
 		author$project$View$LinkIcon,
 		false,
@@ -14006,8 +14020,9 @@ var author$project$Main$editorToolbar = _List_fromArray(
 			author$project$Settings$snippet(author$project$Settings$Link)),
 		'',
 		false,
-		_List_Nil),
-		A6(
+		_List_Nil,
+		false),
+		A7(
 		author$project$View$mkButton,
 		author$project$View$QuoteIcon,
 		false,
@@ -14015,7 +14030,8 @@ var author$project$Main$editorToolbar = _List_fromArray(
 			author$project$Settings$snippet(author$project$Settings$Quote)),
 		'',
 		false,
-		_List_Nil)
+		_List_Nil,
+		false)
 	]);
 var author$project$Main$MediaEdit = function (a) {
 	return {$: 'MediaEdit', a: a};
@@ -14062,6 +14078,15 @@ var author$project$Main$ConfirmMediaDelete = function (a) {
 	return {$: 'ConfirmMediaDelete', a: a};
 };
 var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$ConfirmMediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertMediaAtCursor};
+var author$project$Main$selectedEditorIsMarkdown = function (model) {
+	var _n0 = model.editor;
+	if (_n0.a.$ === 'EditorMarkdown') {
+		var _n1 = _n0.a;
+		return true;
+	} else {
+		return false;
+	}
+};
 var author$project$Main$AlertMsg = function (a) {
 	return {$: 'AlertMsg', a: a};
 };
@@ -14645,7 +14670,7 @@ var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1 = elm$html$Html$Attribu
 var author$project$Main$viewUpload = F5(
 	function (icon, needsOffset, onClickMsg, buttonText, status) {
 		if (status.$ === 'Ready') {
-			return A6(
+			return A7(
 				author$project$View$mkButton,
 				icon,
 				needsOffset,
@@ -14653,7 +14678,8 @@ var author$project$Main$viewUpload = F5(
 				buttonText,
 				true,
 				_List_fromArray(
-					[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1, rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1, rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1]));
+					[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1, rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1, rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1]),
+				false);
 		} else {
 			var fraction = status.a;
 			return A2(
@@ -17475,7 +17501,15 @@ var author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, true, author$project$Main$UploadMediaFileSelect, 'Upload media', model.mediaUploadStatus),
-						A6(author$project$View$mkButton, author$project$View$ArrowDown, true, author$project$Main$OpenMediaPicker, 'Insert media', true, _List_Nil),
+						A7(
+						author$project$View$mkButton,
+						author$project$View$ArrowDown,
+						true,
+						author$project$Main$OpenMediaPicker,
+						'Insert media',
+						true,
+						_List_Nil,
+						author$project$Main$selectedEditorIsMarkdown(model)),
 						A5(author$project$Main$viewUpload, author$project$View$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
 						A4(
 						author$project$View$mkDropdown,

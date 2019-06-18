@@ -70,6 +70,16 @@ type EditorType
     | EditorMedia
 
 
+selectedEditorIsMarkdown : Model -> Bool
+selectedEditorIsMarkdown model =
+    case model.editor of
+        ( EditorMarkdown, _ ) ->
+            True
+
+        _ ->
+            False
+
+
 type MarkdownEditor
     = CodemirrorMarkdown
     | TextareaMarkdown
@@ -778,7 +788,7 @@ viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg
 viewUpload icon needsOffset onClickMsg buttonText status =
     case status of
         Ready ->
-            mkButton icon needsOffset onClickMsg buttonText True [ Spacing.mb1, Spacing.mt1, Spacing.mr1 ]
+            mkButton icon needsOffset onClickMsg buttonText True [ Spacing.mb1, Spacing.mt1, Spacing.mr1 ] False
 
         Uploading fraction ->
             div [ class "upload-percentage" ] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
@@ -875,15 +885,15 @@ viewLink name url =
 
 editorToolbar : List (Html Msg)
 editorToolbar =
-    [ mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H1)) "H1" False []
-    , mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H2)) "H2" False []
-    , mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H3)) "H3" False []
-    , mkButton BoldIcon False (InsertAtCursor (Settings.snippet Settings.Bold)) "" False []
-    , mkButton ItalicIcon False (InsertAtCursor (Settings.snippet Settings.Italic)) "" False []
-    , mkButton ListIcon False (InsertAtCursor (Settings.snippet Settings.Bullet)) "" False []
-    , mkButton NumberedIcon False (InsertAtCursor (Settings.snippet Settings.Numbered)) "" False []
-    , mkButton LinkIcon False (InsertAtCursor (Settings.snippet Settings.Link)) "" False []
-    , mkButton QuoteIcon False (InsertAtCursor (Settings.snippet Settings.Quote)) "" False []
+    [ mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H1)) "H1" False [] False
+    , mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H2)) "H2" False [] False
+    , mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H3)) "H3" False [] False
+    , mkButton BoldIcon False (InsertAtCursor (Settings.snippet Settings.Bold)) "" False [] False
+    , mkButton ItalicIcon False (InsertAtCursor (Settings.snippet Settings.Italic)) "" False [] False
+    , mkButton ListIcon False (InsertAtCursor (Settings.snippet Settings.Bullet)) "" False [] False
+    , mkButton NumberedIcon False (InsertAtCursor (Settings.snippet Settings.Numbered)) "" False [] False
+    , mkButton LinkIcon False (InsertAtCursor (Settings.snippet Settings.Link)) "" False [] False
+    , mkButton QuoteIcon False (InsertAtCursor (Settings.snippet Settings.Quote)) "" False [] False
     ]
 
 
@@ -971,6 +981,7 @@ view model =
                 "Insert media"
                 True
                 []
+                (selectedEditorIsMarkdown model)
             , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
             , mkDropdown model.exportDropState
                 ExportDropMsg

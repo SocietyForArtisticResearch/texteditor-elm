@@ -151,6 +151,8 @@
  var toRender = false;
 
  var mdToRender = "";
+
+ var mdLength = 1000; 
  
  var styleElem = document.createElement('style');
  styleElem.type = 'text/css';
@@ -378,12 +380,22 @@
      cmMarkdown.setValue(textareaMarkdown.value);
  });
 
+  function setMdLength() {
+      mdLength = mdToRender.length;
+  }
+
+  setMdLength();
+
+  setInterval( setMdLength, 15000);
+      
+
  
  setInterval(function () {
      if (toRender) {
 	 app.ports.getHtml.send(marked(mdToRender));
-	 toRender = false
-     } }, 250);
+	 toRender = false;
+	 
+     } }, (Math.pow(2,mdLength/6000) * 100 )  );
  
 </script>
 

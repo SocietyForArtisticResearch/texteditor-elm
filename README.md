@@ -28,6 +28,9 @@ be made outside of elm.
 # Todo
 
 General:
+- Licenses
+- Copyright should be obligatory
+- Markdown-it ?
 - How do we get the author's name?
 - What to do when people are logged out
 - how often render?
@@ -36,15 +39,16 @@ General:
 Casper:
  
 - percentage when uploading
-- double click to insert media
+? double click to insert media
 - display title of exposition somewhere
 - warnings when closing/reloading
+- Test buttons that shouldn't be possible to use when in wrong text editing mode
 
 Luc:
 
 
 - Check rendered html
-- Css userclass (big, small, medium etc), doesn't work in Preview or rendered HTML 
+? Css userclass (big, small, medium etc), doesn't work in Preview or rendered HTML 
 - Caption text not parsed:  ![caption]{media1}
 
 
