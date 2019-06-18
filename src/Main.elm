@@ -223,7 +223,8 @@ subscriptions model =
         , Http.track "uploadMedia" GotMediaUploadProgress
         , Http.track "uploadImport" GotImportUploadProgress
         , Dropdown.subscriptions model.exportDropState ExportDropMsg
-        , Time.every 15000 (\_ -> SaveExposition)
+
+        --       , Time.every 15000 (\_ -> SaveExposition)
         ]
 
 
