@@ -7435,7 +7435,7 @@ var author$project$Main$subscriptions = function (model) {
 				A2(rundis$elm_bootstrap$Bootstrap$Dropdown$subscriptions, model.exportDropState, author$project$Main$ExportDropMsg),
 				A2(
 				elm$time$Time$every,
-				10000,
+				15000,
 				function (_n0) {
 					return author$project$Main$SaveExposition;
 				})
