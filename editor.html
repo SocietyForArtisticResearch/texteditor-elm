@@ -384,12 +384,11 @@
 
  function setMdLength() {
      mdLength = mdToRender.length;
-     renderInterval = Math.pow(2,mdLength/3000) * 200;
+     renderInterval = Math.pow(2,mdLength/2000) * 200;
  }
 
  setMdLength();
-
- setInterval( setMdLength, 15000);
+ setInterval( setMdLength, 20000);
  
  
  setInterval(function () {
