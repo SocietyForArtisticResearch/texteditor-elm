@@ -152,7 +152,9 @@
 
  var mdToRender = "";
 
- var mdLength = 1000; 
+ var mdLength = 0;
+
+ var renderInterval = 100;
  
  var styleElem = document.createElement('style');
  styleElem.type = 'text/css';
@@ -380,22 +382,22 @@
      cmMarkdown.setValue(textareaMarkdown.value);
  });
 
-  function setMdLength() {
-      mdLength = mdToRender.length;
-  }
+ function setMdLength() {
+     mdLength = mdToRender.length;
+     renderInterval = Math.pow(2,mdLength/7000) * 100;
+ }
 
-  setMdLength();
+ setMdLength();
 
-  setInterval( setMdLength, 15000);
-      
-
+ setInterval( setMdLength, 15000);
+ 
  
  setInterval(function () {
      if (toRender) {
 	 app.ports.getHtml.send(marked(mdToRender));
 	 toRender = false;
 	 
-     } }, (Math.pow(2,mdLength/6000) * 100 )  );
+     } }, renderInterval );
  
 </script>
 
