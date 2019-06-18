@@ -981,7 +981,9 @@ view model =
                 "Insert media"
                 True
                 []
-                (selectedEditorIsMarkdown model)
+                (not
+                    (selectedEditorIsMarkdown model)
+                )
             , viewUpload ImportIcon True UploadImportFileSelect "Import doc" model.importUploadStatus
             , mkDropdown model.exportDropState
                 ExportDropMsg

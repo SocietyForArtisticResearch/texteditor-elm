@@ -12774,19 +12774,20 @@ var author$project$RCAPI$toRCExposition = F3(
 	function (apiExpo, id, weave) {
 		var exp = author$project$RCAPI$decodeMetadata(
 			author$project$RCAPI$decodeMedia(apiExpo));
-		return {
-			authors: _List_Nil,
-			contentVersion: author$project$RCAPI$getMetadata(exp).contentVersion,
-			css: apiExpo.style,
-			currentWeave: weave,
-			editorVersion: author$project$RCAPI$getMetadata(exp).editorVersion,
-			id: id,
-			markdownInput: apiExpo.markdown,
-			media: _List_Nil,
-			renderedHtml: apiExpo.html,
-			title: apiExpo.title,
-			toc: _List_Nil
-		};
+		return author$project$Exposition$updateToc(
+			{
+				authors: _List_Nil,
+				contentVersion: author$project$RCAPI$getMetadata(exp).contentVersion,
+				css: apiExpo.style,
+				currentWeave: weave,
+				editorVersion: author$project$RCAPI$getMetadata(exp).editorVersion,
+				id: id,
+				markdownInput: apiExpo.markdown,
+				media: _List_Nil,
+				renderedHtml: apiExpo.html,
+				title: apiExpo.title,
+				toc: _List_Nil
+			});
 	});
 var author$project$RCAPI$getDimensions = function (media) {
 	var _n0 = _Utils_Tuple2(media.width, media.height);
@@ -17508,7 +17509,7 @@ var author$project$Main$view = function (model) {
 						'Insert media',
 						true,
 						_List_Nil,
-						author$project$Main$selectedEditorIsMarkdown(model)),
+						!author$project$Main$selectedEditorIsMarkdown(model)),
 						A5(author$project$Main$viewUpload, author$project$View$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
 						A4(
 						author$project$View$mkDropdown,
