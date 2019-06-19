@@ -37,22 +37,19 @@ General:
 - Uploading Audio doesn't work (does not appear in list)
 
 Casper:
- 
+
+- fix editor height (left and right sections should scroll independently)
 - percentage when uploading
-? double click to insert media
 - display title of exposition somewhere
 - warnings when closing/reloading
-- Test buttons that shouldn't be possible to use when in wrong text editing mode
 
 Luc:
 
 
 - Check rendered html
-? Css userclass (big, small, medium etc), doesn't work in Preview or rendered HTML 
 - Caption text not parsed:  ![caption]{media1}
-
-
-
+- Userclass is still not inserted into rendered HTML.
+  if I set an image to small, it will not have class="small" in rendered HTML.
 
 ## To test
 - tables?
@@ -70,7 +67,7 @@ Luc:
 
 ## DONE
 
-
+- double click to insert media
 - added more media types, user can select to filter 
 - larger preview thumbnails
 - auto close dialog
