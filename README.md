@@ -35,6 +35,8 @@ General:
 - What to do when people are logged out
 - how often render?
 - Uploading Audio doesn't work (does not appear in list)
+- Mime types:
+  * audio/x-aiff
 
 Casper:
 
