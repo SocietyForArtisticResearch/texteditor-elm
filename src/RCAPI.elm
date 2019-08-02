@@ -200,6 +200,9 @@ mediaType f =
         "image/jpg" ->
             Just MImage
 
+        "image/jpeg" ->
+            Just MImage
+
         "image/png" ->
             Just MImage
 
