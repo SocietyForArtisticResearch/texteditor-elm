@@ -35,14 +35,15 @@ General:
 - What to do when people are logged out
 - how often render?
 - Uploading Audio doesn't work (does not appear in list)
+- Mime types:
+  * audio/x-aiff
 
 Casper:
- 
+
+- fix editor height (left and right sections should scroll independently)
 - percentage when uploading
-? double click to insert media
 - display title of exposition somewhere
 - warnings when closing/reloading
-- Test buttons that shouldn't be possible to use when in wrong text editing mode
 
 Luc:
 
@@ -71,7 +72,7 @@ Luc:
 
 ## DONE
 
-
+- double click to insert media
 - added more media types, user can select to filter 
 - larger preview thumbnails
 - auto close dialog
