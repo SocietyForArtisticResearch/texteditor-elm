@@ -559,7 +559,7 @@ update msg model =
                             update (SaveMediaEdit objFromDialog) newModel
 
         SaveMediaEdit obj ->
-            ( model
+            ( { model | saved = False }
             , RCAPI.updateMedia obj (Http.expectString SavedMediaEdit)
             )
 

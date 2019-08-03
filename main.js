@@ -9666,6 +9666,8 @@ var author$project$RCAPI$mediaType = function (f) {
 			return elm$core$Maybe$Just(author$project$RCAPI$MImage);
 		case 'image/jpg':
 			return elm$core$Maybe$Just(author$project$RCAPI$MImage);
+		case 'image/jpeg':
+			return elm$core$Maybe$Just(author$project$RCAPI$MImage);
 		case 'image/png':
 			return elm$core$Maybe$Just(author$project$RCAPI$MImage);
 		case 'image/tiff':
@@ -10043,7 +10045,9 @@ var author$project$Main$update = F2(
 				case 'SaveMediaEdit':
 					var obj = msg.a;
 					return _Utils_Tuple2(
-						model,
+						_Utils_update(
+							model,
+							{saved: false}),
 						A2(
 							author$project$RCAPI$updateMedia,
 							obj,
