@@ -445,9 +445,6 @@ update msg model =
             let
                 modelWithToc =
                     { model | exposition = Exposition.updateToc model.exposition }
-
-                _ =
-                    Debug.log "saving model:" modelWithToc
             in
             if not model.saved then
                 ( modelWithToc, RCAPI.saveExposition modelWithToc.exposition SavedExposition )
@@ -501,9 +498,6 @@ update msg model =
                         expositionWithClasses =
                             Exposition.renameDuplicateMedia <|
                                 addMediaUserClasses expositionWithMedia model.mediaClassesDict
-
-                        _ =
-                            Debug.log "model before loading" model
 
                         _ =
                             Debug.log "loaded exposition with media: " expositionWithClasses

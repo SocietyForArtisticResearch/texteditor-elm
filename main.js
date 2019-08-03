@@ -9305,23 +9305,81 @@ var author$project$RCAPI$apiMedia = A5(
 		A2(elm$json$Json$Decode$field, 'width', elm$json$Json$Decode$int)),
 	elm$json$Json$Decode$maybe(
 		A2(elm$json$Json$Decode$field, 'height', elm$json$Json$Decode$int)));
-var author$project$RCAPI$APIMediaEntry = F5(
-	function (id, media, description, copyright, name) {
-		return {copyright: copyright, description: description, id: id, media: media, name: name};
+var author$project$Licenses$AllRightsReserved = {$: 'AllRightsReserved'};
+var author$project$Licenses$CCBY = {$: 'CCBY'};
+var author$project$Licenses$CCBYNC = {$: 'CCBYNC'};
+var author$project$Licenses$CCBYNCND = {$: 'CCBYNCND'};
+var author$project$Licenses$CCBYNCSA = {$: 'CCBYNCSA'};
+var author$project$Licenses$CCBYSA = {$: 'CCBYSA'};
+var author$project$Licenses$PublicDomain = {$: 'PublicDomain'};
+var author$project$Licenses$licensesDict = _List_fromArray(
+	[
+		_Utils_Tuple2(author$project$Licenses$AllRightsReserved, 'all-rights-reserved'),
+		_Utils_Tuple2(author$project$Licenses$CCBY, 'cc-by'),
+		_Utils_Tuple2(author$project$Licenses$CCBYSA, 'cc-by-sa'),
+		_Utils_Tuple2(author$project$Licenses$CCBYNC, 'cc-by-nc'),
+		_Utils_Tuple2(author$project$Licenses$CCBYNCSA, 'cc-by-nc-sa'),
+		_Utils_Tuple2(author$project$Licenses$CCBYNCND, 'cc-by-nc-nd'),
+		_Utils_Tuple2(author$project$Licenses$PublicDomain, 'public-domain')
+	]);
+var author$project$Util$find = F2(
+	function (predicate, list) {
+		find:
+		while (true) {
+			if (!list.b) {
+				return elm$core$Maybe$Nothing;
+			} else {
+				var first = list.a;
+				var rest = list.b;
+				if (predicate(first)) {
+					return elm$core$Maybe$Just(first);
+				} else {
+					var $temp$predicate = predicate,
+						$temp$list = rest;
+					predicate = $temp$predicate;
+					list = $temp$list;
+					continue find;
+				}
+			}
+		}
 	});
-var author$project$RCAPI$mkMediaEntry = F5(
-	function (id, media, description, copyright, name) {
-		return A5(
+var author$project$Util$fst = function (_n0) {
+	var a = _n0.a;
+	var b = _n0.b;
+	return a;
+};
+var author$project$Licenses$fromString = function (s) {
+	return A2(
+		elm$core$Maybe$withDefault,
+		author$project$Licenses$AllRightsReserved,
+		A2(
+			elm$core$Maybe$map,
+			author$project$Util$fst,
+			A2(
+				author$project$Util$find,
+				function (_n0) {
+					var str = _n0.b;
+					return _Utils_eq(str, s);
+				},
+				author$project$Licenses$licensesDict)));
+};
+var author$project$RCAPI$APIMediaEntry = F6(
+	function (id, media, description, copyright, name, license) {
+		return {copyright: copyright, description: description, id: id, license: license, media: media, name: name};
+	});
+var author$project$RCAPI$mkMediaEntry = F6(
+	function (id, media, description, copyright, name, license) {
+		return A6(
 			author$project$RCAPI$APIMediaEntry,
 			id,
 			media,
 			A2(elm$core$Maybe$withDefault, '', description),
 			A2(elm$core$Maybe$withDefault, '', copyright),
-			name);
+			name,
+			author$project$Licenses$fromString(license));
 	});
-var elm$json$Json$Decode$map5 = _Json_map5;
-var author$project$RCAPI$apiMediaEntry = A6(
-	elm$json$Json$Decode$map5,
+var author$project$RCAPI$apiMediaEntry = A7(
+	elm$json$Json$Decode$map6,
 	author$project$RCAPI$mkMediaEntry,
 	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
 	A2(elm$json$Json$Decode$field, 'media', author$project$RCAPI$apiMedia),
@@ -9329,7 +9387,8 @@ var author$project$RCAPI$apiMediaEntry = A6(
 		A2(elm$json$Json$Decode$field, 'description', elm$json$Json$Decode$string)),
 	elm$json$Json$Decode$maybe(
 		A2(elm$json$Json$Decode$field, 'copyright', elm$json$Json$Decode$string)),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string));
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'license', elm$json$Json$Decode$string));
 var author$project$RCAPI$getMediaList = F2(
 	function (id, msg) {
 		return elm$http$Http$get(
@@ -9586,6 +9645,7 @@ var author$project$RCAPI$toRCMediaObject = F2(
 					expositionId: researchId,
 					htmlId: '',
 					id: mediaEntry.id,
+					license: mediaEntry.license,
 					mediaType: mtype,
 					name: mediaEntry.name,
 					userClass: '',
@@ -9597,6 +9657,26 @@ var author$project$RCAPI$toRCMediaObject = F2(
 				author$project$Problems$CannotLoadMedia(s));
 		}
 	});
+var author$project$Util$snd = function (_n0) {
+	var a = _n0.a;
+	var b = _n0.b;
+	return b;
+};
+var author$project$Licenses$asString = function (l) {
+	return A2(
+		elm$core$Maybe$withDefault,
+		'all-rights-reserved',
+		A2(
+			elm$core$Maybe$map,
+			author$project$Util$snd,
+			A2(
+				author$project$Util$find,
+				function (_n0) {
+					var lic = _n0.a;
+					return _Utils_eq(lic, l);
+				},
+				author$project$Licenses$licensesDict)));
+};
 var author$project$RCAPI$withDefault = F2(
 	function (_default, str) {
 		return (str === '') ? _default : str;
@@ -9614,7 +9694,10 @@ var author$project$RCAPI$updateMedia = F2(
 							'copyrightholder',
 							A2(author$project$RCAPI$withDefault, 'copyright holder', mediaObject.copyright)),
 							A2(elm$http$Http$stringPart, 'description', mediaObject.description),
-							A2(elm$http$Http$stringPart, 'license', 'all-rights-reserved')
+							A2(
+							elm$http$Http$stringPart,
+							'license',
+							author$project$Licenses$asString(mediaObject.license))
 						])),
 				expect: expect,
 				headers: _List_Nil,
@@ -9685,6 +9768,8 @@ var author$project$RCAPI$mediaType = function (f) {
 		case 'audio/ogg':
 			return elm$core$Maybe$Just(author$project$RCAPI$MAudio);
 		case 'audio/aiff':
+			return elm$core$Maybe$Just(author$project$RCAPI$MAudio);
+		case 'audio/x-aiff':
 			return elm$core$Maybe$Just(author$project$RCAPI$MAudio);
 		case 'video/mp4':
 			return elm$core$Maybe$Just(author$project$RCAPI$MVideo);
@@ -9920,7 +10005,6 @@ var author$project$Main$update = F2(
 						{
 							exposition: author$project$Exposition$updateToc(model.exposition)
 						});
-					var _n10 = A2(elm$core$Debug$log, 'saving model:', modelWithToc);
 					return (!model.saved) ? _Utils_Tuple2(
 						modelWithToc,
 						A2(author$project$RCAPI$saveExposition, modelWithToc.exposition, author$project$Main$SavedExposition)) : _Utils_Tuple2(modelWithToc, elm$core$Platform$Cmd$none);
@@ -9928,7 +10012,7 @@ var author$project$Main$update = F2(
 					var result = msg.a;
 					if (result.$ === 'Ok') {
 						var r = result.a;
-						var _n12 = A2(elm$core$Debug$log, 'save result: ', r);
+						var _n11 = A2(elm$core$Debug$log, 'save result: ', r);
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -9936,7 +10020,7 @@ var author$project$Main$update = F2(
 							elm$core$Platform$Cmd$none);
 					} else {
 						var s = result.a;
-						var _n13 = A2(elm$core$Debug$log, 'save error: ', s);
+						var _n12 = A2(elm$core$Debug$log, 'save error: ', s);
 						return _Utils_Tuple2(
 							A2(author$project$Main$addProblem, model, author$project$Problems$CannotSave),
 							elm$core$Platform$Cmd$none);
@@ -9945,7 +10029,7 @@ var author$project$Main$update = F2(
 					var mediaResult = msg.a;
 					if (mediaResult.$ === 'Err') {
 						var e = mediaResult.a;
-						var _n15 = A2(elm$core$Debug$log, 'media list loading issue: ', e);
+						var _n14 = A2(elm$core$Debug$log, 'media list loading issue: ', e);
 						return _Utils_Tuple2(
 							A2(
 								author$project$Main$addProblem,
@@ -9954,20 +10038,19 @@ var author$project$Main$update = F2(
 							elm$core$Platform$Cmd$none);
 					} else {
 						var media = mediaResult.a;
-						var _n16 = A2(elm$core$Debug$log, 'loaded media: ', media);
-						var _n17 = author$project$Problems$splitResultList(
+						var _n15 = A2(elm$core$Debug$log, 'loaded media: ', media);
+						var _n16 = author$project$Problems$splitResultList(
 							A2(
 								elm$core$List$map,
 								author$project$RCAPI$toRCMediaObject(model.research),
 								media));
-						var problems = _n17.a;
-						var mediaEntries = _n17.b;
+						var problems = _n16.a;
+						var mediaEntries = _n16.b;
 						var modelWithProblems = A2(author$project$Main$addProblems, model, problems);
 						var expositionWithMedia = A3(elm$core$List$foldr, author$project$Exposition$addOrReplaceObject, modelWithProblems.exposition, mediaEntries);
 						var expositionWithClasses = author$project$Exposition$renameDuplicateMedia(
 							A2(author$project$Exposition$addMediaUserClasses, expositionWithMedia, model.mediaClassesDict));
-						var _n18 = A2(elm$core$Debug$log, 'model before loading', model);
-						var _n19 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithClasses);
+						var _n17 = A2(elm$core$Debug$log, 'loaded exposition with media: ', expositionWithClasses);
 						return _Utils_Tuple2(
 							_Utils_update(
 								modelWithProblems,
@@ -10000,21 +10083,21 @@ var author$project$Main$update = F2(
 										expositionWithClasses.media))));
 					}
 				case 'MediaEdit':
-					var _n20 = msg.a;
-					var objInModelName = _n20.a;
-					var objFromDialog = _n20.b;
-					var _n21 = A2(author$project$Exposition$objectByNameOrId, objInModelName, model.exposition);
-					if (_n21.$ === 'Nothing') {
+					var _n18 = msg.a;
+					var objInModelName = _n18.a;
+					var objFromDialog = _n18.b;
+					var _n19 = A2(author$project$Exposition$objectByNameOrId, objInModelName, model.exposition);
+					if (_n19.$ === 'Nothing') {
 						var modelWithProblem = A2(author$project$Main$addProblem, model, author$project$Problems$NoMediaWithNameOrId);
 						return _Utils_Tuple2(modelWithProblem, elm$core$Platform$Cmd$none);
 					} else {
-						var objInModel = _n21.a;
+						var objInModel = _n19.a;
 						var viewObjectState = A3(author$project$Exposition$validateMediaObject, model.exposition, objInModel, objFromDialog);
-						var _n22 = model.mediaDialog;
-						var viewStatus = _n22.a;
-						var objInEdit = _n22.b;
-						var _n23 = author$project$Exposition$isValid(viewObjectState.validation);
-						if (!_n23) {
+						var _n20 = model.mediaDialog;
+						var viewStatus = _n20.a;
+						var objInEdit = _n20.b;
+						var _n21 = author$project$Exposition$isValid(viewObjectState.validation);
+						if (!_n21) {
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
@@ -10035,7 +10118,7 @@ var author$project$Main$update = F2(
 										elm$core$Dict$update,
 										objFromDialog.id,
 										elm$core$Maybe$map(
-											function (_n24) {
+											function (_n22) {
 												return objFromDialog.userClass;
 											}),
 										model.mediaClassesDict),
@@ -10066,7 +10149,7 @@ var author$project$Main$update = F2(
 					var result = msg.a;
 					if (result.$ === 'Ok') {
 						var s = result.a;
-						var _n26 = A2(elm$core$Debug$log, 'saved media result: ', s);
+						var _n24 = A2(elm$core$Debug$log, 'saved media result: ', s);
 						var $temp$msg = author$project$Main$SaveExposition,
 							$temp$model = model;
 						msg = $temp$msg;
@@ -10074,7 +10157,7 @@ var author$project$Main$update = F2(
 						continue update;
 					} else {
 						var s = result.a;
-						var _n27 = A2(elm$core$Debug$log, 'update media error: ', s);
+						var _n25 = A2(elm$core$Debug$log, 'update media error: ', s);
 						return _Utils_Tuple2(
 							A2(author$project$Main$addProblem, model, author$project$Problems$CannotUpdateMedia),
 							elm$core$Platform$Cmd$none);
@@ -10171,7 +10254,7 @@ var author$project$Main$update = F2(
 				case 'Uploaded':
 					var result = msg.a;
 					if (result.$ === 'Ok') {
-						var _n31 = A2(elm$core$Debug$log, 'uploaded result: ', result);
+						var _n29 = A2(elm$core$Debug$log, 'uploaded result: ', result);
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -10179,7 +10262,7 @@ var author$project$Main$update = F2(
 							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 					} else {
 						var e = result.a;
-						var _n32 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n30 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
 				case 'UploadedImport':
@@ -10198,7 +10281,7 @@ var author$project$Main$update = F2(
 										importResult.media)),
 								importUploadStatus: author$project$Main$Ready
 							});
-						var _n34 = A2(elm$core$Debug$log, 'import result: ', importResult);
+						var _n32 = A2(elm$core$Debug$log, 'import result: ', importResult);
 						return _Utils_Tuple2(
 							newModel,
 							elm$core$Platform$Cmd$batch(
@@ -10209,7 +10292,7 @@ var author$project$Main$update = F2(
 									])));
 					} else {
 						var e = result.a;
-						var _n35 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n33 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(
 							A2(
 								author$project$Main$addProblem,
@@ -10244,8 +10327,8 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				case 'SwitchTab':
 					var tab = msg.a;
-					var _n36 = model.editor;
-					var mdEditor = _n36.b;
+					var _n34 = model.editor;
+					var mdEditor = _n34.b;
 					var newModel = _Utils_update(
 						model,
 						{
@@ -10270,8 +10353,8 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				case 'SwitchMarkdownEditor':
 					var editor = msg.a;
-					var _n37 = model.editor;
-					var tab = _n37.a;
+					var _n35 = model.editor;
+					var tab = _n35.a;
 					var newModel = _Utils_update(
 						model,
 						{
@@ -10288,7 +10371,7 @@ var author$project$Main$update = F2(
 						author$project$Exposition$objectByNameOrId,
 						elm$core$String$fromInt(obj.id),
 						model.exposition);
-					var _n38 = A2(elm$core$Debug$log, 'trying to insert:', foundObj);
+					var _n36 = A2(elm$core$Debug$log, 'trying to insert:', foundObj);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,

@@ -50,7 +50,6 @@ Luc:
 - licenses field
 - contentversion and problems
 - Check rendered html
-? Css userclass (big, small, medium etc), doesn't work in Preview or rendered HTML: solution: save exposition after mediaedit together with updatemedia in rcapi
 - Caption text not parsed:  ![caption]{media1}
 - display transcoding 
 
@@ -122,3 +121,4 @@ Luc:
 - Transcoding status type
 - auto save
 - Export (Pandoc calls) 
+? Css userclass (big, small, medium etc), doesn't work in Preview or rendered HTML: solution: save exposition after mediaedit together with updatemedia in rcapi

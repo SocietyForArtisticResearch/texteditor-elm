@@ -11,6 +11,7 @@ import Html exposing (Html, span)
 import Http
 import Json.Decode exposing (..)
 import Json.Encode as Encode
+import Licenses
 import Problems exposing (..)
 import Settings
 import Task
@@ -70,12 +71,12 @@ mkExposition html md media meta style title =
 
 
 type alias APIMediaEntry =
-    { id : Int, media : APIMedia, description : String, copyright : String, name : String }
+    { id : Int, media : APIMedia, description : String, copyright : String, name : String, license : Licenses.License }
 
 
-mkMediaEntry : Int -> APIMedia -> Maybe String -> Maybe String -> String -> APIMediaEntry
-mkMediaEntry id media description copyright name =
-    APIMediaEntry id media (Maybe.withDefault "" description) (Maybe.withDefault "" copyright) name
+mkMediaEntry : Int -> APIMedia -> Maybe String -> Maybe String -> String -> String -> APIMediaEntry
+mkMediaEntry id media description copyright name license =
+    APIMediaEntry id media (Maybe.withDefault "" description) (Maybe.withDefault "" copyright) name (Licenses.fromString license)
 
 
 type alias APIMedia =
@@ -121,12 +122,13 @@ apiExpositionMetadata =
 
 apiMediaEntry : Decoder APIMediaEntry
 apiMediaEntry =
-    map5 mkMediaEntry
+    map6 mkMediaEntry
         (field "id" int)
         (field "media" apiMedia)
         (maybe (field "description" string))
         (maybe (field "copyright" string))
         (field "name" string)
+        (field "license" string)
 
 
 apiMedia : Decoder APIMedia
@@ -230,6 +232,9 @@ mediaType f =
         "audio/aiff" ->
             Just MAudio
 
+        "audio/x-aiff" ->
+            Just MAudio
+
         "video/mp4" ->
             Just MVideo
 
@@ -293,7 +298,7 @@ updateMedia mediaObject expect =
                 [ Http.stringPart "name" mediaObject.name
                 , Http.stringPart "copyrightholder" (withDefault "copyright holder" mediaObject.copyright)
                 , Http.stringPart "description" mediaObject.description
-                , Http.stringPart "license" "all-rights-reserved"
+                , Http.stringPart "license" (Licenses.asString mediaObject.license)
                 ]
         , expect = expect
         , timeout = Nothing
@@ -610,6 +615,7 @@ toRCMediaObject researchId mediaEntry =
                 , name = mediaEntry.name
                 , description = mediaEntry.description
                 , copyright = mediaEntry.copyright
+                , license = mediaEntry.license
                 , caption = "" -- needd?
                 , version = 0 -- needed?
                 , mediaType = mtype

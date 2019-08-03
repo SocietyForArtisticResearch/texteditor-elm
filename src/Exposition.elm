@@ -4,6 +4,7 @@ import Dict
 import Html.Parser as HtmlParser
 import Html.String as Html
 import Html.String.Attributes as Attr
+import Licenses
 import Parser exposing ((|.), (|=))
 import Regex
 import Settings
@@ -162,6 +163,7 @@ type alias RCMediaObject =
     , name : String
     , description : String
     , copyright : String
+    , license : Licenses.License
     , caption : String
     , version : Int
     , mediaType : RCMediaType
