@@ -74,9 +74,14 @@ type alias APIMediaEntry =
     { id : Int, media : APIMedia, description : String, copyright : String, name : String, license : Licenses.License }
 
 
-mkMediaEntry : Int -> APIMedia -> Maybe String -> Maybe String -> String -> String -> APIMediaEntry
+mkMediaEntry : Int -> APIMedia -> Maybe String -> Maybe String -> String -> Maybe String -> APIMediaEntry
 mkMediaEntry id media description copyright name license =
-    APIMediaEntry id media (Maybe.withDefault "" description) (Maybe.withDefault "" copyright) name (Licenses.fromString license)
+    APIMediaEntry id
+        media
+        (Maybe.withDefault "" description)
+        (Maybe.withDefault "" copyright)
+        name
+        (Licenses.fromString (Maybe.withDefault "" license))
 
 
 type alias APIMedia =
@@ -128,7 +133,7 @@ apiMediaEntry =
         (maybe (field "description" string))
         (maybe (field "copyright" string))
         (field "name" string)
-        (field "license" string)
+        (maybe (field "license" string))
 
 
 apiMedia : Decoder APIMedia

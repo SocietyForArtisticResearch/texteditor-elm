@@ -9376,7 +9376,8 @@ var author$project$RCAPI$mkMediaEntry = F6(
 			A2(elm$core$Maybe$withDefault, '', description),
 			A2(elm$core$Maybe$withDefault, '', copyright),
 			name,
-			author$project$Licenses$fromString(license));
+			author$project$Licenses$fromString(
+				A2(elm$core$Maybe$withDefault, '', license)));
 	});
 var author$project$RCAPI$apiMediaEntry = A7(
 	elm$json$Json$Decode$map6,
@@ -9388,7 +9389,8 @@ var author$project$RCAPI$apiMediaEntry = A7(
 	elm$json$Json$Decode$maybe(
 		A2(elm$json$Json$Decode$field, 'copyright', elm$json$Json$Decode$string)),
 	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'license', elm$json$Json$Decode$string));
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'license', elm$json$Json$Decode$string)));
 var author$project$RCAPI$getMediaList = F2(
 	function (id, msg) {
 		return elm$http$Http$get(
