@@ -503,6 +503,9 @@ update msg model =
                                 addMediaUserClasses expositionWithMedia model.mediaClassesDict
 
                         _ =
+                            Debug.log "model before loading" model
+
+                        _ =
                             Debug.log "loaded exposition with media: " expositionWithClasses
                     in
                     ( { modelWithProblems
