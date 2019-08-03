@@ -560,6 +560,7 @@ update msg model =
                                             ( viewStatus, Just ( objFromDialog, objInModel.id ), Just viewObjectState )
                                         , exposition =
                                             Exposition.replaceObject objFromDialog model.exposition
+                                        , mediaClassesDict = model.mediaClassesDict |> Dict.update objFromDialog.id (Maybe.map (\_ -> objFromDialog.userClass))
                                     }
                             in
                             update (SaveMediaEdit objFromDialog) newModel

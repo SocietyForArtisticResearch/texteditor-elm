@@ -10031,6 +10031,14 @@ var author$project$Main$update = F2(
 								model,
 								{
 									exposition: A2(author$project$Exposition$replaceObject, objFromDialog, model.exposition),
+									mediaClassesDict: A3(
+										elm$core$Dict$update,
+										objFromDialog.id,
+										elm$core$Maybe$map(
+											function (_n24) {
+												return objFromDialog.userClass;
+											}),
+										model.mediaClassesDict),
 									mediaDialog: _Utils_Tuple3(
 										viewStatus,
 										elm$core$Maybe$Just(
@@ -10058,7 +10066,7 @@ var author$project$Main$update = F2(
 					var result = msg.a;
 					if (result.$ === 'Ok') {
 						var s = result.a;
-						var _n25 = A2(elm$core$Debug$log, 'saved media result: ', s);
+						var _n26 = A2(elm$core$Debug$log, 'saved media result: ', s);
 						var $temp$msg = author$project$Main$SaveExposition,
 							$temp$model = model;
 						msg = $temp$msg;
@@ -10066,7 +10074,7 @@ var author$project$Main$update = F2(
 						continue update;
 					} else {
 						var s = result.a;
-						var _n26 = A2(elm$core$Debug$log, 'update media error: ', s);
+						var _n27 = A2(elm$core$Debug$log, 'update media error: ', s);
 						return _Utils_Tuple2(
 							A2(author$project$Main$addProblem, model, author$project$Problems$CannotUpdateMedia),
 							elm$core$Platform$Cmd$none);
@@ -10163,7 +10171,7 @@ var author$project$Main$update = F2(
 				case 'Uploaded':
 					var result = msg.a;
 					if (result.$ === 'Ok') {
-						var _n30 = A2(elm$core$Debug$log, 'uploaded result: ', result);
+						var _n31 = A2(elm$core$Debug$log, 'uploaded result: ', result);
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -10171,7 +10179,7 @@ var author$project$Main$update = F2(
 							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 					} else {
 						var e = result.a;
-						var _n31 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n32 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
 				case 'UploadedImport':
@@ -10190,7 +10198,7 @@ var author$project$Main$update = F2(
 										importResult.media)),
 								importUploadStatus: author$project$Main$Ready
 							});
-						var _n33 = A2(elm$core$Debug$log, 'import result: ', importResult);
+						var _n34 = A2(elm$core$Debug$log, 'import result: ', importResult);
 						return _Utils_Tuple2(
 							newModel,
 							elm$core$Platform$Cmd$batch(
@@ -10201,7 +10209,7 @@ var author$project$Main$update = F2(
 									])));
 					} else {
 						var e = result.a;
-						var _n34 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n35 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(
 							A2(
 								author$project$Main$addProblem,
@@ -10236,8 +10244,8 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				case 'SwitchTab':
 					var tab = msg.a;
-					var _n35 = model.editor;
-					var mdEditor = _n35.b;
+					var _n36 = model.editor;
+					var mdEditor = _n36.b;
 					var newModel = _Utils_update(
 						model,
 						{
@@ -10262,8 +10270,8 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				case 'SwitchMarkdownEditor':
 					var editor = msg.a;
-					var _n36 = model.editor;
-					var tab = _n36.a;
+					var _n37 = model.editor;
+					var tab = _n37.a;
 					var newModel = _Utils_update(
 						model,
 						{
@@ -10280,7 +10288,7 @@ var author$project$Main$update = F2(
 						author$project$Exposition$objectByNameOrId,
 						elm$core$String$fromInt(obj.id),
 						model.exposition);
-					var _n37 = A2(elm$core$Debug$log, 'trying to insert:', foundObj);
+					var _n38 = A2(elm$core$Debug$log, 'trying to insert:', foundObj);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
