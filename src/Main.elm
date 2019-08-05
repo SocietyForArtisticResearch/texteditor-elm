@@ -19,6 +19,7 @@ import Html.Events exposing (on, onCheck, onClick, onInput)
 import Http
 import Json.Decode as D
 import Json.Encode as E
+import Licenses
 import Problems
 import RCAPI
 import RCMediaEdit
@@ -287,6 +288,9 @@ makeMediaEditFun obj objId field input =
 
         RCMediaEdit.Copyright ->
             MediaEdit ( String.fromInt objId, { obj | copyright = input } )
+
+        RCMediaEdit.LicenseField ->
+            MediaEdit ( String.fromInt objId, { obj | license = Licenses.fromString input } )
 
 
 makeTableMessages : RCMediaList.TableMessages Msg
