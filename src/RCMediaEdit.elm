@@ -86,7 +86,7 @@ viewClassesPicker id classList currentSelection editMessage =
 
 
 
--- TODO TODO
+
 
 
 viewLicensePicker : String -> List License -> License -> (String -> msg) -> Html msg
@@ -249,10 +249,10 @@ viewBody objectState editTool objectInEdit =
             , Form.group []
                 [ Form.label [ for "classPicker" ] [ text "Display size and location" ]
                 , viewClassesPicker "classPicker" cssClasses currentClass (editTool UserClass)
-                , viewLicensePicker "licensePicker" allLicenses currentLicense (editTool LicenseField)
                 ]
             , viewTextAreaWithLabel descriptionProps
             , viewInputWithLabel copyrightProps
+            , viewLicensePicker "licensePicker" allLicenses currentLicense (editTool LicenseField)
             ]
         ]
 

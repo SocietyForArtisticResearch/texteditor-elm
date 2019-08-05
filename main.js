@@ -12384,16 +12384,16 @@ var author$project$RCMediaEdit$viewBody = F3(
 									'classPicker',
 									author$project$RCMediaEdit$cssClasses,
 									currentClass,
-									editTool(author$project$RCMediaEdit$UserClass)),
-									A4(
-									author$project$RCMediaEdit$viewLicensePicker,
-									'licensePicker',
-									author$project$Licenses$allLicenses,
-									currentLicense,
-									editTool(author$project$RCMediaEdit$LicenseField))
+									editTool(author$project$RCMediaEdit$UserClass))
 								])),
 							author$project$RCMediaEdit$viewTextAreaWithLabel(descriptionProps),
-							author$project$RCMediaEdit$viewInputWithLabel(copyrightProps)
+							author$project$RCMediaEdit$viewInputWithLabel(copyrightProps),
+							A4(
+							author$project$RCMediaEdit$viewLicensePicker,
+							'licensePicker',
+							author$project$Licenses$allLicenses,
+							currentLicense,
+							editTool(author$project$RCMediaEdit$LicenseField))
 						]))
 				]));
 	});
