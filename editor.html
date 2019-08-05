@@ -206,7 +206,8 @@
     cmMarkdown.lineWrapping = true;
 
     var cmStyle = CodeMirror.fromTextArea(document.getElementById("cm-style"), {
-        mode: "css"
+        mode: "css",
+        lineWrapping: true
     });
 
 
@@ -215,6 +216,7 @@
             viewportheight = window.innerHeight
     }
     cmStyle.setSize(viewportwidth / 2.0, null);
+
 
     // cmMarkdown.setSize(null, "480px"); // fill available vertical space ?
     // cmStyle.setSize(null, "480px");
