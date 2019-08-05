@@ -137,7 +137,8 @@
 
         @media only screen and (min-width: 600px) {
             .CodeMirror {
-                /* max-width: 50vw; */
+                max-width: 50vw;
+                width: 50vw;
                 /* this should prevent codemirror from growing out of the page */
             }
         }
@@ -207,6 +208,13 @@
     var cmStyle = CodeMirror.fromTextArea(document.getElementById("cm-style"), {
         mode: "css"
     });
+
+
+    if (typeof window.innerWidth != 'undefined') {
+        viewportwidth = window.innerWidth,
+            viewportheight = window.innerHeight
+    }
+    cmStyle.setSize(viewportwidth / 2.0, null);
 
     // cmMarkdown.setSize(null, "480px"); // fill available vertical space ?
     // cmStyle.setSize(null, "480px");
