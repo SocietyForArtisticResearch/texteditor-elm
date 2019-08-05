@@ -348,6 +348,7 @@ type alias RCMediaObjectValidation =
     , description : Result String String
     , copyright : Result String String
     , userClass : Result String String
+    , license : Result String String
     }
 
 
@@ -361,11 +362,13 @@ type alias RCMediaObjectViewState =
 validateMediaObject : RCExposition -> RCMediaObject -> RCMediaObject -> RCMediaObjectViewState
 validateMediaObject exp objInModel objInEdit =
     let
+        validation : RCMediaObjectValidation
         validation =
             { name = validateName exp objInModel objInEdit.name
             , description = Ok objInEdit.description
             , copyright = Ok objInEdit.copyright
             , userClass = Ok objInEdit.userClass
+            , license = Ok <| Licenses.asString objInEdit.license
             }
     in
     { validation = validation

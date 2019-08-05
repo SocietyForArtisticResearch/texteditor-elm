@@ -1,4 +1,4 @@
-module Licenses exposing (License(..), asString, fromString)
+module Licenses exposing (License(..), asString, fromString, getDescription, allLicenses)
 
 import Util
 
@@ -25,6 +25,11 @@ licensesDict =
     ]
 
 
+allLicenses : List License
+allLicenses =
+    List.map (\( license, _ ) -> license) licensesDict
+
+
 asString : License -> String
 asString l =
     Maybe.withDefault "all-rights-reserved" <| Maybe.map Util.snd <| Util.find (\( lic, _ ) -> lic == l) licensesDict
@@ -33,3 +38,28 @@ asString l =
 fromString : String -> License
 fromString s =
     Maybe.withDefault AllRightsReserved <| Maybe.map Util.fst <| Util.find (\( _, str ) -> str == s) licensesDict
+
+
+getDescription : License -> String
+getDescription license =
+    case license of
+        AllRightsReserved ->
+            "All rights reserved"
+
+        CCBY ->
+            "CC BY"
+
+        CCBYSA ->
+            "CC BY SA"
+
+        CCBYNC ->
+            "CC BY NC"
+
+        CCBYNCSA ->
+            "CC BY NC SA"
+
+        CCBYNCND ->
+            "CC BY NC ND"
+
+        PublicDomain ->
+            "Public Domain"
