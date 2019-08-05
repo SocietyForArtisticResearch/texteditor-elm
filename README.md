@@ -28,20 +28,15 @@ be made outside of elm.
 # Todo
 
 General:
-- Licenses
+- If a media is used twice or more, the DOM gets confused.
+
 - Copyright should be obligatory
 - Markdown-it ?
 - How do we get the author's name?
 - What to do when people are logged out
-- how often render?
-- Uploading Audio doesn't work (does not appear in list)
-- Mime types:
-  * audio/x-aiff
 
 Casper:
 
-- fix editor height (left and right sections should scroll independently)
-- percentage when uploading
 - display title of exposition somewhere
 - warnings when closing/reloading
 
