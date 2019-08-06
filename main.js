@@ -10434,6 +10434,27 @@ var author$project$Main$UploadMediaFileSelect = {$: 'UploadMediaFileSelect'};
 var author$project$Main$InsertAtCursor = function (a) {
 	return {$: 'InsertAtCursor', a: a};
 };
+var elm$html$Html$span = _VirtualDom_node('span');
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$string(string));
+	});
+var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
+var author$project$Main$separator = A2(
+	elm$html$Html$span,
+	_List_fromArray(
+		[
+			elm$html$Html$Attributes$class('separator')
+		]),
+	_List_fromArray(
+		[
+			elm$html$Html$text('|')
+		]));
 var author$project$Settings$Bold = {$: 'Bold'};
 var author$project$Settings$Bullet = {$: 'Bullet'};
 var author$project$Settings$H1 = {$: 'H1'};
@@ -10478,14 +10499,6 @@ var author$project$Settings$baseUrl = 'elm-editor/';
 var author$project$Settings$iconUrl = author$project$Settings$baseUrl + 'lib/icons/';
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$img = _VirtualDom_node('img');
-var elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$string(string));
-	});
-var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
 var elm$html$Html$Attributes$height = function (n) {
 	return A2(
 		_VirtualDom_attribute,
@@ -10561,8 +10574,6 @@ var elm$core$List$append = F2(
 			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
 		}
 	});
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -10825,6 +10836,7 @@ var author$project$Main$editorToolbar = _List_fromArray(
 		false,
 		_List_Nil,
 		false),
+		author$project$Main$separator,
 		A7(
 		author$project$View$mkButton,
 		author$project$View$BoldIcon,
@@ -10845,6 +10857,7 @@ var author$project$Main$editorToolbar = _List_fromArray(
 		false,
 		_List_Nil,
 		false),
+		author$project$Main$separator,
 		A7(
 		author$project$View$mkButton,
 		author$project$View$ListIcon,
@@ -11025,7 +11038,6 @@ var rundis$elm_bootstrap$Bootstrap$Internal$Role$Info = {$: 'Info'};
 var rundis$elm_bootstrap$Bootstrap$Alert$info = function (conf) {
 	return A2(rundis$elm_bootstrap$Bootstrap$Alert$role, rundis$elm_bootstrap$Bootstrap$Internal$Role$Info, conf);
 };
-var elm$html$Html$span = _VirtualDom_node('span');
 var elm$virtual_dom$VirtualDom$attribute = F2(
 	function (key, value) {
 		return A2(

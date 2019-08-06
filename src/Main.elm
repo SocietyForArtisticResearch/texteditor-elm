@@ -888,13 +888,21 @@ viewLink name url =
         [ text name ]
 
 
+separator : Html Msg
+separator =
+    span
+      [ class "separator" ]
+      [ text "|" ]
+            
 editorToolbar : List (Html Msg)
 editorToolbar =
     [ mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H1)) "H1" False [] False
     , mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H2)) "H2" False [] False
     , mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H3)) "H3" False [] False
+    , separator
     , mkButton BoldIcon False (InsertAtCursor (Settings.snippet Settings.Bold)) "" False [] False
     , mkButton ItalicIcon False (InsertAtCursor (Settings.snippet Settings.Italic)) "" False [] False
+    , separator
     , mkButton ListIcon False (InsertAtCursor (Settings.snippet Settings.Bullet)) "" False [] False
     , mkButton NumberedIcon False (InsertAtCursor (Settings.snippet Settings.Numbered)) "" False [] False
     , mkButton LinkIcon False (InsertAtCursor (Settings.snippet Settings.Link)) "" False [] False
