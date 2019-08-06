@@ -9230,7 +9230,9 @@ var author$project$Problems$CannotLoadMedia = function (a) {
 };
 var author$project$Problems$CannotSave = {$: 'CannotSave'};
 var author$project$Problems$CannotUpdateMedia = {$: 'CannotUpdateMedia'};
-var author$project$Problems$NoMediaWithNameOrId = {$: 'NoMediaWithNameOrId'};
+var author$project$Problems$NoMediaWithNameOrId = function (a) {
+	return {$: 'NoMediaWithNameOrId', a: a};
+};
 var author$project$Problems$UnkownUploadFileType = function (a) {
 	return {$: 'UnkownUploadFileType', a: a};
 };
@@ -10031,7 +10033,10 @@ var author$project$Main$update = F2(
 								}),
 							elm$core$Platform$Cmd$none);
 					} else {
-						var modelWithProblem = A2(author$project$Main$addProblem, model, author$project$Problems$NoMediaWithNameOrId);
+						var modelWithProblem = A2(
+							author$project$Main$addProblem,
+							model,
+							author$project$Problems$NoMediaWithNameOrId(mediaNameOrId));
 						var _n6 = A2(elm$core$Debug$log, 'no object', model);
 						return _Utils_Tuple2(
 							_Utils_update(
@@ -10163,7 +10168,10 @@ var author$project$Main$update = F2(
 					var objFromDialog = _n18.b;
 					var _n19 = A2(author$project$Exposition$objectByNameOrId, objInModelName, model.exposition);
 					if (_n19.$ === 'Nothing') {
-						var modelWithProblem = A2(author$project$Main$addProblem, model, author$project$Problems$NoMediaWithNameOrId);
+						var modelWithProblem = A2(
+							author$project$Main$addProblem,
+							model,
+							author$project$Problems$NoMediaWithNameOrId(objInModelName));
 						return _Utils_Tuple2(modelWithProblem, elm$core$Platform$Cmd$none);
 					} else {
 						var objInModel = _n19.a;
@@ -11046,7 +11054,8 @@ var author$project$Problems$asString = function (problem) {
 			var name = problem.a;
 			return 'cannot load media ' + name;
 		case 'NoMediaWithNameOrId':
-			return 'media doesn\'t exist';
+			var name = problem.a;
+			return 'media \"' + (name + '\" cannot be found');
 		case 'CannotSave':
 			return 'saving error';
 		case 'CannotUpdateMedia':

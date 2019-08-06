@@ -8,7 +8,7 @@ import Http
 type Problem
     = WrongExpositionUrl
     | CannotLoadMedia String
-    | NoMediaWithNameOrId
+    | NoMediaWithNameOrId String
     | CannotSave
     | CannotUpdateMedia
     | CannotFindMediaFieldInJson
@@ -43,8 +43,8 @@ asString problem =
         CannotLoadMedia name ->
             "cannot load media " ++ name
 
-        NoMediaWithNameOrId ->
-            "media doesn't exist"
+        NoMediaWithNameOrId name ->
+            "media \"" ++ name ++ "\" cannot be found"
 
         CannotSave ->
             "saving error"

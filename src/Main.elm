@@ -406,7 +406,7 @@ update msg model =
                 Nothing ->
                     let
                         modelWithProblem =
-                            addProblem model Problems.NoMediaWithNameOrId
+                            addProblem model <| Problems.NoMediaWithNameOrId mediaNameOrId
                     in
                     let
                         _ =
@@ -533,7 +533,7 @@ update msg model =
                 Nothing ->
                     let
                         modelWithProblem =
-                            addProblem model Problems.NoMediaWithNameOrId
+                            addProblem model <| Problems.NoMediaWithNameOrId objInModelName
                     in
                     ( modelWithProblem, Cmd.none )
 
@@ -772,9 +772,10 @@ update msg model =
 
                 Nothing ->
                     let
-                        _ = Debug.log "not inserted, because object not found"
+                        _ =
+                            Debug.log "not inserted, because object not found"
                     in
-                        Cmd.none
+                    Cmd.none
             )
 
         InsertAtCursor insertTuple ->
