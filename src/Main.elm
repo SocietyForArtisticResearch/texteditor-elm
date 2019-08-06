@@ -1002,7 +1002,8 @@ view model =
                 , ( "markdown", DownloadExport RCAPI.Md )
                 ]
             ]
-        , div [ class "toolbar" ] <|
+        , div [ class "toolbar"
+              , class "markdown-toolbar" ] <|
             List.append
                 editorToolbar
                 [ editorCheckbox ]
