@@ -986,7 +986,7 @@ view model =
         , mediaDialogHtml
         , confirmDialogHtml
         , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
-        , div [ class "btn-toolbar", attribute "role" "toolbar" ]
+        , div [ class "btn-toolbar", class "import-export-toolbar" , attribute "role" "toolbar" ]
             [ viewUpload UploadCloud True UploadMediaFileSelect "Upload media" model.mediaUploadStatus
             , mkButton ArrowDown
                 True
