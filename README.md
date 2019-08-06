@@ -32,6 +32,8 @@ General:
 - Copyright should be obligatory
 - Markdown-it ?
 - What to do when people are logged out
+- Saving license
+- Highlighting caption text and onclick creates problem
 
 Casper:
 
@@ -41,13 +43,10 @@ Casper:
 
 Luc:
 
-- contentversion and problems
-- Check rendered html
-- Caption text not parsed:  ![caption]{media1}
-- display transcoding 
+- manage contentversion and problems
+- display somthing while transcoding 
+- check captions display etc
 
-
-g
 ## To test
 - tables?
 - alignment
@@ -119,3 +118,5 @@ g
 - Mime types:
   * audio/x-aiff
 - If a media is used twice or more, the DOM gets confused.
+- Caption text not parsed:  ![caption]{media1}
+- Check rendered html
