@@ -499,7 +499,7 @@ parseToolCaptions md exp =
             Maybe.withDefault Regex.never <| Regex.fromString "!\\[([^\\]]*)\\]{([^}]*)}"
 
         matches =
-            Regex.find r md
+            List.map (\m -> m.submatches) <| Regex.find r md
 
         _ =
             Debug.log "caption matches: " matches
