@@ -10916,7 +10916,8 @@ var author$project$Main$editorToolbar = _List_fromArray(
 		'',
 		false,
 		_List_Nil,
-		false)
+		false),
+		author$project$Main$separator
 	]);
 var author$project$Main$MediaEdit = function (a) {
 	return {$: 'MediaEdit', a: a};
