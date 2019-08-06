@@ -28,15 +28,10 @@ be made outside of elm.
 # Todo
 
 General:
-- Licenses
+- Licenses, not sure if backend correctly returns the field
 - Copyright should be obligatory
 - Markdown-it ?
-- How do we get the author's name?
 - What to do when people are logged out
-- how often render?
-- Uploading Audio doesn't work (does not appear in list)
-- Mime types:
-  * audio/x-aiff
 
 Casper:
 
@@ -44,17 +39,17 @@ Casper:
 - percentage when uploading
 - display title of exposition somewhere
 - warnings when closing/reloading
+- license edit field
 
 Luc:
 
-- licenses field
 - contentversion and problems
 - Check rendered html
 - Caption text not parsed:  ![caption]{media1}
 - display transcoding 
 
 
-
+g
 ## To test
 - tables?
 - alignment
@@ -122,3 +117,6 @@ Luc:
 - auto save
 - Export (Pandoc calls) 
 ? Css userclass (big, small, medium etc), doesn't work in Preview or rendered HTML: solution: save exposition after mediaedit together with updatemedia in rcapi
+- licenses field
+- Mime types:
+  * audio/x-aiff
