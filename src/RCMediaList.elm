@@ -53,22 +53,23 @@ view objectList messages =
                             Button.button
                                 [ Button.small
                                 , Button.outlineSecondary
-                                , Button.attrs [ onClick <| messages.editObject (String.fromInt object.id) ]
+                                , Button.attrs [ Spacing.ml1, onClick <| messages.editObject (String.fromInt object.id) ]
                                 ]
                                 [ text "edit" ]
 
-                        -- insertButton =
-                        --     Button.button
-                        --         [ Button.small
-                        --         , Button.outlineSuccess
-                        --         , Button.attrs [ Spacing.ml1, onClick <| messages.insertObject object ]
-                        --         ]
-                        --         [ text "insert" ]
+                        insertButton =
+                            Button.button
+                                [ Button.small
+                                , Button.outlineSuccess
+                                , Button.attrs [ Spacing.ml1, onClick <| messages.insertObject object ]
+                                ]
+                                [ text "insert" ]
+                                    
                         removeButton =
                             Button.button
                                 [ Button.small
                                 , Button.outlineDanger
-                                , Button.attrs [ Spacing.ml1, onClick <| messages.deleteObject object ]
+                                , Button.attrs [ onClick <| messages.deleteObject object ]
                                 ]
                                 [ text "x" ]
                     in
@@ -76,7 +77,7 @@ view objectList messages =
                         [ Table.td [] [ viewThumbnail object ]
                         , Table.td [] [ text <| String.fromInt object.id ]
                         , Table.td [] [ text object.name ]
-                        , Table.td [] [ editButton, removeButton ]
+                        , Table.td [] [ insertButton, editButton, removeButton ]
                         ]
 
                 rows =

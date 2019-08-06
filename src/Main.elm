@@ -911,6 +911,7 @@ editorToolbar =
     , mkButton NumberedIcon False (InsertAtCursor (Settings.snippet Settings.Numbered)) "" False [] False
     , mkButton LinkIcon False (InsertAtCursor (Settings.snippet Settings.Link)) "" False [] False
     , mkButton QuoteIcon False (InsertAtCursor (Settings.snippet Settings.Quote)) "" False [] False
+    , separator
     ]
 
 
