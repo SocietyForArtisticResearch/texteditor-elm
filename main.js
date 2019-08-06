@@ -14483,7 +14483,8 @@ var author$project$Main$view = function (model) {
 				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$class('toolbar')
+						elm$html$Html$Attributes$class('toolbar'),
+						elm$html$Html$Attributes$class('markdown-toolbar')
 					]),
 				A2(
 					elm$core$List$append,
