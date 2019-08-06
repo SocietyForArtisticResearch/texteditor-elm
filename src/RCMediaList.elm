@@ -53,7 +53,7 @@ view objectList messages =
                             Button.button
                                 [ Button.small
                                 , Button.outlineSecondary
-                                , Button.attrs [ onClick <| messages.editObject (String.fromInt object.id) ]
+                                , Button.attrs [ Spacing.ml1, onClick <| messages.editObject (String.fromInt object.id) ]
                                 ]
                                 [ text "edit" ]
 
@@ -69,7 +69,7 @@ view objectList messages =
                             Button.button
                                 [ Button.small
                                 , Button.outlineDanger
-                                , Button.attrs [ Spacing.ml1, onClick <| messages.deleteObject object ]
+                                , Button.attrs [ onClick <| messages.deleteObject object ]
                                 ]
                                 [ text "x" ]
                     in

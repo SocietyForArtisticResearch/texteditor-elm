@@ -13543,7 +13543,6 @@ var author$project$RCMediaList$view = F2(
 							rundis$elm_bootstrap$Bootstrap$Button$attrs(
 							_List_fromArray(
 								[
-									rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1,
 									elm$html$Html$Events$onClick(
 									messages.deleteObject(object))
 								]))
@@ -13579,6 +13578,7 @@ var author$project$RCMediaList$view = F2(
 							rundis$elm_bootstrap$Bootstrap$Button$attrs(
 							_List_fromArray(
 								[
+									rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1,
 									elm$html$Html$Events$onClick(
 									messages.editObject(
 										elm$core$String$fromInt(object.id)))
