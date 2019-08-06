@@ -14446,6 +14446,7 @@ var author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						elm$html$Html$Attributes$class('btn-toolbar'),
+						elm$html$Html$Attributes$class('import-export-toolbar'),
 						A2(elm$html$Html$Attributes$attribute, 'role', 'toolbar')
 					]),
 				_List_fromArray(
