@@ -231,6 +231,20 @@ removeObjectWithID id exp =
     { exp | media = List.filter (\m -> m.id /= id) exp.media }
 
 
+updateCaption : String -> String -> RCExposition -> RCExposition
+updateCaption name cap exp =
+    let
+        ob =
+            objectByNameOrId name exp
+    in
+    case Maybe.map (\o -> replaceObject { o | caption = cap } exp) ob of
+        Just e ->
+            e
+
+        Nothing ->
+            exp
+
+
 replaceObject : RCMediaObject -> RCExposition -> RCExposition
 replaceObject obj exp =
     { exp
@@ -500,18 +514,25 @@ parseToolCaptions md exp =
 
         matches =
             List.map (\m -> m.submatches) <| Regex.find r md
-
-        _ =
-            Debug.log "caption matches: " matches
     in
-    exp
+    List.foldr
+        (\m e ->
+            case m of
+                [ Just cap, Just ob ] ->
+                    updateCaption ob cap e
+
+                _ ->
+                    e
+        )
+        exp
+        matches
 
 
 insertToolHtml : String -> RCExposition -> String
 insertToolHtml md exp =
     let
         r =
-            Regex.fromString "!{([^}]*)}"
+            Regex.fromString "\\[[^\\]]*\\]!{([^}]*)}"
     in
     case r of
         Nothing ->

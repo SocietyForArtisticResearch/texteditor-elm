@@ -8354,7 +8354,7 @@ var zwilias$elm_html_string$Html$String$toString = function (indent) {
 };
 var author$project$Exposition$insertToolHtml = F2(
 	function (md, exp) {
-		var r = elm$regex$Regex$fromString('!{([^}]*)}');
+		var r = elm$regex$Regex$fromString('\\[[^\\]]*\\]!{([^}]*)}');
 		if (r.$ === 'Nothing') {
 			return md;
 		} else {
@@ -8767,6 +8767,27 @@ var author$project$Exposition$mkMediaName = function (exp) {
 		imageNames);
 	return 'media' + elm$core$String$fromInt(maxImage + 1);
 };
+var author$project$Exposition$updateCaption = F3(
+	function (name, cap, exp) {
+		var ob = A2(author$project$Exposition$objectByNameOrId, name, exp);
+		var _n0 = A2(
+			elm$core$Maybe$map,
+			function (o) {
+				return A2(
+					author$project$Exposition$replaceObject,
+					_Utils_update(
+						o,
+						{caption: cap}),
+					exp);
+			},
+			ob);
+		if (_n0.$ === 'Just') {
+			var e = _n0.a;
+			return e;
+		} else {
+			return exp;
+		}
+	});
 var elm$regex$Regex$find = _Regex_findAtMost(_Regex_infinity);
 var elm$regex$Regex$never = _Regex_never;
 var author$project$Exposition$parseToolCaptions = F2(
@@ -8781,8 +8802,21 @@ var author$project$Exposition$parseToolCaptions = F2(
 				return m.submatches;
 			},
 			A2(elm$regex$Regex$find, r, md));
-		var _n0 = A2(elm$core$Debug$log, 'caption matches: ', matches);
-		return exp;
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (m, e) {
+					if ((((m.b && (m.a.$ === 'Just')) && m.b.b) && (m.b.a.$ === 'Just')) && (!m.b.b.b)) {
+						var cap = m.a.a;
+						var _n1 = m.b;
+						var ob = _n1.a.a;
+						return A3(author$project$Exposition$updateCaption, ob, cap, e);
+					} else {
+						return e;
+					}
+				}),
+			exp,
+			matches);
 	});
 var author$project$Exposition$removeObjectWithID = F2(
 	function (id, exp) {
