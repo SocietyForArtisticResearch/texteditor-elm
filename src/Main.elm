@@ -352,8 +352,11 @@ update msg model =
             of
                 ( Ok gen, Ok mdcontent, Ok stylecontent ) ->
                     let
+                        expoCaptions =
+                            Exposition.parseToolCaptions mdcontent model.exposition
+
                         newHtml =
-                            Exposition.insertToolHtml mdcontent model.exposition
+                            Exposition.insertToolHtml mdcontent expoCaptions
                     in
                     ( { model
                         | editGeneration = gen
@@ -894,9 +897,10 @@ viewLink name url =
 separator : Html Msg
 separator =
     span
-      [ class "separator" ]
-      [ text "|" ]
-            
+        [ class "separator" ]
+        [ text "|" ]
+
+
 editorToolbar : List (Html Msg)
 editorToolbar =
     [ mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H1)) "H1" False [] False
@@ -990,7 +994,7 @@ view model =
         , mediaDialogHtml
         , confirmDialogHtml
         , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
-        , div [ class "btn-toolbar", class "import-export-toolbar" , attribute "role" "toolbar" ]
+        , div [ class "btn-toolbar", class "import-export-toolbar", attribute "role" "toolbar" ]
             [ viewUpload UploadCloud True UploadMediaFileSelect "Upload media" model.mediaUploadStatus
             , mkButton ArrowDown
                 True
@@ -1014,8 +1018,11 @@ view model =
                 , ( "markdown", DownloadExport RCAPI.Md )
                 ]
             ]
-        , div [ class "toolbar"
-              , class "markdown-toolbar" ] <|
+        , div
+            [ class "toolbar"
+            , class "markdown-toolbar"
+            ]
+          <|
             List.append
                 editorToolbar
                 [ editorCheckbox ]

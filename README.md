@@ -28,8 +28,7 @@ be made outside of elm.
 # Todo
 
 General:
-
-- If a media is used twice or more, the DOM gets confused.
+	
 - Copyright should be obligatory
 - Markdown-it ?
 - What to do when people are logged out
@@ -119,3 +118,4 @@ g
 - licenses field
 - Mime types:
   * audio/x-aiff
+- If a media is used twice or more, the DOM gets confused.

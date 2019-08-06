@@ -8767,6 +8767,23 @@ var author$project$Exposition$mkMediaName = function (exp) {
 		imageNames);
 	return 'media' + elm$core$String$fromInt(maxImage + 1);
 };
+var elm$regex$Regex$find = _Regex_findAtMost(_Regex_infinity);
+var elm$regex$Regex$never = _Regex_never;
+var author$project$Exposition$parseToolCaptions = F2(
+	function (md, exp) {
+		var r = A2(
+			elm$core$Maybe$withDefault,
+			elm$regex$Regex$never,
+			elm$regex$Regex$fromString('!\\[([^\\]]*)\\]{([^}]*)}'));
+		var matches = A2(
+			elm$core$List$map,
+			function (m) {
+				return m.submatches;
+			},
+			A2(elm$regex$Regex$find, r, md));
+		var _n0 = A2(elm$core$Debug$log, 'caption matches: ', matches);
+		return exp;
+	});
 var author$project$Exposition$removeObjectWithID = F2(
 	function (id, exp) {
 		return _Utils_update(
@@ -9924,7 +9941,8 @@ var author$project$Main$update = F2(
 						var gen = _n2.a.a;
 						var mdcontent = _n2.b.a;
 						var stylecontent = _n2.c.a;
-						var newHtml = A2(author$project$Exposition$insertToolHtml, mdcontent, model.exposition);
+						var expoCaptions = A2(author$project$Exposition$parseToolCaptions, mdcontent, model.exposition);
+						var newHtml = A2(author$project$Exposition$insertToolHtml, mdcontent, expoCaptions);
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
