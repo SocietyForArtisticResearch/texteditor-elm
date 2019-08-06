@@ -8904,11 +8904,71 @@ var author$project$Exposition$validateName = F3(
 			return (_Utils_eq(obj.name, newName) || (!A2(elm$core$List$member, newName, mediaNames))) ? elm$core$Result$Ok(newName) : elm$core$Result$Err('Another media object already has this name');
 		}
 	});
+var author$project$Licenses$AllRightsReserved = {$: 'AllRightsReserved'};
+var author$project$Licenses$CCBY = {$: 'CCBY'};
+var author$project$Licenses$CCBYNC = {$: 'CCBYNC'};
+var author$project$Licenses$CCBYNCND = {$: 'CCBYNCND'};
+var author$project$Licenses$CCBYNCSA = {$: 'CCBYNCSA'};
+var author$project$Licenses$CCBYSA = {$: 'CCBYSA'};
+var author$project$Licenses$PublicDomain = {$: 'PublicDomain'};
+var author$project$Licenses$licensesDict = _List_fromArray(
+	[
+		_Utils_Tuple2(author$project$Licenses$AllRightsReserved, 'all-rights-reserved'),
+		_Utils_Tuple2(author$project$Licenses$CCBY, 'cc-by'),
+		_Utils_Tuple2(author$project$Licenses$CCBYSA, 'cc-by-sa'),
+		_Utils_Tuple2(author$project$Licenses$CCBYNC, 'cc-by-nc'),
+		_Utils_Tuple2(author$project$Licenses$CCBYNCSA, 'cc-by-nc-sa'),
+		_Utils_Tuple2(author$project$Licenses$CCBYNCND, 'cc-by-nc-nd'),
+		_Utils_Tuple2(author$project$Licenses$PublicDomain, 'public-domain')
+	]);
+var author$project$Util$find = F2(
+	function (predicate, list) {
+		find:
+		while (true) {
+			if (!list.b) {
+				return elm$core$Maybe$Nothing;
+			} else {
+				var first = list.a;
+				var rest = list.b;
+				if (predicate(first)) {
+					return elm$core$Maybe$Just(first);
+				} else {
+					var $temp$predicate = predicate,
+						$temp$list = rest;
+					predicate = $temp$predicate;
+					list = $temp$list;
+					continue find;
+				}
+			}
+		}
+	});
+var author$project$Util$snd = function (_n0) {
+	var a = _n0.a;
+	var b = _n0.b;
+	return b;
+};
+var author$project$Licenses$asString = function (l) {
+	return A2(
+		elm$core$Maybe$withDefault,
+		'all-rights-reserved',
+		A2(
+			elm$core$Maybe$map,
+			author$project$Util$snd,
+			A2(
+				author$project$Util$find,
+				function (_n0) {
+					var lic = _n0.a;
+					return _Utils_eq(lic, l);
+				},
+				author$project$Licenses$licensesDict)));
+};
 var author$project$Exposition$validateMediaObject = F3(
 	function (exp, objInModel, objInEdit) {
 		var validation = {
 			copyright: elm$core$Result$Ok(objInEdit.copyright),
 			description: elm$core$Result$Ok(objInEdit.description),
+			license: elm$core$Result$Ok(
+				author$project$Licenses$asString(objInEdit.license)),
 			name: A3(author$project$Exposition$validateName, exp, objInModel, objInEdit.name),
 			userClass: elm$core$Result$Ok(objInEdit.userClass)
 		};
@@ -9305,44 +9365,6 @@ var author$project$RCAPI$apiMedia = A5(
 		A2(elm$json$Json$Decode$field, 'width', elm$json$Json$Decode$int)),
 	elm$json$Json$Decode$maybe(
 		A2(elm$json$Json$Decode$field, 'height', elm$json$Json$Decode$int)));
-var author$project$Licenses$AllRightsReserved = {$: 'AllRightsReserved'};
-var author$project$Licenses$CCBY = {$: 'CCBY'};
-var author$project$Licenses$CCBYNC = {$: 'CCBYNC'};
-var author$project$Licenses$CCBYNCND = {$: 'CCBYNCND'};
-var author$project$Licenses$CCBYNCSA = {$: 'CCBYNCSA'};
-var author$project$Licenses$CCBYSA = {$: 'CCBYSA'};
-var author$project$Licenses$PublicDomain = {$: 'PublicDomain'};
-var author$project$Licenses$licensesDict = _List_fromArray(
-	[
-		_Utils_Tuple2(author$project$Licenses$AllRightsReserved, 'all-rights-reserved'),
-		_Utils_Tuple2(author$project$Licenses$CCBY, 'cc-by'),
-		_Utils_Tuple2(author$project$Licenses$CCBYSA, 'cc-by-sa'),
-		_Utils_Tuple2(author$project$Licenses$CCBYNC, 'cc-by-nc'),
-		_Utils_Tuple2(author$project$Licenses$CCBYNCSA, 'cc-by-nc-sa'),
-		_Utils_Tuple2(author$project$Licenses$CCBYNCND, 'cc-by-nc-nd'),
-		_Utils_Tuple2(author$project$Licenses$PublicDomain, 'public-domain')
-	]);
-var author$project$Util$find = F2(
-	function (predicate, list) {
-		find:
-		while (true) {
-			if (!list.b) {
-				return elm$core$Maybe$Nothing;
-			} else {
-				var first = list.a;
-				var rest = list.b;
-				if (predicate(first)) {
-					return elm$core$Maybe$Just(first);
-				} else {
-					var $temp$predicate = predicate,
-						$temp$list = rest;
-					predicate = $temp$predicate;
-					list = $temp$list;
-					continue find;
-				}
-			}
-		}
-	});
 var author$project$Util$fst = function (_n0) {
 	var a = _n0.a;
 	var b = _n0.b;
@@ -9659,26 +9681,6 @@ var author$project$RCAPI$toRCMediaObject = F2(
 				author$project$Problems$CannotLoadMedia(s));
 		}
 	});
-var author$project$Util$snd = function (_n0) {
-	var a = _n0.a;
-	var b = _n0.b;
-	return b;
-};
-var author$project$Licenses$asString = function (l) {
-	return A2(
-		elm$core$Maybe$withDefault,
-		'all-rights-reserved',
-		A2(
-			elm$core$Maybe$map,
-			author$project$Util$snd,
-			A2(
-				author$project$Util$find,
-				function (_n0) {
-					var lic = _n0.a;
-					return _Utils_eq(lic, l);
-				},
-				author$project$Licenses$licensesDict)));
-};
 var author$project$RCAPI$withDefault = F2(
 	function (_default, str) {
 		return (str === '') ? _default : str;
@@ -10432,6 +10434,27 @@ var author$project$Main$UploadMediaFileSelect = {$: 'UploadMediaFileSelect'};
 var author$project$Main$InsertAtCursor = function (a) {
 	return {$: 'InsertAtCursor', a: a};
 };
+var elm$html$Html$span = _VirtualDom_node('span');
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$string(string));
+	});
+var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
+var author$project$Main$separator = A2(
+	elm$html$Html$span,
+	_List_fromArray(
+		[
+			elm$html$Html$Attributes$class('separator')
+		]),
+	_List_fromArray(
+		[
+			elm$html$Html$text('|')
+		]));
 var author$project$Settings$Bold = {$: 'Bold'};
 var author$project$Settings$Bullet = {$: 'Bullet'};
 var author$project$Settings$H1 = {$: 'H1'};
@@ -10476,14 +10499,6 @@ var author$project$Settings$baseUrl = 'elm-editor/';
 var author$project$Settings$iconUrl = author$project$Settings$baseUrl + 'lib/icons/';
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$img = _VirtualDom_node('img');
-var elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$string(string));
-	});
-var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
 var elm$html$Html$Attributes$height = function (n) {
 	return A2(
 		_VirtualDom_attribute,
@@ -10559,8 +10574,6 @@ var elm$core$List$append = F2(
 			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
 		}
 	});
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -10823,6 +10836,7 @@ var author$project$Main$editorToolbar = _List_fromArray(
 		false,
 		_List_Nil,
 		false),
+		author$project$Main$separator,
 		A7(
 		author$project$View$mkButton,
 		author$project$View$BoldIcon,
@@ -10843,6 +10857,7 @@ var author$project$Main$editorToolbar = _List_fromArray(
 		false,
 		_List_Nil,
 		false),
+		author$project$Main$separator,
 		A7(
 		author$project$View$mkButton,
 		author$project$View$ListIcon,
@@ -10911,13 +10926,22 @@ var author$project$Main$makeMediaEditFun = F4(
 						_Utils_update(
 							obj,
 							{userClass: input})));
-			default:
+			case 'Copyright':
 				return author$project$Main$MediaEdit(
 					_Utils_Tuple2(
 						elm$core$String$fromInt(objId),
 						_Utils_update(
 							obj,
 							{copyright: input})));
+			default:
+				return author$project$Main$MediaEdit(
+					_Utils_Tuple2(
+						elm$core$String$fromInt(objId),
+						_Utils_update(
+							obj,
+							{
+								license: author$project$Licenses$fromString(input)
+							})));
 		}
 	});
 var author$project$Main$CloseMediaPicker = {$: 'CloseMediaPicker'};
@@ -11014,7 +11038,6 @@ var rundis$elm_bootstrap$Bootstrap$Internal$Role$Info = {$: 'Info'};
 var rundis$elm_bootstrap$Bootstrap$Alert$info = function (conf) {
 	return A2(rundis$elm_bootstrap$Bootstrap$Alert$role, rundis$elm_bootstrap$Bootstrap$Internal$Role$Info, conf);
 };
-var elm$html$Html$span = _VirtualDom_node('span');
 var elm$virtual_dom$VirtualDom$attribute = F2(
 	function (key, value) {
 		return A2(
@@ -11557,8 +11580,16 @@ var author$project$RCAPI$Latex = {$: 'Latex'};
 var author$project$RCAPI$Md = {$: 'Md'};
 var author$project$RCAPI$Odt = {$: 'Odt'};
 var author$project$RCAPI$Pdf = {$: 'Pdf'};
+var author$project$Licenses$allLicenses = A2(
+	elm$core$List$map,
+	function (_n0) {
+		var license = _n0.a;
+		return license;
+	},
+	author$project$Licenses$licensesDict);
 var author$project$RCMediaEdit$Copyright = {$: 'Copyright'};
 var author$project$RCMediaEdit$Description = {$: 'Description'};
+var author$project$RCMediaEdit$LicenseField = {$: 'LicenseField'};
 var author$project$RCMediaEdit$Name = {$: 'Name'};
 var author$project$RCMediaEdit$UserClass = {$: 'UserClass'};
 var author$project$RCMediaEdit$CssClass = F2(
@@ -12084,6 +12115,55 @@ var author$project$RCMediaEdit$viewInputWithLabel = function (props) {
 					]))
 			]));
 };
+var author$project$Licenses$getDescription = function (license) {
+	switch (license.$) {
+		case 'AllRightsReserved':
+			return 'All rights reserved';
+		case 'CCBY':
+			return 'CC BY';
+		case 'CCBYSA':
+			return 'CC BY SA';
+		case 'CCBYNC':
+			return 'CC BY NC';
+		case 'CCBYNCSA':
+			return 'CC BY NC SA';
+		case 'CCBYNCND':
+			return 'CC BY NC ND';
+		default:
+			return 'Public Domain';
+	}
+};
+var author$project$RCMediaEdit$viewLicensePicker = F4(
+	function (id, licenseOptions, currentSelection, editMessage) {
+		var selectItem = function (license) {
+			var isSelected = _Utils_eq(currentSelection, license);
+			return A2(
+				rundis$elm_bootstrap$Bootstrap$Form$Select$item,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$value(
+						author$project$Licenses$asString(license)),
+						elm$html$Html$Attributes$selected(isSelected)
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text(
+						author$project$Licenses$getDescription(license))
+					]));
+		};
+		return A2(
+			rundis$elm_bootstrap$Bootstrap$Form$Select$select,
+			_List_fromArray(
+				[
+					rundis$elm_bootstrap$Bootstrap$Form$Select$id(id),
+					rundis$elm_bootstrap$Bootstrap$Form$Select$attrs(
+					_List_fromArray(
+						[
+							elm$html$Html$Events$onInput(editMessage)
+						]))
+				]),
+			A2(elm$core$List$map, selectItem, author$project$Licenses$allLicenses));
+	});
 var rundis$elm_bootstrap$Bootstrap$Form$Textarea$Attrs = function (a) {
 	return {$: 'Attrs', a: a};
 };
@@ -12257,6 +12337,16 @@ var author$project$RCMediaEdit$viewBody = F3(
 			validation: objectState.validation.description,
 			value: objectInEdit.description
 		};
+		var currentLicense = function () {
+			var _n1 = objectState.validation.license;
+			if (_n1.$ === 'Ok') {
+				var val = _n1.a;
+				return author$project$Licenses$fromString(val);
+			} else {
+				var val = _n1.a;
+				return author$project$Licenses$AllRightsReserved;
+			}
+		}();
 		var currentClass = function () {
 			var _n0 = objectState.validation.userClass;
 			if (_n0.$ === 'Ok') {
@@ -12309,7 +12399,13 @@ var author$project$RCMediaEdit$viewBody = F3(
 									editTool(author$project$RCMediaEdit$UserClass))
 								])),
 							author$project$RCMediaEdit$viewTextAreaWithLabel(descriptionProps),
-							author$project$RCMediaEdit$viewInputWithLabel(copyrightProps)
+							author$project$RCMediaEdit$viewInputWithLabel(copyrightProps),
+							A4(
+							author$project$RCMediaEdit$viewLicensePicker,
+							'licensePicker',
+							author$project$Licenses$allLicenses,
+							currentLicense,
+							editTool(author$project$RCMediaEdit$LicenseField))
 						]))
 				]));
 	});
@@ -14350,6 +14446,7 @@ var author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						elm$html$Html$Attributes$class('btn-toolbar'),
+						elm$html$Html$Attributes$class('import-export-toolbar'),
 						A2(elm$html$Html$Attributes$attribute, 'role', 'toolbar')
 					]),
 				_List_fromArray(
@@ -14399,7 +14496,8 @@ var author$project$Main$view = function (model) {
 				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$class('toolbar')
+						elm$html$Html$Attributes$class('toolbar'),
+						elm$html$Html$Attributes$class('markdown-toolbar')
 					]),
 				A2(
 					elm$core$List$append,

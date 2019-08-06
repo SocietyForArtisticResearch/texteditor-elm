@@ -13,6 +13,7 @@ import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectValidation
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events as Events
+import Licenses exposing (..)
 
 
 type Field
@@ -20,6 +21,7 @@ type Field
     | Description
     | UserClass
     | Copyright
+    | LicenseField
 
 
 
@@ -80,6 +82,34 @@ viewClassesPicker id classList currentSelection editMessage =
         ]
     <|
         List.map selectItem classList
+
+
+
+
+
+
+
+viewLicensePicker : String -> List License -> License -> (String -> msg) -> Html msg
+viewLicensePicker id licenseOptions currentSelection editMessage =
+    let
+        selectItem : License -> Select.Item msg
+        selectItem license =
+            let
+                isSelected =
+                    currentSelection == license
+            in
+            Select.item
+                [ value <| asString license
+                , selected isSelected 
+                ]
+                [ text <| getDescription license ]
+    in
+    Select.select
+        [ Select.id id
+        , Select.attrs [ Events.onInput editMessage ]
+        ]
+    <|
+        List.map selectItem allLicenses
 
 
 type alias InputWithLabelProperties msg =
@@ -203,6 +233,15 @@ viewBody objectState editTool objectInEdit =
 
                 Err _ ->
                     "big"
+
+        currentLicense : License
+        currentLicense =
+            case objectState.validation.license of   
+                Ok val ->
+                    fromString val
+
+                Err val ->
+                    AllRightsReserved
     in
     div []
         [ Form.form []
@@ -213,12 +252,17 @@ viewBody objectState editTool objectInEdit =
                 ]
             , viewTextAreaWithLabel descriptionProps
             , viewInputWithLabel copyrightProps
+            , viewLicensePicker "licensePicker" allLicenses currentLicense (editTool LicenseField)
             ]
         ]
 
 
 type alias MakeMediaEditFun msg =
     Exposition.RCMediaObject -> Int -> Field -> String -> msg
+
+
+
+-- object ObjectId field newValue -> msg
 
 
 viewMediaDialog : MakeMediaEditFun msg -> msg -> RCExposition -> ( Modal.Visibility, ( RCMediaObject, Int ), RCMediaObjectViewState ) -> Html msg

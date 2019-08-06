@@ -19,6 +19,7 @@ import Html.Events exposing (on, onCheck, onClick, onInput)
 import Http
 import Json.Decode as D
 import Json.Encode as E
+import Licenses
 import Problems
 import RCAPI
 import RCMediaEdit
@@ -287,6 +288,9 @@ makeMediaEditFun obj objId field input =
 
         RCMediaEdit.Copyright ->
             MediaEdit ( String.fromInt objId, { obj | copyright = input } )
+
+        RCMediaEdit.LicenseField ->
+            MediaEdit ( String.fromInt objId, { obj | license = Licenses.fromString input } )
 
 
 makeTableMessages : RCMediaList.TableMessages Msg
@@ -884,13 +888,21 @@ viewLink name url =
         [ text name ]
 
 
+separator : Html Msg
+separator =
+    span
+      [ class "separator" ]
+      [ text "|" ]
+            
 editorToolbar : List (Html Msg)
 editorToolbar =
     [ mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H1)) "H1" False [] False
     , mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H2)) "H2" False [] False
     , mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H3)) "H3" False [] False
+    , separator
     , mkButton BoldIcon False (InsertAtCursor (Settings.snippet Settings.Bold)) "" False [] False
     , mkButton ItalicIcon False (InsertAtCursor (Settings.snippet Settings.Italic)) "" False [] False
+    , separator
     , mkButton ListIcon False (InsertAtCursor (Settings.snippet Settings.Bullet)) "" False [] False
     , mkButton NumberedIcon False (InsertAtCursor (Settings.snippet Settings.Numbered)) "" False [] False
     , mkButton LinkIcon False (InsertAtCursor (Settings.snippet Settings.Link)) "" False [] False
@@ -974,7 +986,7 @@ view model =
         , mediaDialogHtml
         , confirmDialogHtml
         , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
-        , div [ class "btn-toolbar", attribute "role" "toolbar" ]
+        , div [ class "btn-toolbar", class "import-export-toolbar" , attribute "role" "toolbar" ]
             [ viewUpload UploadCloud True UploadMediaFileSelect "Upload media" model.mediaUploadStatus
             , mkButton ArrowDown
                 True
@@ -998,7 +1010,8 @@ view model =
                 , ( "markdown", DownloadExport RCAPI.Md )
                 ]
             ]
-        , div [ class "toolbar" ] <|
+        , div [ class "toolbar"
+              , class "markdown-toolbar" ] <|
             List.append
                 editorToolbar
                 [ editorCheckbox ]

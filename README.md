@@ -28,15 +28,14 @@ be made outside of elm.
 # Todo
 
 General:
-- Licenses, not sure if backend correctly returns the field
+
+- If a media is used twice or more, the DOM gets confused.
 - Copyright should be obligatory
 - Markdown-it ?
 - What to do when people are logged out
 
 Casper:
 
-- fix editor height (left and right sections should scroll independently)
-- percentage when uploading
 - display title of exposition somewhere
 - warnings when closing/reloading
 - license edit field
