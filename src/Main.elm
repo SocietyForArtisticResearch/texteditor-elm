@@ -771,7 +771,10 @@ update msg model =
                     insertMdString ( "!{" ++ o.name ++ "}", 0 )
 
                 Nothing ->
-                    Cmd.none
+                    let
+                        _ = Debug.log "not inserted, because object not found"
+                    in
+                        Cmd.none
             )
 
         InsertAtCursor insertTuple ->
