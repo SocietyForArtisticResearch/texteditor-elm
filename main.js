@@ -8354,7 +8354,7 @@ var zwilias$elm_html_string$Html$String$toString = function (indent) {
 };
 var author$project$Exposition$insertToolHtml = F2(
 	function (md, exp) {
-		var r = elm$regex$Regex$fromString('!\\[[^\\]]*\\]{([^}]*)}');
+		var r = elm$regex$Regex$fromString('!(?:\\[[^\\]]*\\])?{([^}]*)}');
 		if (r.$ === 'Nothing') {
 			return md;
 		} else {

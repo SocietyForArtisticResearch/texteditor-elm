@@ -532,7 +532,7 @@ insertToolHtml : String -> RCExposition -> String
 insertToolHtml md exp =
     let
         r =
-            Regex.fromString "!\\[[^\\]]*\\]{([^}]*)}"
+            Regex.fromString "!(?:\\[[^\\]]*\\])?{([^}]*)}"
     in
     case r of
         Nothing ->
