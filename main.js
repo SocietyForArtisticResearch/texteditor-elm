@@ -10405,6 +10405,7 @@ var author$project$Main$update = F2(
 								return author$project$Main$insertMdString(
 									_Utils_Tuple2('!{' + (o.name + '}'), 0));
 							} else {
+								var _n38 = elm$core$Debug$log('not inserted, because object not found');
 								return elm$core$Platform$Cmd$none;
 							}
 						}());
