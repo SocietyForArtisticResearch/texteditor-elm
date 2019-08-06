@@ -57,19 +57,19 @@ view objectList messages =
                                 ]
                                 [ text "edit" ]
 
-                        insertButton =
-                            Button.button
-                                [ Button.small
-                                , Button.outlineSuccess
-                                , Button.attrs [ Spacing.ml1, onClick <| messages.insertObject object ]
-                                ]
-                                [ text "insert" ]
+                        -- insertButton =
+                        --     Button.button
+                        --         [ Button.small
+                        --         , Button.outlineSuccess
+                        --         , Button.attrs [ Spacing.ml1, onClick <| messages.insertObject object ]
+                        --         ]
+                        --         [ text "insert" ]
                                     
                         removeButton =
                             Button.button
                                 [ Button.small
                                 , Button.outlineDanger
-                                , Button.attrs [ onClick <| messages.deleteObject object ]
+                                , Button.attrs [ Spacing.ml1,  onClick <| messages.deleteObject object ]
                                 ]
                                 [ text "x" ]
                     in
