@@ -1,4 +1,4 @@
-module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, customThumbUrl, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, mkMediaName, objectByNameOrId, removeObjectWithID, renameDuplicateMedia, replaceImagesWithTools, replaceObject, replaceToolsWithImages, thumbUrl, updateToc, validateMediaObject, withCSS, withHtml, withMd)
+module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, customThumbUrl, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, mkMediaName, objectByNameOrId, parseToolCaptions, removeObjectWithID, renameDuplicateMedia, replaceImagesWithTools, replaceObject, replaceToolsWithImages, thumbUrl, updateToc, validateMediaObject, withCSS, withHtml, withMd)
 
 import Dict
 import Html.Parser as HtmlParser
@@ -490,6 +490,21 @@ asHtml media mediaId =
 --         Just o ->
 --             asHtml o
 -- DEALING WITH TOOLS<->IMAGES
+
+
+parseToolCaptions : String -> RCExposition -> RCExposition
+parseToolCaptions md exp =
+    let
+        r =
+            Maybe.withDefault Regex.never <| Regex.fromString "[([^]]*)]!{[^}]*}"
+
+        matches =
+            Regex.find r md
+
+        _ =
+            Debug.log "caption matches: " matches
+    in
+    exp
 
 
 insertToolHtml : String -> RCExposition -> String
