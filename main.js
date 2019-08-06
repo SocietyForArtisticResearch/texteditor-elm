@@ -8774,7 +8774,7 @@ var author$project$Exposition$parseToolCaptions = F2(
 		var r = A2(
 			elm$core$Maybe$withDefault,
 			elm$regex$Regex$never,
-			elm$regex$Regex$fromString('!\\[([^\\]]*)\\]{[^}]*}'));
+			elm$regex$Regex$fromString('!\\[([^\\]]*)\\]{([^}]*)}'));
 		var matches = A2(elm$regex$Regex$find, r, md);
 		var _n0 = A2(elm$core$Debug$log, 'caption matches: ', matches);
 		return exp;

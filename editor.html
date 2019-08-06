@@ -358,7 +358,7 @@
             if (tok.includes("rcmedia")) {
                 let word = cmMarkdown.findWordAt(pos);
                 let content = cmMarkdown.getRange(word.anchor, word.head)
-                if (content !== "}" && content !== "!{") {
+                if (content !== "}" && content !== "{") {
                     app.ports.mediaDialog.send({
                         media: content
                     });

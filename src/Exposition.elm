@@ -496,7 +496,7 @@ parseToolCaptions : String -> RCExposition -> RCExposition
 parseToolCaptions md exp =
     let
         r =
-            Maybe.withDefault Regex.never <| Regex.fromString "!\\[([^\\]]*)\\]{[^}]*}"
+            Maybe.withDefault Regex.never <| Regex.fromString "!\\[([^\\]]*)\\]{([^}]*)}"
 
         matches =
             Regex.find r md
