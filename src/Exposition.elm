@@ -409,19 +409,19 @@ asMarkdown media =
     "![" ++ media.name ++ "](" ++ mediaUrl media ++ ")"
 
 
-asHtml : RCMediaObject -> Html.Html msg
-asHtml media =
+asHtml : RCMediaObject -> String -> Html.Html msg
+asHtml media mediaId =
     case ( media.mediaType, media ) of
         ( RCImage, data ) ->
             objectDiv data <|
-                Html.figure []
+                Html.figure [ Attr.id mediaId ]
                     [ Html.img (addDimensions data.dimensions [ Attr.src (mediaUrl data), Attr.alt data.name ]) []
                     , Html.figcaption [] [ Html.text data.caption ]
                     ]
 
         ( RCPdf, data ) ->
             objectDiv data <|
-                Html.figure []
+                Html.figure [ Attr.id mediaId ]
                     [ Html.object
                         (addDimensions data.dimensions
                             [ Attr.attribute "data" (mediaUrl data)
@@ -435,7 +435,7 @@ asHtml media =
 
         ( RCSvg, data ) ->
             objectDiv data <|
-                Html.figure []
+                Html.figure [ Attr.id mediaId ]
                     [ Html.object
                         (addDimensions data.dimensions
                             [ Attr.attribute "data" (mediaUrl data)
@@ -449,7 +449,7 @@ asHtml media =
 
         ( RCAudio playerData, data ) ->
             objectDiv data <|
-                Html.figure []
+                Html.figure [ Attr.id mediaId ]
                     [ Html.audio
                         (addDimensions data.dimensions
                             [ Attr.controls True
@@ -466,7 +466,7 @@ asHtml media =
 
         ( RCVideo playerData, data ) ->
             objectDiv data <|
-                Html.figure []
+                Html.figure [ Attr.id mediaId ]
                     [ Html.video
                         (addDimensions data.dimensions
                             [ Attr.controls True
@@ -481,17 +481,14 @@ asHtml media =
                     ]
 
 
-htmlForMediaString : RCExposition -> String -> Html.Html msg
-htmlForMediaString expo mediaString =
-    case objectByNameOrId mediaString expo of
-        Nothing ->
-            Html.div [] []
 
-        Just o ->
-            asHtml o
-
-
-
+-- htmlForMediaString : RCExposition -> String -> Html.Html msg
+-- htmlForMediaString expo mediaString =
+--     case objectByNameOrId mediaString expo of
+--         Nothing ->
+--             Html.div [] []
+--         Just o ->
+--             asHtml o
 -- DEALING WITH TOOLS<->IMAGES
 
 
@@ -513,7 +510,7 @@ insertToolHtml md exp =
                             Maybe.withDefault "" <|
                                 Maybe.map
                                     (\o ->
-                                        Html.toString 0 (asHtml o)
+                                        Html.toString 0 (asHtml o ("media-" ++ String.fromInt m.number))
                                     )
                                     (objectByNameOrId sub exp)
 

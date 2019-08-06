@@ -7691,198 +7691,214 @@ var zwilias$elm_html_string$Html$String$Attributes$preload = function (val) {
 var zwilias$elm_html_string$Html$String$Attributes$src = function (val) {
 	return A2(zwilias$elm_html_string$Html$String$Attributes$stringProperty, 'src', val);
 };
-var author$project$Exposition$asHtml = function (media) {
-	var _n0 = _Utils_Tuple2(media.mediaType, media);
-	switch (_n0.a.$) {
-		case 'RCImage':
-			var _n1 = _n0.a;
-			var data = _n0.b;
-			return A2(
-				author$project$Exposition$objectDiv,
-				data,
-				A2(
-					zwilias$elm_html_string$Html$String$figure,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							zwilias$elm_html_string$Html$String$img,
-							A2(
-								author$project$Exposition$addDimensions,
-								data.dimensions,
-								_List_fromArray(
-									[
-										zwilias$elm_html_string$Html$String$Attributes$src(
-										author$project$Exposition$mediaUrl(data)),
-										zwilias$elm_html_string$Html$String$Attributes$alt(data.name)
-									])),
-							_List_Nil),
-							A2(
-							zwilias$elm_html_string$Html$String$figcaption,
-							_List_Nil,
-							_List_fromArray(
-								[
-									zwilias$elm_html_string$Html$String$text(data.caption)
-								]))
-						])));
-		case 'RCPdf':
-			var _n2 = _n0.a;
-			var data = _n0.b;
-			return A2(
-				author$project$Exposition$objectDiv,
-				data,
-				A2(
-					zwilias$elm_html_string$Html$String$figure,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							zwilias$elm_html_string$Html$String$object,
-							A2(
-								author$project$Exposition$addDimensions,
-								data.dimensions,
-								_List_fromArray(
-									[
-										A2(
-										zwilias$elm_html_string$Html$String$Attributes$attribute,
-										'data',
-										author$project$Exposition$mediaUrl(data)),
-										A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'type', 'application/pdf'),
-										A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'title', data.name)
-									])),
-							_List_Nil),
-							A2(
-							zwilias$elm_html_string$Html$String$figcaption,
-							_List_Nil,
-							_List_fromArray(
-								[
-									zwilias$elm_html_string$Html$String$text(data.caption)
-								]))
-						])));
-		case 'RCSvg':
-			var _n3 = _n0.a;
-			var data = _n0.b;
-			return A2(
-				author$project$Exposition$objectDiv,
-				data,
-				A2(
-					zwilias$elm_html_string$Html$String$figure,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							zwilias$elm_html_string$Html$String$object,
-							A2(
-								author$project$Exposition$addDimensions,
-								data.dimensions,
-								_List_fromArray(
-									[
-										A2(
-										zwilias$elm_html_string$Html$String$Attributes$attribute,
-										'data',
-										author$project$Exposition$mediaUrl(data)),
-										A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'type', 'application/svg+xml'),
-										A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'title', data.name)
-									])),
-							_List_Nil),
-							A2(
-							zwilias$elm_html_string$Html$String$figcaption,
-							_List_Nil,
-							_List_fromArray(
-								[
-									zwilias$elm_html_string$Html$String$text(data.caption)
-								]))
-						])));
-		case 'RCAudio':
-			var playerData = _n0.a.a;
-			var data = _n0.b;
-			return A2(
-				author$project$Exposition$objectDiv,
-				data,
-				A2(
-					zwilias$elm_html_string$Html$String$figure,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							zwilias$elm_html_string$Html$String$audio,
-							A2(
-								author$project$Exposition$addDimensions,
-								data.dimensions,
-								_List_fromArray(
-									[
-										zwilias$elm_html_string$Html$String$Attributes$controls(true),
-										zwilias$elm_html_string$Html$String$Attributes$preload(
-										author$project$Exposition$preloadToString(playerData.preload)),
-										zwilias$elm_html_string$Html$String$Attributes$autoplay(playerData.autoplay),
-										zwilias$elm_html_string$Html$String$Attributes$loop(playerData.loop),
-										zwilias$elm_html_string$Html$String$Attributes$class('rcaudio')
-									])),
-							_List_fromArray(
-								[
-									A2(
-									zwilias$elm_html_string$Html$String$source,
-									_List_fromArray(
-										[
-											zwilias$elm_html_string$Html$String$Attributes$src(
-											author$project$Exposition$mediaUrl(data))
-										]),
-									_List_Nil)
-								])),
-							A2(
-							zwilias$elm_html_string$Html$String$figcaption,
-							_List_Nil,
-							_List_fromArray(
-								[
-									zwilias$elm_html_string$Html$String$text(data.caption)
-								]))
-						])));
-		default:
-			var playerData = _n0.a.a;
-			var data = _n0.b;
-			return A2(
-				author$project$Exposition$objectDiv,
-				data,
-				A2(
-					zwilias$elm_html_string$Html$String$figure,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							zwilias$elm_html_string$Html$String$video,
-							A2(
-								author$project$Exposition$addDimensions,
-								data.dimensions,
-								_List_fromArray(
-									[
-										zwilias$elm_html_string$Html$String$Attributes$controls(true),
-										zwilias$elm_html_string$Html$String$Attributes$preload(
-										author$project$Exposition$preloadToString(playerData.preload)),
-										zwilias$elm_html_string$Html$String$Attributes$autoplay(playerData.autoplay),
-										zwilias$elm_html_string$Html$String$Attributes$loop(playerData.loop)
-									])),
-							_List_fromArray(
-								[
-									A2(
-									zwilias$elm_html_string$Html$String$source,
+var author$project$Exposition$asHtml = F2(
+	function (media, mediaId) {
+		var _n0 = _Utils_Tuple2(media.mediaType, media);
+		switch (_n0.a.$) {
+			case 'RCImage':
+				var _n1 = _n0.a;
+				var data = _n0.b;
+				return A2(
+					author$project$Exposition$objectDiv,
+					data,
+					A2(
+						zwilias$elm_html_string$Html$String$figure,
+						_List_fromArray(
+							[
+								zwilias$elm_html_string$Html$String$Attributes$id(mediaId)
+							]),
+						_List_fromArray(
+							[
+								A2(
+								zwilias$elm_html_string$Html$String$img,
+								A2(
+									author$project$Exposition$addDimensions,
+									data.dimensions,
 									_List_fromArray(
 										[
 											zwilias$elm_html_string$Html$String$Attributes$src(
 											author$project$Exposition$mediaUrl(data)),
-											A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'type', 'video/mp4')
-										]),
-									_List_Nil)
-								])),
-							A2(
-							zwilias$elm_html_string$Html$String$figcaption,
-							_List_Nil,
-							_List_fromArray(
-								[
-									zwilias$elm_html_string$Html$String$text(data.caption)
-								]))
-						])));
-	}
-};
+											zwilias$elm_html_string$Html$String$Attributes$alt(data.name)
+										])),
+								_List_Nil),
+								A2(
+								zwilias$elm_html_string$Html$String$figcaption,
+								_List_Nil,
+								_List_fromArray(
+									[
+										zwilias$elm_html_string$Html$String$text(data.caption)
+									]))
+							])));
+			case 'RCPdf':
+				var _n2 = _n0.a;
+				var data = _n0.b;
+				return A2(
+					author$project$Exposition$objectDiv,
+					data,
+					A2(
+						zwilias$elm_html_string$Html$String$figure,
+						_List_fromArray(
+							[
+								zwilias$elm_html_string$Html$String$Attributes$id(mediaId)
+							]),
+						_List_fromArray(
+							[
+								A2(
+								zwilias$elm_html_string$Html$String$object,
+								A2(
+									author$project$Exposition$addDimensions,
+									data.dimensions,
+									_List_fromArray(
+										[
+											A2(
+											zwilias$elm_html_string$Html$String$Attributes$attribute,
+											'data',
+											author$project$Exposition$mediaUrl(data)),
+											A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'type', 'application/pdf'),
+											A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'title', data.name)
+										])),
+								_List_Nil),
+								A2(
+								zwilias$elm_html_string$Html$String$figcaption,
+								_List_Nil,
+								_List_fromArray(
+									[
+										zwilias$elm_html_string$Html$String$text(data.caption)
+									]))
+							])));
+			case 'RCSvg':
+				var _n3 = _n0.a;
+				var data = _n0.b;
+				return A2(
+					author$project$Exposition$objectDiv,
+					data,
+					A2(
+						zwilias$elm_html_string$Html$String$figure,
+						_List_fromArray(
+							[
+								zwilias$elm_html_string$Html$String$Attributes$id(mediaId)
+							]),
+						_List_fromArray(
+							[
+								A2(
+								zwilias$elm_html_string$Html$String$object,
+								A2(
+									author$project$Exposition$addDimensions,
+									data.dimensions,
+									_List_fromArray(
+										[
+											A2(
+											zwilias$elm_html_string$Html$String$Attributes$attribute,
+											'data',
+											author$project$Exposition$mediaUrl(data)),
+											A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'type', 'application/svg+xml'),
+											A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'title', data.name)
+										])),
+								_List_Nil),
+								A2(
+								zwilias$elm_html_string$Html$String$figcaption,
+								_List_Nil,
+								_List_fromArray(
+									[
+										zwilias$elm_html_string$Html$String$text(data.caption)
+									]))
+							])));
+			case 'RCAudio':
+				var playerData = _n0.a.a;
+				var data = _n0.b;
+				return A2(
+					author$project$Exposition$objectDiv,
+					data,
+					A2(
+						zwilias$elm_html_string$Html$String$figure,
+						_List_fromArray(
+							[
+								zwilias$elm_html_string$Html$String$Attributes$id(mediaId)
+							]),
+						_List_fromArray(
+							[
+								A2(
+								zwilias$elm_html_string$Html$String$audio,
+								A2(
+									author$project$Exposition$addDimensions,
+									data.dimensions,
+									_List_fromArray(
+										[
+											zwilias$elm_html_string$Html$String$Attributes$controls(true),
+											zwilias$elm_html_string$Html$String$Attributes$preload(
+											author$project$Exposition$preloadToString(playerData.preload)),
+											zwilias$elm_html_string$Html$String$Attributes$autoplay(playerData.autoplay),
+											zwilias$elm_html_string$Html$String$Attributes$loop(playerData.loop),
+											zwilias$elm_html_string$Html$String$Attributes$class('rcaudio')
+										])),
+								_List_fromArray(
+									[
+										A2(
+										zwilias$elm_html_string$Html$String$source,
+										_List_fromArray(
+											[
+												zwilias$elm_html_string$Html$String$Attributes$src(
+												author$project$Exposition$mediaUrl(data))
+											]),
+										_List_Nil)
+									])),
+								A2(
+								zwilias$elm_html_string$Html$String$figcaption,
+								_List_Nil,
+								_List_fromArray(
+									[
+										zwilias$elm_html_string$Html$String$text(data.caption)
+									]))
+							])));
+			default:
+				var playerData = _n0.a.a;
+				var data = _n0.b;
+				return A2(
+					author$project$Exposition$objectDiv,
+					data,
+					A2(
+						zwilias$elm_html_string$Html$String$figure,
+						_List_fromArray(
+							[
+								zwilias$elm_html_string$Html$String$Attributes$id(mediaId)
+							]),
+						_List_fromArray(
+							[
+								A2(
+								zwilias$elm_html_string$Html$String$video,
+								A2(
+									author$project$Exposition$addDimensions,
+									data.dimensions,
+									_List_fromArray(
+										[
+											zwilias$elm_html_string$Html$String$Attributes$controls(true),
+											zwilias$elm_html_string$Html$String$Attributes$preload(
+											author$project$Exposition$preloadToString(playerData.preload)),
+											zwilias$elm_html_string$Html$String$Attributes$autoplay(playerData.autoplay),
+											zwilias$elm_html_string$Html$String$Attributes$loop(playerData.loop)
+										])),
+								_List_fromArray(
+									[
+										A2(
+										zwilias$elm_html_string$Html$String$source,
+										_List_fromArray(
+											[
+												zwilias$elm_html_string$Html$String$Attributes$src(
+												author$project$Exposition$mediaUrl(data)),
+												A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'type', 'video/mp4')
+											]),
+										_List_Nil)
+									])),
+								A2(
+								zwilias$elm_html_string$Html$String$figcaption,
+								_List_Nil,
+								_List_fromArray(
+									[
+										zwilias$elm_html_string$Html$String$text(data.caption)
+									]))
+							])));
+		}
+	});
 var elm$core$List$head = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -8359,7 +8375,10 @@ var author$project$Exposition$insertToolHtml = F2(
 									return A2(
 										zwilias$elm_html_string$Html$String$toString,
 										0,
-										author$project$Exposition$asHtml(o));
+										A2(
+											author$project$Exposition$asHtml,
+											o,
+											'media-' + elm$core$String$fromInt(m.number)));
 								},
 								A2(author$project$Exposition$objectByNameOrId, sub, exp)));
 					} else {
