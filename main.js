@@ -12981,6 +12981,9 @@ var rundis$elm_bootstrap$Bootstrap$Button$outlineDanger = rundis$elm_bootstrap$B
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary = {$: 'Secondary'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Success = {$: 'Success'};
+var rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Success));
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Size = function (a) {
 	return {$: 'Size', a: a};
 };
@@ -13549,6 +13552,24 @@ var author$project$RCMediaList$view = F2(
 						[
 							elm$html$Html$text('x')
 						]));
+				var insertButton = A2(
+					rundis$elm_bootstrap$Bootstrap$Button$button,
+					_List_fromArray(
+						[
+							rundis$elm_bootstrap$Bootstrap$Button$small,
+							rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess,
+							rundis$elm_bootstrap$Bootstrap$Button$attrs(
+							_List_fromArray(
+								[
+									rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1,
+									elm$html$Html$Events$onClick(
+									messages.insertObject(object))
+								]))
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('insert')
+						]));
 				var editButton = A2(
 					rundis$elm_bootstrap$Bootstrap$Button$button,
 					_List_fromArray(
@@ -13598,7 +13619,7 @@ var author$project$RCMediaList$view = F2(
 							rundis$elm_bootstrap$Bootstrap$Table$td,
 							_List_Nil,
 							_List_fromArray(
-								[editButton, removeButton]))
+								[insertButton, editButton, removeButton]))
 						]));
 			};
 			var rows = A2(elm$core$List$map, rowFromRCObject, objectList);
@@ -13659,9 +13680,6 @@ var elm$html$Html$Events$onDoubleClick = function (msg) {
 		'dblclick',
 		elm$json$Json$Decode$succeed(msg));
 };
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Success = {$: 'Success'};
-var rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Success));
 var rundis$elm_bootstrap$Bootstrap$Button$secondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
 var elm$html$Html$h1 = _VirtualDom_node('h1');

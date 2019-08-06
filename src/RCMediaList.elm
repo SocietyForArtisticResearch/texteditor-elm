@@ -57,13 +57,14 @@ view objectList messages =
                                 ]
                                 [ text "edit" ]
 
-                        -- insertButton =
-                        --     Button.button
-                        --         [ Button.small
-                        --         , Button.outlineSuccess
-                        --         , Button.attrs [ Spacing.ml1, onClick <| messages.insertObject object ]
-                        --         ]
-                        --         [ text "insert" ]
+                        insertButton =
+                            Button.button
+                                [ Button.small
+                                , Button.outlineSuccess
+                                , Button.attrs [ Spacing.ml1, onClick <| messages.insertObject object ]
+                                ]
+                                [ text "insert" ]
+                                    
                         removeButton =
                             Button.button
                                 [ Button.small
@@ -76,7 +77,7 @@ view objectList messages =
                         [ Table.td [] [ viewThumbnail object ]
                         , Table.td [] [ text <| String.fromInt object.id ]
                         , Table.td [] [ text object.name ]
-                        , Table.td [] [ editButton, removeButton ]
+                        , Table.td [] [ insertButton, editButton, removeButton ]
                         ]
 
                 rows =
