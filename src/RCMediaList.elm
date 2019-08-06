@@ -77,7 +77,7 @@ view objectList messages =
                         [ Table.td [] [ viewThumbnail object ]
                         , Table.td [] [ text <| String.fromInt object.id ]
                         , Table.td [] [ text object.name ]
-                        , Table.td [] [ insertButton, editButton, removeButton ]
+                        , Table.td [] [ editButton, removeButton ]
                         ]
 
                 rows =
