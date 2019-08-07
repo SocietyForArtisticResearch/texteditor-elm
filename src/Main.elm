@@ -849,13 +849,21 @@ viewTabs model =
 viewAlert : Model -> Html Msg
 viewAlert model =
     let
+        isRealProblem problem =
+            case problem of
+                Problems.NoMediaWithNameOrId _ ->
+                    False
+
+                _ ->
+                    True
+
         message =
             case model.problems of
                 [] ->
                     "test - no problem :-)"
 
                 problems ->
-                    String.join " " <| List.map Problems.asString problems
+                    String.join " " <| List.map Problems.asString <| List.filter isRealProblem problems
     in
     Alert.config
         |> Alert.info

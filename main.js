@@ -11282,6 +11282,13 @@ var rundis$elm_bootstrap$Bootstrap$Alert$view = F2(
 			A3(rundis$elm_bootstrap$Bootstrap$Alert$maybeAddDismissButton, visibility, configRec, configRec.children));
 	});
 var author$project$Main$viewAlert = function (model) {
+	var isRealProblem = function (problem) {
+		if (problem.$ === 'NoMediaWithNameOrId') {
+			return false;
+		} else {
+			return true;
+		}
+	};
 	var message = function () {
 		var _n0 = model.problems;
 		if (!_n0.b) {
@@ -11291,7 +11298,10 @@ var author$project$Main$viewAlert = function (model) {
 			return A2(
 				elm$core$String$join,
 				' ',
-				A2(elm$core$List$map, author$project$Problems$asString, problems));
+				A2(
+					elm$core$List$map,
+					author$project$Problems$asString,
+					A2(elm$core$List$filter, isRealProblem, problems)));
 		}
 	}();
 	return A2(
