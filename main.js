@@ -11289,19 +11289,16 @@ var author$project$Main$viewAlert = function (model) {
 			return true;
 		}
 	};
+	var realProblems = A2(elm$core$List$filter, isRealProblem, model.problems);
 	var message = function () {
-		var _n0 = model.problems;
-		if (!_n0.b) {
+		if (!realProblems.b) {
 			return 'test - no problem :-)';
 		} else {
-			var problems = _n0;
+			var problems = realProblems;
 			return A2(
 				elm$core$String$join,
 				' ',
-				A2(
-					elm$core$List$map,
-					author$project$Problems$asString,
-					A2(elm$core$List$filter, isRealProblem, problems)));
+				A2(elm$core$List$map, author$project$Problems$asString, problems));
 		}
 	}();
 	return A2(

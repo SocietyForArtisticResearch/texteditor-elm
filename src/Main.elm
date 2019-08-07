@@ -857,13 +857,15 @@ viewAlert model =
                 _ ->
                     True
 
+        realProblems = List.filter isRealProblem model.problems
+
         message =
-            case model.problems of
+            case realProblems of
                 [] ->
                     "test - no problem :-)"
 
                 problems ->
-                    String.join " " <| List.map Problems.asString <| List.filter isRealProblem problems
+                    String.join " " <| List.map Problems.asString problems
     in
     Alert.config
         |> Alert.info
