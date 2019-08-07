@@ -33,19 +33,21 @@ General:
 - Markdown-it ?
 - What to do when people are logged out
 - Saving license
-- Highlighting caption text and onclick creates problem
 
 Casper:
 
 - display title of exposition somewhere
 - warnings when closing/reloading
 - license edit field
+- don't display problem about media not found (double click, captions)
+- save before closing
 
 Luc:
 
-- manage contentversion and problems
+- save and inc contentversion 
 - display somthing while transcoding 
-- check captions display etc
+- elm-bootstrap update
+- codemirror undo/redo as buttons
 
 ## To test
 - tables?
@@ -120,3 +122,5 @@ Luc:
 - If a media is used twice or more, the DOM gets confused.
 - Caption text not parsed:  ![caption]{media1}
 - Check rendered html
+- check captions display etc
+- Highlighting caption text and onclick creates problem
