@@ -29,8 +29,6 @@ be made outside of elm.
 
 General:
 	
-- Copyright should be obligatory
-- Markdown-it ?
 - What to do when people are logged out
 - Saving license
 
@@ -41,6 +39,8 @@ Casper:
 - license edit field
 - don't display problem about media not found (double click, captions)
 - save before closing
+- upload display media edit and insert if you want
+- media edit copyright obligatory
 
 Luc:
 
