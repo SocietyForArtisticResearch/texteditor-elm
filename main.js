@@ -11290,37 +11290,35 @@ var author$project$Main$viewAlert = function (model) {
 		}
 	};
 	var realProblems = A2(elm$core$List$filter, isRealProblem, model.problems);
-	var message = function () {
-		if (!realProblems.b) {
-			return 'test - no problem :-)';
-		} else {
-			var problems = realProblems;
-			return A2(
-				elm$core$String$join,
-				' ',
-				A2(elm$core$List$map, author$project$Problems$asString, problems));
-		}
-	}();
-	return A2(
-		rundis$elm_bootstrap$Bootstrap$Alert$view,
-		model.alertVisibility,
-		A2(
-			rundis$elm_bootstrap$Bootstrap$Alert$children,
-			_List_fromArray(
-				[
-					A2(
-					rundis$elm_bootstrap$Bootstrap$Alert$h4,
-					_List_Nil,
-					_List_fromArray(
-						[
-							elm$html$Html$text('there is a problem')
-						])),
-					elm$html$Html$text(message)
-				]),
+	if (!realProblems.b) {
+		return A2(elm$html$Html$div, _List_Nil, _List_Nil);
+	} else {
+		var problems = realProblems;
+		return A2(
+			rundis$elm_bootstrap$Bootstrap$Alert$view,
+			model.alertVisibility,
 			A2(
-				rundis$elm_bootstrap$Bootstrap$Alert$dismissable,
-				author$project$Main$AlertMsg,
-				rundis$elm_bootstrap$Bootstrap$Alert$info(rundis$elm_bootstrap$Bootstrap$Alert$config))));
+				rundis$elm_bootstrap$Bootstrap$Alert$children,
+				_List_fromArray(
+					[
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Alert$h4,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text('there is a problem')
+							])),
+						elm$html$Html$text(
+						A2(
+							elm$core$String$join,
+							' ',
+							A2(elm$core$List$map, author$project$Problems$asString, problems)))
+					]),
+				A2(
+					rundis$elm_bootstrap$Bootstrap$Alert$dismissable,
+					author$project$Main$AlertMsg,
+					rundis$elm_bootstrap$Bootstrap$Alert$info(rundis$elm_bootstrap$Bootstrap$Alert$config))));
+	}
 };
 var author$project$Main$SwitchMarkdownEditor = function (a) {
 	return {$: 'SwitchMarkdownEditor', a: a};

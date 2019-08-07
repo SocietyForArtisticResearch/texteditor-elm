@@ -857,24 +857,22 @@ viewAlert model =
                 _ ->
                     True
 
-        realProblems = List.filter isRealProblem model.problems
-
-        message =
-            case realProblems of
-                [] ->
-                    "test - no problem :-)"
-
-                problems ->
-                    String.join " " <| List.map Problems.asString problems
+        realProblems =
+            List.filter isRealProblem model.problems
     in
-    Alert.config
-        |> Alert.info
-        |> Alert.dismissable AlertMsg
-        |> Alert.children
-            [ Alert.h4 [] [ text "there is a problem" ]
-            , text <| message
-            ]
-        |> Alert.view model.alertVisibility
+    case realProblems of
+        [] ->
+            div [] []
+
+        problems ->
+            Alert.config
+                |> Alert.info
+                |> Alert.dismissable AlertMsg
+                |> Alert.children
+                    [ Alert.h4 [] [ text "there is a problem" ]
+                    , text <| String.join " " <| List.map Problems.asString problems
+                    ]
+                |> Alert.view model.alertVisibility
 
 
 viewEditorCheckbox : MarkdownEditor -> Html Msg
