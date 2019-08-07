@@ -48,6 +48,7 @@ Luc:
 - display somthing while transcoding 
 - elm-bootstrap update
 - codemirror undo/redo as buttons
+- json decoder/encoder for RCExposition type
 
 ## To test
 - tables?
