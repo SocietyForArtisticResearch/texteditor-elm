@@ -479,10 +479,10 @@
     }, renderInterval);
 
 
-    window.beforeunload = function(evt) {
+    window.onbeforeunload = function(evt) {
         console.log("user closed browser tab");
         app.ports.userClosesBrowserTab(null); // see -> https://stackoverflow.com/questions/41679386/elm-define-subscription-port-with-no-parameters
-        return "debug, you are about to close, but RC has saved your stuff !"
+        return "I am not a spam message"
     };
 </script>
 
