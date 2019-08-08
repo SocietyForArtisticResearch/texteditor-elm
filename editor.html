@@ -107,10 +107,10 @@
             border-color: #aaa #efefef #efefef #aaa;
         }
 
-	.import-export-toolbar .btn-outline-dark:not(:disabled):not(.disabled):active {
-	    background-color: #939393;
-	    border-color: #777 #aaa #aaa #777;
-	}
+        .import-export-toolbar .btn-outline-dark:not(:disabled):not(.disabled):active {
+            background-color: #939393;
+            border-color: #777 #aaa #aaa #777;
+        }
 
         .toolbar {
             display: block;
@@ -363,7 +363,7 @@
             if (tok.includes("rcmedia")) {
                 let word = cmMarkdown.findWordAt(pos);
                 let content = cmMarkdown.getRange(word.anchor, word.head)
-//		console.log(word);
+                //		console.log(word);
                 if (content !== "}" && content !== "{") {
                     app.ports.mediaDialog.send({
                         media: content
@@ -477,6 +477,13 @@
 
         }
     }, renderInterval);
+
+
+    window.beforeunload = function(evt) {
+        console.log("user closed browser tab");
+        app.ports.userClosesBrowserTab(null); // see -> https://stackoverflow.com/questions/41679386/elm-define-subscription-port-with-no-parameters
+        return "debug, you are about to close, but RC has saved your stuff !"
+    };
 </script>
 
 </html>
