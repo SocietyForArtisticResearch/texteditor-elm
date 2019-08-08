@@ -6579,20 +6579,11 @@ var author$project$Main$MdContent = function (a) {
 	return {$: 'MdContent', a: a};
 };
 var author$project$Main$SaveExposition = {$: 'SaveExposition'};
-var author$project$Main$UserClosesBrowserTab = {$: 'UserClosesBrowserTab'};
 var elm$json$Json$Decode$value = _Json_decodeValue;
 var author$project$Main$cmContent = _Platform_incomingPort('cmContent', elm$json$Json$Decode$value);
 var author$project$Main$currentGeneration = _Platform_incomingPort('currentGeneration', elm$json$Json$Decode$value);
 var author$project$Main$getHtml = _Platform_incomingPort('getHtml', elm$json$Json$Decode$string);
 var author$project$Main$mediaDialog = _Platform_incomingPort('mediaDialog', elm$json$Json$Decode$value);
-var elm$json$Json$Decode$null = _Json_decodeNull;
-var author$project$Main$userClosesBrowserTab = _Platform_incomingPort(
-	'userClosesBrowserTab',
-	elm$json$Json$Decode$null(_Utils_Tuple0));
-var elm$core$Basics$always = F2(
-	function (a, _n0) {
-		return a;
-	});
 var elm$core$Platform$Sub$batch = _Platform_batch;
 var elm$http$Http$track = F2(
 	function (tracker, toMsg) {
@@ -7439,8 +7430,6 @@ var author$project$Main$subscriptions = function (model) {
 				author$project$Main$cmContent(author$project$Main$MdContent),
 				author$project$Main$getHtml(author$project$Main$GotConvertedHtml),
 				author$project$Main$mediaDialog(author$project$Main$CMOpenMediaDialog),
-				author$project$Main$userClosesBrowserTab(
-				elm$core$Basics$always(author$project$Main$UserClosesBrowserTab)),
 				A2(elm$http$Http$track, 'uploadMedia', author$project$Main$GotMediaUploadProgress),
 				A2(elm$http$Http$track, 'uploadImport', author$project$Main$GotImportUploadProgress),
 				A2(rundis$elm_bootstrap$Bootstrap$Dropdown$subscriptions, model.exportDropState, author$project$Main$ExportDropMsg),
@@ -7963,6 +7952,10 @@ var elm$regex$Regex$fromString = function (string) {
 		string);
 };
 var elm$regex$Regex$replace = _Regex_replaceAtMost(_Regex_infinity);
+var elm$core$Basics$always = F2(
+	function (a, _n0) {
+		return a;
+	});
 var elm$core$Bitwise$and = _Bitwise_and;
 var elm$core$Bitwise$shiftRightBy = _Bitwise_shiftRightBy;
 var elm$core$String$repeatHelp = F3(
@@ -9199,6 +9192,8 @@ var author$project$Main$insertMdString = _Platform_outgoingPort(
 					elm$json$Json$Encode$int(b)
 				]));
 	});
+var elm$json$Json$Encode$bool = _Json_wrap;
+var author$project$Main$reportIsSaved = _Platform_outgoingPort('reportIsSaved', elm$json$Json$Encode$bool);
 var author$project$Main$setContent = _Platform_outgoingPort('setContent', elm$core$Basics$identity);
 var author$project$Main$setEditor = _Platform_outgoingPort('setEditor', elm$json$Json$Encode$int);
 var author$project$Main$setPreviewContent = _Platform_outgoingPort('setPreviewContent', elm$json$Json$Encode$string);
@@ -9961,7 +9956,12 @@ var author$project$Main$update = F2(
 									exposition: author$project$Exposition$incContentVersion(model.exposition),
 									saved: false
 								}),
-							author$project$Main$getContent(_Utils_Tuple0)) : _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+							elm$core$Platform$Cmd$batch(
+								_List_fromArray(
+									[
+										author$project$Main$reportIsSaved(false),
+										author$project$Main$getContent(_Utils_Tuple0)
+									]))) : _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					} else {
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
@@ -10104,7 +10104,7 @@ var author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{saved: true}),
-							elm$core$Platform$Cmd$none);
+							author$project$Main$reportIsSaved(true));
 					} else {
 						var s = result.a;
 						var _n12 = A2(elm$core$Debug$log, 'save error: ', s);
@@ -10500,7 +10500,7 @@ var author$project$Main$update = F2(
 							model,
 							{exportDropState: state}),
 						elm$core$Platform$Cmd$none);
-				case 'BadUploadFileType':
+				default:
 					var str = msg.a;
 					return _Utils_Tuple2(
 						A2(
@@ -10508,12 +10508,6 @@ var author$project$Main$update = F2(
 							model,
 							author$project$Problems$UnkownUploadFileType(str)),
 						elm$core$Platform$Cmd$none);
-				default:
-					var $temp$msg = author$project$Main$SaveExposition,
-						$temp$model = model;
-					msg = $temp$msg;
-					model = $temp$model;
-					continue update;
 			}
 		}
 	});
@@ -10710,7 +10704,6 @@ var elm$html$Html$Attributes$classList = function (classes) {
 				elm$core$Tuple$first,
 				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
 };
-var elm$json$Json$Encode$bool = _Json_wrap;
 var elm$html$Html$Attributes$boolProperty = F2(
 	function (key, bool) {
 		return A2(
@@ -14273,6 +14266,7 @@ var elm$json$Json$Decode$float = _Json_decodeFloat;
 var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetHeight = A2(elm$json$Json$Decode$field, 'offsetHeight', elm$json$Json$Decode$float);
 var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetWidth = A2(elm$json$Json$Decode$field, 'offsetWidth', elm$json$Json$Decode$float);
 var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetLeft = A2(elm$json$Json$Decode$field, 'offsetLeft', elm$json$Json$Decode$float);
+var elm$json$Json$Decode$null = _Json_decodeNull;
 var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetParent = F2(
 	function (x, decoder) {
 		return elm$json$Json$Decode$oneOf(

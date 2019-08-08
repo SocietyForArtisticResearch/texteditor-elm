@@ -180,7 +180,7 @@ port getContent : () -> Cmd msg
 port setContent : E.Value -> Cmd msg
 
                   
-port userClosesBrowserTab : (() -> msg) -> Sub msg
+port reportIsSaved : Bool -> Cmd msg
 
 
 updateEditorContent : Model -> Cmd msg
@@ -224,7 +224,6 @@ subscriptions model =
         , cmContent MdContent
         , getHtml GotConvertedHtml
         , mediaDialog CMOpenMediaDialog
-        , userClosesBrowserTab (always UserClosesBrowserTab)
         , Http.track "uploadMedia" GotMediaUploadProgress
         , Http.track "uploadImport" GotImportUploadProgress
         , Dropdown.subscriptions model.exportDropState ExportDropMsg
@@ -272,7 +271,6 @@ type Msg
     | CloseMediaPicker
     | ExportDropMsg Dropdown.State
     | BadUploadFileType String
-    | UserClosesBrowserTab
 
 
 
@@ -339,7 +337,7 @@ update msg model =
                             , exposition = incContentVersion model.exposition
                             , saved = False
                           }
-                        , getContent ()
+                        , Cmd.batch [reportIsSaved False,getContent ()]
                         )
 
                     else
@@ -471,7 +469,7 @@ update msg model =
                         _ =
                             Debug.log "save result: " r
                     in
-                    ( { model | saved = True }, Cmd.none )
+                    ( { model | saved = True }, reportIsSaved True )
 
                 Err s ->
                     let
@@ -799,10 +797,7 @@ update msg model =
 
         BadUploadFileType str ->
             ( addProblem model (Problems.UnkownUploadFileType str), Cmd.none )
-                
-        UserClosesBrowserTab ->
-            (update SaveExposition model)
-                    
+                                
 
 
 viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg

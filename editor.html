@@ -236,6 +236,8 @@
 
     var selectedEditor = editorCmMd;
 
+    var expositionSaved = False;
+
     var cmMarkdown = CodeMirror.fromTextArea(document.getElementById("cm-markdown"), {
         mode: "markdown"
     });
@@ -479,11 +481,16 @@
     }, renderInterval);
 
 
-    window.onbeforeunload = function(evt) {
-        console.log("user closed browser tab");
-        app.ports.userClosesBrowserTab(null); // see -> https://stackoverflow.com/questions/41679386/elm-define-subscription-port-with-no-parameters
-        return "I am not a spam message"
-    };
+    app.ports.reportIsSaved.subscribe(function(isSaved) {
+        /* this function prevents closing tab if unsaved content */
+        if (isSaved) {
+            window.onbeforeunload = null;
+        } else {
+            window.onbeforeunload = function() {
+                return "unsaved content";
+            };
+        }
+    });
 </script>
 
 </html>
