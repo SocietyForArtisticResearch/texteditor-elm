@@ -12484,13 +12484,11 @@ var elm$html$Html$Attributes$alt = elm$html$Html$Attributes$stringProperty('alt'
 var author$project$RCMediaEdit$viewThumbnail = F2(
 	function (url, altText) {
 		return A2(
-			elm$html$Html$div,
+			elm$html$Html$label,
+			_List_Nil,
 			_List_fromArray(
 				[
-					elm$html$Html$Attributes$class('media')
-				]),
-			_List_fromArray(
-				[
+					elm$html$Html$text('preview'),
 					A2(
 					elm$html$Html$img,
 					_List_fromArray(
