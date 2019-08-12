@@ -188,6 +188,18 @@ helpFromValidation result =
             "error: " ++ err
 
 
+viewThumbnail : String -> String -> Html msg
+viewThumbnail url altText =
+    div [ class "media" ]
+        [ img
+            [ src url
+            , alt <| "image named " ++ altText
+            , class "preview-thumbnail"
+            ]
+            []
+        ]
+
+
 viewBody : RCMediaObjectViewState -> MediaEditMessage msg -> RCMediaObject -> Html msg
 viewBody objectState editTool objectInEdit =
     let
@@ -237,10 +249,14 @@ viewBody objectState editTool objectInEdit =
 
                 Err val ->
                     AllRightsReserved
+
+        thumbnailUrl =
+            Exposition.thumbUrl objectInEdit
     in
-    div []
+    div [ class "edit-media-dialog" ]
         [ Form.form []
-            [ viewInputWithLabel nameProps
+            [ viewThumbnail thumbnailUrl (.value descriptionProps)
+            , viewInputWithLabel nameProps
             , Form.group []
                 [ Form.label [ for "classPicker" ] [ text "Display size and location" ]
                 , viewClassesPicker "classPicker" cssClasses currentClass (editTool UserClass)
