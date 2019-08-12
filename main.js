@@ -12484,20 +12484,29 @@ var elm$html$Html$Attributes$alt = elm$html$Html$Attributes$stringProperty('alt'
 var author$project$RCMediaEdit$viewThumbnail = F2(
 	function (url, altText) {
 		return A2(
-			elm$html$Html$label,
-			_List_Nil,
+			elm$html$Html$div,
 			_List_fromArray(
 				[
-					elm$html$Html$text('preview'),
+					elm$html$Html$Attributes$class('media')
+				]),
+			_List_fromArray(
+				[
 					A2(
-					elm$html$Html$img,
+					elm$html$Html$label,
+					_List_Nil,
 					_List_fromArray(
 						[
-							elm$html$Html$Attributes$src(url),
-							elm$html$Html$Attributes$alt('image named ' + altText),
-							elm$html$Html$Attributes$class('preview-thumbnail')
-						]),
-					_List_Nil)
+							elm$html$Html$text('preview'),
+							A2(
+							elm$html$Html$img,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$src(url),
+									elm$html$Html$Attributes$alt('image named ' + altText),
+									elm$html$Html$Attributes$class('preview-thumbnail')
+								]),
+							_List_Nil)
+						]))
 				]));
 	});
 var elm$html$Html$form = _VirtualDom_node('form');

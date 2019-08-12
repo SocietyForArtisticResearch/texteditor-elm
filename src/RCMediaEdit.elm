@@ -190,14 +190,16 @@ helpFromValidation result =
 
 viewThumbnail : String -> String -> Html msg
 viewThumbnail url altText =
-    label []
-        [ text "preview"
-        , img
-            [ src url
-            , alt <| "image named " ++ altText
-            , class "preview-thumbnail"
+    div [ class "media" ]
+        [ label []
+            [ text "preview"
+            , img
+                [ src url
+                , alt <| "image named " ++ altText
+                , class "preview-thumbnail"
+                ]
+                []
             ]
-            []
         ]
 
 
