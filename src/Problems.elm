@@ -14,6 +14,7 @@ type Problem
     | CannotFindMediaFieldInJson
     | CannotImportFile Http.Error
     | UnkownUploadFileType String
+    | MediaUploadFailed Http.Error
 
 
 splitResultList : List (Result Problem a) -> ( List Problem, List a )
@@ -60,3 +61,25 @@ asString problem =
 
         UnkownUploadFileType s ->
             "unkown upload file type: " ++ s
+
+        MediaUploadFailed e ->
+            "media upload failed with an http error, because of " ++ httpErrorString e
+
+
+httpErrorString : Http.Error -> String
+httpErrorString err =
+    case err of
+        Http.BadUrl url ->
+            "bad url: " ++ url
+
+        Http.Timeout ->
+            "timeout"
+
+        Http.NetworkError ->
+            "a networkerror"
+
+        Http.BadStatus status ->
+            "bad status: " ++ String.fromInt status
+
+        Http.BadBody body ->
+            "bad body:" ++ body

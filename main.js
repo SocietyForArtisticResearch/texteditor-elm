@@ -9236,6 +9236,9 @@ var author$project$Problems$CannotLoadMedia = function (a) {
 };
 var author$project$Problems$CannotSave = {$: 'CannotSave'};
 var author$project$Problems$CannotUpdateMedia = {$: 'CannotUpdateMedia'};
+var author$project$Problems$MediaUploadFailed = function (a) {
+	return {$: 'MediaUploadFailed', a: a};
+};
 var author$project$Problems$NoMediaWithNameOrId = function (a) {
 	return {$: 'NoMediaWithNameOrId', a: a};
 };
@@ -10372,8 +10375,6 @@ var author$project$Main$update = F2(
 								return elm$core$Maybe$Nothing;
 							}
 						}();
-						var _n30 = A2(elm$core$Debug$log, 'uploaded result: ', result);
-						var _n31 = A2(elm$core$Debug$log, 'id', maybeId);
 						if (maybeId.$ === 'Nothing') {
 							return _Utils_Tuple2(
 								model,
@@ -10391,8 +10392,12 @@ var author$project$Main$update = F2(
 						}
 					} else {
 						var e = result.a;
-						var _n34 = A2(elm$core$Debug$log, 'error uploading: ', e);
-						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+						return _Utils_Tuple2(
+							A2(
+								author$project$Main$addProblem,
+								model,
+								author$project$Problems$MediaUploadFailed(e)),
+							elm$core$Platform$Cmd$none);
 					}
 				case 'UploadedImport':
 					var result = msg.a;
@@ -10410,7 +10415,7 @@ var author$project$Main$update = F2(
 										importResult.media)),
 								importUploadStatus: author$project$Main$Ready
 							});
-						var _n36 = A2(elm$core$Debug$log, 'import result: ', importResult);
+						var _n33 = A2(elm$core$Debug$log, 'import result: ', importResult);
 						return _Utils_Tuple2(
 							newModel,
 							elm$core$Platform$Cmd$batch(
@@ -10421,7 +10426,7 @@ var author$project$Main$update = F2(
 									])));
 					} else {
 						var e = result.a;
-						var _n37 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n34 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(
 							A2(
 								author$project$Main$addProblem,
@@ -10456,8 +10461,8 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				case 'SwitchTab':
 					var tab = msg.a;
-					var _n38 = model.editor;
-					var mdEditor = _n38.b;
+					var _n35 = model.editor;
+					var mdEditor = _n35.b;
 					var newModel = _Utils_update(
 						model,
 						{
@@ -10482,8 +10487,8 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				case 'SwitchMarkdownEditor':
 					var editor = msg.a;
-					var _n39 = model.editor;
-					var tab = _n39.a;
+					var _n36 = model.editor;
+					var tab = _n36.a;
 					var newModel = _Utils_update(
 						model,
 						{
@@ -10500,7 +10505,7 @@ var author$project$Main$update = F2(
 						author$project$Exposition$objectByNameOrId,
 						elm$core$String$fromInt(obj.id),
 						model.exposition);
-					var _n40 = A2(elm$core$Debug$log, 'trying to insert:', foundObj);
+					var _n37 = A2(elm$core$Debug$log, 'trying to insert:', foundObj);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -10511,7 +10516,7 @@ var author$project$Main$update = F2(
 								return author$project$Main$insertMdString(
 									_Utils_Tuple2('!{' + (o.name + '}'), 0));
 							} else {
-								var _n42 = elm$core$Debug$log('not inserted, because object not found');
+								var _n39 = elm$core$Debug$log('not inserted, because object not found');
 								return elm$core$Platform$Cmd$none;
 							}
 						}());
@@ -11094,6 +11099,23 @@ var author$project$Main$selectedEditorIsMarkdown = function (model) {
 var author$project$Main$AlertMsg = function (a) {
 	return {$: 'AlertMsg', a: a};
 };
+var author$project$Problems$httpErrorString = function (err) {
+	switch (err.$) {
+		case 'BadUrl':
+			var url = err.a;
+			return 'bad url: ' + url;
+		case 'Timeout':
+			return 'timeout';
+		case 'NetworkError':
+			return 'a networkerror';
+		case 'BadStatus':
+			var status = err.a;
+			return 'bad status: ' + elm$core$String$fromInt(status);
+		default:
+			var body = err.a;
+			return 'bad body:' + body;
+	}
+};
 var author$project$Problems$asString = function (problem) {
 	switch (problem.$) {
 		case 'WrongExpositionUrl':
@@ -11112,9 +11134,12 @@ var author$project$Problems$asString = function (problem) {
 			return 'unkown media field in the json';
 		case 'CannotImportFile':
 			return 'import http error';
-		default:
+		case 'UnkownUploadFileType':
 			var s = problem.a;
 			return 'unkown upload file type: ' + s;
+		default:
+			var e = problem.a;
+			return 'media upload failed with an http error, because of ' + author$project$Problems$httpErrorString(e);
 	}
 };
 var rundis$elm_bootstrap$Bootstrap$Alert$Config = function (a) {

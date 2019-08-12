@@ -536,6 +536,7 @@ update msg model =
                         )
                     )
 
+        -- a new media file was (successfully) uploaded, immediately show edit dialog
         OpenNewMediaGotMediaList id mediaList ->
             let
                 ( modelWithNewMedia, _ ) =
@@ -680,6 +681,7 @@ update msg model =
                     ( model, Cmd.none )
 
         Uploaded result ->
+            -- first, try to retrieve media Id from result, for the purpose of opening the media  edit window if success.
             case result of
                 Ok apiMedia ->
                     let
@@ -696,11 +698,10 @@ update msg model =
                                 Err _ ->
                                     Nothing
 
-                        _ =
-                            Debug.log "uploaded result: " result
-
-                        _ =
-                            Debug.log "id" maybeId
+                        -- _ =
+                        --     Debug.log "uploaded result: " result
+                        -- _ =
+                        --     Debug.log "id" maybeId
                     in
                     case maybeId of
                         Nothing ->
@@ -714,12 +715,7 @@ update msg model =
                             )
 
                 Err e ->
-                    -- TODO: add problem
-                    let
-                        _ =
-                            Debug.log "error uploading: " e
-                    in
-                    ( model, Cmd.none )
+                    ( addProblem model <| Problems.MediaUploadFailed e, Cmd.none )
 
         UploadedImport result ->
             case result of
