@@ -532,15 +532,12 @@ update msg model =
                         )
                     )
 
-        OpenNewMediaGotMediaList name mediaList ->
+        OpenNewMediaGotMediaList id mediaList ->
             let
-                modelWithNewMedia =
+                ( modelWithNewMedia, _ ) =
                     update (GotMediaList mediaList) model
-
-                modelWithEditWindow =
-                    update (MediaDialog name) model
             in
-            modelWithEditWindow
+            update (MediaDialog id) modelWithNewMedia
 
         MediaEdit ( objInModelName, objFromDialog ) ->
             case Exposition.objectByNameOrId objInModelName model.exposition of
@@ -697,6 +694,9 @@ update msg model =
 
                         _ =
                             Debug.log "uploaded result: " result
+
+                        _ =
+                            Debug.log "id" maybeId
                     in
                     case maybeId of
                         Nothing ->

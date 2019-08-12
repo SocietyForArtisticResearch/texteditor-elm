@@ -10174,36 +10174,37 @@ var author$project$Main$update = F2(
 										expositionWithClasses.media))));
 					}
 				case 'OpenNewMediaGotMediaList':
-					var name = msg.a;
+					var id = msg.a;
 					var mediaList = msg.b;
-					var modelWithNewMedia = A2(
+					var _n18 = A2(
 						author$project$Main$update,
 						author$project$Main$GotMediaList(mediaList),
 						model);
-					var modelWithEditWindow = A2(
-						author$project$Main$update,
-						author$project$Main$MediaDialog(name),
-						model);
-					return modelWithEditWindow;
+					var modelWithNewMedia = _n18.a;
+					var $temp$msg = author$project$Main$MediaDialog(id),
+						$temp$model = modelWithNewMedia;
+					msg = $temp$msg;
+					model = $temp$model;
+					continue update;
 				case 'MediaEdit':
-					var _n18 = msg.a;
-					var objInModelName = _n18.a;
-					var objFromDialog = _n18.b;
-					var _n19 = A2(author$project$Exposition$objectByNameOrId, objInModelName, model.exposition);
-					if (_n19.$ === 'Nothing') {
+					var _n19 = msg.a;
+					var objInModelName = _n19.a;
+					var objFromDialog = _n19.b;
+					var _n20 = A2(author$project$Exposition$objectByNameOrId, objInModelName, model.exposition);
+					if (_n20.$ === 'Nothing') {
 						var modelWithProblem = A2(
 							author$project$Main$addProblem,
 							model,
 							author$project$Problems$NoMediaWithNameOrId(objInModelName));
 						return _Utils_Tuple2(modelWithProblem, elm$core$Platform$Cmd$none);
 					} else {
-						var objInModel = _n19.a;
+						var objInModel = _n20.a;
 						var viewObjectState = A3(author$project$Exposition$validateMediaObject, model.exposition, objInModel, objFromDialog);
-						var _n20 = model.mediaDialog;
-						var viewStatus = _n20.a;
-						var objInEdit = _n20.b;
-						var _n21 = author$project$Exposition$isValid(viewObjectState.validation);
-						if (!_n21) {
+						var _n21 = model.mediaDialog;
+						var viewStatus = _n21.a;
+						var objInEdit = _n21.b;
+						var _n22 = author$project$Exposition$isValid(viewObjectState.validation);
+						if (!_n22) {
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
@@ -10224,7 +10225,7 @@ var author$project$Main$update = F2(
 										elm$core$Dict$update,
 										objFromDialog.id,
 										elm$core$Maybe$map(
-											function (_n22) {
+											function (_n23) {
 												return objFromDialog.userClass;
 											}),
 										model.mediaClassesDict),
@@ -10255,7 +10256,7 @@ var author$project$Main$update = F2(
 					var result = msg.a;
 					if (result.$ === 'Ok') {
 						var s = result.a;
-						var _n24 = A2(elm$core$Debug$log, 'saved media result: ', s);
+						var _n25 = A2(elm$core$Debug$log, 'saved media result: ', s);
 						var $temp$msg = author$project$Main$SaveExposition,
 							$temp$model = model;
 						msg = $temp$msg;
@@ -10263,7 +10264,7 @@ var author$project$Main$update = F2(
 						continue update;
 					} else {
 						var s = result.a;
-						var _n25 = A2(elm$core$Debug$log, 'update media error: ', s);
+						var _n26 = A2(elm$core$Debug$log, 'update media error: ', s);
 						return _Utils_Tuple2(
 							A2(author$project$Main$addProblem, model, author$project$Problems$CannotUpdateMedia),
 							elm$core$Platform$Cmd$none);
@@ -10374,7 +10375,8 @@ var author$project$Main$update = F2(
 								return elm$core$Maybe$Nothing;
 							}
 						}();
-						var _n29 = A2(elm$core$Debug$log, 'uploaded result: ', result);
+						var _n30 = A2(elm$core$Debug$log, 'uploaded result: ', result);
+						var _n31 = A2(elm$core$Debug$log, 'id', maybeId);
 						if (maybeId.$ === 'Nothing') {
 							return _Utils_Tuple2(
 								model,
@@ -10392,7 +10394,7 @@ var author$project$Main$update = F2(
 						}
 					} else {
 						var e = result.a;
-						var _n32 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n34 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
 				case 'UploadedImport':
@@ -10411,7 +10413,7 @@ var author$project$Main$update = F2(
 										importResult.media)),
 								importUploadStatus: author$project$Main$Ready
 							});
-						var _n34 = A2(elm$core$Debug$log, 'import result: ', importResult);
+						var _n36 = A2(elm$core$Debug$log, 'import result: ', importResult);
 						return _Utils_Tuple2(
 							newModel,
 							elm$core$Platform$Cmd$batch(
@@ -10422,7 +10424,7 @@ var author$project$Main$update = F2(
 									])));
 					} else {
 						var e = result.a;
-						var _n35 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n37 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(
 							A2(
 								author$project$Main$addProblem,
@@ -10457,8 +10459,8 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				case 'SwitchTab':
 					var tab = msg.a;
-					var _n36 = model.editor;
-					var mdEditor = _n36.b;
+					var _n38 = model.editor;
+					var mdEditor = _n38.b;
 					var newModel = _Utils_update(
 						model,
 						{
@@ -10483,8 +10485,8 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				case 'SwitchMarkdownEditor':
 					var editor = msg.a;
-					var _n37 = model.editor;
-					var tab = _n37.a;
+					var _n39 = model.editor;
+					var tab = _n39.a;
 					var newModel = _Utils_update(
 						model,
 						{
@@ -10501,7 +10503,7 @@ var author$project$Main$update = F2(
 						author$project$Exposition$objectByNameOrId,
 						elm$core$String$fromInt(obj.id),
 						model.exposition);
-					var _n38 = A2(elm$core$Debug$log, 'trying to insert:', foundObj);
+					var _n40 = A2(elm$core$Debug$log, 'trying to insert:', foundObj);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -10512,7 +10514,7 @@ var author$project$Main$update = F2(
 								return author$project$Main$insertMdString(
 									_Utils_Tuple2('!{' + (o.name + '}'), 0));
 							} else {
-								var _n40 = elm$core$Debug$log('not inserted, because object not found');
+								var _n42 = elm$core$Debug$log('not inserted, because object not found');
 								return elm$core$Platform$Cmd$none;
 							}
 						}());
