@@ -35,7 +35,7 @@ import View exposing (..)
 type alias Model =
     { exposition : RCExposition
     , editGeneration : ( Int, Int )
-    , mediaDialog : ( Modal.Visibility, Maybe ( RCMediaObject, Int ), Maybe RCMediaObjectViewState )
+    , mediaDialog : ( Modal.Visibility, Maybe RCMediaObject, Maybe RCMediaObjectViewState )
     , confirmDialog : ( Modal.Visibility, Maybe ConfirmDialogContent, Maybe (UserConfirm.Messages Msg) )
     , mediaPickerDialog : Modal.Visibility
     , alertVisibility : Alert.Visibility
@@ -278,8 +278,12 @@ type Msg
 -- not yet validated, only update request
 
 
-makeMediaEditFun : Exposition.RCMediaObject -> Int -> RCMediaEdit.Field -> String -> Msg
-makeMediaEditFun obj objId field input =
+makeMediaEditFun : Exposition.RCMediaObject -> RCMediaEdit.Field -> String -> Msg
+makeMediaEditFun obj field input =
+    let
+        objId =
+            .id obj
+    in
     case field of
         RCMediaEdit.Name ->
             MediaEdit ( String.fromInt objId, { obj | name = input } )
@@ -400,7 +404,7 @@ update msg model =
                     ( { model
                         | mediaDialog =
                             ( Modal.shown
-                            , Just ( obj, obj.id )
+                            , Just obj
                             , Just viewObjectState
                             )
                       }
@@ -559,7 +563,7 @@ update msg model =
                     case Exposition.isValid viewObjectState.validation of
                         False ->
                             ( { model
-                                | mediaDialog = ( viewStatus, Just ( objFromDialog, objInModel.id ), Just viewObjectState )
+                                | mediaDialog = ( viewStatus, Just objFromDialog, Just viewObjectState )
                               }
                             , Cmd.none
                             )
@@ -569,7 +573,7 @@ update msg model =
                                 newModel =
                                     { model
                                         | mediaDialog =
-                                            ( viewStatus, Just ( objFromDialog, objInModel.id ), Just viewObjectState )
+                                            ( viewStatus, Just objFromDialog, Just viewObjectState )
                                         , exposition =
                                             Exposition.replaceObject objFromDialog model.exposition
                                         , mediaClassesDict = model.mediaClassesDict |> Dict.update objFromDialog.id (Maybe.map (\_ -> objFromDialog.userClass))
@@ -968,8 +972,8 @@ view model =
     let
         mediaDialogHtml =
             case model.mediaDialog of
-                ( vis, Just ( obj, objId ), Just valid ) ->
-                    RCMediaEdit.viewMediaDialog makeMediaEditFun CloseMediaDialog model.exposition ( vis, ( obj, objId ), valid )
+                ( vis, Just obj, Just valid ) ->
+                    RCMediaEdit.viewMediaDialog makeMediaEditFun CloseMediaDialog model.exposition ( vis, obj, valid )
 
                 _ ->
                     div [] []

@@ -10038,8 +10038,7 @@ var author$project$Main$update = F2(
 								{
 									mediaDialog: _Utils_Tuple3(
 										rundis$elm_bootstrap$Bootstrap$Modal$shown,
-										elm$core$Maybe$Just(
-											_Utils_Tuple2(obj, obj.id)),
+										elm$core$Maybe$Just(obj),
 										elm$core$Maybe$Just(viewObjectState))
 								}),
 							elm$core$Platform$Cmd$none);
@@ -10211,8 +10210,7 @@ var author$project$Main$update = F2(
 									{
 										mediaDialog: _Utils_Tuple3(
 											viewStatus,
-											elm$core$Maybe$Just(
-												_Utils_Tuple2(objFromDialog, objInModel.id)),
+											elm$core$Maybe$Just(objFromDialog),
 											elm$core$Maybe$Just(viewObjectState))
 									}),
 								elm$core$Platform$Cmd$none);
@@ -10231,8 +10229,7 @@ var author$project$Main$update = F2(
 										model.mediaClassesDict),
 									mediaDialog: _Utils_Tuple3(
 										viewStatus,
-										elm$core$Maybe$Just(
-											_Utils_Tuple2(objFromDialog, objInModel.id)),
+										elm$core$Maybe$Just(objFromDialog),
 										elm$core$Maybe$Just(viewObjectState))
 								});
 							var $temp$msg = author$project$Main$SaveMediaEdit(objFromDialog),
@@ -11031,8 +11028,11 @@ var author$project$Main$editorToolbar = _List_fromArray(
 var author$project$Main$MediaEdit = function (a) {
 	return {$: 'MediaEdit', a: a};
 };
-var author$project$Main$makeMediaEditFun = F4(
-	function (obj, objId, field, input) {
+var author$project$Main$makeMediaEditFun = F3(
+	function (obj, field, input) {
+		var objId = function ($) {
+			return $.id;
+		}(obj);
 		switch (field.$) {
 			case 'Name':
 				return author$project$Main$MediaEdit(
@@ -12982,14 +12982,12 @@ var rundis$elm_bootstrap$Bootstrap$Modal$view = F2(
 var author$project$RCMediaEdit$viewMediaDialog = F4(
 	function (makeMediaEditFun, closeMediaDialog, exposition, _n0) {
 		var visibility = _n0.a;
-		var _n1 = _n0.b;
-		var object = _n1.a;
-		var objId = _n1.b;
+		var object = _n0.b;
 		var viewObjectState = _n0.c;
 		var mediaEditView = A3(
 			author$project$RCMediaEdit$viewBody,
 			viewObjectState,
-			A2(makeMediaEditFun, object, objId),
+			makeMediaEditFun(object),
 			object);
 		return A2(
 			rundis$elm_bootstrap$Bootstrap$Modal$view,
@@ -14522,19 +14520,14 @@ var author$project$Main$view = function (model) {
 		var _n4 = model.mediaDialog;
 		if ((_n4.b.$ === 'Just') && (_n4.c.$ === 'Just')) {
 			var vis = _n4.a;
-			var _n5 = _n4.b.a;
-			var obj = _n5.a;
-			var objId = _n5.b;
+			var obj = _n4.b.a;
 			var valid = _n4.c.a;
 			return A4(
 				author$project$RCMediaEdit$viewMediaDialog,
 				author$project$Main$makeMediaEditFun,
 				author$project$Main$CloseMediaDialog,
 				model.exposition,
-				_Utils_Tuple3(
-					vis,
-					_Utils_Tuple2(obj, objId),
-					valid));
+				_Utils_Tuple3(vis, obj, valid));
 		} else {
 			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
 		}

@@ -84,11 +84,6 @@ viewClassesPicker id classList currentSelection editMessage =
         List.map selectItem classList
 
 
-
-
-
-
-
 viewLicensePicker : String -> List License -> License -> (String -> msg) -> Html msg
 viewLicensePicker id licenseOptions currentSelection editMessage =
     let
@@ -100,7 +95,7 @@ viewLicensePicker id licenseOptions currentSelection editMessage =
             in
             Select.item
                 [ value <| asString license
-                , selected isSelected 
+                , selected isSelected
                 ]
                 [ text <| getDescription license ]
     in
@@ -236,7 +231,7 @@ viewBody objectState editTool objectInEdit =
 
         currentLicense : License
         currentLicense =
-            case objectState.validation.license of   
+            case objectState.validation.license of
                 Ok val ->
                     fromString val
 
@@ -258,18 +253,18 @@ viewBody objectState editTool objectInEdit =
 
 
 type alias MakeMediaEditFun msg =
-    Exposition.RCMediaObject -> Int -> Field -> String -> msg
+    Exposition.RCMediaObject -> Field -> String -> msg
 
 
 
 -- object ObjectId field newValue -> msg
 
 
-viewMediaDialog : MakeMediaEditFun msg -> msg -> RCExposition -> ( Modal.Visibility, ( RCMediaObject, Int ), RCMediaObjectViewState ) -> Html msg
-viewMediaDialog makeMediaEditFun closeMediaDialog exposition ( visibility, ( object, objId ), viewObjectState ) =
+viewMediaDialog : MakeMediaEditFun msg -> msg -> RCExposition -> ( Modal.Visibility, RCMediaObject, RCMediaObjectViewState ) -> Html msg
+viewMediaDialog makeMediaEditFun closeMediaDialog exposition ( visibility, object, viewObjectState ) =
     let
         mediaEditView =
-            viewBody viewObjectState (makeMediaEditFun object objId) object
+            viewBody viewObjectState (makeMediaEditFun object) object
     in
     Modal.config closeMediaDialog
         |> Modal.small
