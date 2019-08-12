@@ -20,7 +20,7 @@ Open `editor.html`.
 
 # Important note on DOM in editor.html
 
-The "preview"-div is not a node transformed/created/known by elm. This
+The "preview"-div is not a node transformed/created/known by Elm. This
 is because we set its content using morphdom and elm should not
 interfere. General page styling/layout of preview etc.  thus needs to
 be made outside of elm.
@@ -30,15 +30,10 @@ be made outside of elm.
 General:
 	
 - What to do when people are logged out
-- Saving license
 
 Casper:
 
 - display title of exposition somewhere
-- warnings when closing/reloading
-- license edit field
-- don't display problem about media not found (double click, captions)
-- save before closing
 - upload display media edit and insert if you want
 - media edit copyright obligatory
 

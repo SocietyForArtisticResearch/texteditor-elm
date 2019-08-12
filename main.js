@@ -9082,6 +9082,10 @@ var author$project$Main$MediaDeleted = function (a) {
 var author$project$Main$MediaDialog = function (a) {
 	return {$: 'MediaDialog', a: a};
 };
+var author$project$Main$OpenNewMediaGotMediaList = F2(
+	function (a, b) {
+		return {$: 'OpenNewMediaGotMediaList', a: a, b: b};
+	});
 var author$project$Main$SaveMediaEdit = function (a) {
 	return {$: 'SaveMediaEdit', a: a};
 };
@@ -9272,6 +9276,68 @@ var author$project$Problems$splitResultListAcc = F3(
 var author$project$Problems$splitResultList = function (results) {
 	return A3(author$project$Problems$splitResultListAcc, results, _List_Nil, _List_Nil);
 };
+var author$project$RCAPI$APIMedia = F4(
+	function (mediaType, status, width, height) {
+		return {height: height, mediaType: mediaType, status: status, width: width};
+	});
+var elm$json$Json$Decode$map4 = _Json_map4;
+var author$project$RCAPI$apiMedia = A5(
+	elm$json$Json$Decode$map4,
+	author$project$RCAPI$APIMedia,
+	A2(elm$json$Json$Decode$field, 'type', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'status', elm$json$Json$Decode$string),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'width', elm$json$Json$Decode$int)),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'height', elm$json$Json$Decode$int)));
+var author$project$Util$fst = function (_n0) {
+	var a = _n0.a;
+	var b = _n0.b;
+	return a;
+};
+var author$project$Licenses$fromString = function (s) {
+	return A2(
+		elm$core$Maybe$withDefault,
+		author$project$Licenses$AllRightsReserved,
+		A2(
+			elm$core$Maybe$map,
+			author$project$Util$fst,
+			A2(
+				author$project$Util$find,
+				function (_n0) {
+					var str = _n0.b;
+					return _Utils_eq(str, s);
+				},
+				author$project$Licenses$licensesDict)));
+};
+var author$project$RCAPI$APIMediaEntry = F6(
+	function (id, media, description, copyright, name, license) {
+		return {copyright: copyright, description: description, id: id, license: license, media: media, name: name};
+	});
+var author$project$RCAPI$mkMediaEntry = F6(
+	function (id, media, description, copyright, name, license) {
+		return A6(
+			author$project$RCAPI$APIMediaEntry,
+			id,
+			media,
+			A2(elm$core$Maybe$withDefault, '', description),
+			A2(elm$core$Maybe$withDefault, '', copyright),
+			name,
+			author$project$Licenses$fromString(
+				A2(elm$core$Maybe$withDefault, '', license)));
+	});
+var author$project$RCAPI$apiMediaEntry = A7(
+	elm$json$Json$Decode$map6,
+	author$project$RCAPI$mkMediaEntry,
+	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'media', author$project$RCAPI$apiMedia),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'description', elm$json$Json$Decode$string)),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'copyright', elm$json$Json$Decode$string)),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'license', elm$json$Json$Decode$string)));
 var author$project$Exposition$withPrefix = F2(
 	function (prefix, str) {
 		if (prefix.$ === 'Nothing') {
@@ -9425,68 +9491,6 @@ var author$project$RCAPI$deleteMedia = F2(
 				url: 'text-editor/simple-media-remove?research=' + (elm$core$String$fromInt(mediaObject.expositionId) + ('&simple-media=' + elm$core$String$fromInt(mediaObject.id)))
 			});
 	});
-var author$project$RCAPI$APIMedia = F4(
-	function (mediaType, status, width, height) {
-		return {height: height, mediaType: mediaType, status: status, width: width};
-	});
-var elm$json$Json$Decode$map4 = _Json_map4;
-var author$project$RCAPI$apiMedia = A5(
-	elm$json$Json$Decode$map4,
-	author$project$RCAPI$APIMedia,
-	A2(elm$json$Json$Decode$field, 'type', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'status', elm$json$Json$Decode$string),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'width', elm$json$Json$Decode$int)),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'height', elm$json$Json$Decode$int)));
-var author$project$Util$fst = function (_n0) {
-	var a = _n0.a;
-	var b = _n0.b;
-	return a;
-};
-var author$project$Licenses$fromString = function (s) {
-	return A2(
-		elm$core$Maybe$withDefault,
-		author$project$Licenses$AllRightsReserved,
-		A2(
-			elm$core$Maybe$map,
-			author$project$Util$fst,
-			A2(
-				author$project$Util$find,
-				function (_n0) {
-					var str = _n0.b;
-					return _Utils_eq(str, s);
-				},
-				author$project$Licenses$licensesDict)));
-};
-var author$project$RCAPI$APIMediaEntry = F6(
-	function (id, media, description, copyright, name, license) {
-		return {copyright: copyright, description: description, id: id, license: license, media: media, name: name};
-	});
-var author$project$RCAPI$mkMediaEntry = F6(
-	function (id, media, description, copyright, name, license) {
-		return A6(
-			author$project$RCAPI$APIMediaEntry,
-			id,
-			media,
-			A2(elm$core$Maybe$withDefault, '', description),
-			A2(elm$core$Maybe$withDefault, '', copyright),
-			name,
-			author$project$Licenses$fromString(
-				A2(elm$core$Maybe$withDefault, '', license)));
-	});
-var author$project$RCAPI$apiMediaEntry = A7(
-	elm$json$Json$Decode$map6,
-	author$project$RCAPI$mkMediaEntry,
-	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
-	A2(elm$json$Json$Decode$field, 'media', author$project$RCAPI$apiMedia),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'description', elm$json$Json$Decode$string)),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'copyright', elm$json$Json$Decode$string)),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'license', elm$json$Json$Decode$string)));
 var author$project$RCAPI$getMediaList = F2(
 	function (id, msg) {
 		return elm$http$Http$get(
@@ -10169,6 +10173,18 @@ var author$project$Main$update = F2(
 										},
 										expositionWithClasses.media))));
 					}
+				case 'OpenNewMediaGotMediaList':
+					var name = msg.a;
+					var mediaList = msg.b;
+					var modelWithNewMedia = A2(
+						author$project$Main$update,
+						author$project$Main$GotMediaList(mediaList),
+						model);
+					var modelWithEditWindow = A2(
+						author$project$Main$update,
+						author$project$Main$MediaDialog(name),
+						model);
+					return modelWithEditWindow;
 				case 'MediaEdit':
 					var _n18 = msg.a;
 					var objInModelName = _n18.a;
@@ -10344,15 +10360,39 @@ var author$project$Main$update = F2(
 				case 'Uploaded':
 					var result = msg.a;
 					if (result.$ === 'Ok') {
+						var apiMedia = result.a;
+						var decoded = A2(elm$json$Json$Decode$decodeString, author$project$RCAPI$apiMediaEntry, apiMedia);
+						var maybeId = function () {
+							if (decoded.$ === 'Ok') {
+								var media = decoded.a;
+								return elm$core$Maybe$Just(
+									elm$core$String$fromInt(
+										function ($) {
+											return $.id;
+										}(media)));
+							} else {
+								return elm$core$Maybe$Nothing;
+							}
+						}();
 						var _n29 = A2(elm$core$Debug$log, 'uploaded result: ', result);
-						return _Utils_Tuple2(
-							_Utils_update(
+						if (maybeId.$ === 'Nothing') {
+							return _Utils_Tuple2(
 								model,
-								{mediaUploadStatus: author$project$Main$Ready}),
-							A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
+								A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
+						} else {
+							var id = maybeId.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{mediaUploadStatus: author$project$Main$Ready}),
+								A2(
+									author$project$RCAPI$getMediaList,
+									model.research,
+									author$project$Main$OpenNewMediaGotMediaList(id)));
+						}
 					} else {
 						var e = result.a;
-						var _n30 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n32 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
 				case 'UploadedImport':
@@ -10371,7 +10411,7 @@ var author$project$Main$update = F2(
 										importResult.media)),
 								importUploadStatus: author$project$Main$Ready
 							});
-						var _n32 = A2(elm$core$Debug$log, 'import result: ', importResult);
+						var _n34 = A2(elm$core$Debug$log, 'import result: ', importResult);
 						return _Utils_Tuple2(
 							newModel,
 							elm$core$Platform$Cmd$batch(
@@ -10382,7 +10422,7 @@ var author$project$Main$update = F2(
 									])));
 					} else {
 						var e = result.a;
-						var _n33 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n35 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(
 							A2(
 								author$project$Main$addProblem,
@@ -10417,8 +10457,8 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				case 'SwitchTab':
 					var tab = msg.a;
-					var _n34 = model.editor;
-					var mdEditor = _n34.b;
+					var _n36 = model.editor;
+					var mdEditor = _n36.b;
 					var newModel = _Utils_update(
 						model,
 						{
@@ -10443,8 +10483,8 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				case 'SwitchMarkdownEditor':
 					var editor = msg.a;
-					var _n35 = model.editor;
-					var tab = _n35.a;
+					var _n37 = model.editor;
+					var tab = _n37.a;
 					var newModel = _Utils_update(
 						model,
 						{
@@ -10461,7 +10501,7 @@ var author$project$Main$update = F2(
 						author$project$Exposition$objectByNameOrId,
 						elm$core$String$fromInt(obj.id),
 						model.exposition);
-					var _n36 = A2(elm$core$Debug$log, 'trying to insert:', foundObj);
+					var _n38 = A2(elm$core$Debug$log, 'trying to insert:', foundObj);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -10472,7 +10512,7 @@ var author$project$Main$update = F2(
 								return author$project$Main$insertMdString(
 									_Utils_Tuple2('!{' + (o.name + '}'), 0));
 							} else {
-								var _n38 = elm$core$Debug$log('not inserted, because object not found');
+								var _n40 = elm$core$Debug$log('not inserted, because object not found');
 								return elm$core$Platform$Cmd$none;
 							}
 						}());

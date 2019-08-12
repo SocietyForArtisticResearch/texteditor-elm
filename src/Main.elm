@@ -179,7 +179,7 @@ port getContent : () -> Cmd msg
 
 port setContent : E.Value -> Cmd msg
 
-                  
+
 port reportIsSaved : Bool -> Cmd msg
 
 
@@ -246,6 +246,7 @@ type Msg
     | CloseMediaDialog
     | GotExposition (Result Http.Error RCAPI.APIExposition)
     | GotMediaList (Result Http.Error (List RCAPI.APIMediaEntry))
+    | OpenNewMediaGotMediaList String (Result Http.Error (List RCAPI.APIMediaEntry))
     | UploadMediaFileSelect
     | UploadMediaFileSelected File
     | UploadImportFileSelect
@@ -337,7 +338,7 @@ update msg model =
                             , exposition = incContentVersion model.exposition
                             , saved = False
                           }
-                        , Cmd.batch [reportIsSaved False,getContent ()]
+                        , Cmd.batch [ reportIsSaved False, getContent () ]
                         )
 
                     else
@@ -531,6 +532,16 @@ update msg model =
                         )
                     )
 
+        OpenNewMediaGotMediaList name mediaList ->
+            let
+                modelWithNewMedia =
+                    update (GotMediaList mediaList) model
+
+                modelWithEditWindow =
+                    update (MediaDialog name) model
+            in
+            modelWithEditWindow
+
         MediaEdit ( objInModelName, objFromDialog ) ->
             case Exposition.objectByNameOrId objInModelName model.exposition of
                 Nothing ->
@@ -669,12 +680,34 @@ update msg model =
 
         Uploaded result ->
             case result of
-                Ok _ ->
+                Ok apiMedia ->
                     let
+                        decoded : Result D.Error RCAPI.APIMediaEntry
+                        decoded =
+                            D.decodeString RCAPI.apiMediaEntry apiMedia
+
+                        maybeId : Maybe String
+                        maybeId =
+                            case decoded of
+                                Ok media ->
+                                    Just <| String.fromInt (.id media)
+
+                                Err _ ->
+                                    Nothing
+
                         _ =
                             Debug.log "uploaded result: " result
                     in
-                    ( { model | mediaUploadStatus = Ready }, RCAPI.getMediaList model.research GotMediaList )
+                    case maybeId of
+                        Nothing ->
+                            ( model
+                            , RCAPI.getMediaList model.research GotMediaList
+                            )
+
+                        Just id ->
+                            ( { model | mediaUploadStatus = Ready }
+                            , RCAPI.getMediaList model.research (OpenNewMediaGotMediaList id)
+                            )
 
                 Err e ->
                     -- TODO: add problem
@@ -797,7 +830,6 @@ update msg model =
 
         BadUploadFileType str ->
             ( addProblem model (Problems.UnkownUploadFileType str), Cmd.none )
-                                
 
 
 viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg

@@ -1,4 +1,4 @@
-module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, APIPandocImport, ConversionType(..), convertExposition, deleteMedia, getExposition, getMediaList, saveExposition, toMediaClassesDict, toRCExposition, toRCMediaObject, updateMedia, uploadImport, uploadMedia)
+module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, APIPandocImport, ConversionType(..), apiMediaEntry, convertExposition, deleteMedia, getExposition, getMediaList, saveExposition, toMediaClassesDict, toRCExposition, toRCMediaObject, updateMedia, uploadImport, uploadMedia)
 
 --import Bytes.Decode
 
