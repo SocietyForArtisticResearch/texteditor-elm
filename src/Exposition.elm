@@ -357,6 +357,16 @@ validateName exp obj newName =
             Err "Another media object already has this name"
 
 
+validateCopyright : String -> Result String String
+validateCopyright copyright =
+    case copyright of
+        "" ->
+            Err "copyright is obligatory"
+
+        something ->
+            Ok something
+
+
 type alias RCMediaObjectValidation =
     { name : Result String String
     , description : Result String String
@@ -380,7 +390,7 @@ validateMediaObject exp objInModel objInEdit =
         validation =
             { name = validateName exp objInModel objInEdit.name
             , description = Ok objInEdit.description
-            , copyright = Ok objInEdit.copyright
+            , copyright = validateCopyright objInEdit.copyright
             , userClass = Ok objInEdit.userClass
             , license = Ok <| Licenses.asString objInEdit.license
             }

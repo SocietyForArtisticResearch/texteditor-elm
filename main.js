@@ -8950,6 +8950,14 @@ var author$project$Exposition$updateToc = function (expo) {
 var author$project$Exposition$thumbUrl = function (data) {
 	return '/text-editor/simple-media-thumb?research=' + (elm$core$String$fromInt(data.expositionId) + ('&simple-media=' + (elm$core$String$fromInt(data.id) + '&width=132&height=132')));
 };
+var author$project$Exposition$validateCopyright = function (copyright) {
+	if (copyright === '') {
+		return elm$core$Result$Err('copyright is obligatory');
+	} else {
+		var something = copyright;
+		return elm$core$Result$Ok(something);
+	}
+};
 var elm$core$List$member = F2(
 	function (x, xs) {
 		return A2(
@@ -9035,7 +9043,7 @@ var author$project$Licenses$asString = function (l) {
 var author$project$Exposition$validateMediaObject = F3(
 	function (exp, objInModel, objInEdit) {
 		var validation = {
-			copyright: elm$core$Result$Ok(objInEdit.copyright),
+			copyright: author$project$Exposition$validateCopyright(objInEdit.copyright),
 			description: elm$core$Result$Ok(objInEdit.description),
 			license: elm$core$Result$Ok(
 				author$project$Licenses$asString(objInEdit.license)),
