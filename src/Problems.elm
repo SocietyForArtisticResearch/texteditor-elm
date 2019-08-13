@@ -51,7 +51,7 @@ asString problem =
             "saving error"
 
         CannotUpdateMedia ->
-            "problem updaing media"
+            "problem updating media"
 
         CannotFindMediaFieldInJson ->
             "unkown media field in the json"

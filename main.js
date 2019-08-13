@@ -10524,10 +10524,31 @@ var author$project$Main$update = F2(
 						function () {
 							if (foundObj.$ === 'Just') {
 								var o = foundObj.a;
-								return author$project$Main$insertMdString(
-									_Utils_Tuple2('!{' + (o.name + '}'), 0));
+								var closeMediaListIfOpen = function () {
+									var _n39 = model.editor;
+									if (_n39.a.$ === 'EditorMedia') {
+										if (_n39.b.$ === 'CodemirrorMarkdown') {
+											var _n40 = _n39.a;
+											var _n41 = _n39.b;
+											return author$project$Main$setEditor(0);
+										} else {
+											var _n42 = _n39.a;
+											var _n43 = _n39.b;
+											return author$project$Main$setEditor(1);
+										}
+									} else {
+										return elm$core$Platform$Cmd$none;
+									}
+								}();
+								return elm$core$Platform$Cmd$batch(
+									_List_fromArray(
+										[
+											author$project$Main$insertMdString(
+											_Utils_Tuple2('!{' + (o.name + '}'), 0)),
+											closeMediaListIfOpen
+										]));
 							} else {
-								var _n39 = elm$core$Debug$log('not inserted, because object not found');
+								var _n44 = elm$core$Debug$log('not inserted, because object not found');
 								return elm$core$Platform$Cmd$none;
 							}
 						}());
@@ -11140,7 +11161,7 @@ var author$project$Problems$asString = function (problem) {
 		case 'CannotSave':
 			return 'saving error';
 		case 'CannotUpdateMedia':
-			return 'problem updaing media';
+			return 'problem updating media';
 		case 'CannotFindMediaFieldInJson':
 			return 'unkown media field in the json';
 		case 'CannotImportFile':

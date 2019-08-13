@@ -102,6 +102,22 @@ getTabState state =
             MediaListTab
 
 
+editorNumber : TabState -> Int
+editorNumber tab =
+    case tab of
+        CmMarkdownTab ->
+            0
+
+        TxtMarkdownTab ->
+            1
+
+        StyleTab ->
+            2
+
+        MediaListTab ->
+            3
+
+
 type alias Flags =
     { weave : Int, research : Int }
 
@@ -195,7 +211,8 @@ updateEditorContent model =
         )
 
 
-port mediaDialog : (E.Value -> msg) -> Sub msg
+
+-- Elm to Javascript
 
 
 port setEditor : Int -> Cmd msg
@@ -211,10 +228,17 @@ port insertMdString : ( String, Int ) -> Cmd msg
 port convertMarkdown : String -> Cmd msg
 
 
+port setPreviewContent : String -> Cmd msg
+
+
+
+-- Javascript to Elm
+
+
 port getHtml : (String -> msg) -> Sub msg
 
 
-port setPreviewContent : String -> Cmd msg
+port mediaDialog : (E.Value -> msg) -> Sub msg
 
 
 subscriptions : Model -> Sub Msg
@@ -807,7 +831,22 @@ update msg model =
               -- this is simply to make sure the object is in the exposition media
             , case foundObj of
                 Just o ->
-                    insertMdString ( "!{" ++ o.name ++ "}", 0 )
+                    let
+                        closeMediaListIfOpen =
+                            case model.editor of
+                                ( EditorMedia, CodemirrorMarkdown ) ->
+                                    setEditor 0
+
+                                ( EditorMedia, TextareaMarkdown ) ->
+                                    setEditor 1
+
+                                _ ->
+                                    Cmd.none
+                    in
+                    Cmd.batch
+                        [ insertMdString ( "!{" ++ o.name ++ "}", 0 )
+                        , closeMediaListIfOpen -- close media list
+                        ]
 
                 Nothing ->
                     let
