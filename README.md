@@ -34,7 +34,6 @@ General:
 Casper:
 
 - display title of exposition somewhere
-- upload display media edit and insert if you want
 - media edit copyright obligatory
 
 Luc:
