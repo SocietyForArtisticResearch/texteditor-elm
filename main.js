@@ -14695,22 +14695,22 @@ var author$project$Main$view = function (model) {
 					]),
 				_List_fromArray(
 					[
-						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, true, author$project$Main$UploadMediaFileSelect, 'Upload media', model.mediaUploadStatus),
+						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, true, author$project$Main$UploadMediaFileSelect, 'upload media', model.mediaUploadStatus),
 						A7(
 						author$project$View$mkButton,
 						author$project$View$ArrowDown,
 						true,
 						author$project$Main$OpenMediaPicker,
-						'Insert media',
+						'insert media',
 						true,
 						_List_Nil,
 						!author$project$Main$selectedEditorIsMarkdown(model)),
-						A5(author$project$Main$viewUpload, author$project$View$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import doc', model.importUploadStatus),
+						A5(author$project$Main$viewUpload, author$project$View$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'import doc', model.importUploadStatus),
 						A4(
 						author$project$View$mkDropdown,
 						model.exportDropState,
 						author$project$Main$ExportDropMsg,
-						'Export doc',
+						'export doc',
 						_List_fromArray(
 							[
 								_Utils_Tuple2(
