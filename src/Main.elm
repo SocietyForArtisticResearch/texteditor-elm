@@ -631,11 +631,18 @@ update msg model =
             let
                 modelWithoutObj =
                     { model | exposition = Exposition.removeObjectWithID obj.id model.exposition }
+
+                ( modelWithClosedWindow, cmd ) =
+                    update CloseConfirmDialog modelWithoutObj
             in
-            ( modelWithoutObj, Cmd.batch [ RCAPI.deleteMedia obj MediaDeleted, RCAPI.getMediaList model.research GotMediaList ] )
+            ( modelWithClosedWindow, Cmd.batch [ cmd, RCAPI.deleteMedia obj MediaDeleted ] )
 
         MediaDeleted obj ->
-            update CloseConfirmDialog model
+            let
+                _ =
+                    Debug.log "MediaDeleted api" obj
+            in
+            ( model, RCAPI.getMediaList model.research GotMediaList )
 
         UploadMediaFileSelect ->
             -- alowed media types:

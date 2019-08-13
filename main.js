@@ -10284,21 +10284,23 @@ var author$project$Main$update = F2(
 						{
 							exposition: A2(author$project$Exposition$removeObjectWithID, obj.id, model.exposition)
 						});
+					var _n27 = A2(author$project$Main$update, author$project$Main$CloseConfirmDialog, modelWithoutObj);
+					var modelWithClosedWindow = _n27.a;
+					var cmd = _n27.b;
 					return _Utils_Tuple2(
-						modelWithoutObj,
+						modelWithClosedWindow,
 						elm$core$Platform$Cmd$batch(
 							_List_fromArray(
 								[
-									A2(author$project$RCAPI$deleteMedia, obj, author$project$Main$MediaDeleted),
-									A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList)
+									cmd,
+									A2(author$project$RCAPI$deleteMedia, obj, author$project$Main$MediaDeleted)
 								])));
 				case 'MediaDeleted':
 					var obj = msg.a;
-					var $temp$msg = author$project$Main$CloseConfirmDialog,
-						$temp$model = model;
-					msg = $temp$msg;
-					model = $temp$model;
-					continue update;
+					var _n28 = A2(elm$core$Debug$log, 'MediaDeleted api', obj);
+					return _Utils_Tuple2(
+						model,
+						A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList));
 				case 'UploadMediaFileSelect':
 					return _Utils_Tuple2(
 						model,
@@ -10423,7 +10425,7 @@ var author$project$Main$update = F2(
 										importResult.media)),
 								importUploadStatus: author$project$Main$Ready
 							});
-						var _n33 = A2(elm$core$Debug$log, 'import result: ', importResult);
+						var _n35 = A2(elm$core$Debug$log, 'import result: ', importResult);
 						return _Utils_Tuple2(
 							newModel,
 							elm$core$Platform$Cmd$batch(
@@ -10434,7 +10436,7 @@ var author$project$Main$update = F2(
 									])));
 					} else {
 						var e = result.a;
-						var _n34 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n36 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(
 							A2(
 								author$project$Main$addProblem,
@@ -10469,8 +10471,8 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				case 'SwitchTab':
 					var tab = msg.a;
-					var _n35 = model.editor;
-					var mdEditor = _n35.b;
+					var _n37 = model.editor;
+					var mdEditor = _n37.b;
 					var newModel = _Utils_update(
 						model,
 						{
@@ -10495,8 +10497,8 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				case 'SwitchMarkdownEditor':
 					var editor = msg.a;
-					var _n36 = model.editor;
-					var tab = _n36.a;
+					var _n38 = model.editor;
+					var tab = _n38.a;
 					var newModel = _Utils_update(
 						model,
 						{
@@ -10513,7 +10515,7 @@ var author$project$Main$update = F2(
 						author$project$Exposition$objectByNameOrId,
 						elm$core$String$fromInt(obj.id),
 						model.exposition);
-					var _n37 = A2(elm$core$Debug$log, 'trying to insert:', foundObj);
+					var _n39 = A2(elm$core$Debug$log, 'trying to insert:', foundObj);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -10525,15 +10527,15 @@ var author$project$Main$update = F2(
 							if (foundObj.$ === 'Just') {
 								var o = foundObj.a;
 								var closeMediaListIfOpen = function () {
-									var _n39 = model.editor;
-									if (_n39.a.$ === 'EditorMedia') {
-										if (_n39.b.$ === 'CodemirrorMarkdown') {
-											var _n40 = _n39.a;
-											var _n41 = _n39.b;
+									var _n41 = model.editor;
+									if (_n41.a.$ === 'EditorMedia') {
+										if (_n41.b.$ === 'CodemirrorMarkdown') {
+											var _n42 = _n41.a;
+											var _n43 = _n41.b;
 											return author$project$Main$setEditor(0);
 										} else {
-											var _n42 = _n39.a;
-											var _n43 = _n39.b;
+											var _n44 = _n41.a;
+											var _n45 = _n41.b;
 											return author$project$Main$setEditor(1);
 										}
 									} else {
@@ -10548,7 +10550,7 @@ var author$project$Main$update = F2(
 											closeMediaListIfOpen
 										]));
 							} else {
-								var _n44 = elm$core$Debug$log('not inserted, because object not found');
+								var _n46 = elm$core$Debug$log('not inserted, because object not found');
 								return elm$core$Platform$Cmd$none;
 							}
 						}());
