@@ -10517,7 +10517,10 @@ var author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{mediaPickerDialog: rundis$elm_bootstrap$Bootstrap$Modal$hidden}),
+							{
+								mediaDialog: _Utils_Tuple3(rundis$elm_bootstrap$Bootstrap$Modal$hidden, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing),
+								mediaPickerDialog: rundis$elm_bootstrap$Bootstrap$Modal$hidden
+							}),
 						function () {
 							if (foundObj.$ === 'Just') {
 								var o = foundObj.a;

@@ -799,7 +799,10 @@ update msg model =
                 _ =
                     Debug.log "trying to insert:" foundObj
             in
-            ( { model | mediaPickerDialog = Modal.hidden }
+            ( { model
+                | mediaPickerDialog = Modal.hidden
+                , mediaDialog = ( Modal.hidden, Nothing, Nothing )
+              }
               -- close mediapicker if insert
               -- this is simply to make sure the object is in the exposition media
             , case foundObj of
