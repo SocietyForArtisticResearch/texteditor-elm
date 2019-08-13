@@ -292,10 +292,10 @@ viewMediaDialog makeMediaEditFun closeMediaDialogMsg insertMediaMsg exposition (
     Modal.config closeMediaDialogMsg
         |> Modal.small
         |> Modal.hideOnBackdropClick True
-        |> Modal.h5 [] [ text <| "Edit object " ++ object.name ]
         |> Modal.body [] [ p [] [ mediaEditView ] ]
         |> Modal.footer []
-            [ Button.button
+            [
+             Button.button
                 [ Button.outlinePrimary
                 , Button.attrs [ Events.onClick <| insertMediaMsg object ]
                 ]
