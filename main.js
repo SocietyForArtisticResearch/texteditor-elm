@@ -10567,6 +10567,9 @@ var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
 var author$project$Main$DownloadExport = function (a) {
 	return {$: 'DownloadExport', a: a};
 };
+var author$project$Main$InsertMediaAtCursor = function (a) {
+	return {$: 'InsertMediaAtCursor', a: a};
+};
 var author$project$Main$OpenMediaPicker = {$: 'OpenMediaPicker'};
 var author$project$Main$UploadImportFileSelect = {$: 'UploadImportFileSelect'};
 var author$project$Main$UploadMediaFileSelect = {$: 'UploadMediaFileSelect'};
@@ -11087,9 +11090,6 @@ var author$project$Main$makeMediaEditFun = F3(
 		}
 	});
 var author$project$Main$CloseMediaPicker = {$: 'CloseMediaPicker'};
-var author$project$Main$InsertMediaAtCursor = function (a) {
-	return {$: 'InsertMediaAtCursor', a: a};
-};
 var author$project$Main$makePickerMessages = {closeModal: author$project$Main$CloseMediaPicker, insertObject: author$project$Main$InsertMediaAtCursor};
 var author$project$Main$ConfirmMediaDelete = function (a) {
 	return {$: 'ConfirmMediaDelete', a: a};
@@ -12596,7 +12596,7 @@ var author$project$RCMediaEdit$viewBody = F3(
 										]),
 									_List_fromArray(
 										[
-											elm$html$Html$text('Display size and location')
+											elm$html$Html$text('display size and location')
 										])),
 									A4(
 									author$project$RCMediaEdit$viewClassesPicker,
@@ -12620,6 +12620,9 @@ var elm$html$Html$p = _VirtualDom_node('p');
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary = {$: 'Secondary'};
+var rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
 var rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {
 	return {$: 'Body', a: a};
 };
@@ -13051,8 +13054,8 @@ var rundis$elm_bootstrap$Bootstrap$Modal$view = F2(
 					]),
 				A2(rundis$elm_bootstrap$Bootstrap$Modal$backdrop, visibility, conf)));
 	});
-var author$project$RCMediaEdit$viewMediaDialog = F4(
-	function (makeMediaEditFun, closeMediaDialog, exposition, _n0) {
+var author$project$RCMediaEdit$viewMediaDialog = F5(
+	function (makeMediaEditFun, closeMediaDialogMsg, insertMediaMsg, exposition, _n0) {
 		var visibility = _n0.a;
 		var object = _n0.b;
 		var viewObjectState = _n0.c;
@@ -13077,7 +13080,23 @@ var author$project$RCMediaEdit$viewMediaDialog = F4(
 								rundis$elm_bootstrap$Bootstrap$Button$attrs(
 								_List_fromArray(
 									[
-										elm$html$Html$Events$onClick(closeMediaDialog)
+										elm$html$Html$Events$onClick(
+										insertMediaMsg(object))
+									]))
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Insert')
+							])),
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Button$button,
+						_List_fromArray(
+							[
+								rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary,
+								rundis$elm_bootstrap$Bootstrap$Button$attrs(
+								_List_fromArray(
+									[
+										elm$html$Html$Events$onClick(closeMediaDialogMsg)
 									]))
 							]),
 						_List_fromArray(
@@ -13107,7 +13126,7 @@ var author$project$RCMediaEdit$viewMediaDialog = F4(
 							rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
 							true,
 							rundis$elm_bootstrap$Bootstrap$Modal$small(
-								rundis$elm_bootstrap$Bootstrap$Modal$config(closeMediaDialog)))))));
+								rundis$elm_bootstrap$Bootstrap$Modal$config(closeMediaDialogMsg)))))));
 	});
 var author$project$Exposition$customThumbUrl = F2(
 	function (size, data) {
@@ -13163,9 +13182,6 @@ var rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo = rundis$elm_bootstrap$Boots
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger = {$: 'Danger'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlineDanger = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary = {$: 'Secondary'};
-var rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Size = function (a) {
 	return {$: 'Size', a: a};
 };
@@ -14594,10 +14610,11 @@ var author$project$Main$view = function (model) {
 			var vis = _n4.a;
 			var obj = _n4.b.a;
 			var valid = _n4.c.a;
-			return A4(
+			return A5(
 				author$project$RCMediaEdit$viewMediaDialog,
 				author$project$Main$makeMediaEditFun,
 				author$project$Main$CloseMediaDialog,
+				author$project$Main$InsertMediaAtCursor,
 				model.exposition,
 				_Utils_Tuple3(vis, obj, valid));
 		} else {

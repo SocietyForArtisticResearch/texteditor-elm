@@ -969,7 +969,7 @@ view model =
         mediaDialogHtml =
             case model.mediaDialog of
                 ( vis, Just obj, Just valid ) ->
-                    RCMediaEdit.viewMediaDialog makeMediaEditFun CloseMediaDialog model.exposition ( vis, obj, valid )
+                    RCMediaEdit.viewMediaDialog makeMediaEditFun CloseMediaDialog InsertMediaAtCursor model.exposition ( vis, obj, valid )
 
                 _ ->
                     div [] []

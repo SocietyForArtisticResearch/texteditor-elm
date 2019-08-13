@@ -61,6 +61,9 @@ Luc:
 
 ## DONE
 
+- media edit opens after upload finishes
+- removed cannot find media error
+- added thumbnail to mediaedit
 - double click to insert media
 - added more media types, user can select to filter 
 - larger preview thumbnails

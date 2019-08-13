@@ -261,7 +261,7 @@ viewBody objectState editTool objectInEdit =
             [ viewThumbnail thumbnailUrl (.value descriptionProps)
             , viewInputWithLabel nameProps
             , Form.group []
-                [ Form.label [ for "classPicker" ] [ text "Display size and location" ]
+                [ Form.label [ for "classPicker" ] [ text "display size and location" ]
                 , viewClassesPicker "classPicker" cssClasses currentClass (editTool UserClass)
                 ]
             , viewTextAreaWithLabel descriptionProps
@@ -275,17 +275,21 @@ type alias MakeMediaEditFun msg =
     Exposition.RCMediaObject -> Field -> String -> msg
 
 
+type alias InsertMediaMessage msg =
+    Exposition.RCMediaObject -> msg
+
+
 
 -- object ObjectId field newValue -> msg
 
 
-viewMediaDialog : MakeMediaEditFun msg -> msg -> RCExposition -> ( Modal.Visibility, RCMediaObject, RCMediaObjectViewState ) -> Html msg
-viewMediaDialog makeMediaEditFun closeMediaDialog exposition ( visibility, object, viewObjectState ) =
+viewMediaDialog : MakeMediaEditFun msg -> msg -> InsertMediaMessage msg -> RCExposition -> ( Modal.Visibility, RCMediaObject, RCMediaObjectViewState ) -> Html msg
+viewMediaDialog makeMediaEditFun closeMediaDialogMsg insertMediaMsg exposition ( visibility, object, viewObjectState ) =
     let
         mediaEditView =
             viewBody viewObjectState (makeMediaEditFun object) object
     in
-    Modal.config closeMediaDialog
+    Modal.config closeMediaDialogMsg
         |> Modal.small
         |> Modal.hideOnBackdropClick True
         |> Modal.h5 [] [ text <| "Edit object " ++ object.name ]
@@ -293,7 +297,12 @@ viewMediaDialog makeMediaEditFun closeMediaDialog exposition ( visibility, objec
         |> Modal.footer []
             [ Button.button
                 [ Button.outlinePrimary
-                , Button.attrs [ Events.onClick closeMediaDialog ]
+                , Button.attrs [ Events.onClick <| insertMediaMsg object ]
+                ]
+                [ text "Insert" ]
+            , Button.button
+                [ Button.outlineSecondary
+                , Button.attrs [ Events.onClick closeMediaDialogMsg ]
                 ]
                 [ text "Close" ]
             ]
