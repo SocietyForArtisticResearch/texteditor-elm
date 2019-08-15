@@ -105,10 +105,10 @@ mkButton icon needsOffset onClickMsg buttonText primary otherAttrs hidden =
                 [ onClick onClickMsg
                 , style "display" <|
                     if hidden then
-                        "inline-block"
+                        "none"
 
                     else
-                        "none"
+                        "inline-block"
                 ]
                 (List.append spacing otherAttrs)
         ]
