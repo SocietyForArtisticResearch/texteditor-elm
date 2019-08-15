@@ -14589,6 +14589,7 @@ var author$project$View$optionalBlock = F2(
 	});
 var elm$html$Html$Attributes$target = elm$html$Html$Attributes$stringProperty('target');
 var author$project$Main$view = function (model) {
+	var showButtons = author$project$Main$selectedEditorIsMarkdown(model);
 	var saveButtonText = model.saved ? 'Saved' : 'Not Saved';
 	var saveButton = A2(
 		rundis$elm_bootstrap$Bootstrap$Button$button,
@@ -14649,7 +14650,6 @@ var author$project$Main$view = function (model) {
 			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
 		}
 	}();
-	var hideButtons = author$project$Main$selectedEditorIsMarkdown(model);
 	var editorCheckbox = function () {
 		var _n2 = model.editor;
 		if (_n2.a.$ === 'EditorMarkdown') {
@@ -14699,14 +14699,14 @@ var author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, true, author$project$Main$UploadMediaFileSelect, 'upload media', model.mediaUploadStatus),
-						A7(author$project$View$mkButton, author$project$View$ArrowDown, true, author$project$Main$OpenMediaPicker, 'insert media', true, _List_Nil, !hideButtons),
+						A7(author$project$View$mkButton, author$project$View$ArrowDown, true, author$project$Main$OpenMediaPicker, 'insert media', true, _List_Nil, !showButtons),
 						A2(
 						author$project$View$optionalBlock,
-						hideButtons,
+						showButtons,
 						A5(author$project$Main$viewUpload, author$project$View$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'import doc', model.importUploadStatus)),
 						A2(
 						author$project$View$optionalBlock,
-						hideButtons,
+						showButtons,
 						A4(
 							author$project$View$mkDropdown,
 							model.exportDropState,
