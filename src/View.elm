@@ -4,7 +4,7 @@ import Bootstrap.Button as Button
 import Bootstrap.Dropdown as Dropdown
 import Bootstrap.Utilities.Spacing as Spacing
 import Html exposing (Html, a, button, div, img, li, p, span, text, ul)
-import Html.Attributes exposing (attribute, class, for, href, id, src)
+import Html.Attributes exposing (attribute, class, for, href, id, src, style)
 import Html.Events exposing (on, onCheck, onClick, onInput)
 import Settings exposing (iconUrl)
 
@@ -85,7 +85,7 @@ renderIcon icon =
 
 
 mkButton : Icon -> Bool -> msg -> String -> Bool -> List (Html.Attribute msg) -> Bool -> Html msg
-mkButton icon needsOffset onClickMsg buttonText primary otherAttrs disabled =
+mkButton icon needsOffset onClickMsg buttonText primary otherAttrs hidden =
     let
         spacing =
             if needsOffset then
@@ -100,8 +100,7 @@ mkButton icon needsOffset onClickMsg buttonText primary otherAttrs disabled =
 
           else
             Button.light
-        , Button.attrs <| List.append [ onClick onClickMsg ] (List.append spacing otherAttrs)
-        , Button.disabled disabled
+        , Button.attrs <| List.append [ onClick onClickMsg, style "display" <| if hidden then "inline-block" else "hidden" ] (List.append spacing otherAttrs)
         ]
         [ renderIcon icon
         , text buttonText
