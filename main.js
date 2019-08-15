@@ -10958,7 +10958,7 @@ var author$project$View$mkButton = F7(
 								A2(
 								elm$html$Html$Attributes$style,
 								'display',
-								hidden ? 'inline-block' : 'hidden')
+								hidden ? 'inline-block' : 'none')
 							]),
 						A2(elm$core$List$append, spacing, otherAttrs)))
 				]),

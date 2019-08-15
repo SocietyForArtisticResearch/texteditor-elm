@@ -100,7 +100,17 @@ mkButton icon needsOffset onClickMsg buttonText primary otherAttrs hidden =
 
           else
             Button.light
-        , Button.attrs <| List.append [ onClick onClickMsg, style "display" <| if hidden then "inline-block" else "hidden" ] (List.append spacing otherAttrs)
+        , Button.attrs <|
+            List.append
+                [ onClick onClickMsg
+                , style "display" <|
+                    if hidden then
+                        "inline-block"
+
+                    else
+                        "none"
+                ]
+                (List.append spacing otherAttrs)
         ]
         [ renderIcon icon
         , text buttonText
