@@ -11127,6 +11127,15 @@ var author$project$Main$selectedEditorIsMarkdown = function (model) {
 		return false;
 	}
 };
+var author$project$Main$selectedEditorIsStyle = function (model) {
+	var _n0 = model.editor;
+	if (_n0.a.$ === 'EditorStyle') {
+		var _n1 = _n0.a;
+		return true;
+	} else {
+		return false;
+	}
+};
 var author$project$Main$AlertMsg = function (a) {
 	return {$: 'AlertMsg', a: a};
 };
@@ -14589,6 +14598,7 @@ var author$project$View$optionalBlock = F2(
 	});
 var elm$html$Html$Attributes$target = elm$html$Html$Attributes$stringProperty('target');
 var author$project$Main$view = function (model) {
+	var showMediaUpload = !author$project$Main$selectedEditorIsStyle(model);
 	var showButtons = author$project$Main$selectedEditorIsMarkdown(model);
 	var saveButtonText = model.saved ? 'Saved' : 'Not Saved';
 	var saveButton = A2(
@@ -14698,7 +14708,10 @@ var author$project$Main$view = function (model) {
 					]),
 				_List_fromArray(
 					[
-						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, true, author$project$Main$UploadMediaFileSelect, 'upload media', model.mediaUploadStatus),
+						A2(
+						author$project$View$optionalBlock,
+						showMediaUpload,
+						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, true, author$project$Main$UploadMediaFileSelect, 'upload media', model.mediaUploadStatus)),
 						A7(author$project$View$mkButton, author$project$View$ArrowDown, true, author$project$Main$OpenMediaPicker, 'insert media', true, _List_Nil, !showButtons),
 						A2(
 						author$project$View$optionalBlock,

@@ -81,6 +81,16 @@ selectedEditorIsMarkdown model =
             False
 
 
+selectedEditorIsStyle : Model -> Bool
+selectedEditorIsStyle model =
+    case model.editor of
+        ( EditorStyle, _ ) ->
+            True
+
+        _ ->
+            False
+
+
 type MarkdownEditor
     = CodemirrorMarkdown
     | TextareaMarkdown
@@ -1083,9 +1093,13 @@ view model =
                 [ renderIcon EyeIcon
                 ]
 
-        -- some buttons only shown when
+        -- some buttons should only show when editing the text
         showButtons =
             selectedEditorIsMarkdown model
+
+        -- media upload not so useful in style
+        showMediaUpload =
+            not <| selectedEditorIsStyle model
     in
     div []
         [ viewTabs model
@@ -1093,7 +1107,7 @@ view model =
         , confirmDialogHtml
         , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
         , div [ class "btn-toolbar", class "import-export-toolbar", attribute "role" "toolbar" ]
-            [ viewUpload UploadCloud True UploadMediaFileSelect "upload media" model.mediaUploadStatus
+            [ optionalBlock showMediaUpload <| viewUpload UploadCloud True UploadMediaFileSelect "upload media" model.mediaUploadStatus
             , mkButton ArrowDown
                 True
                 OpenMediaPicker
