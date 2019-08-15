@@ -14649,7 +14649,7 @@ var author$project$Main$view = function (model) {
 			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
 		}
 	}();
-	var hideButtons = !author$project$Main$selectedEditorIsMarkdown(model);
+	var hideButtons = author$project$Main$selectedEditorIsMarkdown(model);
 	var editorCheckbox = function () {
 		var _n2 = model.editor;
 		if (_n2.a.$ === 'EditorMarkdown') {
@@ -14699,7 +14699,7 @@ var author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, true, author$project$Main$UploadMediaFileSelect, 'upload media', model.mediaUploadStatus),
-						A7(author$project$View$mkButton, author$project$View$ArrowDown, true, author$project$Main$OpenMediaPicker, 'insert media', true, _List_Nil, hideButtons),
+						A7(author$project$View$mkButton, author$project$View$ArrowDown, true, author$project$Main$OpenMediaPicker, 'insert media', true, _List_Nil, !hideButtons),
 						A2(
 						author$project$View$optionalBlock,
 						hideButtons,
