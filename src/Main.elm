@@ -1084,8 +1084,8 @@ view model =
                 ]
 
         -- some buttons only shown when
-        hideButtons =
-            not (selectedEditorIsMarkdown model)
+        showButtons =
+            selectedEditorIsMarkdown model
     in
     div []
         [ viewTabs model
@@ -1100,9 +1100,9 @@ view model =
                 "insert media"
                 True
                 []
-                hideButtons
-            , optionalBlock hideButtons <| viewUpload ImportIcon True UploadImportFileSelect "import doc" model.importUploadStatus
-            , optionalBlock hideButtons <|
+                (not showButtons)
+            , optionalBlock showButtons <| viewUpload ImportIcon True UploadImportFileSelect "import doc" model.importUploadStatus
+            , optionalBlock showButtons <|
                 mkDropdown model.exportDropState
                     ExportDropMsg
                     "export doc"
