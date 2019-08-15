@@ -14738,17 +14738,20 @@ var author$project$Main$view = function (model) {
 								])))
 					])),
 				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('toolbar'),
-						elm$html$Html$Attributes$class('markdown-toolbar')
-					]),
+				author$project$View$optionalBlock,
+				showButtons,
 				A2(
-					elm$core$List$append,
-					author$project$Main$editorToolbar,
+					elm$html$Html$div,
 					_List_fromArray(
-						[editorCheckbox]))),
+						[
+							elm$html$Html$Attributes$class('toolbar'),
+							elm$html$Html$Attributes$class('markdown-toolbar')
+						]),
+					A2(
+						elm$core$List$append,
+						author$project$Main$editorToolbar,
+						_List_fromArray(
+							[editorCheckbox])))),
 				saveButton,
 				alert,
 				mediaList,

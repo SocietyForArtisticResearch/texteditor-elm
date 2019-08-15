@@ -1115,14 +1115,15 @@ view model =
                     , ( "markdown", DownloadExport RCAPI.Md )
                     ]
             ]
-        , div
-            [ class "toolbar"
-            , class "markdown-toolbar"
-            ]
-          <|
-            List.append
-                editorToolbar
-                [ editorCheckbox ]
+        , optionalBlock showButtons <|
+            div
+                [ class "toolbar"
+                , class "markdown-toolbar"
+                ]
+            <|
+                List.append
+                    editorToolbar
+                    [ editorCheckbox ]
         , saveButton
         , alert
         , mediaList
