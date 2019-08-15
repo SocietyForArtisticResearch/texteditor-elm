@@ -1082,6 +1082,10 @@ view model =
                 ]
                 [ renderIcon EyeIcon
                 ]
+
+        -- some buttons only shown when
+        hideButtons =
+            not (selectedEditorIsMarkdown model)
     in
     div []
         [ viewTabs model
@@ -1096,21 +1100,20 @@ view model =
                 "insert media"
                 True
                 []
-                (not
-                    (selectedEditorIsMarkdown model)
-                )
-            , viewUpload ImportIcon True UploadImportFileSelect "import doc" model.importUploadStatus
-            , mkDropdown model.exportDropState
-                ExportDropMsg
-                "export doc"
-                [ ( "doc", DownloadExport RCAPI.Docx )
-                , ( "pdf", DownloadExport RCAPI.Pdf )
-                , ( "epub", DownloadExport RCAPI.Epub )
-                , ( "odt", DownloadExport RCAPI.Odt )
-                , ( "latex", DownloadExport RCAPI.Latex )
-                , ( "html", DownloadExport RCAPI.Html )
-                , ( "markdown", DownloadExport RCAPI.Md )
-                ]
+                hideButtons
+            , optionalBlock hideButtons <| viewUpload ImportIcon True UploadImportFileSelect "import doc" model.importUploadStatus
+            , optionalBlock hideButtons <|
+                mkDropdown model.exportDropState
+                    ExportDropMsg
+                    "export doc"
+                    [ ( "doc", DownloadExport RCAPI.Docx )
+                    , ( "pdf", DownloadExport RCAPI.Pdf )
+                    , ( "epub", DownloadExport RCAPI.Epub )
+                    , ( "odt", DownloadExport RCAPI.Odt )
+                    , ( "latex", DownloadExport RCAPI.Latex )
+                    , ( "html", DownloadExport RCAPI.Html )
+                    , ( "markdown", DownloadExport RCAPI.Md )
+                    ]
             ]
         , div
             [ class "toolbar"

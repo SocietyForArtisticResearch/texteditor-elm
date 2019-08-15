@@ -14573,6 +14573,20 @@ var author$project$View$mkDropdown = F4(
 					})
 				]));
 	});
+var author$project$View$optionalBlock = F2(
+	function (show, elem) {
+		return A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$Attributes$style,
+					'display',
+					show ? 'inline-block' : 'none')
+				]),
+			_List_fromArray(
+				[elem]));
+	});
 var elm$html$Html$Attributes$target = elm$html$Html$Attributes$stringProperty('target');
 var author$project$Main$view = function (model) {
 	var saveButtonText = model.saved ? 'Saved' : 'Not Saved';
@@ -14635,6 +14649,7 @@ var author$project$Main$view = function (model) {
 			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
 		}
 	}();
+	var hideButtons = !author$project$Main$selectedEditorIsMarkdown(model);
 	var editorCheckbox = function () {
 		var _n2 = model.editor;
 		if (_n2.a.$ === 'EditorMarkdown') {
@@ -14684,45 +14699,43 @@ var author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, true, author$project$Main$UploadMediaFileSelect, 'upload media', model.mediaUploadStatus),
-						A7(
-						author$project$View$mkButton,
-						author$project$View$ArrowDown,
-						true,
-						author$project$Main$OpenMediaPicker,
-						'insert media',
-						true,
-						_List_Nil,
-						!author$project$Main$selectedEditorIsMarkdown(model)),
-						A5(author$project$Main$viewUpload, author$project$View$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'import doc', model.importUploadStatus),
+						A7(author$project$View$mkButton, author$project$View$ArrowDown, true, author$project$Main$OpenMediaPicker, 'insert media', true, _List_Nil, hideButtons),
+						A2(
+						author$project$View$optionalBlock,
+						hideButtons,
+						A5(author$project$Main$viewUpload, author$project$View$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'import doc', model.importUploadStatus)),
+						A2(
+						author$project$View$optionalBlock,
+						hideButtons,
 						A4(
-						author$project$View$mkDropdown,
-						model.exportDropState,
-						author$project$Main$ExportDropMsg,
-						'export doc',
-						_List_fromArray(
-							[
-								_Utils_Tuple2(
-								'doc',
-								author$project$Main$DownloadExport(author$project$RCAPI$Docx)),
-								_Utils_Tuple2(
-								'pdf',
-								author$project$Main$DownloadExport(author$project$RCAPI$Pdf)),
-								_Utils_Tuple2(
-								'epub',
-								author$project$Main$DownloadExport(author$project$RCAPI$Epub)),
-								_Utils_Tuple2(
-								'odt',
-								author$project$Main$DownloadExport(author$project$RCAPI$Odt)),
-								_Utils_Tuple2(
-								'latex',
-								author$project$Main$DownloadExport(author$project$RCAPI$Latex)),
-								_Utils_Tuple2(
-								'html',
-								author$project$Main$DownloadExport(author$project$RCAPI$Html)),
-								_Utils_Tuple2(
-								'markdown',
-								author$project$Main$DownloadExport(author$project$RCAPI$Md))
-							]))
+							author$project$View$mkDropdown,
+							model.exportDropState,
+							author$project$Main$ExportDropMsg,
+							'export doc',
+							_List_fromArray(
+								[
+									_Utils_Tuple2(
+									'doc',
+									author$project$Main$DownloadExport(author$project$RCAPI$Docx)),
+									_Utils_Tuple2(
+									'pdf',
+									author$project$Main$DownloadExport(author$project$RCAPI$Pdf)),
+									_Utils_Tuple2(
+									'epub',
+									author$project$Main$DownloadExport(author$project$RCAPI$Epub)),
+									_Utils_Tuple2(
+									'odt',
+									author$project$Main$DownloadExport(author$project$RCAPI$Odt)),
+									_Utils_Tuple2(
+									'latex',
+									author$project$Main$DownloadExport(author$project$RCAPI$Latex)),
+									_Utils_Tuple2(
+									'html',
+									author$project$Main$DownloadExport(author$project$RCAPI$Html)),
+									_Utils_Tuple2(
+									'markdown',
+									author$project$Main$DownloadExport(author$project$RCAPI$Md))
+								])))
 					])),
 				A2(
 				elm$html$Html$div,

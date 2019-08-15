@@ -1,4 +1,4 @@
-module View exposing (Icon(..), mkButton, mkDropdown, renderIcon)
+module View exposing (Icon(..), mkButton, mkDropdown, optionalBlock, renderIcon)
 
 import Bootstrap.Button as Button
 import Bootstrap.Dropdown as Dropdown
@@ -133,4 +133,18 @@ mkDropdown modelState openMsg mainTxt itemMsgLst =
                     )
                     itemMsgLst
             }
+        ]
+
+
+optionalBlock : Bool -> Html msg -> Html msg
+optionalBlock show elem =
+    div
+        [ style "display" <|
+            if show then
+                "inline-block"
+
+            else
+                "none"
+        ]
+        [ elem
         ]
