@@ -1138,6 +1138,7 @@ view model =
                 List.append
                     editorToolbar
                     [ editorCheckbox ]
+        , separator
         , saveButton
         , alert
         , mediaList

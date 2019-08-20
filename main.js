@@ -14765,6 +14765,7 @@ var author$project$Main$view = function (model) {
 						author$project$Main$editorToolbar,
 						_List_fromArray(
 							[editorCheckbox])))),
+				author$project$Main$separator,
 				saveButton,
 				alert,
 				mediaList,
