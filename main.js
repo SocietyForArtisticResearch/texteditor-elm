@@ -14711,12 +14711,12 @@ var author$project$Main$view = function (model) {
 						A2(
 						author$project$View$optionalBlock,
 						showMediaUpload,
-						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, true, author$project$Main$UploadMediaFileSelect, 'upload media', model.mediaUploadStatus)),
-						A7(author$project$View$mkButton, author$project$View$ArrowDown, true, author$project$Main$OpenMediaPicker, 'insert media', true, _List_Nil, !showButtons),
+						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, true, author$project$Main$UploadMediaFileSelect, 'Add Media', model.mediaUploadStatus)),
+						A7(author$project$View$mkButton, author$project$View$ArrowDown, true, author$project$Main$OpenMediaPicker, 'Insert Media', true, _List_Nil, !showButtons),
 						A2(
 						author$project$View$optionalBlock,
 						showButtons,
-						A5(author$project$Main$viewUpload, author$project$View$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'import doc', model.importUploadStatus)),
+						A5(author$project$Main$viewUpload, author$project$View$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import Doc', model.importUploadStatus)),
 						A2(
 						author$project$View$optionalBlock,
 						showButtons,
@@ -14724,7 +14724,7 @@ var author$project$Main$view = function (model) {
 							author$project$View$mkDropdown,
 							model.exportDropState,
 							author$project$Main$ExportDropMsg,
-							'export doc',
+							'Export Doc',
 							_List_fromArray(
 								[
 									_Utils_Tuple2(

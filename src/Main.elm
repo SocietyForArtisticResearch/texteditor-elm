@@ -1107,19 +1107,19 @@ view model =
         , confirmDialogHtml
         , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
         , div [ class "btn-toolbar", class "import-export-toolbar", attribute "role" "toolbar" ]
-            [ optionalBlock showMediaUpload <| viewUpload UploadCloud True UploadMediaFileSelect "upload media" model.mediaUploadStatus
+            [ optionalBlock showMediaUpload <| viewUpload UploadCloud True UploadMediaFileSelect "Add Media" model.mediaUploadStatus
             , mkButton ArrowDown
                 True
                 OpenMediaPicker
-                "insert media"
+                "Insert Media"
                 True
                 []
                 (not showButtons)
-            , optionalBlock showButtons <| viewUpload ImportIcon True UploadImportFileSelect "import doc" model.importUploadStatus
+            , optionalBlock showButtons <| viewUpload ImportIcon True UploadImportFileSelect "Import Doc" model.importUploadStatus
             , optionalBlock showButtons <|
                 mkDropdown model.exportDropState
                     ExportDropMsg
-                    "export doc"
+                    "Export Doc"
                     [ ( "doc", DownloadExport RCAPI.Docx )
                     , ( "pdf", DownloadExport RCAPI.Pdf )
                     , ( "epub", DownloadExport RCAPI.Epub )
