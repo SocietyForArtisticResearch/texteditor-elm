@@ -301,7 +301,7 @@ viewMediaDialog makeMediaEditFun closeMediaDialogMsg insertMediaMsg exposition (
             viewBody viewObjectState (makeMediaEditFun object) object
     in
     Modal.config closeMediaDialogMsg
-        |> Modal.small
+        |> Modal.large
         |> Modal.hideOnBackdropClick True
         |> Modal.body [] [ p [] [ mediaEditView ] ]
         |> Modal.footer []

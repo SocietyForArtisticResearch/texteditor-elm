@@ -13532,7 +13532,8 @@ var rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick = F2(
 						{hideOnBackdropClick: hide})
 				}));
 	});
-var rundis$elm_bootstrap$Bootstrap$Modal$small = function (_n0) {
+var rundis$elm_bootstrap$Bootstrap$General$Internal$LG = {$: 'LG'};
+var rundis$elm_bootstrap$Bootstrap$Modal$large = function (_n0) {
 	var conf = _n0.a;
 	var options = conf.options;
 	return rundis$elm_bootstrap$Bootstrap$Modal$Config(
@@ -13542,7 +13543,7 @@ var rundis$elm_bootstrap$Bootstrap$Modal$small = function (_n0) {
 				options: _Utils_update(
 					options,
 					{
-						modalSize: elm$core$Maybe$Just(rundis$elm_bootstrap$Bootstrap$General$Internal$SM)
+						modalSize: elm$core$Maybe$Just(rundis$elm_bootstrap$Bootstrap$General$Internal$LG)
 					})
 			}));
 };
@@ -13937,7 +13938,7 @@ var author$project$RCMediaEdit$viewMediaDialog = F5(
 					A2(
 						rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
 						true,
-						rundis$elm_bootstrap$Bootstrap$Modal$small(
+						rundis$elm_bootstrap$Bootstrap$Modal$large(
 							rundis$elm_bootstrap$Bootstrap$Modal$config(closeMediaDialogMsg))))));
 	});
 var author$project$Exposition$customThumbUrl = F2(
@@ -14710,21 +14711,6 @@ var rundis$elm_bootstrap$Bootstrap$Modal$titledHeader = F3(
 				]));
 	});
 var rundis$elm_bootstrap$Bootstrap$Modal$h1 = rundis$elm_bootstrap$Bootstrap$Modal$titledHeader(elm$html$Html$h1);
-var rundis$elm_bootstrap$Bootstrap$General$Internal$LG = {$: 'LG'};
-var rundis$elm_bootstrap$Bootstrap$Modal$large = function (_n0) {
-	var conf = _n0.a;
-	var options = conf.options;
-	return rundis$elm_bootstrap$Bootstrap$Modal$Config(
-		_Utils_update(
-			conf,
-			{
-				options: _Utils_update(
-					options,
-					{
-						modalSize: elm$core$Maybe$Just(rundis$elm_bootstrap$Bootstrap$General$Internal$LG)
-					})
-			}));
-};
 var rundis$elm_bootstrap$Bootstrap$Table$RowAttr = function (a) {
 	return {$: 'RowAttr', a: a};
 };
@@ -14887,6 +14873,20 @@ var author$project$RCMediaList$viewModalMediaPicker = F3(
 	});
 var rundis$elm_bootstrap$Bootstrap$Button$danger = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
+var rundis$elm_bootstrap$Bootstrap$Modal$small = function (_n0) {
+	var conf = _n0.a;
+	var options = conf.options;
+	return rundis$elm_bootstrap$Bootstrap$Modal$Config(
+		_Utils_update(
+			conf,
+			{
+				options: _Utils_update(
+					options,
+					{
+						modalSize: elm$core$Maybe$Just(rundis$elm_bootstrap$Bootstrap$General$Internal$SM)
+					})
+			}));
+};
 var author$project$UserConfirm$view = F3(
 	function (visibility, content, messages) {
 		return A2(
