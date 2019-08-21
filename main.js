@@ -14639,7 +14639,7 @@ var author$project$Main$view = function (model) {
 				[
 					elm$html$Html$Attributes$href(previewUrl),
 					elm$html$Html$Attributes$target('_blank'),
-					elm$html$Html$Attributes$class('btn btn-outline-dark')
+					elm$html$Html$Attributes$class('btn btn-link ml-1')
 				]),
 			_List_fromArray(
 				[

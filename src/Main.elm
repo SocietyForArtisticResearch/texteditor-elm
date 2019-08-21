@@ -1088,7 +1088,7 @@ view model =
             a
                 [ href previewUrl
                 , Html.Attributes.target "_blank"
-                , class "btn btn-outline-dark"
+                , class "btn btn-link ml-1"
                 ]
                 [ renderIcon EyeIcon
                 ]
