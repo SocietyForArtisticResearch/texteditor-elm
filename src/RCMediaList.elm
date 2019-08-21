@@ -7,7 +7,7 @@ import Bootstrap.Table as Table
 import Bootstrap.Utilities.Spacing as Spacing
 import Exposition exposing (RCMediaObject)
 import Html exposing (Html, div, img, span, text)
-import Html.Attributes exposing (id, src, style)
+import Html.Attributes exposing (class, id, src, style)
 import Html.Events exposing (onClick, onDoubleClick)
 
 
@@ -43,7 +43,10 @@ view objectList messages =
                         [ Table.th [] [ text "preview" ]
                         , Table.th [] [ text "id" ]
                         , Table.th [] [ text "name" ]
-                        , Table.th [] [ text "edit" ]
+                        , Table.th
+                            [ Table.cellAttr <| class "edit-button-column"
+                            ]
+                            [ text "edit" ]
                         ]
 
                 rowFromRCObject : RCMediaObject -> Table.Row msg
@@ -64,12 +67,11 @@ view objectList messages =
                         --         , Button.attrs [ Spacing.ml1, onClick <| messages.insertObject object ]
                         --         ]
                         --         [ text "insert" ]
-                                    
                         removeButton =
                             Button.button
                                 [ Button.small
                                 , Button.outlineDanger
-                                , Button.attrs [ Spacing.ml1,  onClick <| messages.deleteObject object ]
+                                , Button.attrs [ Spacing.ml1, onClick <| messages.deleteObject object ]
                                 ]
                                 [ text "x" ]
                     in
