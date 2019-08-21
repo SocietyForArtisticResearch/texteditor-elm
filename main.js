@@ -13519,6 +13519,39 @@ var rundis$elm_bootstrap$Bootstrap$Modal$footer = F3(
 							{attributes: attributes, children: children}))
 				}));
 	});
+var elm$html$Html$h2 = _VirtualDom_node('h2');
+var rundis$elm_bootstrap$Bootstrap$Modal$Header = function (a) {
+	return {$: 'Header', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Modal$header = F3(
+	function (attributes, children, _n0) {
+		var conf = _n0.a;
+		return rundis$elm_bootstrap$Bootstrap$Modal$Config(
+			_Utils_update(
+				conf,
+				{
+					header: elm$core$Maybe$Just(
+						rundis$elm_bootstrap$Bootstrap$Modal$Header(
+							{attributes: attributes, children: children}))
+				}));
+	});
+var rundis$elm_bootstrap$Bootstrap$Modal$titledHeader = F3(
+	function (itemFn, attributes, children) {
+		return A2(
+			rundis$elm_bootstrap$Bootstrap$Modal$header,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					itemFn,
+					A2(
+						elm$core$List$cons,
+						elm$html$Html$Attributes$class('modal-title'),
+						attributes),
+					children)
+				]));
+	});
+var rundis$elm_bootstrap$Bootstrap$Modal$h2 = rundis$elm_bootstrap$Bootstrap$Modal$titledHeader(elm$html$Html$h2);
 var rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick = F2(
 	function (hide, _n0) {
 		var conf = _n0.a;
@@ -13939,7 +13972,14 @@ var author$project$RCMediaEdit$viewMediaDialog = F5(
 						rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
 						true,
 						rundis$elm_bootstrap$Bootstrap$Modal$large(
-							rundis$elm_bootstrap$Bootstrap$Modal$config(closeMediaDialogMsg))))));
+							A3(
+								rundis$elm_bootstrap$Bootstrap$Modal$h2,
+								_List_Nil,
+								_List_fromArray(
+									[
+										elm$html$Html$text('Edit ' + object.name)
+									]),
+								rundis$elm_bootstrap$Bootstrap$Modal$config(closeMediaDialogMsg)))))));
 	});
 var author$project$Exposition$customThumbUrl = F2(
 	function (size, data) {
@@ -14679,37 +14719,6 @@ var rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess = rundis$elm_bootstrap$
 var rundis$elm_bootstrap$Bootstrap$Button$secondary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
 var elm$html$Html$h1 = _VirtualDom_node('h1');
-var rundis$elm_bootstrap$Bootstrap$Modal$Header = function (a) {
-	return {$: 'Header', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Modal$header = F3(
-	function (attributes, children, _n0) {
-		var conf = _n0.a;
-		return rundis$elm_bootstrap$Bootstrap$Modal$Config(
-			_Utils_update(
-				conf,
-				{
-					header: elm$core$Maybe$Just(
-						rundis$elm_bootstrap$Bootstrap$Modal$Header(
-							{attributes: attributes, children: children}))
-				}));
-	});
-var rundis$elm_bootstrap$Bootstrap$Modal$titledHeader = F3(
-	function (itemFn, attributes, children) {
-		return A2(
-			rundis$elm_bootstrap$Bootstrap$Modal$header,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A2(
-					itemFn,
-					A2(
-						elm$core$List$cons,
-						elm$html$Html$Attributes$class('modal-title'),
-						attributes),
-					children)
-				]));
-	});
 var rundis$elm_bootstrap$Bootstrap$Modal$h1 = rundis$elm_bootstrap$Bootstrap$Modal$titledHeader(elm$html$Html$h1);
 var rundis$elm_bootstrap$Bootstrap$Table$RowAttr = function (a) {
 	return {$: 'RowAttr', a: a};
