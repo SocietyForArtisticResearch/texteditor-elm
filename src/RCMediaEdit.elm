@@ -203,6 +203,14 @@ viewThumbnail url altText =
         ]
 
 
+twoCols : List (Html msg) -> List (Html msg) -> Html msg
+twoCols col1 col2 =
+    Grid.row []
+        [ Grid.col [] col1
+        , Grid.col [] col2
+        ]
+
+
 viewBody : RCMediaObjectViewState -> MediaEditMessage msg -> RCMediaObject -> Html msg
 viewBody objectState editTool objectInEdit =
     let
@@ -257,17 +265,20 @@ viewBody objectState editTool objectInEdit =
             Exposition.thumbUrl objectInEdit
     in
     div [ class "edit-media-dialog" ]
-        [ Form.form []
-            [ viewThumbnail thumbnailUrl (.value descriptionProps)
-            , viewInputWithLabel nameProps
-            , Form.group []
-                [ Form.label [ for "classPicker" ] [ text "display size and location" ]
-                , viewClassesPicker "classPicker" cssClasses currentClass (editTool UserClass)
-                ]
-            , viewTextAreaWithLabel descriptionProps
-            , viewInputWithLabel copyrightProps
-            , viewLicensePicker "licensePicker" allLicenses currentLicense (editTool LicenseField)
-            ]
+        [ Form.form [] <|
+            List.singleton <|
+                twoCols
+                    [ viewThumbnail thumbnailUrl (.value descriptionProps)
+                    , viewInputWithLabel nameProps
+                    , Form.group []
+                        [ Form.label [ for "classPicker" ] [ text "display size and location" ]
+                        , viewClassesPicker "classPicker" cssClasses currentClass (editTool UserClass)
+                        ]
+                    ]
+                    [ viewTextAreaWithLabel descriptionProps
+                    , viewInputWithLabel copyrightProps
+                    , viewLicensePicker "licensePicker" allLicenses currentLicense (editTool LicenseField)
+                    ]
         ]
 
 
@@ -294,8 +305,7 @@ viewMediaDialog makeMediaEditFun closeMediaDialogMsg insertMediaMsg exposition (
         |> Modal.hideOnBackdropClick True
         |> Modal.body [] [ p [] [ mediaEditView ] ]
         |> Modal.footer []
-            [
-             Button.button
+            [ Button.button
                 [ Button.outlinePrimary
                 , Button.attrs [ Events.onClick <| insertMediaMsg object ]
                 ]

@@ -1137,8 +1137,7 @@ view model =
             <|
                 List.append
                     editorToolbar
-                    [ editorCheckbox ]
-        , separator
+                    [ editorCheckbox, separator ]
         , saveButton
         , alert
         , mediaList
