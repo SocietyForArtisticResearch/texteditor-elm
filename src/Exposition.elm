@@ -1,4 +1,4 @@
-module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, customThumbUrl, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, mkMediaName, objectByNameOrId, parseToolCaptions, removeObjectWithID, renameDuplicateMedia, replaceImagesWithTools, replaceObject, replaceToolsWithImages, thumbUrl, updateToc, validateMediaObject, withCSS, withHtml, withMd)
+module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, customThumbUrl, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, mkMediaName, objectByNameOrId, parseToolCaptions, removeObjectWithID, renameDuplicateMedia, replaceImagesWithTools, replaceObject, replaceToolsWithImages, thumbUrl, updateToc, validateMediaObject, withCSS, withHtml, withMd, wordCount)
 
 import Dict
 import Html.Parser as HtmlParser
@@ -8,6 +8,7 @@ import Licenses
 import Parser exposing ((|.), (|=))
 import Regex
 import Settings
+import Util
 
 
 type alias RCExposition =
@@ -727,3 +728,8 @@ createToc expo =
 updateToc : RCExposition -> RCExposition
 updateToc expo =
     expo
+
+
+wordCount : RCExposition -> Int
+wordCount expo =
+    Util.wordCount expo.markdownInput

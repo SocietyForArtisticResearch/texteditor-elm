@@ -300,7 +300,7 @@ type Msg
     | AlertMsg Alert.Visibility
     | SwitchMarkdownEditor MarkdownEditor
     | DownloadExport RCAPI.ConversionType
-    | InsertAtCursor ( String, Int ) -- string and cursor offest after insert
+    | InsertAtCursor ( String, Int ) -- string and cursor offset after insert
     | InsertMediaAtCursor RCMediaObject
     | OpenMediaPicker
     | CloseMediaPicker
@@ -1022,6 +1022,35 @@ editorToolbar =
     ]
 
 
+statusBar : Model -> Html Msg
+statusBar model =
+    let
+        wc =
+            Exposition.wordCount model.exposition
+
+        status =
+            "word count : " ++ String.fromInt wc
+
+        saveButtonText =
+            if model.saved then
+                "Saved"
+
+            else
+                "Not Saved"
+
+        saveButton =
+            Button.button
+                [ Button.light
+                , Button.attrs [ onClick SaveExposition ]
+                ]
+                [ renderIcon SaveIcon, text saveButtonText ]
+    in
+    div [ class "editor-status-bar" ]
+        [ span [] [ text status ]
+        , saveButton
+        ]
+
+
 view : Model -> Html Msg
 view model =
     let
@@ -1040,20 +1069,6 @@ view model =
 
                 ( _, _, _ ) ->
                     div [] []
-
-        saveButtonText =
-            if model.saved then
-                "Saved"
-
-            else
-                "Not Saved"
-
-        saveButton =
-            Button.button
-                [ Button.light
-                , Button.attrs [ onClick SaveExposition ]
-                ]
-                [ renderIcon SaveIcon, text saveButtonText ]
 
         mediaList =
             RCMediaList.view model.exposition.media makeTableMessages
@@ -1138,7 +1153,6 @@ view model =
                 List.append
                     editorToolbar
                     [ editorCheckbox, separator ]
-        , saveButton
         , alert
         , mediaList
         , div [ class "navigation-links" ]
@@ -1146,4 +1160,5 @@ view model =
             , viewLink "profile" "profile"
             , viewLink "logout" "session/logout"
             ]
+        , statusBar model
         ]

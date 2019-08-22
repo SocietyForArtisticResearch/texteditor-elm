@@ -11136,6 +11136,82 @@ var author$project$Main$selectedEditorIsStyle = function (model) {
 		return false;
 	}
 };
+var elm$core$List$concat = function (lists) {
+	return A3(elm$core$List$foldr, elm$core$List$append, _List_Nil, lists);
+};
+var elm$core$List$concatMap = F2(
+	function (f, list) {
+		return elm$core$List$concat(
+			A2(elm$core$List$map, f, list));
+	});
+var elm$core$String$foldr = _String_foldr;
+var elm$core$String$toList = function (string) {
+	return A3(elm$core$String$foldr, elm$core$List$cons, _List_Nil, string);
+};
+var author$project$Util$wordCount = function (str) {
+	var splitter = F2(
+		function (_char, z) {
+			return A2(
+				elm$core$List$concatMap,
+				elm$core$String$split(
+					elm$core$String$fromChar(_char)),
+				z);
+		});
+	var splitChars = elm$core$String$toList(' .,!?()');
+	var splitted = A3(
+		elm$core$List$foldr,
+		splitter,
+		_List_fromArray(
+			[str]),
+		splitChars);
+	var filterEmpty = A2(
+		elm$core$List$filter,
+		A2(elm$core$Basics$composeL, elm$core$Basics$not, elm$core$String$isEmpty),
+		splitted);
+	return elm$core$List$length(filterEmpty);
+};
+var author$project$Exposition$wordCount = function (expo) {
+	return author$project$Util$wordCount(expo.markdownInput);
+};
+var author$project$View$SaveIcon = {$: 'SaveIcon'};
+var author$project$Main$statusBar = function (model) {
+	var wc = author$project$Exposition$wordCount(model.exposition);
+	var status = 'word count : ' + elm$core$String$fromInt(wc);
+	var saveButtonText = model.saved ? 'Saved' : 'Not Saved';
+	var saveButton = A2(
+		rundis$elm_bootstrap$Bootstrap$Button$button,
+		_List_fromArray(
+			[
+				rundis$elm_bootstrap$Bootstrap$Button$light,
+				rundis$elm_bootstrap$Bootstrap$Button$attrs(
+				_List_fromArray(
+					[
+						elm$html$Html$Events$onClick(author$project$Main$SaveExposition)
+					]))
+			]),
+		_List_fromArray(
+			[
+				author$project$View$renderIcon(author$project$View$SaveIcon),
+				elm$html$Html$text(saveButtonText)
+			]));
+	return A2(
+		elm$html$Html$div,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('editor-status-bar')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$span,
+				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$text(status)
+					])),
+				saveButton
+			]));
+};
 var author$project$Main$AlertMsg = function (a) {
 	return {$: 'AlertMsg', a: a};
 };
@@ -11312,9 +11388,6 @@ var rundis$elm_bootstrap$Bootstrap$Alert$maybeAddDismissButton = F3(
 					])),
 			children_) : children_;
 	});
-var elm$core$List$concat = function (lists) {
-	return A3(elm$core$List$foldr, elm$core$List$append, _List_Nil, lists);
-};
 var rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass = F2(
 	function (prefix, role) {
 		return elm$html$Html$Attributes$class(
@@ -14959,7 +15032,6 @@ var author$project$UserConfirm$view = F3(
 var author$project$View$ArrowDown = {$: 'ArrowDown'};
 var author$project$View$EyeIcon = {$: 'EyeIcon'};
 var author$project$View$ImportIcon = {$: 'ImportIcon'};
-var author$project$View$SaveIcon = {$: 'SaveIcon'};
 var author$project$View$UploadCloud = {$: 'UploadCloud'};
 var rundis$elm_bootstrap$Bootstrap$Dropdown$Attrs = function (a) {
 	return {$: 'Attrs', a: a};
@@ -15428,23 +15500,6 @@ var elm$html$Html$Attributes$target = elm$html$Html$Attributes$stringProperty('t
 var author$project$Main$view = function (model) {
 	var showMediaUpload = !author$project$Main$selectedEditorIsStyle(model);
 	var showButtons = author$project$Main$selectedEditorIsMarkdown(model);
-	var saveButtonText = model.saved ? 'Saved' : 'Not Saved';
-	var saveButton = A2(
-		rundis$elm_bootstrap$Bootstrap$Button$button,
-		_List_fromArray(
-			[
-				rundis$elm_bootstrap$Bootstrap$Button$light,
-				rundis$elm_bootstrap$Bootstrap$Button$attrs(
-				_List_fromArray(
-					[
-						elm$html$Html$Events$onClick(author$project$Main$SaveExposition)
-					]))
-			]),
-		_List_fromArray(
-			[
-				author$project$View$renderIcon(author$project$View$SaveIcon),
-				elm$html$Html$text(saveButtonText)
-			]));
 	var previewButton = function () {
 		var weave = model.exposition.currentWeave;
 		var researchId = model.exposition.id;
@@ -15593,7 +15648,6 @@ var author$project$Main$view = function (model) {
 						author$project$Main$editorToolbar,
 						_List_fromArray(
 							[editorCheckbox, author$project$Main$separator])))),
-				saveButton,
 				alert,
 				mediaList,
 				A2(
@@ -15607,7 +15661,8 @@ var author$project$Main$view = function (model) {
 						previewButton,
 						A2(author$project$Main$viewLink, 'profile', 'profile'),
 						A2(author$project$Main$viewLink, 'logout', 'session/logout')
-					]))
+					])),
+				author$project$Main$statusBar(model)
 			]));
 };
 var elm$browser$Browser$element = _Browser_element;

@@ -66,8 +66,13 @@
 
         .CodeMirror {
             flex: 1;
-            height: 100%;
+            height: calc(100% - 25px);
         }
+
+	.editor-status-bar {
+	    position : fixed;
+	    bottom : 0;
+	}
 
         .CodeMirror-scroll * {
             white-space: pre-wrap;
