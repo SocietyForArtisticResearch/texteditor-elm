@@ -277,7 +277,10 @@ viewBody objectState editTool objectInEdit =
                     ]
                     [ viewTextAreaWithLabel descriptionProps
                     , viewInputWithLabel copyrightProps
-                    , viewLicensePicker "licensePicker" allLicenses currentLicense (editTool LicenseField)
+                    , Form.group []
+                        [ Form.label [ for "licensePicker" ] [ text "license type" ]
+                        , viewLicensePicker "licensePicker" allLicenses currentLicense (editTool LicenseField)
+                        ]
                     ]
         ]
 
