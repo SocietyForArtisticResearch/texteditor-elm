@@ -11520,9 +11520,17 @@ var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Checkbox = function (a) {
 	return {$: 'Checkbox', a: a};
 };
 var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$create = F2(
-	function (options, label) {
+	function (options, label_) {
 		return rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Checkbox(
-			{label: label, options: options});
+			{label: label_, options: options});
+	});
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Label = function (a) {
+	return {$: 'Label', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$label = F2(
+	function (attributes, children) {
+		return rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Label(
+			{attributes: attributes, children: children});
 	});
 var elm$html$Html$input = _VirtualDom_node('input');
 var elm$html$Html$label = _VirtualDom_node('label');
@@ -11657,6 +11665,8 @@ var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$toAttributes = function (option
 var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$view = function (_n0) {
 	var chk = _n0.a;
 	var opts = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Form$Checkbox$applyModifier, rundis$elm_bootstrap$Bootstrap$Form$Checkbox$defaultOptions, chk.options);
+	var _n1 = chk.label;
+	var label_ = _n1.a;
 	return A2(
 		elm$html$Html$div,
 		_List_fromArray(
@@ -11680,37 +11690,45 @@ var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$view = function (_n0) {
 				A2(
 				elm$html$Html$label,
 				_Utils_ap(
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$classList(
-							_List_fromArray(
-								[
-									_Utils_Tuple2('form-check-label', !opts.custom),
-									_Utils_Tuple2('custom-control-label', opts.custom)
-								]))
-						]),
-					function () {
-						var _n1 = opts.id;
-						if (_n1.$ === 'Just') {
-							var v = _n1.a;
-							return _List_fromArray(
-								[
-									elm$html$Html$Attributes$for(v)
-								]);
-						} else {
-							return _List_Nil;
-						}
-					}()),
-				_List_fromArray(
-					[
-						elm$html$Html$text(chk.label)
-					]))
+					label_.attributes,
+					_Utils_ap(
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$classList(
+								_List_fromArray(
+									[
+										_Utils_Tuple2('form-check-label', !opts.custom),
+										_Utils_Tuple2('custom-control-label', opts.custom)
+									]))
+							]),
+						function () {
+							var _n2 = opts.id;
+							if (_n2.$ === 'Just') {
+								var v = _n2.a;
+								return _List_fromArray(
+									[
+										elm$html$Html$Attributes$for(v)
+									]);
+							} else {
+								return _List_Nil;
+							}
+						}())),
+				label_.children)
 			]));
 };
 var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$checkbox = F2(
-	function (options, label) {
+	function (options, labelText) {
 		return rundis$elm_bootstrap$Bootstrap$Form$Checkbox$view(
-			A2(rundis$elm_bootstrap$Bootstrap$Form$Checkbox$create, options, label));
+			A2(
+				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$create,
+				options,
+				A2(
+					rundis$elm_bootstrap$Bootstrap$Form$Checkbox$label,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text(labelText)
+						]))));
 	});
 var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$On = {$: 'On'};
 var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Value = function (a) {
@@ -13050,6 +13068,11 @@ var rundis$elm_bootstrap$Bootstrap$Form$Input$applyModifier = F2(
 				return _Utils_update(
 					options,
 					{readonly: val});
+			case 'PlainText':
+				var val = modifier.a;
+				return _Utils_update(
+					options,
+					{plainText: val});
 			default:
 				var attrs_ = modifier.a;
 				return _Utils_update(
@@ -13059,7 +13082,7 @@ var rundis$elm_bootstrap$Bootstrap$Form$Input$applyModifier = F2(
 					});
 		}
 	});
-var rundis$elm_bootstrap$Bootstrap$Form$Input$defaultOptions = {attributes: _List_Nil, disabled: false, id: elm$core$Maybe$Nothing, onInput: elm$core$Maybe$Nothing, placeholder: elm$core$Maybe$Nothing, readonly: false, size: elm$core$Maybe$Nothing, tipe: rundis$elm_bootstrap$Bootstrap$Form$Input$Text, validation: elm$core$Maybe$Nothing, value: elm$core$Maybe$Nothing};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$defaultOptions = {attributes: _List_Nil, disabled: false, id: elm$core$Maybe$Nothing, onInput: elm$core$Maybe$Nothing, placeholder: elm$core$Maybe$Nothing, plainText: false, readonly: false, size: elm$core$Maybe$Nothing, tipe: rundis$elm_bootstrap$Bootstrap$Form$Input$Text, validation: elm$core$Maybe$Nothing, value: elm$core$Maybe$Nothing};
 var rundis$elm_bootstrap$Bootstrap$Form$Input$sizeAttribute = function (size) {
 	return A2(
 		elm$core$Maybe$map,
@@ -13110,9 +13133,10 @@ var rundis$elm_bootstrap$Bootstrap$Form$Input$toAttributes = function (modifiers
 	return _Utils_ap(
 		_List_fromArray(
 			[
-				elm$html$Html$Attributes$class('form-control'),
+				elm$html$Html$Attributes$class(
+				options.plainText ? 'form-control-plaintext' : 'form-control'),
 				elm$html$Html$Attributes$disabled(options.disabled),
-				elm$html$Html$Attributes$readonly(options.readonly),
+				elm$html$Html$Attributes$readonly(options.readonly || options.plainText),
 				rundis$elm_bootstrap$Bootstrap$Form$Input$typeAttribute(options.tipe)
 			]),
 		_Utils_ap(
@@ -13573,7 +13597,7 @@ var rundis$elm_bootstrap$Bootstrap$Modal$config = function (closeMsg) {
 			closeMsg: closeMsg,
 			footer: elm$core$Maybe$Nothing,
 			header: elm$core$Maybe$Nothing,
-			options: {centered: true, hideOnBackdropClick: true, modalSize: elm$core$Maybe$Nothing},
+			options: {attrs: _List_Nil, centered: true, hideOnBackdropClick: true, modalSize: elm$core$Maybe$Nothing, scrollableBody: false},
 			withAnimation: elm$core$Maybe$Nothing
 		});
 };
@@ -13842,20 +13866,23 @@ var rundis$elm_bootstrap$Bootstrap$Modal$modalClass = function (size) {
 };
 var rundis$elm_bootstrap$Bootstrap$Modal$modalAttributes = function (options) {
 	return _Utils_ap(
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$classList(
-				_List_fromArray(
-					[
-						_Utils_Tuple2('modal-dialog', true),
-						_Utils_Tuple2('modal-dialog-centered', options.centered)
-					])),
-				A2(elm$html$Html$Attributes$style, 'pointer-events', 'auto')
-			]),
-		A2(
-			elm$core$Maybe$withDefault,
-			_List_Nil,
-			A2(elm$core$Maybe$map, rundis$elm_bootstrap$Bootstrap$Modal$modalClass, options.modalSize)));
+		options.attrs,
+		_Utils_ap(
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$classList(
+					_List_fromArray(
+						[
+							_Utils_Tuple2('modal-dialog', true),
+							_Utils_Tuple2('modal-dialog-centered', options.centered),
+							_Utils_Tuple2('modal-dialog-scrollable', options.scrollableBody)
+						])),
+					A2(elm$html$Html$Attributes$style, 'pointer-events', 'auto')
+				]),
+			A2(
+				elm$core$Maybe$withDefault,
+				_List_Nil,
+				A2(elm$core$Maybe$map, rundis$elm_bootstrap$Bootstrap$Modal$modalClass, options.modalSize))));
 };
 var rundis$elm_bootstrap$Bootstrap$Modal$renderBody = function (maybeBody) {
 	if (maybeBody.$ === 'Just') {
@@ -15193,7 +15220,9 @@ var rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownMenu = F3(
 									[
 										_Utils_Tuple2('dropdown-menu', true),
 										_Utils_Tuple2('dropdown-menu-right', config.hasMenuRight),
-										_Utils_Tuple2('show', true)
+										_Utils_Tuple2(
+										'show',
+										!_Utils_eq(status, rundis$elm_bootstrap$Bootstrap$Dropdown$Closed))
 									]))
 							]),
 						_Utils_ap(
