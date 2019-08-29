@@ -37,11 +37,13 @@ Casper:
 - display title of exposition somewhere
 - media edit copyright obligatory
 - Width or media browser and markdown editor should be equal
+- line wrap
 
 Luc:
 
 - display somthing while transcoding (status: waiting for server fix)
 - json decoder/encoder for RCExposition type
+- navbar bootstrap for preview
 
 ## To test
 - tables?
