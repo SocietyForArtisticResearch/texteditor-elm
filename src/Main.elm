@@ -1047,12 +1047,17 @@ mkEditorToolbar tabState =
     , mkButton NumberedIcon False (InsertAtCursor (Settings.snippet Settings.Numbered)) "" False [] False
     , mkButton LinkIcon False (InsertAtCursor (Settings.snippet Settings.Link)) "" False [] False
     , mkButton QuoteIcon False (InsertAtCursor (Settings.snippet Settings.Quote)) "" False [] False
-
-    --    , separator
-    , mkButton UndoIcon False UndoCM "" False [] (not cmEditor)
-    , mkButton RedoIcon False RedoCM "" False [] (not cmEditor)
     , separator
     ]
+        ++ (if not cmEditor then
+                [ mkButton UndoIcon False UndoCM "" False [] (not cmEditor)
+                , mkButton RedoIcon False RedoCM "" False [] (not cmEditor)
+                , separator
+                ]
+
+            else
+                []
+           )
 
 
 statusBar : Model -> Html Msg
