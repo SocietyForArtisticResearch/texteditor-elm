@@ -11158,7 +11158,7 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 				false),
 				author$project$Main$separator
 			]),
-		(!cmEditor) ? _List_fromArray(
+		cmEditor ? _List_fromArray(
 			[
 				A7(author$project$View$mkButton, author$project$View$UndoIcon, false, author$project$Main$UndoCM, '', false, _List_Nil, !cmEditor),
 				A7(author$project$View$mkButton, author$project$View$RedoIcon, false, author$project$Main$RedoCM, '', false, _List_Nil, !cmEditor),

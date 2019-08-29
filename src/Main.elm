@@ -1049,7 +1049,7 @@ mkEditorToolbar tabState =
     , mkButton QuoteIcon False (InsertAtCursor (Settings.snippet Settings.Quote)) "" False [] False
     , separator
     ]
-        ++ (if not cmEditor then
+        ++ (if cmEditor then
                 [ mkButton UndoIcon False UndoCM "" False [] (not cmEditor)
                 , mkButton RedoIcon False RedoCM "" False [] (not cmEditor)
                 , separator
