@@ -41,7 +41,6 @@ Casper:
 Luc:
 
 - display somthing while transcoding (status: waiting for server fix)
-- codemirror undo/redo as buttons
 - json decoder/encoder for RCExposition type
 
 ## To test
@@ -124,3 +123,4 @@ Luc:
 - Highlighting caption text and onclick creates problem
 - elm-bootstrap update
 - save and inc contentversion 
+- codemirror undo/redo as buttons
