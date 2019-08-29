@@ -11155,7 +11155,6 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 			false,
 			_List_Nil,
 			false),
-			author$project$Main$separator,
 			A7(author$project$View$mkButton, author$project$View$UndoIcon, false, author$project$Main$UndoCM, '', false, _List_Nil, !cmEditor),
 			A7(author$project$View$mkButton, author$project$View$RedoIcon, false, author$project$Main$RedoCM, '', false, _List_Nil, !cmEditor),
 			author$project$Main$separator
@@ -15721,7 +15720,7 @@ var author$project$Main$view = function (model) {
 						elm$core$List$append,
 						editorToolbar,
 						_List_fromArray(
-							[editorCheckbox, author$project$Main$separator])))),
+							[editorCheckbox])))),
 				alert,
 				mediaList,
 				A2(
