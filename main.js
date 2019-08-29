@@ -13603,12 +13603,28 @@ var author$project$RCMediaEdit$viewBody = F3(
 								[
 									author$project$RCMediaEdit$viewTextAreaWithLabel(descriptionProps),
 									author$project$RCMediaEdit$viewInputWithLabel(copyrightProps),
-									A4(
-									author$project$RCMediaEdit$viewLicensePicker,
-									'licensePicker',
-									author$project$Licenses$allLicenses,
-									currentLicense,
-									editTool(author$project$RCMediaEdit$LicenseField))
+									A2(
+									rundis$elm_bootstrap$Bootstrap$Form$group,
+									_List_Nil,
+									_List_fromArray(
+										[
+											A2(
+											rundis$elm_bootstrap$Bootstrap$Form$label,
+											_List_fromArray(
+												[
+													elm$html$Html$Attributes$for('licensePicker')
+												]),
+											_List_fromArray(
+												[
+													elm$html$Html$text('license')
+												])),
+											A4(
+											author$project$RCMediaEdit$viewLicensePicker,
+											'licensePicker',
+											author$project$Licenses$allLicenses,
+											currentLicense,
+											editTool(author$project$RCMediaEdit$LicenseField))
+										]))
 								]))))
 				]));
 	});
