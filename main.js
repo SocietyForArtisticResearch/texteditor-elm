@@ -12743,6 +12743,15 @@ var rundis$elm_bootstrap$Bootstrap$Grid$row = F2(
 			rundis$elm_bootstrap$Bootstrap$Grid$Internal$rowAttributes(options),
 			A2(elm$core$List$map, rundis$elm_bootstrap$Bootstrap$Grid$renderCol, cols));
 	});
+var rundis$elm_bootstrap$Bootstrap$Grid$Internal$ColWidth = function (a) {
+	return {$: 'ColWidth', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Grid$Internal$width = F2(
+	function (size, count) {
+		return rundis$elm_bootstrap$Bootstrap$Grid$Internal$ColWidth(
+			A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$Width, size, count));
+	});
+var rundis$elm_bootstrap$Bootstrap$Grid$Col$xs = A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$width, rundis$elm_bootstrap$Bootstrap$General$Internal$XS, rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col);
 var author$project$RCMediaEdit$twoCols = F2(
 	function (col1, col2) {
 		return A2(
@@ -12750,8 +12759,16 @@ var author$project$RCMediaEdit$twoCols = F2(
 			_List_Nil,
 			_List_fromArray(
 				[
-					A2(rundis$elm_bootstrap$Bootstrap$Grid$col, _List_Nil, col1),
-					A2(rundis$elm_bootstrap$Bootstrap$Grid$col, _List_Nil, col2)
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$Grid$Col$xs]),
+					col1),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$Grid$Col$xs]),
+					col2)
 				]));
 	});
 var elm$html$Html$Attributes$selected = elm$html$Html$Attributes$boolProperty('selected');
