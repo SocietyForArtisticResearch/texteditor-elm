@@ -231,6 +231,12 @@ port setEditor : Int -> Cmd msg
 port insertMdString : ( String, Int ) -> Cmd msg
 
 
+port cmUndo : () -> Cmd msg
+
+
+port cmRedo : () -> Cmd msg
+
+
 
 --- markdown conversion using marked
 
@@ -306,6 +312,8 @@ type Msg
     | CloseMediaPicker
     | ExportDropMsg Dropdown.State
     | BadUploadFileType String
+    | UndoCM
+    | RedoCM
 
 
 
@@ -890,6 +898,12 @@ update msg model =
         BadUploadFileType str ->
             ( addProblem model (Problems.UnkownUploadFileType str), Cmd.none )
 
+        UndoCM ->
+            ( model, cmUndo () )
+
+        RedoCM ->
+            ( model, cmRedo () )
+
 
 viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg
 viewUpload icon needsOffset onClickMsg buttonText status =
@@ -1005,8 +1019,23 @@ separator =
         [ text "|" ]
 
 
-editorToolbar : List (Html Msg)
-editorToolbar =
+mkEditorToolbar : TabState -> List (Html Msg)
+mkEditorToolbar tabState =
+    let
+        cmEditor =
+            case tabState of
+                CmMarkdownTab ->
+                    True
+
+                TxtMarkdownTab ->
+                    False
+
+                StyleTab ->
+                    True
+
+                MediaListTab ->
+                    False
+    in
     [ mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H1)) "H1" False [] False
     , mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H2)) "H2" False [] False
     , mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H3)) "H3" False [] False
@@ -1019,6 +1048,9 @@ editorToolbar =
     , mkButton LinkIcon False (InsertAtCursor (Settings.snippet Settings.Link)) "" False [] False
     , mkButton QuoteIcon False (InsertAtCursor (Settings.snippet Settings.Quote)) "" False [] False
     , separator
+    , mkButton UndoIcon False UndoCM "" False [] (not cmEditor)
+    , mkButton RedoIcon False RedoCM "" False [] (not cmEditor)
+    , separator
     ]
 
 
@@ -1029,7 +1061,7 @@ statusBar model =
             Exposition.wordCount model.exposition
 
         status =
-            "word count : " ++ String.fromInt wc
+            "Word count : " ++ String.fromInt wc
 
         saveButtonText =
             if model.saved then
@@ -1115,6 +1147,9 @@ view model =
         -- media upload not so useful in style
         showMediaUpload =
             not <| selectedEditorIsStyle model
+
+        editorToolbar =
+            mkEditorToolbar (getTabState model.editor)
     in
     div []
         [ viewTabs model
@@ -1157,8 +1192,8 @@ view model =
         , mediaList
         , div [ class "navigation-links" ]
             [ previewButton
-            , viewLink "profile" "profile"
-            , viewLink "logout" "session/logout"
+            , viewLink "Profile" "profile"
+            , viewLink "Logout" "session/logout"
             ]
         , statusBar model
         ]

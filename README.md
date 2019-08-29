@@ -30,17 +30,17 @@ be made outside of elm.
 General:
 	
 - What to do when people are logged out
+- Server problem when exporting?
 
 Casper:
 
 - display title of exposition somewhere
 - media edit copyright obligatory
+- Width or media browser and markdown editor should be equal
 
 Luc:
 
-- save and inc contentversion 
-- display somthing while transcoding 
-- elm-bootstrap update
+- display somthing while transcoding (status: waiting for server fix)
 - codemirror undo/redo as buttons
 - json decoder/encoder for RCExposition type
 
@@ -122,3 +122,5 @@ Luc:
 - Check rendered html
 - check captions display etc
 - Highlighting caption text and onclick creates problem
+- elm-bootstrap update
+- save and inc contentversion 
