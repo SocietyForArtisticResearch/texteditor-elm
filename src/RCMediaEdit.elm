@@ -211,6 +211,8 @@ twoCols col1 col2 =
         ]
 
 
+
+
 viewBody : RCMediaObjectViewState -> MediaEditMessage msg -> RCMediaObject -> Html msg
 viewBody objectState editTool objectInEdit =
     let
@@ -265,17 +267,14 @@ viewBody objectState editTool objectInEdit =
             Exposition.thumbUrl objectInEdit
     in
     div [ class "edit-media-dialog" ]
-        [ Form.form [] <|
-            List.singleton <|
-                twoCols
+        [ Form.form [] 
                     [ --viewThumbnail thumbnailUrl (.value descriptionProps)
                       viewInputWithLabel nameProps
                     , Form.group []
                         [ Form.label [ for "classPicker" ] [ text "display size and location" ]
                         , viewClassesPicker "classPicker" cssClasses currentClass (editTool UserClass)
                         ]
-                    ]
-                    [ viewTextAreaWithLabel descriptionProps
+                    , viewTextAreaWithLabel descriptionProps
                     , viewInputWithLabel copyrightProps
                     , Form.group []
                         [ Form.label [ for "licensePicker" ] [ text "license" ]
