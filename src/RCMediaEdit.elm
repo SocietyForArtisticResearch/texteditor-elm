@@ -207,8 +207,8 @@ viewThumbnail url altText =
 twoCols : List (Html msg) -> List (Html msg) -> Html msg
 twoCols col1 col2 =
     Grid.row []
-        [ Grid.col [ Col.xs ] col1
-        , Grid.col [ Col.xs ] col2
+        [ Grid.col [ Col.sm6 ] col1
+        , Grid.col [ Col.sm6 ] col2
         ]
 
 

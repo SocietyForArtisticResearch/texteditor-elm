@@ -12743,6 +12743,8 @@ var rundis$elm_bootstrap$Bootstrap$Grid$row = F2(
 			rundis$elm_bootstrap$Bootstrap$Grid$Internal$rowAttributes(options),
 			A2(elm$core$List$map, rundis$elm_bootstrap$Bootstrap$Grid$renderCol, cols));
 	});
+var rundis$elm_bootstrap$Bootstrap$General$Internal$SM = {$: 'SM'};
+var rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col6 = {$: 'Col6'};
 var rundis$elm_bootstrap$Bootstrap$Grid$Internal$ColWidth = function (a) {
 	return {$: 'ColWidth', a: a};
 };
@@ -12751,7 +12753,7 @@ var rundis$elm_bootstrap$Bootstrap$Grid$Internal$width = F2(
 		return rundis$elm_bootstrap$Bootstrap$Grid$Internal$ColWidth(
 			A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$Width, size, count));
 	});
-var rundis$elm_bootstrap$Bootstrap$Grid$Col$xs = A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$width, rundis$elm_bootstrap$Bootstrap$General$Internal$XS, rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col);
+var rundis$elm_bootstrap$Bootstrap$Grid$Col$sm6 = A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$width, rundis$elm_bootstrap$Bootstrap$General$Internal$SM, rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col6);
 var author$project$RCMediaEdit$twoCols = F2(
 	function (col1, col2) {
 		return A2(
@@ -12762,12 +12764,12 @@ var author$project$RCMediaEdit$twoCols = F2(
 					A2(
 					rundis$elm_bootstrap$Bootstrap$Grid$col,
 					_List_fromArray(
-						[rundis$elm_bootstrap$Bootstrap$Grid$Col$xs]),
+						[rundis$elm_bootstrap$Bootstrap$Grid$Col$sm6]),
 					col1),
 					A2(
 					rundis$elm_bootstrap$Bootstrap$Grid$col,
 					_List_fromArray(
-						[rundis$elm_bootstrap$Bootstrap$Grid$Col$xs]),
+						[rundis$elm_bootstrap$Bootstrap$Grid$Col$sm6]),
 					col2)
 				]));
 	});
@@ -13050,7 +13052,6 @@ var rundis$elm_bootstrap$Bootstrap$Form$Input$danger = rundis$elm_bootstrap$Boot
 var rundis$elm_bootstrap$Bootstrap$Form$Input$Size = function (a) {
 	return {$: 'Size', a: a};
 };
-var rundis$elm_bootstrap$Bootstrap$General$Internal$SM = {$: 'SM'};
 var rundis$elm_bootstrap$Bootstrap$Form$Input$small = rundis$elm_bootstrap$Bootstrap$Form$Input$Size(rundis$elm_bootstrap$Bootstrap$General$Internal$SM);
 var rundis$elm_bootstrap$Bootstrap$Form$FormInternal$Success = {$: 'Success'};
 var rundis$elm_bootstrap$Bootstrap$Form$Input$success = rundis$elm_bootstrap$Bootstrap$Form$Input$Validation(rundis$elm_bootstrap$Bootstrap$Form$FormInternal$Success);
