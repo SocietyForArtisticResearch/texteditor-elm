@@ -67,14 +67,14 @@
         .CodeMirror {
             flex: 1;
             height: calc(100% - 25px);
-	    background-color: #fbfbf9;
-	}
-	
+            background-color: #fbfbf9;
+        }
 
-	.editor-status-bar {
-	    position : fixed;
-	    bottom : 0;
-	}
+
+        .editor-status-bar {
+            position: fixed;
+            bottom: 0;
+        }
 
         .CodeMirror-scroll * {
             white-space: pre-wrap;
@@ -112,15 +112,15 @@
         }
 
         .import-export-toolbar .btn {
-	    color: #495057;
+            color: #495057;
             background-color: #fff;
             border-color: #999999;
-	    font-size: 15px;
+            font-size: 15px;
         }
 
-	.import-export-toolbar .btn.dropdown-toggle {
-	    padding: 0.17em 1em;
-	}
+        .import-export-toolbar .btn.dropdown-toggle {
+            padding: 0.17em 1em;
+        }
 
         .import-export-toolbar .btn:hover {
             border-color: #aaa #efefef #efefef #aaa;
@@ -199,9 +199,9 @@
             display: block;
         }
 
-	.CodeMirror {
-	    font-family: Helvetica, Arial, sans-serif;
-	}
+        .CodeMirror {
+            font-family: Helvetica, Arial, sans-serif;
+        }
 
         @media only screen and (min-width: 600px) {
             .CodeMirror {
@@ -211,10 +211,14 @@
             }
         }
 
-	#media-list th.edit-button-column {
-	    width:100px;
-	}
-	
+        #media-list th.edit-button-column {
+            width: 100px;
+        }
+
+        .edit-media-dialog .media img {
+            width: 368px;
+            height: auto;
+        }
     </style>
 </head>
 
@@ -248,309 +252,309 @@
     </div>
 </body>
 <script>
- var urlParams = new URLSearchParams(window.location.search);
-
- var toRender = false;
-
- var mdToRender = "";
-
- var mdLength = 0;
-
- var renderInterval = 100;
-
- var styleElem = document.createElement('style');
- styleElem.type = 'text/css';
- document.getElementsByTagName('head')[0].appendChild(styleElem);
-
- const editorCmMd = 0;
-
- const editorTxtMd = 1;
-
- const editorCmCss = 2;
-
- const editorMediaList = 3;
-
- var selectedEditor = editorCmMd;
-
- var cmMarkdown = CodeMirror.fromTextArea(document.getElementById("cm-markdown"), {
-     mode: "markdown"
- });
-
- cmMarkdown.lineWrapping = true;
-
- var cmStyle = CodeMirror.fromTextArea(document.getElementById("cm-style"), {
-     mode: "css",
-     lineWrapping: true
- });
-
-
- if (typeof window.innerWidth != 'undefined') {
-     viewportwidth = window.innerWidth,
-     viewportheight = window.innerHeight
- }
- cmStyle.setSize(viewportwidth / 2.0, null);
-
-
- // cmMarkdown.setSize(null, "480px"); // fill available vertical space ?
- // cmStyle.setSize(null, "480px");
-
- var textareaMarkdown = document.getElementById("textarea-markdown");
-
- var app = Elm.Main.init({
-     node: document.getElementById('elm'),
-     flags: {
-         weave: parseInt(urlParams.get('weave')),
-         research: parseInt(urlParams.get('research'))
-     }
- });
-
-
- function setEditorDisplay(editor) {
-
-     let showMediaList = function(shouldDisplayIfExist) {
-         let mediaList = document.getElementById("media-list");
-         /* media List may not exist yet, this will only set if it does */
-         if (mediaList != null) {
-             if (shouldDisplayIfExist) {
-                 mediaList.style.display = "block";
-                 console.log("show media");
-             } else {
-                 mediaList.style.display = "none";
-                 console.log("hide media");
-             }
-         } else {
-             console.log("media list does not exist (yet?)", document.getElementById("media-list"));
-         }
-     }
-
-     switch (editor) {
-         case editorCmMd:
-             let setAfterShow = (selectedEditor == editorTxtMd);
-             textareaMarkdown.style.display = "none"
-             cmStyle.getWrapperElement().style.display = "none";
-             showMediaList(false);
-             cmMarkdown.getWrapperElement().style.display = "block";
-             selectedEditor = editor;
-             if (setAfterShow) {
-                 cmMarkdown.setValue(textareaMarkdown.value);
-                 cmMarkdown.refresh();
-             };
-             break;
-         case editorTxtMd:
-             cmMarkdown.getWrapperElement().style.display = "none";
-             cmStyle.getWrapperElement().style.display = "none";
-             showMediaList(false);
-             textareaMarkdown.style.display = "block"
-             selectedEditor = editor;
-             break;
-         case editorCmCss:
-             cmMarkdown.getWrapperElement().style.display = "none";
-             textareaMarkdown.style.display = "none"
-             showMediaList(false);
-             cmStyle.getWrapperElement().style.display = "block";
-             selectedEditor = editor;
-             cmStyle.refresh();
-             break;
-         case editorMediaList:
-             cmMarkdown.getWrapperElement().style.display = "none";
-             cmStyle.getWrapperElement().style.display = "none";
-             textareaMarkdown.style.display = "none";
-             showMediaList(true);
-             selectedEditor = editor;
-             break;
-         default:
-             console.log("editor selection not known or not implemented");
-     }
- }
-
- setEditorDisplay(selectedEditor);
-
- // send current edit generation
- /* setInterval(function(){
-  *     app.ports.currentGeneration.send(cm.changeGeneration());
-  * }, 100);
-  */
-
- function mkGenerationObj() {
-     return ({
-         md: cmMarkdown.changeGeneration(),
-         style: cmStyle.changeGeneration()
-     })
- }
-
- cmMarkdown.on("changes", function() {
-     app.ports.currentGeneration.send(mkGenerationObj());
-
-     textareaMarkdown.value = cmMarkdown.getValue();
- });
-
-
- cmStyle.on("changes", function() {
-     app.ports.currentGeneration.send(mkGenerationObj());
-
-     styleElem.innerHTML = cmStyle.getValue();
- });
-
-
- cmMarkdown.on("mousedown", function() {
-     let pos = cmMarkdown.getCursor();
-     let tok = cmMarkdown.getTokenTypeAt(pos);
-     if (tok !== null && tok !== undefined) {
-         if (tok.includes("rcmedia")) {
-             let word = cmMarkdown.findWordAt(pos);
-             let content = cmMarkdown.getRange(word.anchor, word.head)
-             //		console.log(word);
-             if (content !== "}" && content !== "{") {
-                 app.ports.mediaDialog.send({
-                     media: content
-                 });
-             }
-         }
-     }
- });
-
-
- function sendContent() {
-     app.ports.cmContent.send({
-         generation: mkGenerationObj(),
-         md: cmMarkdown.getValue(),
-         style: cmStyle.getValue()
-     });
- }
-
-
- app.ports.setEditor.subscribe(function(editor) {
-     setEditorDisplay(editor);
- });
-
- app.ports.getContent.subscribe(function() {
-     sendContent();
- });
-
-
- app.ports.cmUndo.subscribe(function() {
-
-     switch (selectedEditor) {
-	 case editorCmMd:
-	     cmMarkdown.undo();
-	     break;
-	 case editorCmCss:
-	     cmStyle.undo();
-	     break;
-     }
-     
- });
-
- app.ports.cmRedo.subscribe(function() {
-     
-     switch (selectedEditor) {
-	 case editorCmMd:
-	     cmMarkdown.redo();
-	     break;
-	 case editorCmCss:
-	     cmStyle.redo();
-	     break;
-     }
-
- });
-
- app.ports.setContent.subscribe(function(content) {
-
-     cmMarkdown.setValue(content.md);
-     cmStyle.setValue(content.style);
-
-     styleElem.innerHTML = content.style;
-
-     textareaMarkdown.value = content.md;
- });
-
-
- function insertAtCursor(input, textToInsert) {
-     // get current text of the input
-     const value = input.value;
-
-     // save selection start and end position
-     const start = input.selectionStart;
-     const end = input.selectionEnd;
-
-     // update the value with our text inserted
-     input.value = value.slice(0, start) + textToInsert + value.slice(end);
-
-     // update cursor to be at the end of insertion
-     input.selectionStart = input.selectionEnd = start + textToInsert.length;
- }
-
- app.ports.insertMdString.subscribe(function(insertTuple) {
-     var [str, offset] = insertTuple;
-     if (selectedEditor == editorCmMd) {
-         cmMarkdown.replaceSelection(str);
-         textareaMarkdown.value = cmMarkdown.getValue();
-         cmMarkdown.focus();
-         let cursor = cmMarkdown.getCursor();
-         cmMarkdown.setCursor({
-             line: cursor.line,
-             ch: Math.max(0, cursor.ch + offset)
-         });
-     } else if (selectedEditor == editorTxtMd) {
-         insertAtCursor(textareaMarkdown, str);
-         cmMarkdown.setValue(textareaMarkdown.value);
-         textareaMarkdown.focus();
-         let sel = textareaMarkdown.selectionStart;
-         textareaMarkdown.selectionStart = sel + offset;
-         textareaMarkdown.selectionEnd = sel + offset;
-     }
-
- });
-
-
- app.ports.convertMarkdown.subscribe(function(md) {
-     mdToRender = md;
-     toRender = true;
- });
-
- app.ports.setPreviewContent.subscribe(function(content) {
-     var preview = document.getElementById("preview")
-     var newTo = document.createElement('div');
-     newTo.id = "preview";
-     newTo.classList.add("exposition");
-     newTo.classList.add("exposition-content");
-     newTo.innerHTML = content;
-     morphdom(preview, newTo);
- });
-
-
- textareaMarkdown.addEventListener("input", function() {
-     cmMarkdown.setValue(textareaMarkdown.value);
- });
-
- function setMdLength() {
-     mdLength = mdToRender.length;
-     renderInterval = Math.pow(2, mdLength / 2000) * 200;
- }
-
- setMdLength();
- setInterval(setMdLength, 20000);
-
-
- setInterval(function() {
-     if (toRender) {
-         app.ports.getHtml.send(marked(mdToRender));
-         toRender = false;
-
-     }
- }, renderInterval);
-
-
- app.ports.reportIsSaved.subscribe(function(isSaved) {
-     /* this function prevents closing tab if unsaved content */
-     if (isSaved) {
-         window.onbeforeunload = null;
-     } else {
-         window.onbeforeunload = function() {
-             return "unsaved content";
-         };
-     }
- });
+    var urlParams = new URLSearchParams(window.location.search);
+
+    var toRender = false;
+
+    var mdToRender = "";
+
+    var mdLength = 0;
+
+    var renderInterval = 100;
+
+    var styleElem = document.createElement('style');
+    styleElem.type = 'text/css';
+    document.getElementsByTagName('head')[0].appendChild(styleElem);
+
+    const editorCmMd = 0;
+
+    const editorTxtMd = 1;
+
+    const editorCmCss = 2;
+
+    const editorMediaList = 3;
+
+    var selectedEditor = editorCmMd;
+
+    var cmMarkdown = CodeMirror.fromTextArea(document.getElementById("cm-markdown"), {
+        mode: "markdown"
+    });
+
+    cmMarkdown.lineWrapping = true;
+
+    var cmStyle = CodeMirror.fromTextArea(document.getElementById("cm-style"), {
+        mode: "css",
+        lineWrapping: true
+    });
+
+
+    if (typeof window.innerWidth != 'undefined') {
+        viewportwidth = window.innerWidth,
+            viewportheight = window.innerHeight
+    }
+    cmStyle.setSize(viewportwidth / 2.0, null);
+
+
+    // cmMarkdown.setSize(null, "480px"); // fill available vertical space ?
+    // cmStyle.setSize(null, "480px");
+
+    var textareaMarkdown = document.getElementById("textarea-markdown");
+
+    var app = Elm.Main.init({
+        node: document.getElementById('elm'),
+        flags: {
+            weave: parseInt(urlParams.get('weave')),
+            research: parseInt(urlParams.get('research'))
+        }
+    });
+
+
+    function setEditorDisplay(editor) {
+
+        let showMediaList = function(shouldDisplayIfExist) {
+            let mediaList = document.getElementById("media-list");
+            /* media List may not exist yet, this will only set if it does */
+            if (mediaList != null) {
+                if (shouldDisplayIfExist) {
+                    mediaList.style.display = "block";
+                    console.log("show media");
+                } else {
+                    mediaList.style.display = "none";
+                    console.log("hide media");
+                }
+            } else {
+                console.log("media list does not exist (yet?)", document.getElementById("media-list"));
+            }
+        }
+
+        switch (editor) {
+            case editorCmMd:
+                let setAfterShow = (selectedEditor == editorTxtMd);
+                textareaMarkdown.style.display = "none"
+                cmStyle.getWrapperElement().style.display = "none";
+                showMediaList(false);
+                cmMarkdown.getWrapperElement().style.display = "block";
+                selectedEditor = editor;
+                if (setAfterShow) {
+                    cmMarkdown.setValue(textareaMarkdown.value);
+                    cmMarkdown.refresh();
+                };
+                break;
+            case editorTxtMd:
+                cmMarkdown.getWrapperElement().style.display = "none";
+                cmStyle.getWrapperElement().style.display = "none";
+                showMediaList(false);
+                textareaMarkdown.style.display = "block"
+                selectedEditor = editor;
+                break;
+            case editorCmCss:
+                cmMarkdown.getWrapperElement().style.display = "none";
+                textareaMarkdown.style.display = "none"
+                showMediaList(false);
+                cmStyle.getWrapperElement().style.display = "block";
+                selectedEditor = editor;
+                cmStyle.refresh();
+                break;
+            case editorMediaList:
+                cmMarkdown.getWrapperElement().style.display = "none";
+                cmStyle.getWrapperElement().style.display = "none";
+                textareaMarkdown.style.display = "none";
+                showMediaList(true);
+                selectedEditor = editor;
+                break;
+            default:
+                console.log("editor selection not known or not implemented");
+        }
+    }
+
+    setEditorDisplay(selectedEditor);
+
+    // send current edit generation
+    /* setInterval(function(){
+     *     app.ports.currentGeneration.send(cm.changeGeneration());
+     * }, 100);
+     */
+
+    function mkGenerationObj() {
+        return ({
+            md: cmMarkdown.changeGeneration(),
+            style: cmStyle.changeGeneration()
+        })
+    }
+
+    cmMarkdown.on("changes", function() {
+        app.ports.currentGeneration.send(mkGenerationObj());
+
+        textareaMarkdown.value = cmMarkdown.getValue();
+    });
+
+
+    cmStyle.on("changes", function() {
+        app.ports.currentGeneration.send(mkGenerationObj());
+
+        styleElem.innerHTML = cmStyle.getValue();
+    });
+
+
+    cmMarkdown.on("mousedown", function() {
+        let pos = cmMarkdown.getCursor();
+        let tok = cmMarkdown.getTokenTypeAt(pos);
+        if (tok !== null && tok !== undefined) {
+            if (tok.includes("rcmedia")) {
+                let word = cmMarkdown.findWordAt(pos);
+                let content = cmMarkdown.getRange(word.anchor, word.head)
+                //		console.log(word);
+                if (content !== "}" && content !== "{") {
+                    app.ports.mediaDialog.send({
+                        media: content
+                    });
+                }
+            }
+        }
+    });
+
+
+    function sendContent() {
+        app.ports.cmContent.send({
+            generation: mkGenerationObj(),
+            md: cmMarkdown.getValue(),
+            style: cmStyle.getValue()
+        });
+    }
+
+
+    app.ports.setEditor.subscribe(function(editor) {
+        setEditorDisplay(editor);
+    });
+
+    app.ports.getContent.subscribe(function() {
+        sendContent();
+    });
+
+
+    app.ports.cmUndo.subscribe(function() {
+
+        switch (selectedEditor) {
+            case editorCmMd:
+                cmMarkdown.undo();
+                break;
+            case editorCmCss:
+                cmStyle.undo();
+                break;
+        }
+
+    });
+
+    app.ports.cmRedo.subscribe(function() {
+
+        switch (selectedEditor) {
+            case editorCmMd:
+                cmMarkdown.redo();
+                break;
+            case editorCmCss:
+                cmStyle.redo();
+                break;
+        }
+
+    });
+
+    app.ports.setContent.subscribe(function(content) {
+
+        cmMarkdown.setValue(content.md);
+        cmStyle.setValue(content.style);
+
+        styleElem.innerHTML = content.style;
+
+        textareaMarkdown.value = content.md;
+    });
+
+
+    function insertAtCursor(input, textToInsert) {
+        // get current text of the input
+        const value = input.value;
+
+        // save selection start and end position
+        const start = input.selectionStart;
+        const end = input.selectionEnd;
+
+        // update the value with our text inserted
+        input.value = value.slice(0, start) + textToInsert + value.slice(end);
+
+        // update cursor to be at the end of insertion
+        input.selectionStart = input.selectionEnd = start + textToInsert.length;
+    }
+
+    app.ports.insertMdString.subscribe(function(insertTuple) {
+        var [str, offset] = insertTuple;
+        if (selectedEditor == editorCmMd) {
+            cmMarkdown.replaceSelection(str);
+            textareaMarkdown.value = cmMarkdown.getValue();
+            cmMarkdown.focus();
+            let cursor = cmMarkdown.getCursor();
+            cmMarkdown.setCursor({
+                line: cursor.line,
+                ch: Math.max(0, cursor.ch + offset)
+            });
+        } else if (selectedEditor == editorTxtMd) {
+            insertAtCursor(textareaMarkdown, str);
+            cmMarkdown.setValue(textareaMarkdown.value);
+            textareaMarkdown.focus();
+            let sel = textareaMarkdown.selectionStart;
+            textareaMarkdown.selectionStart = sel + offset;
+            textareaMarkdown.selectionEnd = sel + offset;
+        }
+
+    });
+
+
+    app.ports.convertMarkdown.subscribe(function(md) {
+        mdToRender = md;
+        toRender = true;
+    });
+
+    app.ports.setPreviewContent.subscribe(function(content) {
+        var preview = document.getElementById("preview")
+        var newTo = document.createElement('div');
+        newTo.id = "preview";
+        newTo.classList.add("exposition");
+        newTo.classList.add("exposition-content");
+        newTo.innerHTML = content;
+        morphdom(preview, newTo);
+    });
+
+
+    textareaMarkdown.addEventListener("input", function() {
+        cmMarkdown.setValue(textareaMarkdown.value);
+    });
+
+    function setMdLength() {
+        mdLength = mdToRender.length;
+        renderInterval = Math.pow(2, mdLength / 2000) * 200;
+    }
+
+    setMdLength();
+    setInterval(setMdLength, 20000);
+
+
+    setInterval(function() {
+        if (toRender) {
+            app.ports.getHtml.send(marked(mdToRender));
+            toRender = false;
+
+        }
+    }, renderInterval);
+
+
+    app.ports.reportIsSaved.subscribe(function(isSaved) {
+        /* this function prevents closing tab if unsaved content */
+        if (isSaved) {
+            window.onbeforeunload = null;
+        } else {
+            window.onbeforeunload = function() {
+                return "unsaved content";
+            };
+        }
+    });
 </script>
 
 </html>

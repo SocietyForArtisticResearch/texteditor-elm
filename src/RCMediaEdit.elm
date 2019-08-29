@@ -268,8 +268,8 @@ viewBody objectState editTool objectInEdit =
         [ Form.form [] <|
             List.singleton <|
                 twoCols
-                    [ viewThumbnail thumbnailUrl (.value descriptionProps)
-                    , viewInputWithLabel nameProps
+                    [ --viewThumbnail thumbnailUrl (.value descriptionProps)
+                      viewInputWithLabel nameProps
                     , Form.group []
                         [ Form.label [ for "classPicker" ] [ text "display size and location" ]
                         , viewClassesPicker "classPicker" cssClasses currentClass (editTool UserClass)
