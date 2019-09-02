@@ -76,9 +76,9 @@
             bottom: 0;
         }
 
-        .CodeMirror-scroll * {
-            white-space: pre-wrap;
-        }
+        /* .CodeMirror-scroll * { */
+        /*     white-space: pre-wrap; */
+        /* } */
 
         #textarea-markdown {
             resize: none;
@@ -285,14 +285,17 @@
     var selectedEditor = editorCmMd;
 
     var cmMarkdown = CodeMirror.fromTextArea(document.getElementById("cm-markdown"), {
-        mode: "markdown"
+        mode: "markdown",
+	config: {
+	    lineWrapping:True
+	}
     });
-
-    cmMarkdown.lineWrapping = true;
 
     var cmStyle = CodeMirror.fromTextArea(document.getElementById("cm-style"), {
         mode: "css",
-        lineWrapping: true
+        config: {
+	    lineWrapping: true
+	}
     });
 
 
