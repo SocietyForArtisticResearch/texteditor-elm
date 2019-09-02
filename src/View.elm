@@ -24,6 +24,8 @@ type Icon
     | UploadCloud
     | EyeIcon
     | NoIcon
+    | UndoIcon
+    | RedoIcon
 
 
 renderIcon : Icon -> Html msg
@@ -82,6 +84,12 @@ renderIcon icon =
 
         EyeIcon ->
             iconImg "eye.svg"
+
+        UndoIcon ->
+            iconImg "undo.svg"
+
+        RedoIcon ->
+            iconImg "redo.svg"
 
 
 mkButton : Icon -> Bool -> msg -> String -> Bool -> List (Html.Attribute msg) -> Bool -> Html msg

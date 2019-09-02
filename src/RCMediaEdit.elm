@@ -7,6 +7,7 @@ import Bootstrap.Form.Input as Input
 import Bootstrap.Form.Select as Select
 import Bootstrap.Form.Textarea as Textarea
 import Bootstrap.Grid as Grid
+import Bootstrap.Grid.Col as Col
 import Bootstrap.Modal as Modal
 import Bootstrap.Utilities.Spacing as Spacing
 import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState)
@@ -206,8 +207,8 @@ viewThumbnail url altText =
 twoCols : List (Html msg) -> List (Html msg) -> Html msg
 twoCols col1 col2 =
     Grid.row []
-        [ Grid.col [] col1
-        , Grid.col [] col2
+        [ Grid.col [ Col.sm6 ] col1
+        , Grid.col [ Col.sm6 ] col2
         ]
 
 
@@ -268,15 +269,15 @@ viewBody objectState editTool objectInEdit =
         [ Form.form [] <|
             List.singleton <|
                 twoCols
-                    [ viewThumbnail thumbnailUrl (.value descriptionProps)
-                    , viewInputWithLabel nameProps
+                    [ --viewThumbnail thumbnailUrl (.value descriptionProps)
+                      viewInputWithLabel nameProps
                     , Form.group []
                         [ Form.label [ for "classPicker" ] [ text "display size and location" ]
                         , viewClassesPicker "classPicker" cssClasses currentClass (editTool UserClass)
                         ]
+                    , viewTextAreaWithLabel descriptionProps
                     ]
-                    [ viewTextAreaWithLabel descriptionProps
-                    , viewInputWithLabel copyrightProps
+                    [ viewInputWithLabel copyrightProps
                     , Form.group []
                         [ Form.label [ for "licensePicker" ] [ text "license type" ]
                         , viewLicensePicker "licensePicker" allLicenses currentLicense (editTool LicenseField)

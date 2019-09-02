@@ -9127,6 +9127,17 @@ var author$project$Main$addProblems = F2(
 				problems: _Utils_ap(problems, model.problems)
 			});
 	});
+var elm$json$Json$Encode$null = _Json_encodeNull;
+var author$project$Main$cmRedo = _Platform_outgoingPort(
+	'cmRedo',
+	function ($) {
+		return elm$json$Json$Encode$null;
+	});
+var author$project$Main$cmUndo = _Platform_outgoingPort(
+	'cmUndo',
+	function ($) {
+		return elm$json$Json$Encode$null;
+	});
 var elm$json$Json$Encode$string = _Json_wrap;
 var author$project$Main$convertMarkdown = _Platform_outgoingPort('convertMarkdown', elm$json$Json$Encode$string);
 var elm$core$Tuple$pair = F2(
@@ -9150,7 +9161,6 @@ var author$project$Main$enumTabState = function (t) {
 			return 3;
 	}
 };
-var elm$json$Json$Encode$null = _Json_encodeNull;
 var author$project$Main$getContent = _Platform_outgoingPort(
 	'getContent',
 	function ($) {
@@ -10578,7 +10588,7 @@ var author$project$Main$update = F2(
 							model,
 							{exportDropState: state}),
 						elm$core$Platform$Cmd$none);
-				default:
+				case 'BadUploadFileType':
 					var str = msg.a;
 					return _Utils_Tuple2(
 						A2(
@@ -10586,6 +10596,14 @@ var author$project$Main$update = F2(
 							model,
 							author$project$Problems$UnkownUploadFileType(str)),
 						elm$core$Platform$Cmd$none);
+				case 'UndoCM':
+					return _Utils_Tuple2(
+						model,
+						author$project$Main$cmUndo(_Utils_Tuple0));
+				default:
+					return _Utils_Tuple2(
+						model,
+						author$project$Main$cmRedo(_Utils_Tuple0));
 			}
 		}
 	});
@@ -10599,9 +10617,65 @@ var author$project$Main$InsertMediaAtCursor = function (a) {
 var author$project$Main$OpenMediaPicker = {$: 'OpenMediaPicker'};
 var author$project$Main$UploadImportFileSelect = {$: 'UploadImportFileSelect'};
 var author$project$Main$UploadMediaFileSelect = {$: 'UploadMediaFileSelect'};
+var author$project$Main$MediaEdit = function (a) {
+	return {$: 'MediaEdit', a: a};
+};
+var author$project$Main$makeMediaEditFun = F3(
+	function (obj, field, input) {
+		var objId = function ($) {
+			return $.id;
+		}(obj);
+		switch (field.$) {
+			case 'Name':
+				return author$project$Main$MediaEdit(
+					_Utils_Tuple2(
+						elm$core$String$fromInt(objId),
+						_Utils_update(
+							obj,
+							{name: input})));
+			case 'Description':
+				return author$project$Main$MediaEdit(
+					_Utils_Tuple2(
+						elm$core$String$fromInt(objId),
+						_Utils_update(
+							obj,
+							{description: input})));
+			case 'UserClass':
+				return author$project$Main$MediaEdit(
+					_Utils_Tuple2(
+						elm$core$String$fromInt(objId),
+						_Utils_update(
+							obj,
+							{userClass: input})));
+			case 'Copyright':
+				return author$project$Main$MediaEdit(
+					_Utils_Tuple2(
+						elm$core$String$fromInt(objId),
+						_Utils_update(
+							obj,
+							{copyright: input})));
+			default:
+				return author$project$Main$MediaEdit(
+					_Utils_Tuple2(
+						elm$core$String$fromInt(objId),
+						_Utils_update(
+							obj,
+							{
+								license: author$project$Licenses$fromString(input)
+							})));
+		}
+	});
+var author$project$Main$CloseMediaPicker = {$: 'CloseMediaPicker'};
+var author$project$Main$makePickerMessages = {closeModal: author$project$Main$CloseMediaPicker, insertObject: author$project$Main$InsertMediaAtCursor};
+var author$project$Main$ConfirmMediaDelete = function (a) {
+	return {$: 'ConfirmMediaDelete', a: a};
+};
+var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$ConfirmMediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertMediaAtCursor};
 var author$project$Main$InsertAtCursor = function (a) {
 	return {$: 'InsertAtCursor', a: a};
 };
+var author$project$Main$RedoCM = {$: 'RedoCM'};
+var author$project$Main$UndoCM = {$: 'UndoCM'};
 var elm$html$Html$span = _VirtualDom_node('span');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
@@ -10663,6 +10737,8 @@ var author$project$View$ListIcon = {$: 'ListIcon'};
 var author$project$View$NoIcon = {$: 'NoIcon'};
 var author$project$View$NumberedIcon = {$: 'NumberedIcon'};
 var author$project$View$QuoteIcon = {$: 'QuoteIcon'};
+var author$project$View$RedoIcon = {$: 'RedoIcon'};
+var author$project$View$UndoIcon = {$: 'UndoIcon'};
 var author$project$Settings$baseUrl = 'elm-editor/';
 var author$project$Settings$iconUrl = author$project$Settings$baseUrl + 'lib/icons/';
 var elm$html$Html$div = _VirtualDom_node('div');
@@ -10730,8 +10806,12 @@ var author$project$View$renderIcon = function (icon) {
 			return iconImg('arrow-down.svg');
 		case 'UploadCloud':
 			return iconImg('cloud-upload.svg');
-		default:
+		case 'EyeIcon':
 			return iconImg('eye.svg');
+		case 'UndoIcon':
+			return iconImg('undo.svg');
+		default:
+			return iconImg('redo.svg');
 	}
 };
 var elm$core$List$append = F2(
@@ -10968,156 +11048,123 @@ var author$project$View$mkButton = F7(
 					elm$html$Html$text(buttonText)
 				]));
 	});
-var author$project$Main$editorToolbar = _List_fromArray(
-	[
-		A7(
-		author$project$View$mkButton,
-		author$project$View$NoIcon,
-		false,
-		author$project$Main$InsertAtCursor(
-			author$project$Settings$snippet(author$project$Settings$H1)),
-		'H1',
-		false,
-		_List_Nil,
-		false),
-		A7(
-		author$project$View$mkButton,
-		author$project$View$NoIcon,
-		false,
-		author$project$Main$InsertAtCursor(
-			author$project$Settings$snippet(author$project$Settings$H2)),
-		'H2',
-		false,
-		_List_Nil,
-		false),
-		A7(
-		author$project$View$mkButton,
-		author$project$View$NoIcon,
-		false,
-		author$project$Main$InsertAtCursor(
-			author$project$Settings$snippet(author$project$Settings$H3)),
-		'H3',
-		false,
-		_List_Nil,
-		false),
-		author$project$Main$separator,
-		A7(
-		author$project$View$mkButton,
-		author$project$View$BoldIcon,
-		false,
-		author$project$Main$InsertAtCursor(
-			author$project$Settings$snippet(author$project$Settings$Bold)),
-		'',
-		false,
-		_List_Nil,
-		false),
-		A7(
-		author$project$View$mkButton,
-		author$project$View$ItalicIcon,
-		false,
-		author$project$Main$InsertAtCursor(
-			author$project$Settings$snippet(author$project$Settings$Italic)),
-		'',
-		false,
-		_List_Nil,
-		false),
-		author$project$Main$separator,
-		A7(
-		author$project$View$mkButton,
-		author$project$View$ListIcon,
-		false,
-		author$project$Main$InsertAtCursor(
-			author$project$Settings$snippet(author$project$Settings$Bullet)),
-		'',
-		false,
-		_List_Nil,
-		false),
-		A7(
-		author$project$View$mkButton,
-		author$project$View$NumberedIcon,
-		false,
-		author$project$Main$InsertAtCursor(
-			author$project$Settings$snippet(author$project$Settings$Numbered)),
-		'',
-		false,
-		_List_Nil,
-		false),
-		A7(
-		author$project$View$mkButton,
-		author$project$View$LinkIcon,
-		false,
-		author$project$Main$InsertAtCursor(
-			author$project$Settings$snippet(author$project$Settings$Link)),
-		'',
-		false,
-		_List_Nil,
-		false),
-		A7(
-		author$project$View$mkButton,
-		author$project$View$QuoteIcon,
-		false,
-		author$project$Main$InsertAtCursor(
-			author$project$Settings$snippet(author$project$Settings$Quote)),
-		'',
-		false,
-		_List_Nil,
-		false),
-		author$project$Main$separator
-	]);
-var author$project$Main$MediaEdit = function (a) {
-	return {$: 'MediaEdit', a: a};
-};
-var author$project$Main$makeMediaEditFun = F3(
-	function (obj, field, input) {
-		var objId = function ($) {
-			return $.id;
-		}(obj);
-		switch (field.$) {
-			case 'Name':
-				return author$project$Main$MediaEdit(
-					_Utils_Tuple2(
-						elm$core$String$fromInt(objId),
-						_Utils_update(
-							obj,
-							{name: input})));
-			case 'Description':
-				return author$project$Main$MediaEdit(
-					_Utils_Tuple2(
-						elm$core$String$fromInt(objId),
-						_Utils_update(
-							obj,
-							{description: input})));
-			case 'UserClass':
-				return author$project$Main$MediaEdit(
-					_Utils_Tuple2(
-						elm$core$String$fromInt(objId),
-						_Utils_update(
-							obj,
-							{userClass: input})));
-			case 'Copyright':
-				return author$project$Main$MediaEdit(
-					_Utils_Tuple2(
-						elm$core$String$fromInt(objId),
-						_Utils_update(
-							obj,
-							{copyright: input})));
+var author$project$Main$mkEditorToolbar = function (tabState) {
+	var cmEditor = function () {
+		switch (tabState.$) {
+			case 'CmMarkdownTab':
+				return true;
+			case 'TxtMarkdownTab':
+				return false;
+			case 'StyleTab':
+				return true;
 			default:
-				return author$project$Main$MediaEdit(
-					_Utils_Tuple2(
-						elm$core$String$fromInt(objId),
-						_Utils_update(
-							obj,
-							{
-								license: author$project$Licenses$fromString(input)
-							})));
+				return false;
 		}
-	});
-var author$project$Main$CloseMediaPicker = {$: 'CloseMediaPicker'};
-var author$project$Main$makePickerMessages = {closeModal: author$project$Main$CloseMediaPicker, insertObject: author$project$Main$InsertMediaAtCursor};
-var author$project$Main$ConfirmMediaDelete = function (a) {
-	return {$: 'ConfirmMediaDelete', a: a};
+	}();
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				A7(
+				author$project$View$mkButton,
+				author$project$View$NoIcon,
+				false,
+				author$project$Main$InsertAtCursor(
+					author$project$Settings$snippet(author$project$Settings$H1)),
+				'H1',
+				false,
+				_List_Nil,
+				false),
+				A7(
+				author$project$View$mkButton,
+				author$project$View$NoIcon,
+				false,
+				author$project$Main$InsertAtCursor(
+					author$project$Settings$snippet(author$project$Settings$H2)),
+				'H2',
+				false,
+				_List_Nil,
+				false),
+				A7(
+				author$project$View$mkButton,
+				author$project$View$NoIcon,
+				false,
+				author$project$Main$InsertAtCursor(
+					author$project$Settings$snippet(author$project$Settings$H3)),
+				'H3',
+				false,
+				_List_Nil,
+				false),
+				author$project$Main$separator,
+				A7(
+				author$project$View$mkButton,
+				author$project$View$BoldIcon,
+				false,
+				author$project$Main$InsertAtCursor(
+					author$project$Settings$snippet(author$project$Settings$Bold)),
+				'',
+				false,
+				_List_Nil,
+				false),
+				A7(
+				author$project$View$mkButton,
+				author$project$View$ItalicIcon,
+				false,
+				author$project$Main$InsertAtCursor(
+					author$project$Settings$snippet(author$project$Settings$Italic)),
+				'',
+				false,
+				_List_Nil,
+				false),
+				author$project$Main$separator,
+				A7(
+				author$project$View$mkButton,
+				author$project$View$ListIcon,
+				false,
+				author$project$Main$InsertAtCursor(
+					author$project$Settings$snippet(author$project$Settings$Bullet)),
+				'',
+				false,
+				_List_Nil,
+				false),
+				A7(
+				author$project$View$mkButton,
+				author$project$View$NumberedIcon,
+				false,
+				author$project$Main$InsertAtCursor(
+					author$project$Settings$snippet(author$project$Settings$Numbered)),
+				'',
+				false,
+				_List_Nil,
+				false),
+				A7(
+				author$project$View$mkButton,
+				author$project$View$LinkIcon,
+				false,
+				author$project$Main$InsertAtCursor(
+					author$project$Settings$snippet(author$project$Settings$Link)),
+				'',
+				false,
+				_List_Nil,
+				false),
+				A7(
+				author$project$View$mkButton,
+				author$project$View$QuoteIcon,
+				false,
+				author$project$Main$InsertAtCursor(
+					author$project$Settings$snippet(author$project$Settings$Quote)),
+				'',
+				false,
+				_List_Nil,
+				false),
+				author$project$Main$separator
+			]),
+		cmEditor ? _List_fromArray(
+			[
+				A7(author$project$View$mkButton, author$project$View$UndoIcon, false, author$project$Main$UndoCM, '', false, _List_Nil, !cmEditor),
+				A7(author$project$View$mkButton, author$project$View$RedoIcon, false, author$project$Main$RedoCM, '', false, _List_Nil, !cmEditor),
+				author$project$Main$separator
+			]) : _List_Nil);
 };
-var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$ConfirmMediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertMediaAtCursor};
 var author$project$Main$selectedEditorIsMarkdown = function (model) {
 	var _n0 = model.editor;
 	if (_n0.a.$ === 'EditorMarkdown') {
@@ -11176,7 +11223,7 @@ var author$project$Exposition$wordCount = function (expo) {
 var author$project$View$SaveIcon = {$: 'SaveIcon'};
 var author$project$Main$statusBar = function (model) {
 	var wc = author$project$Exposition$wordCount(model.exposition);
-	var status = 'word count : ' + elm$core$String$fromInt(wc);
+	var status = 'Word count : ' + elm$core$String$fromInt(wc);
 	var saveButtonText = model.saved ? 'Saved' : 'Not Saved';
 	var saveButton = A2(
 		rundis$elm_bootstrap$Bootstrap$Button$button,
@@ -11520,9 +11567,17 @@ var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Checkbox = function (a) {
 	return {$: 'Checkbox', a: a};
 };
 var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$create = F2(
-	function (options, label) {
+	function (options, label_) {
 		return rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Checkbox(
-			{label: label, options: options});
+			{label: label_, options: options});
+	});
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Label = function (a) {
+	return {$: 'Label', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$label = F2(
+	function (attributes, children) {
+		return rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Label(
+			{attributes: attributes, children: children});
 	});
 var elm$html$Html$input = _VirtualDom_node('input');
 var elm$html$Html$label = _VirtualDom_node('label');
@@ -11657,6 +11712,8 @@ var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$toAttributes = function (option
 var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$view = function (_n0) {
 	var chk = _n0.a;
 	var opts = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Form$Checkbox$applyModifier, rundis$elm_bootstrap$Bootstrap$Form$Checkbox$defaultOptions, chk.options);
+	var _n1 = chk.label;
+	var label_ = _n1.a;
 	return A2(
 		elm$html$Html$div,
 		_List_fromArray(
@@ -11680,37 +11737,45 @@ var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$view = function (_n0) {
 				A2(
 				elm$html$Html$label,
 				_Utils_ap(
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$classList(
-							_List_fromArray(
-								[
-									_Utils_Tuple2('form-check-label', !opts.custom),
-									_Utils_Tuple2('custom-control-label', opts.custom)
-								]))
-						]),
-					function () {
-						var _n1 = opts.id;
-						if (_n1.$ === 'Just') {
-							var v = _n1.a;
-							return _List_fromArray(
-								[
-									elm$html$Html$Attributes$for(v)
-								]);
-						} else {
-							return _List_Nil;
-						}
-					}()),
-				_List_fromArray(
-					[
-						elm$html$Html$text(chk.label)
-					]))
+					label_.attributes,
+					_Utils_ap(
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$classList(
+								_List_fromArray(
+									[
+										_Utils_Tuple2('form-check-label', !opts.custom),
+										_Utils_Tuple2('custom-control-label', opts.custom)
+									]))
+							]),
+						function () {
+							var _n2 = opts.id;
+							if (_n2.$ === 'Just') {
+								var v = _n2.a;
+								return _List_fromArray(
+									[
+										elm$html$Html$Attributes$for(v)
+									]);
+							} else {
+								return _List_Nil;
+							}
+						}())),
+				label_.children)
 			]));
 };
 var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$checkbox = F2(
-	function (options, label) {
+	function (options, labelText) {
 		return rundis$elm_bootstrap$Bootstrap$Form$Checkbox$view(
-			A2(rundis$elm_bootstrap$Bootstrap$Form$Checkbox$create, options, label));
+			A2(
+				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$create,
+				options,
+				A2(
+					rundis$elm_bootstrap$Bootstrap$Form$Checkbox$label,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text(labelText)
+						]))));
 	});
 var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$On = {$: 'On'};
 var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Value = function (a) {
@@ -12678,6 +12743,17 @@ var rundis$elm_bootstrap$Bootstrap$Grid$row = F2(
 			rundis$elm_bootstrap$Bootstrap$Grid$Internal$rowAttributes(options),
 			A2(elm$core$List$map, rundis$elm_bootstrap$Bootstrap$Grid$renderCol, cols));
 	});
+var rundis$elm_bootstrap$Bootstrap$General$Internal$SM = {$: 'SM'};
+var rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col6 = {$: 'Col6'};
+var rundis$elm_bootstrap$Bootstrap$Grid$Internal$ColWidth = function (a) {
+	return {$: 'ColWidth', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Grid$Internal$width = F2(
+	function (size, count) {
+		return rundis$elm_bootstrap$Bootstrap$Grid$Internal$ColWidth(
+			A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$Width, size, count));
+	});
+var rundis$elm_bootstrap$Bootstrap$Grid$Col$sm6 = A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$width, rundis$elm_bootstrap$Bootstrap$General$Internal$SM, rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col6);
 var author$project$RCMediaEdit$twoCols = F2(
 	function (col1, col2) {
 		return A2(
@@ -12685,8 +12761,16 @@ var author$project$RCMediaEdit$twoCols = F2(
 			_List_Nil,
 			_List_fromArray(
 				[
-					A2(rundis$elm_bootstrap$Bootstrap$Grid$col, _List_Nil, col1),
-					A2(rundis$elm_bootstrap$Bootstrap$Grid$col, _List_Nil, col2)
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$Grid$Col$sm6]),
+					col1),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$Grid$Col$sm6]),
+					col2)
 				]));
 	});
 var elm$html$Html$Attributes$selected = elm$html$Html$Attributes$boolProperty('selected');
@@ -12968,7 +13052,6 @@ var rundis$elm_bootstrap$Bootstrap$Form$Input$danger = rundis$elm_bootstrap$Boot
 var rundis$elm_bootstrap$Bootstrap$Form$Input$Size = function (a) {
 	return {$: 'Size', a: a};
 };
-var rundis$elm_bootstrap$Bootstrap$General$Internal$SM = {$: 'SM'};
 var rundis$elm_bootstrap$Bootstrap$Form$Input$small = rundis$elm_bootstrap$Bootstrap$Form$Input$Size(rundis$elm_bootstrap$Bootstrap$General$Internal$SM);
 var rundis$elm_bootstrap$Bootstrap$Form$FormInternal$Success = {$: 'Success'};
 var rundis$elm_bootstrap$Bootstrap$Form$Input$success = rundis$elm_bootstrap$Bootstrap$Form$Input$Validation(rundis$elm_bootstrap$Bootstrap$Form$FormInternal$Success);
@@ -13050,6 +13133,11 @@ var rundis$elm_bootstrap$Bootstrap$Form$Input$applyModifier = F2(
 				return _Utils_update(
 					options,
 					{readonly: val});
+			case 'PlainText':
+				var val = modifier.a;
+				return _Utils_update(
+					options,
+					{plainText: val});
 			default:
 				var attrs_ = modifier.a;
 				return _Utils_update(
@@ -13059,7 +13147,7 @@ var rundis$elm_bootstrap$Bootstrap$Form$Input$applyModifier = F2(
 					});
 		}
 	});
-var rundis$elm_bootstrap$Bootstrap$Form$Input$defaultOptions = {attributes: _List_Nil, disabled: false, id: elm$core$Maybe$Nothing, onInput: elm$core$Maybe$Nothing, placeholder: elm$core$Maybe$Nothing, readonly: false, size: elm$core$Maybe$Nothing, tipe: rundis$elm_bootstrap$Bootstrap$Form$Input$Text, validation: elm$core$Maybe$Nothing, value: elm$core$Maybe$Nothing};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$defaultOptions = {attributes: _List_Nil, disabled: false, id: elm$core$Maybe$Nothing, onInput: elm$core$Maybe$Nothing, placeholder: elm$core$Maybe$Nothing, plainText: false, readonly: false, size: elm$core$Maybe$Nothing, tipe: rundis$elm_bootstrap$Bootstrap$Form$Input$Text, validation: elm$core$Maybe$Nothing, value: elm$core$Maybe$Nothing};
 var rundis$elm_bootstrap$Bootstrap$Form$Input$sizeAttribute = function (size) {
 	return A2(
 		elm$core$Maybe$map,
@@ -13110,9 +13198,10 @@ var rundis$elm_bootstrap$Bootstrap$Form$Input$toAttributes = function (modifiers
 	return _Utils_ap(
 		_List_fromArray(
 			[
-				elm$html$Html$Attributes$class('form-control'),
+				elm$html$Html$Attributes$class(
+				options.plainText ? 'form-control-plaintext' : 'form-control'),
 				elm$html$Html$Attributes$disabled(options.disabled),
-				elm$html$Html$Attributes$readonly(options.readonly),
+				elm$html$Html$Attributes$readonly(options.readonly || options.plainText),
 				rundis$elm_bootstrap$Bootstrap$Form$Input$typeAttribute(options.tipe)
 			]),
 		_Utils_ap(
@@ -13395,35 +13484,6 @@ var author$project$RCMediaEdit$viewTextAreaWithLabel = function (props) {
 					]))
 			]));
 };
-var elm$html$Html$Attributes$alt = elm$html$Html$Attributes$stringProperty('alt');
-var author$project$RCMediaEdit$viewThumbnail = F2(
-	function (url, altText) {
-		return A2(
-			elm$html$Html$div,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$class('media')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					elm$html$Html$label,
-					_List_Nil,
-					_List_fromArray(
-						[
-							elm$html$Html$text('preview'),
-							A2(
-							elm$html$Html$img,
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$src(url),
-									elm$html$Html$Attributes$alt('image named ' + altText),
-									elm$html$Html$Attributes$class('preview-thumbnail')
-								]),
-							_List_Nil)
-						]))
-				]));
-	});
 var elm$core$List$singleton = function (value) {
 	return _List_fromArray(
 		[value]);
@@ -13498,12 +13558,6 @@ var author$project$RCMediaEdit$viewBody = F3(
 							author$project$RCMediaEdit$twoCols,
 							_List_fromArray(
 								[
-									A2(
-									author$project$RCMediaEdit$viewThumbnail,
-									thumbnailUrl,
-									function ($) {
-										return $.value;
-									}(descriptionProps)),
 									author$project$RCMediaEdit$viewInputWithLabel(nameProps),
 									A2(
 									rundis$elm_bootstrap$Bootstrap$Form$group,
@@ -13526,11 +13580,11 @@ var author$project$RCMediaEdit$viewBody = F3(
 											author$project$RCMediaEdit$cssClasses,
 											currentClass,
 											editTool(author$project$RCMediaEdit$UserClass))
-										]))
+										])),
+									author$project$RCMediaEdit$viewTextAreaWithLabel(descriptionProps)
 								]),
 							_List_fromArray(
 								[
-									author$project$RCMediaEdit$viewTextAreaWithLabel(descriptionProps),
 									author$project$RCMediaEdit$viewInputWithLabel(copyrightProps),
 									A2(
 									rundis$elm_bootstrap$Bootstrap$Form$group,
@@ -13589,7 +13643,7 @@ var rundis$elm_bootstrap$Bootstrap$Modal$config = function (closeMsg) {
 			closeMsg: closeMsg,
 			footer: elm$core$Maybe$Nothing,
 			header: elm$core$Maybe$Nothing,
-			options: {centered: true, hideOnBackdropClick: true, modalSize: elm$core$Maybe$Nothing},
+			options: {attrs: _List_Nil, centered: true, hideOnBackdropClick: true, modalSize: elm$core$Maybe$Nothing, scrollableBody: false},
 			withAnimation: elm$core$Maybe$Nothing
 		});
 };
@@ -13858,20 +13912,23 @@ var rundis$elm_bootstrap$Bootstrap$Modal$modalClass = function (size) {
 };
 var rundis$elm_bootstrap$Bootstrap$Modal$modalAttributes = function (options) {
 	return _Utils_ap(
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$classList(
-				_List_fromArray(
-					[
-						_Utils_Tuple2('modal-dialog', true),
-						_Utils_Tuple2('modal-dialog-centered', options.centered)
-					])),
-				A2(elm$html$Html$Attributes$style, 'pointer-events', 'auto')
-			]),
-		A2(
-			elm$core$Maybe$withDefault,
-			_List_Nil,
-			A2(elm$core$Maybe$map, rundis$elm_bootstrap$Bootstrap$Modal$modalClass, options.modalSize)));
+		options.attrs,
+		_Utils_ap(
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$classList(
+					_List_fromArray(
+						[
+							_Utils_Tuple2('modal-dialog', true),
+							_Utils_Tuple2('modal-dialog-centered', options.centered),
+							_Utils_Tuple2('modal-dialog-scrollable', options.scrollableBody)
+						])),
+					A2(elm$html$Html$Attributes$style, 'pointer-events', 'auto')
+				]),
+			A2(
+				elm$core$Maybe$withDefault,
+				_List_Nil,
+				A2(elm$core$Maybe$map, rundis$elm_bootstrap$Bootstrap$Modal$modalClass, options.modalSize))));
 };
 var rundis$elm_bootstrap$Bootstrap$Modal$renderBody = function (maybeBody) {
 	if (maybeBody.$ === 'Just') {
@@ -15209,7 +15266,9 @@ var rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownMenu = F3(
 									[
 										_Utils_Tuple2('dropdown-menu', true),
 										_Utils_Tuple2('dropdown-menu-right', config.hasMenuRight),
-										_Utils_Tuple2('show', true)
+										_Utils_Tuple2(
+										'show',
+										!_Utils_eq(status, rundis$elm_bootstrap$Bootstrap$Dropdown$Closed))
 									]))
 							]),
 						_Utils_ap(
@@ -15559,6 +15618,8 @@ var author$project$Main$view = function (model) {
 			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
 		}
 	}();
+	var editorToolbar = author$project$Main$mkEditorToolbar(
+		author$project$Main$getTabState(model.editor));
 	var editorCheckbox = function () {
 		var _n2 = model.editor;
 		if (_n2.a.$ === 'EditorMarkdown') {
@@ -15661,9 +15722,9 @@ var author$project$Main$view = function (model) {
 						]),
 					A2(
 						elm$core$List$append,
-						author$project$Main$editorToolbar,
+						editorToolbar,
 						_List_fromArray(
-							[editorCheckbox, author$project$Main$separator])))),
+							[editorCheckbox])))),
 				alert,
 				mediaList,
 				A2(
@@ -15675,8 +15736,8 @@ var author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						previewButton,
-						A2(author$project$Main$viewLink, 'profile', 'profile'),
-						A2(author$project$Main$viewLink, 'logout', 'session/logout')
+						A2(author$project$Main$viewLink, 'Profile', 'profile'),
+						A2(author$project$Main$viewLink, 'Logout', 'session/logout')
 					])),
 				author$project$Main$statusBar(model)
 			]));

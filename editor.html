@@ -67,14 +67,14 @@
         .CodeMirror {
             flex: 1;
             height: calc(100% - 25px);
-	    background-color: #fbfbf9;
-	}
-	
+            background-color: #fbfbf9;
+        }
 
-	.editor-status-bar {
-	    position : fixed;
-	    bottom : 0;
-	}
+
+        .editor-status-bar {
+            position: fixed;
+            bottom: 0;
+        }
 
         .CodeMirror-scroll * {
             white-space: pre-wrap;
@@ -112,15 +112,15 @@
         }
 
         .import-export-toolbar .btn {
-	    color: #495057;
+            color: #495057;
             background-color: #fff;
             border-color: #999999;
-	    font-size: 15px;
+            font-size: 15px;
         }
 
-	.import-export-toolbar .btn.dropdown-toggle {
-	    padding: 0.17em 1em;
-	}
+        .import-export-toolbar .btn.dropdown-toggle {
+            padding: 0.17em 1em;
+        }
 
         .import-export-toolbar .btn:hover {
             border-color: #aaa #efefef #efefef #aaa;
@@ -199,9 +199,9 @@
             display: block;
         }
 
-	.CodeMirror {
-	    font-family: Helvetica, Arial, sans-serif;
-	}
+        .CodeMirror {
+            font-family: Helvetica, Arial, sans-serif;
+        }
 
         @media only screen and (min-width: 600px) {
             .CodeMirror {
@@ -211,10 +211,14 @@
             }
         }
 
-	#media-list th.edit-button-column {
-	    width:100px;
-	}
-	
+        #media-list th.edit-button-column {
+            width: 100px;
+        }
+
+        .edit-media-dialog .media img {
+            width: 368px;
+            height: auto;
+        }
     </style>
 </head>
 
@@ -427,6 +431,32 @@
         sendContent();
     });
 
+
+    app.ports.cmUndo.subscribe(function() {
+
+        switch (selectedEditor) {
+            case editorCmMd:
+                cmMarkdown.undo();
+                break;
+            case editorCmCss:
+                cmStyle.undo();
+                break;
+        }
+
+    });
+
+    app.ports.cmRedo.subscribe(function() {
+
+        switch (selectedEditor) {
+            case editorCmMd:
+                cmMarkdown.redo();
+                break;
+            case editorCmCss:
+                cmStyle.redo();
+                break;
+        }
+
+    });
 
     app.ports.setContent.subscribe(function(content) {
 

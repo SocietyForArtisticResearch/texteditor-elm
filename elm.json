@@ -21,7 +21,7 @@
             "hecrj/html-parser": "2.3.3",
             "pablohirafuji/elm-markdown": "2.0.5",
             "rtfeldman/elm-validate": "4.0.1",
-            "rundis/elm-bootstrap": "5.1.0",
+            "rundis/elm-bootstrap": "5.2.0",
             "zwilias/elm-html-string": "2.0.2"
         },
         "indirect": {
