@@ -1,10 +1,10 @@
-module View exposing (Icon(..), mkButton, mkDropdown, optionalBlock, renderIcon)
+module View exposing (ButtonInfo, Icon(..), defaultButton, mkButton, mkDropdown, optionalBlock, renderIcon)
 
 import Bootstrap.Button as Button
 import Bootstrap.Dropdown as Dropdown
 import Bootstrap.Utilities.Spacing as Spacing
 import Html exposing (Html, a, button, div, img, li, p, span, text, ul)
-import Html.Attributes exposing (attribute, class, for, href, id, src, style)
+import Html.Attributes exposing (attribute, class, for, href, id, src, style, title)
 import Html.Events exposing (on, onCheck, onClick, onInput)
 import Settings exposing (iconUrl)
 
@@ -92,36 +92,62 @@ renderIcon icon =
             iconImg "redo.svg"
 
 
-mkButton : Icon -> Bool -> msg -> String -> Bool -> List (Html.Attribute msg) -> Bool -> Html msg
-mkButton icon needsOffset onClickMsg buttonText primary otherAttrs hidden =
+type alias ButtonInfo msg =
+    { icon : Icon
+    , offset : Bool
+    , onClickMsg : msg
+    , text : String
+    , primary : Bool
+    , otherAttrs : List (Html.Attribute msg)
+    , hidden : Bool
+    , title : String
+    }
+
+
+defaultButton : msg -> ButtonInfo msg
+defaultButton message =
+    { icon = NoIcon
+    , offset = False
+    , onClickMsg = message
+    , text = ""
+    , primary = False
+    , otherAttrs = []
+    , hidden = False
+    , title = "button"
+    }
+
+
+mkButton : ButtonInfo msg -> Html msg
+mkButton props =
     let
         spacing =
-            if needsOffset then
+            if props.offset then
                 [ Spacing.m1 ]
 
             else
                 []
     in
     Button.button
-        [ if primary then
+        [ if props.primary then
             Button.outlineDark
 
           else
             Button.light
         , Button.attrs <|
             List.append
-                [ onClick onClickMsg
+                [ onClick props.onClickMsg
                 , style "display" <|
-                    if hidden then
+                    if props.hidden then
                         "none"
 
                     else
                         "inline-block"
+                , title props.title
                 ]
-                (List.append spacing otherAttrs)
+                (List.append spacing props.otherAttrs)
         ]
-        [ renderIcon icon
-        , text buttonText
+        [ renderIcon props.icon
+        , text props.text
         ]
 
 

@@ -907,9 +907,13 @@ update msg model =
 
 viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg
 viewUpload icon needsOffset onClickMsg buttonText status =
+    let
+        btn =
+            defaultButton onClickMsg
+    in
     case status of
         Ready ->
-            mkButton icon needsOffset onClickMsg buttonText True [ Spacing.mb1, Spacing.mt1, Spacing.mr1 ] False
+            mkButton { btn | icon = icon, offset = needsOffset, text = buttonText, primary = True, otherAttrs = [ Spacing.mb1, Spacing.mt1, Spacing.mr1 ] }
 
         Uploading fraction ->
             div [ class "upload-percentage" ] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
@@ -1035,23 +1039,32 @@ mkEditorToolbar tabState =
 
                 MediaListTab ->
                     False
+
+        snippetMsg action =
+            InsertAtCursor (Settings.snippet action)
+
+        default : ButtonInfo Msg
+        default =
+            defaultButton (InsertAtCursor ( "", 0 ))
+
+        -- note, this is a nonsense Msg, should always be overridden, is only here to satisfy msg requirement.
     in
-    [ mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H1)) "H1" False [] False
-    , mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H2)) "H2" False [] False
-    , mkButton NoIcon False (InsertAtCursor (Settings.snippet Settings.H3)) "H3" False [] False
+    [ mkButton { default | onClickMsg = snippetMsg Settings.H1, text = "H1", title = "Header 1" }
+    , mkButton { default | onClickMsg = snippetMsg Settings.H2, text = "H2", title = "Header 2" }
+    , mkButton { default | onClickMsg = snippetMsg Settings.H3, text = "H3", title = "Header 3" }
     , separator
-    , mkButton BoldIcon False (InsertAtCursor (Settings.snippet Settings.Bold)) "" False [] False
-    , mkButton ItalicIcon False (InsertAtCursor (Settings.snippet Settings.Italic)) "" False [] False
+    , mkButton { default | onClickMsg = snippetMsg Settings.Bold, icon = BoldIcon, title = "bold" }
+    , mkButton { default | onClickMsg = snippetMsg Settings.Italic, icon = ItalicIcon, title = "italic" }
     , separator
-    , mkButton ListIcon False (InsertAtCursor (Settings.snippet Settings.Bullet)) "" False [] False
-    , mkButton NumberedIcon False (InsertAtCursor (Settings.snippet Settings.Numbered)) "" False [] False
-    , mkButton LinkIcon False (InsertAtCursor (Settings.snippet Settings.Link)) "" False [] False
-    , mkButton QuoteIcon False (InsertAtCursor (Settings.snippet Settings.Quote)) "" False [] False
+    , mkButton { default | onClickMsg = snippetMsg Settings.Bullet, icon = ListIcon, title = "unordered list" }
+    , mkButton { default | onClickMsg = snippetMsg Settings.Numbered, icon = NumberedIcon, title = "numbered list" }
+    , mkButton { default | onClickMsg = snippetMsg Settings.Link, icon = LinkIcon, title = "hyperlink" }
+    , mkButton { default | onClickMsg = snippetMsg Settings.Quote, icon = QuoteIcon, title = "quote" }
     , separator
     ]
         ++ (if cmEditor then
-                [ mkButton UndoIcon False UndoCM "" False [] (not cmEditor)
-                , mkButton RedoIcon False RedoCM "" False [] (not cmEditor)
+                [ mkButton { default | onClickMsg = UndoCM, icon = UndoIcon, title = "undo", hidden = not cmEditor }
+                , mkButton { default | onClickMsg = RedoCM, icon = RedoIcon, title = "redo", hidden = not cmEditor }
                 , separator
                 ]
 
@@ -1156,6 +1169,9 @@ view model =
 
         editorToolbar =
             mkEditorToolbar (getTabState model.editor)
+
+        insertButton =
+            defaultButton OpenMediaPicker
     in
     div []
         [ viewTabs model
@@ -1164,13 +1180,14 @@ view model =
         , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
         , div [ class "btn-toolbar", class "import-export-toolbar", attribute "role" "toolbar" ]
             [ optionalBlock showMediaUpload <| viewUpload UploadCloud False UploadMediaFileSelect "Add Media" model.mediaUploadStatus
-            , mkButton ArrowDown
-                True
-                OpenMediaPicker
-                "Insert Media"
-                True
-                []
-                (not showButtons)
+            , mkButton
+                { insertButton
+                    | icon = ArrowDown
+                    , primary = True
+                    , text = "Insert Media"
+                    , offset = True
+                    , hidden = not showButtons
+                }
             , optionalBlock showButtons <| viewUpload ImportIcon True UploadImportFileSelect "Import Doc" model.importUploadStatus
             , optionalBlock showButtons <|
                 mkDropdown model.exportDropState

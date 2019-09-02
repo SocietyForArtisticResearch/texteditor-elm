@@ -10734,11 +10734,14 @@ var author$project$View$BoldIcon = {$: 'BoldIcon'};
 var author$project$View$ItalicIcon = {$: 'ItalicIcon'};
 var author$project$View$LinkIcon = {$: 'LinkIcon'};
 var author$project$View$ListIcon = {$: 'ListIcon'};
-var author$project$View$NoIcon = {$: 'NoIcon'};
 var author$project$View$NumberedIcon = {$: 'NumberedIcon'};
 var author$project$View$QuoteIcon = {$: 'QuoteIcon'};
 var author$project$View$RedoIcon = {$: 'RedoIcon'};
 var author$project$View$UndoIcon = {$: 'UndoIcon'};
+var author$project$View$NoIcon = {$: 'NoIcon'};
+var author$project$View$defaultButton = function (message) {
+	return {hidden: false, icon: author$project$View$NoIcon, offset: false, onClickMsg: message, otherAttrs: _List_Nil, primary: false, text: '', title: 'button'};
+};
 var author$project$Settings$baseUrl = 'elm-editor/';
 var author$project$Settings$iconUrl = author$project$Settings$baseUrl + 'lib/icons/';
 var elm$html$Html$div = _VirtualDom_node('div');
@@ -10822,6 +10825,7 @@ var elm$core$List$append = F2(
 			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
 		}
 	});
+var elm$html$Html$Attributes$title = elm$html$Html$Attributes$stringProperty('title');
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -11020,35 +11024,42 @@ var rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
 var rundis$elm_bootstrap$Bootstrap$Button$outlineDark = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark));
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1 = elm$html$Html$Attributes$class('m-1');
-var author$project$View$mkButton = F7(
-	function (icon, needsOffset, onClickMsg, buttonText, primary, otherAttrs, hidden) {
-		var spacing = needsOffset ? _List_fromArray(
-			[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1]) : _List_Nil;
-		return A2(
-			rundis$elm_bootstrap$Bootstrap$Button$button,
-			_List_fromArray(
-				[
-					primary ? rundis$elm_bootstrap$Bootstrap$Button$outlineDark : rundis$elm_bootstrap$Bootstrap$Button$light,
-					rundis$elm_bootstrap$Bootstrap$Button$attrs(
-					A2(
-						elm$core$List$append,
-						_List_fromArray(
-							[
-								elm$html$Html$Events$onClick(onClickMsg),
-								A2(
-								elm$html$Html$Attributes$style,
-								'display',
-								hidden ? 'none' : 'inline-block')
-							]),
-						A2(elm$core$List$append, spacing, otherAttrs)))
-				]),
-			_List_fromArray(
-				[
-					author$project$View$renderIcon(icon),
-					elm$html$Html$text(buttonText)
-				]));
-	});
+var author$project$View$mkButton = function (props) {
+	var spacing = props.offset ? _List_fromArray(
+		[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1]) : _List_Nil;
+	return A2(
+		rundis$elm_bootstrap$Bootstrap$Button$button,
+		_List_fromArray(
+			[
+				props.primary ? rundis$elm_bootstrap$Bootstrap$Button$outlineDark : rundis$elm_bootstrap$Bootstrap$Button$light,
+				rundis$elm_bootstrap$Bootstrap$Button$attrs(
+				A2(
+					elm$core$List$append,
+					_List_fromArray(
+						[
+							elm$html$Html$Events$onClick(props.onClickMsg),
+							A2(
+							elm$html$Html$Attributes$style,
+							'display',
+							props.hidden ? 'none' : 'inline-block'),
+							elm$html$Html$Attributes$title(props.title)
+						]),
+					A2(elm$core$List$append, spacing, props.otherAttrs)))
+			]),
+		_List_fromArray(
+			[
+				author$project$View$renderIcon(props.icon),
+				elm$html$Html$text(props.text)
+			]));
+};
 var author$project$Main$mkEditorToolbar = function (tabState) {
+	var snippetMsg = function (action) {
+		return author$project$Main$InsertAtCursor(
+			author$project$Settings$snippet(action));
+	};
+	var _default = author$project$View$defaultButton(
+		author$project$Main$InsertAtCursor(
+			_Utils_Tuple2('', 0)));
 	var cmEditor = function () {
 		switch (tabState.$) {
 			case 'CmMarkdownTab':
@@ -11064,104 +11075,92 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 	return _Utils_ap(
 		_List_fromArray(
 			[
-				A7(
-				author$project$View$mkButton,
-				author$project$View$NoIcon,
-				false,
-				author$project$Main$InsertAtCursor(
-					author$project$Settings$snippet(author$project$Settings$H1)),
-				'H1',
-				false,
-				_List_Nil,
-				false),
-				A7(
-				author$project$View$mkButton,
-				author$project$View$NoIcon,
-				false,
-				author$project$Main$InsertAtCursor(
-					author$project$Settings$snippet(author$project$Settings$H2)),
-				'H2',
-				false,
-				_List_Nil,
-				false),
-				A7(
-				author$project$View$mkButton,
-				author$project$View$NoIcon,
-				false,
-				author$project$Main$InsertAtCursor(
-					author$project$Settings$snippet(author$project$Settings$H3)),
-				'H3',
-				false,
-				_List_Nil,
-				false),
+				author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{
+						onClickMsg: snippetMsg(author$project$Settings$H1),
+						text: 'H1',
+						title: 'Header 1'
+					})),
+				author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{
+						onClickMsg: snippetMsg(author$project$Settings$H2),
+						text: 'H2',
+						title: 'Header 2'
+					})),
+				author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{
+						onClickMsg: snippetMsg(author$project$Settings$H3),
+						text: 'H3',
+						title: 'Header 3'
+					})),
 				author$project$Main$separator,
-				A7(
-				author$project$View$mkButton,
-				author$project$View$BoldIcon,
-				false,
-				author$project$Main$InsertAtCursor(
-					author$project$Settings$snippet(author$project$Settings$Bold)),
-				'',
-				false,
-				_List_Nil,
-				false),
-				A7(
-				author$project$View$mkButton,
-				author$project$View$ItalicIcon,
-				false,
-				author$project$Main$InsertAtCursor(
-					author$project$Settings$snippet(author$project$Settings$Italic)),
-				'',
-				false,
-				_List_Nil,
-				false),
+				author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{
+						icon: author$project$View$BoldIcon,
+						onClickMsg: snippetMsg(author$project$Settings$Bold),
+						title: 'bold'
+					})),
+				author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{
+						icon: author$project$View$ItalicIcon,
+						onClickMsg: snippetMsg(author$project$Settings$Italic),
+						title: 'italic'
+					})),
 				author$project$Main$separator,
-				A7(
-				author$project$View$mkButton,
-				author$project$View$ListIcon,
-				false,
-				author$project$Main$InsertAtCursor(
-					author$project$Settings$snippet(author$project$Settings$Bullet)),
-				'',
-				false,
-				_List_Nil,
-				false),
-				A7(
-				author$project$View$mkButton,
-				author$project$View$NumberedIcon,
-				false,
-				author$project$Main$InsertAtCursor(
-					author$project$Settings$snippet(author$project$Settings$Numbered)),
-				'',
-				false,
-				_List_Nil,
-				false),
-				A7(
-				author$project$View$mkButton,
-				author$project$View$LinkIcon,
-				false,
-				author$project$Main$InsertAtCursor(
-					author$project$Settings$snippet(author$project$Settings$Link)),
-				'',
-				false,
-				_List_Nil,
-				false),
-				A7(
-				author$project$View$mkButton,
-				author$project$View$QuoteIcon,
-				false,
-				author$project$Main$InsertAtCursor(
-					author$project$Settings$snippet(author$project$Settings$Quote)),
-				'',
-				false,
-				_List_Nil,
-				false),
+				author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{
+						icon: author$project$View$ListIcon,
+						onClickMsg: snippetMsg(author$project$Settings$Bullet),
+						title: 'unordered list'
+					})),
+				author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{
+						icon: author$project$View$NumberedIcon,
+						onClickMsg: snippetMsg(author$project$Settings$Numbered),
+						title: 'numbered list'
+					})),
+				author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{
+						icon: author$project$View$LinkIcon,
+						onClickMsg: snippetMsg(author$project$Settings$Link),
+						title: 'hyperlink'
+					})),
+				author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{
+						icon: author$project$View$QuoteIcon,
+						onClickMsg: snippetMsg(author$project$Settings$Quote),
+						title: 'quote'
+					})),
 				author$project$Main$separator
 			]),
 		cmEditor ? _List_fromArray(
 			[
-				A7(author$project$View$mkButton, author$project$View$UndoIcon, false, author$project$Main$UndoCM, '', false, _List_Nil, !cmEditor),
-				A7(author$project$View$mkButton, author$project$View$RedoIcon, false, author$project$Main$RedoCM, '', false, _List_Nil, !cmEditor),
+				author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{hidden: !cmEditor, icon: author$project$View$UndoIcon, onClickMsg: author$project$Main$UndoCM, title: 'undo'})),
+				author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{hidden: !cmEditor, icon: author$project$View$RedoIcon, onClickMsg: author$project$Main$RedoCM, title: 'redo'})),
 				author$project$Main$separator
 			]) : _List_Nil);
 };
@@ -11884,17 +11883,19 @@ var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1 = elm$html$Html$Attribu
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1 = elm$html$Html$Attributes$class('mt-1');
 var author$project$Main$viewUpload = F5(
 	function (icon, needsOffset, onClickMsg, buttonText, status) {
+		var btn = author$project$View$defaultButton(onClickMsg);
 		if (status.$ === 'Ready') {
-			return A7(
-				author$project$View$mkButton,
-				icon,
-				needsOffset,
-				onClickMsg,
-				buttonText,
-				true,
-				_List_fromArray(
-					[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1, rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1, rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1]),
-				false);
+			return author$project$View$mkButton(
+				_Utils_update(
+					btn,
+					{
+						icon: icon,
+						offset: needsOffset,
+						otherAttrs: _List_fromArray(
+							[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1, rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1, rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1]),
+						primary: true,
+						text: buttonText
+					}));
 		} else {
 			var fraction = status.a;
 			return A2(
@@ -15618,6 +15619,7 @@ var author$project$Main$view = function (model) {
 			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
 		}
 	}();
+	var insertButton = author$project$View$defaultButton(author$project$Main$OpenMediaPicker);
 	var editorToolbar = author$project$Main$mkEditorToolbar(
 		author$project$Main$getTabState(model.editor));
 	var editorCheckbox = function () {
@@ -15672,7 +15674,10 @@ var author$project$Main$view = function (model) {
 						author$project$View$optionalBlock,
 						showMediaUpload,
 						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, false, author$project$Main$UploadMediaFileSelect, 'Add Media', model.mediaUploadStatus)),
-						A7(author$project$View$mkButton, author$project$View$ArrowDown, true, author$project$Main$OpenMediaPicker, 'Insert Media', true, _List_Nil, !showButtons),
+						author$project$View$mkButton(
+						_Utils_update(
+							insertButton,
+							{hidden: !showButtons, icon: author$project$View$ArrowDown, offset: true, primary: true, text: 'Insert Media'})),
 						A2(
 						author$project$View$optionalBlock,
 						showButtons,

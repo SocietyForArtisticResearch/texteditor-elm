@@ -36,8 +36,7 @@ Casper:
 
 - display title of exposition somewhere
 - media edit copyright obligatory
-- Width or media browser and markdown editor should be equal
-- line wrap
+
 
 Luc:
 
