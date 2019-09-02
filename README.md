@@ -35,11 +35,10 @@ General:
 Casper:
 
 - display title of exposition somewhere
-- media edit copyright obligatory
-
 
 Luc:
 
+- footnotes 
 - display somthing while transcoding (status: waiting for server fix)
 - json decoder/encoder for RCExposition type
 - navbar bootstrap for preview
