@@ -21,7 +21,6 @@ body {
     height: 100%;
 }
 
-
 .editor-col {
     display: flex;
     flex-direction: column;
@@ -40,7 +39,6 @@ body {
     background-color: #fbfbf9;
 }
 
-
 .editor-status-bar {
     position: fixed;
     bottom: 0;
@@ -49,7 +47,6 @@ body {
 /* .CodeMirror-scroll * { */
 /*     white-space: pre-wrap; */
 /* } */
-
 #textarea-markdown {
     resize: none;
     flex: 1;
@@ -110,7 +107,7 @@ body {
 }
 
 .markdown-toolbar:hover {
-    opacity: 0.9;
+    opacity: 0.8;
 }
 
 .markdown-toolbar .btn {
@@ -123,7 +120,6 @@ body {
     background-color: #fcfcfc;
     border-color: #aaa #efefef #efefef #aaa;
 }
-
 
 .editor-checkbox {
     display: inline-block;
