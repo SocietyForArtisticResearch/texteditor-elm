@@ -61,6 +61,8 @@
             overflow-y: scroll;
         }
 
+
+
         .CodeMirror {
             flex: 1;
             height: calc(100% - 25px);
@@ -210,6 +212,14 @@
                 max-width: 50vw;
                 /* width: 50vw; */
                 /* this should prevent codemirror from growing out of the page */
+            }
+        }
+
+        @media only screen and (max-width: 800px) {
+
+            /* hide the preview on mobile, bigger phones have a width of 750px */
+            .preview-container {
+                display: none;
             }
         }
 
