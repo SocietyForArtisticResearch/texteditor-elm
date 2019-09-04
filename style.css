@@ -42,6 +42,7 @@ body {
 }
 
 .CodeMirror .cm-header {
+    color: black;
     opacity: 0.6;
 }
 
