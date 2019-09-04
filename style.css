@@ -42,7 +42,7 @@ body {
 }
 
 .CodeMirror .cm-header {
-    color: rgba(0,0,80,.28);
+    opacity: 0.6;
 }
 
 .editor-status-bar {
