@@ -7,6 +7,7 @@ import Bootstrap.Form as Form
 import Bootstrap.Form.Checkbox as Checkbox
 import Bootstrap.Grid as Grid
 import Bootstrap.Modal as Modal
+import Bootstrap.Navbar as Navbar
 import Bootstrap.Utilities.Spacing as Spacing
 import Browser
 import Dict
@@ -48,6 +49,7 @@ type alias Model =
     , saved : Bool
     , editor : ( EditorType, MarkdownEditor )
     , exportDropState : Dropdown.State
+    , navbarState : Navbar.State
     }
 
 
@@ -137,8 +139,8 @@ decodeFlags =
     D.map2 Flags (D.field "weave" D.int) (D.field "research" D.int)
 
 
-emptyModel : Int -> Int -> Model
-emptyModel research weave =
+emptyModel : Navbar.State -> Int -> Int -> Model
+emptyModel navbarInitState research weave =
     { editGeneration = ( -1, -1 )
     , exposition = Exposition.empty
     , mediaDialog = ( Modal.hidden, Nothing, Nothing )
@@ -154,15 +156,20 @@ emptyModel research weave =
     , saved = True
     , editor = ( EditorMarkdown, CodemirrorMarkdown )
     , exportDropState = Dropdown.initialState
+    , navbarState = navbarInitState
     }
 
 
 init : D.Value -> ( Model, Cmd Msg )
 init flags =
+    let
+        ( navbarState, navCmd ) =
+            Navbar.initialState NavbarMsg
+    in
     case D.decodeValue decodeFlags flags of
         Ok fl ->
-            ( emptyModel fl.research fl.weave
-            , RCAPI.getExposition fl.research fl.weave GotExposition
+            ( emptyModel navbarState fl.research fl.weave
+            , Cmd.batch [ navCmd, RCAPI.getExposition fl.research fl.weave GotExposition ]
             )
 
         Err str ->
@@ -170,7 +177,7 @@ init flags =
                 _ =
                     Debug.log "err" str
             in
-            ( addProblem (emptyModel -1 -1) Problems.WrongExpositionUrl
+            ( addProblem (emptyModel navbarState -1 -1) Problems.WrongExpositionUrl
             , Cmd.none
             )
 
@@ -268,6 +275,7 @@ subscriptions model =
         , Http.track "uploadImport" GotImportUploadProgress
         , Dropdown.subscriptions model.exportDropState ExportDropMsg
         , Time.every 10000 (\_ -> SaveExposition)
+        , Navbar.subscriptions model.navbarState NavbarMsg
         ]
 
 
@@ -302,6 +310,7 @@ type Msg
     | ConfirmMediaDelete Exposition.RCMediaObject
     | CloseConfirmDialog
     | SwitchTab EditorType
+    | NavbarMsg Navbar.State
     | MediaDeleted (Result Http.Error ())
     | AlertMsg Alert.Visibility
     | SwitchMarkdownEditor MarkdownEditor
@@ -826,6 +835,9 @@ update msg model =
             in
             ( newModel, Cmd.batch [ RCAPI.getMediaList model.research GotMediaList, enumTabState (getTabState newModel.editor) |> setEditor ] )
 
+        NavbarMsg state ->
+            ( { model | navbarState = state }, Cmd.none )
+
         AlertMsg visibility ->
             ( { model | alertVisibility = visibility }, Cmd.none )
 
@@ -957,6 +969,19 @@ viewTabs model =
         , tabLink EditorMedia "Media browser"
         , tabLink EditorStyle "Style"
         ]
+
+
+viewNavbar : Model -> Html Msg
+viewNavbar model =
+    Navbar.config NavbarMsg
+        |> Navbar.withAnimation
+        |> Navbar.collapseMedium
+        |> Navbar.items
+            [ Navbar.itemLink [ href "#" ] [ text "Item 1" ]
+            , Navbar.itemLink [ href "#" ] [ text "Item 2" ]
+            , Navbar.itemLink [ Spacing.ml2Sm, href "#" ] [ text "Item 3" ]
+            ]
+        |> Navbar.view model.navbarState
 
 
 viewAlert : Model -> Html Msg
@@ -1174,7 +1199,8 @@ view model =
             defaultButton OpenMediaPicker
     in
     div []
-        [ viewTabs model
+        [ viewNavbar model
+        , viewTabs model
         , mediaDialogHtml
         , confirmDialogHtml
         , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
