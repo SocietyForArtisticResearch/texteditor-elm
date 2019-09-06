@@ -38,9 +38,9 @@ Casper:
 
 Luc:
 
-- display somthing while transcoding (status: waiting for server fix)
+- display something while transcoding (status: waiting for server fix)
 - json decoder/encoder for RCExposition type
-- navbar bootstrap for preview
+
 
 ## To test
 - tables?
@@ -124,3 +124,4 @@ Luc:
 - save and inc contentversion 
 - codemirror undo/redo as buttons
 - footnotes 
+- navbar bootstrap for preview
