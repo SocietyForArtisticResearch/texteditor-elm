@@ -12831,6 +12831,7 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$withAnimation = function (config_) {
 		config_);
 };
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0 = elm$html$Html$Attributes$class('ml-0');
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm = elm$html$Html$Attributes$class('ml-sm-2');
 var author$project$Main$viewNavbar = function (model) {
 	var tabLink = function (tab) {
 		var selectedClass = _Utils_eq(model.editor.a, tab) ? 'nav-link active' : 'nav-link';
@@ -12853,6 +12854,7 @@ var author$project$Main$viewNavbar = function (model) {
 					rundis$elm_bootstrap$Bootstrap$Navbar$textItem,
 					_List_fromArray(
 						[
+							rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm,
 							elm$html$Html$Attributes$href('#')
 						]),
 					_List_fromArray(
@@ -12863,6 +12865,7 @@ var author$project$Main$viewNavbar = function (model) {
 					rundis$elm_bootstrap$Bootstrap$Navbar$textItem,
 					_List_fromArray(
 						[
+							rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm,
 							elm$html$Html$Attributes$href('#')
 						]),
 					_List_fromArray(
@@ -12873,6 +12876,7 @@ var author$project$Main$viewNavbar = function (model) {
 					rundis$elm_bootstrap$Bootstrap$Navbar$textItem,
 					_List_fromArray(
 						[
+							rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm,
 							elm$html$Html$Attributes$href('#')
 						]),
 					_List_fromArray(
