@@ -12932,7 +12932,7 @@ var author$project$Main$viewNavbar = function (model) {
 							rundis$elm_bootstrap$Bootstrap$Navbar$attrs,
 							_List_fromArray(
 								[
-									A2(elm$html$Html$Attributes$attribute, 'padding', '0')
+									A2(elm$html$Html$Attributes$style, 'padding', '0')
 								]),
 							rundis$elm_bootstrap$Bootstrap$Navbar$config(author$project$Main$NavbarMsg)))))));
 };
