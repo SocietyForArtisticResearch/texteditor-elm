@@ -12008,6 +12008,7 @@ var author$project$Main$EditorStyle = {$: 'EditorStyle'};
 var author$project$Main$SwitchTab = function (a) {
 	return {$: 'SwitchTab', a: a};
 };
+var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$Attributes$href = function (url) {
 	return A2(
 		elm$html$Html$Attributes$stringProperty,
@@ -12081,6 +12082,12 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$config = function (toMsg) {
 			withAnimation: false
 		});
 };
+var rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem = function (a) {
+	return {$: 'CustomItem', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$customItem = function (elem) {
+	return rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem(elem);
+};
 var rundis$elm_bootstrap$Bootstrap$Navbar$updateConfig = F2(
 	function (mapper, _n0) {
 		var conf = _n0.a;
@@ -12116,20 +12123,6 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$items = F2(
 					{items: items_});
 			},
 			config_);
-	});
-var rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem = function (a) {
-	return {$: 'CustomItem', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Navbar$textItem = F2(
-	function (attributes, children) {
-		return rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem(
-			A2(
-				elm$html$Html$span,
-				A2(
-					elm$core$List$cons,
-					elm$html$Html$Attributes$class('navbar-text'),
-					attributes),
-				children));
 	});
 var elm$html$Html$nav = _VirtualDom_node('nav');
 var rundis$elm_bootstrap$Bootstrap$Navbar$maybeBrand = function (brand_) {
@@ -12526,7 +12519,6 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$getOrInitDropdownStatus = F2(
 			rundis$elm_bootstrap$Bootstrap$Navbar$Closed,
 			A2(elm$core$Dict$get, id, dropdowns));
 	});
-var elm$html$Html$a = _VirtualDom_node('a');
 var elm$virtual_dom$VirtualDom$Custom = function (a) {
 	return {$: 'Custom', a: a};
 };
@@ -12873,40 +12865,43 @@ var author$project$Main$viewNavbar = function (model) {
 			rundis$elm_bootstrap$Bootstrap$Navbar$customItems,
 			_List_fromArray(
 				[
+					rundis$elm_bootstrap$Bootstrap$Navbar$customItem(
 					A2(
-					rundis$elm_bootstrap$Bootstrap$Navbar$textItem,
-					_List_fromArray(
-						[
-							rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm,
-							elm$html$Html$Attributes$href(previewUrl),
-							elm$html$Html$Attributes$target('_blank')
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('Preview')
-						])),
+						elm$html$Html$a,
+						_List_fromArray(
+							[
+								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm,
+								elm$html$Html$Attributes$href(previewUrl),
+								elm$html$Html$Attributes$target('_blank')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Preview')
+							]))),
+					rundis$elm_bootstrap$Bootstrap$Navbar$customItem(
 					A2(
-					rundis$elm_bootstrap$Bootstrap$Navbar$textItem,
-					_List_fromArray(
-						[
-							rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm,
-							elm$html$Html$Attributes$href('profile')
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('Profile')
-						])),
+						elm$html$Html$a,
+						_List_fromArray(
+							[
+								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm,
+								elm$html$Html$Attributes$href('profile')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Profile')
+							]))),
+					rundis$elm_bootstrap$Bootstrap$Navbar$customItem(
 					A2(
-					rundis$elm_bootstrap$Bootstrap$Navbar$textItem,
-					_List_fromArray(
-						[
-							rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm,
-							elm$html$Html$Attributes$href('session/logout')
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('Logout')
-						]))
+						elm$html$Html$a,
+						_List_fromArray(
+							[
+								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm,
+								elm$html$Html$Attributes$href('session/logout')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Logout')
+							])))
 				]),
 			A2(
 				rundis$elm_bootstrap$Bootstrap$Navbar$items,
