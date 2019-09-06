@@ -999,7 +999,7 @@ viewNavbar model =
             ]
         |> Navbar.customItems
             [ Navbar.customItem (a [ class "nav-link", class "navbar-nav", Spacing.ml1Sm, href previewUrl, Html.Attributes.target "_blank" ] [ text "Preview" ])
-            , Navbar.customItem (a [ class "nav-link", class "navbar-nav", Spacing.ml1Sm, href "profile" ] [ text "Profile" ])
+            , Navbar.textItem [] [ a [ class "nav-link", class "navbar-nav", Spacing.ml1Sm, href "profile" ] [ text "Profile" ] ]
             , Navbar.customItem (a [ class "nav-link", class "navbar-nav", href "session/logout" ] [ text "Logout" ])
             ]
         |> Navbar.view model.navbarState

@@ -12124,6 +12124,17 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$items = F2(
 			},
 			config_);
 	});
+var rundis$elm_bootstrap$Bootstrap$Navbar$textItem = F2(
+	function (attributes, children) {
+		return rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem(
+			A2(
+				elm$html$Html$span,
+				A2(
+					elm$core$List$cons,
+					elm$html$Html$Attributes$class('navbar-text'),
+					attributes),
+				children));
+	});
 var elm$html$Html$nav = _VirtualDom_node('nav');
 var rundis$elm_bootstrap$Bootstrap$Navbar$maybeBrand = function (brand_) {
 	if (brand_.$ === 'Just') {
@@ -12880,20 +12891,25 @@ var author$project$Main$viewNavbar = function (model) {
 							[
 								elm$html$Html$text('Preview')
 							]))),
-					rundis$elm_bootstrap$Bootstrap$Navbar$customItem(
 					A2(
-						elm$html$Html$a,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('nav-link'),
-								elm$html$Html$Attributes$class('navbar-nav'),
-								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1Sm,
-								elm$html$Html$Attributes$href('profile')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('Profile')
-							]))),
+					rundis$elm_bootstrap$Bootstrap$Navbar$textItem,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$a,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('nav-link'),
+									elm$html$Html$Attributes$class('navbar-nav'),
+									rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1Sm,
+									elm$html$Html$Attributes$href('profile')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Profile')
+								]))
+						])),
 					rundis$elm_bootstrap$Bootstrap$Navbar$customItem(
 					A2(
 						elm$html$Html$a,
