@@ -12870,6 +12870,7 @@ var author$project$Main$viewNavbar = function (model) {
 						elm$html$Html$a,
 						_List_fromArray(
 							[
+								elm$html$Html$Attributes$class('nav-link'),
 								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm,
 								elm$html$Html$Attributes$href(previewUrl),
 								elm$html$Html$Attributes$target('_blank')
@@ -12883,6 +12884,7 @@ var author$project$Main$viewNavbar = function (model) {
 						elm$html$Html$a,
 						_List_fromArray(
 							[
+								elm$html$Html$Attributes$class('nav-link'),
 								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm,
 								elm$html$Html$Attributes$href('profile')
 							]),
@@ -12895,6 +12897,7 @@ var author$project$Main$viewNavbar = function (model) {
 						elm$html$Html$a,
 						_List_fromArray(
 							[
+								elm$html$Html$Attributes$class('nav-link'),
 								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm,
 								elm$html$Html$Attributes$href('session/logout')
 							]),

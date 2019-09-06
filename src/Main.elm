@@ -998,9 +998,9 @@ viewNavbar model =
             , Navbar.itemLink (tabLink EditorStyle) [ text "Style" ]
             ]
         |> Navbar.customItems
-            [ Navbar.customItem (a [ Spacing.ml2Sm, href previewUrl, Html.Attributes.target "_blank" ] [ text "Preview" ])
-            , Navbar.customItem (a [ Spacing.ml2Sm, href "profile" ] [ text "Profile" ])
-            , Navbar.customItem (a [ Spacing.ml2Sm, href "session/logout" ] [ text "Logout" ])
+            [ Navbar.customItem (a [ class "nav-link", Spacing.ml2Sm, href previewUrl, Html.Attributes.target "_blank" ] [ text "Preview" ])
+            , Navbar.customItem (a [ class "nav-link", Spacing.ml2Sm, href "profile" ] [ text "Profile" ])
+            , Navbar.customItem (a [ class "nav-link", Spacing.ml2Sm, href "session/logout" ] [ text "Logout" ])
             ]
         |> Navbar.view model.navbarState
 
