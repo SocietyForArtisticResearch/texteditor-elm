@@ -994,13 +994,13 @@ viewNavbar model =
         |> Navbar.collapseMedium
         |> Navbar.items
             [ Navbar.itemLink ([ Spacing.ml0 ] ++ tabLink EditorMarkdown) [ text "Markdown" ]
-            , Navbar.itemLink (tabLink EditorMedia) [ text "Media browser" ]
+            , Navbar.itemLink (tabLink EditorMedia) [ text "Media" ]
             , Navbar.itemLink (tabLink EditorStyle) [ text "Style" ]
             ]
         |> Navbar.customItems
-            [ Navbar.customItem (a [ class "nav-link", Spacing.ml2Sm, href previewUrl, Html.Attributes.target "_blank" ] [ text "Preview" ])
-            , Navbar.customItem (a [ class "nav-link", Spacing.ml2Sm, href "profile" ] [ text "Profile" ])
-            , Navbar.customItem (a [ class "nav-link", Spacing.ml2Sm, href "session/logout" ] [ text "Logout" ])
+            [ Navbar.customItem (a [ class "nav-link", class "navbar-nav", Spacing.ml1Sm, href previewUrl, Html.Attributes.target "_blank" ] [ text "Preview" ])
+            , Navbar.customItem (a [ class "nav-link", class "navbar-nav", Spacing.ml1Sm, href "profile" ] [ text "Profile" ])
+            , Navbar.customItem (a [ class "nav-link", class "navbar-nav", href "session/logout" ] [ text "Logout" ])
             ]
         |> Navbar.view model.navbarState
 

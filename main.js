@@ -12837,7 +12837,7 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$withAnimation = function (config_) {
 		config_);
 };
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0 = elm$html$Html$Attributes$class('ml-0');
-var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm = elm$html$Html$Attributes$class('ml-sm-2');
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1Sm = elm$html$Html$Attributes$class('ml-sm-1');
 var author$project$Main$viewNavbar = function (model) {
 	var tabLink = function (tab) {
 		var selectedClass = _Utils_eq(model.editor.a, tab) ? 'nav-link active' : 'nav-link';
@@ -12871,7 +12871,8 @@ var author$project$Main$viewNavbar = function (model) {
 						_List_fromArray(
 							[
 								elm$html$Html$Attributes$class('nav-link'),
-								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm,
+								elm$html$Html$Attributes$class('navbar-nav'),
+								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1Sm,
 								elm$html$Html$Attributes$href(previewUrl),
 								elm$html$Html$Attributes$target('_blank')
 							]),
@@ -12885,7 +12886,8 @@ var author$project$Main$viewNavbar = function (model) {
 						_List_fromArray(
 							[
 								elm$html$Html$Attributes$class('nav-link'),
-								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm,
+								elm$html$Html$Attributes$class('navbar-nav'),
+								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1Sm,
 								elm$html$Html$Attributes$href('profile')
 							]),
 						_List_fromArray(
@@ -12898,7 +12900,7 @@ var author$project$Main$viewNavbar = function (model) {
 						_List_fromArray(
 							[
 								elm$html$Html$Attributes$class('nav-link'),
-								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm,
+								elm$html$Html$Attributes$class('navbar-nav'),
 								elm$html$Html$Attributes$href('session/logout')
 							]),
 						_List_fromArray(
@@ -12925,7 +12927,7 @@ var author$project$Main$viewNavbar = function (model) {
 						tabLink(author$project$Main$EditorMedia),
 						_List_fromArray(
 							[
-								elm$html$Html$text('Media browser')
+								elm$html$Html$text('Media')
 							])),
 						A2(
 						rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
