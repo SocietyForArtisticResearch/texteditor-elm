@@ -12003,27 +12003,17 @@ var author$project$Main$viewEditorCheckbox = function (markdownEditor) {
 			]),
 		'Plain text');
 };
-var elm$html$Html$a = _VirtualDom_node('a');
+var author$project$Main$EditorMedia = {$: 'EditorMedia'};
+var author$project$Main$EditorStyle = {$: 'EditorStyle'};
+var author$project$Main$SwitchTab = function (a) {
+	return {$: 'SwitchTab', a: a};
+};
 var elm$html$Html$Attributes$href = function (url) {
 	return A2(
 		elm$html$Html$Attributes$stringProperty,
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
-var author$project$Main$viewLink = F2(
-	function (name, url) {
-		return A2(
-			elm$html$Html$a,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$href(url),
-					elm$html$Html$Attributes$class('btn btn-link ml-1')
-				]),
-			_List_fromArray(
-				[
-					elm$html$Html$text(name)
-				]));
-	});
 var rundis$elm_bootstrap$Bootstrap$General$Internal$MD = {$: 'MD'};
 var rundis$elm_bootstrap$Bootstrap$Navbar$Config = function (a) {
 	return {$: 'Config', a: a};
@@ -12077,6 +12067,23 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$config = function (toMsg) {
 			withAnimation: false
 		});
 };
+var rundis$elm_bootstrap$Bootstrap$Navbar$updateConfig = F2(
+	function (mapper, _n0) {
+		var conf = _n0.a;
+		return rundis$elm_bootstrap$Bootstrap$Navbar$Config(
+			mapper(conf));
+	});
+var rundis$elm_bootstrap$Bootstrap$Navbar$customItems = F2(
+	function (items_, config_) {
+		return A2(
+			rundis$elm_bootstrap$Bootstrap$Navbar$updateConfig,
+			function (conf) {
+				return _Utils_update(
+					conf,
+					{customItems: items_});
+			},
+			config_);
+	});
 var rundis$elm_bootstrap$Bootstrap$Navbar$Item = function (a) {
 	return {$: 'Item', a: a};
 };
@@ -12084,12 +12091,6 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$itemLink = F2(
 	function (attributes, children) {
 		return rundis$elm_bootstrap$Bootstrap$Navbar$Item(
 			{attributes: attributes, children: children});
-	});
-var rundis$elm_bootstrap$Bootstrap$Navbar$updateConfig = F2(
-	function (mapper, _n0) {
-		var conf = _n0.a;
-		return rundis$elm_bootstrap$Bootstrap$Navbar$Config(
-			mapper(conf));
 	});
 var rundis$elm_bootstrap$Bootstrap$Navbar$items = F2(
 	function (items_, config_) {
@@ -12101,6 +12102,20 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$items = F2(
 					{items: items_});
 			},
 			config_);
+	});
+var rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem = function (a) {
+	return {$: 'CustomItem', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$textItem = F2(
+	function (attributes, children) {
+		return rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem(
+			A2(
+				elm$html$Html$span,
+				A2(
+					elm$core$List$cons,
+					elm$html$Html$Attributes$class('navbar-text'),
+					attributes),
+				children));
 	});
 var elm$html$Html$nav = _VirtualDom_node('nav');
 var rundis$elm_bootstrap$Bootstrap$Navbar$maybeBrand = function (brand_) {
@@ -12497,6 +12512,7 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$getOrInitDropdownStatus = F2(
 			rundis$elm_bootstrap$Bootstrap$Navbar$Closed,
 			A2(elm$core$Dict$get, id, dropdowns));
 	});
+var elm$html$Html$a = _VirtualDom_node('a');
 var elm$virtual_dom$VirtualDom$Custom = function (a) {
 	return {$: 'Custom', a: a};
 };
@@ -12814,55 +12830,88 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$withAnimation = function (config_) {
 		},
 		config_);
 };
-var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm = elm$html$Html$Attributes$class('ml-sm-2');
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0 = elm$html$Html$Attributes$class('ml-0');
 var author$project$Main$viewNavbar = function (model) {
+	var tabLink = function (tab) {
+		var selectedClass = _Utils_eq(model.editor.a, tab) ? 'nav-link active' : 'nav-link';
+		return _List_fromArray(
+			[
+				elm$html$Html$Attributes$class(selectedClass),
+				elm$html$Html$Attributes$href('#'),
+				elm$html$Html$Events$onClick(
+				author$project$Main$SwitchTab(tab))
+			]);
+	};
 	return A2(
 		rundis$elm_bootstrap$Bootstrap$Navbar$view,
 		model.navbarState,
 		A2(
-			rundis$elm_bootstrap$Bootstrap$Navbar$items,
+			rundis$elm_bootstrap$Bootstrap$Navbar$customItems,
 			_List_fromArray(
 				[
 					A2(
-					rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
+					rundis$elm_bootstrap$Bootstrap$Navbar$textItem,
 					_List_fromArray(
 						[
 							elm$html$Html$Attributes$href('#')
 						]),
 					_List_fromArray(
 						[
-							elm$html$Html$text('Item 1')
+							elm$html$Html$text('Preview')
 						])),
 					A2(
-					rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
+					rundis$elm_bootstrap$Bootstrap$Navbar$textItem,
 					_List_fromArray(
 						[
 							elm$html$Html$Attributes$href('#')
 						]),
 					_List_fromArray(
 						[
-							elm$html$Html$text('Item 2')
+							elm$html$Html$text('Profile')
 						])),
 					A2(
-					rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
+					rundis$elm_bootstrap$Bootstrap$Navbar$textItem,
 					_List_fromArray(
 						[
-							rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm,
 							elm$html$Html$Attributes$href('#')
 						]),
 					_List_fromArray(
 						[
-							elm$html$Html$text('Item 3')
+							elm$html$Html$text('Logout')
 						]))
 				]),
-			rundis$elm_bootstrap$Bootstrap$Navbar$collapseMedium(
-				rundis$elm_bootstrap$Bootstrap$Navbar$withAnimation(
-					rundis$elm_bootstrap$Bootstrap$Navbar$config(author$project$Main$NavbarMsg)))));
-};
-var author$project$Main$EditorMedia = {$: 'EditorMedia'};
-var author$project$Main$EditorStyle = {$: 'EditorStyle'};
-var author$project$Main$SwitchTab = function (a) {
-	return {$: 'SwitchTab', a: a};
+			A2(
+				rundis$elm_bootstrap$Bootstrap$Navbar$items,
+				_List_fromArray(
+					[
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
+						_Utils_ap(
+							_List_fromArray(
+								[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0]),
+							tabLink(author$project$Main$EditorMarkdown)),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Markdown')
+							])),
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
+						tabLink(author$project$Main$EditorMedia),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Media browser')
+							])),
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
+						tabLink(author$project$Main$EditorStyle),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Style')
+							]))
+					]),
+				rundis$elm_bootstrap$Bootstrap$Navbar$collapseMedium(
+					rundis$elm_bootstrap$Bootstrap$Navbar$withAnimation(
+						rundis$elm_bootstrap$Bootstrap$Navbar$config(author$project$Main$NavbarMsg))))));
 };
 var author$project$Main$viewTabs = function (model) {
 	var tabLink = F2(
@@ -16749,18 +16798,6 @@ var author$project$Main$view = function (model) {
 							[editorCheckbox])))),
 				alert,
 				mediaList,
-				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('navigation-links')
-					]),
-				_List_fromArray(
-					[
-						previewButton,
-						A2(author$project$Main$viewLink, 'Profile', 'profile'),
-						A2(author$project$Main$viewLink, 'Logout', 'session/logout')
-					])),
 				author$project$Main$statusBar(model)
 			]));
 };

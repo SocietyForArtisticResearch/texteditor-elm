@@ -973,13 +973,31 @@ viewTabs model =
 
 viewNavbar : Model -> Html Msg
 viewNavbar model =
+    let
+        tabLink : EditorType -> List (Html.Attribute Msg)
+        tabLink tab =
+            let
+                selectedClass =
+                    if Tuple.first model.editor == tab then
+                        "nav-link active"
+
+                    else
+                        "nav-link"
+            in
+            [ class selectedClass, href "#", onClick (SwitchTab tab) ]
+    in
     Navbar.config NavbarMsg
         |> Navbar.withAnimation
         |> Navbar.collapseMedium
         |> Navbar.items
-            [ Navbar.itemLink [ href "#" ] [ text "Item 1" ]
-            , Navbar.itemLink [ href "#" ] [ text "Item 2" ]
-            , Navbar.itemLink [ Spacing.ml2Sm, href "#" ] [ text "Item 3" ]
+            [ Navbar.itemLink ([ Spacing.ml0 ] ++ tabLink EditorMarkdown) [ text "Markdown" ]
+            , Navbar.itemLink (tabLink EditorMedia) [ text "Media browser" ]
+            , Navbar.itemLink (tabLink EditorStyle) [ text "Style" ]
+            ]
+        |> Navbar.customItems
+            [ Navbar.textItem [ href "#" ] [ text "Preview" ]
+            , Navbar.textItem [ href "#" ] [ text "Profile" ]
+            , Navbar.textItem [ href "#" ] [ text "Logout" ]
             ]
         |> Navbar.view model.navbarState
 
@@ -1239,10 +1257,11 @@ view model =
                     [ editorCheckbox ]
         , alert
         , mediaList
-        , div [ class "navigation-links" ]
-            [ previewButton
-            , viewLink "Profile" "profile"
-            , viewLink "Logout" "session/logout"
-            ]
+
+        -- , div [ class "navigation-links" ]
+        --     [ previewButton
+        --     , viewLink "Profile" "profile"
+        --     , viewLink "Logout" "session/logout"
+        --     ]
         , statusBar model
         ]
