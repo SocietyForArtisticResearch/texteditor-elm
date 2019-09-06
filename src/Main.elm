@@ -1218,7 +1218,8 @@ view model =
     in
     div []
         [ viewNavbar model
-        , viewTabs model
+
+        --        , viewTabs model
         , mediaDialogHtml
         , confirmDialogHtml
         , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages

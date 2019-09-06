@@ -12917,46 +12917,6 @@ var author$project$Main$viewNavbar = function (model) {
 					rundis$elm_bootstrap$Bootstrap$Navbar$withAnimation(
 						rundis$elm_bootstrap$Bootstrap$Navbar$config(author$project$Main$NavbarMsg))))));
 };
-var author$project$Main$viewTabs = function (model) {
-	var tabLink = F2(
-		function (tab, title) {
-			var selectedClass = _Utils_eq(model.editor.a, tab) ? 'nav-link active' : 'nav-link';
-			return A2(
-				elm$html$Html$li,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('nav-item')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$a,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class(selectedClass),
-								elm$html$Html$Attributes$href('#'),
-								elm$html$Html$Events$onClick(
-								author$project$Main$SwitchTab(tab))
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text(title)
-							]))
-					]));
-		});
-	return A2(
-		elm$html$Html$ul,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('nav nav-tabs')
-			]),
-		_List_fromArray(
-			[
-				A2(tabLink, author$project$Main$EditorMarkdown, 'Markdown'),
-				A2(tabLink, author$project$Main$EditorMedia, 'Media browser'),
-				A2(tabLink, author$project$Main$EditorStyle, 'Style')
-			]));
-};
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1 = elm$html$Html$Attributes$class('mb-1');
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1 = elm$html$Html$Attributes$class('mr-1');
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1 = elm$html$Html$Attributes$class('mt-1');
@@ -16726,7 +16686,6 @@ var author$project$Main$view = function (model) {
 		_List_fromArray(
 			[
 				author$project$Main$viewNavbar(model),
-				author$project$Main$viewTabs(model),
 				mediaDialogHtml,
 				confirmDialogHtml,
 				A3(author$project$RCMediaList$viewModalMediaPicker, model.mediaPickerDialog, model.exposition.media, author$project$Main$makePickerMessages),
