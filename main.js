@@ -12014,6 +12014,7 @@ var elm$html$Html$Attributes$href = function (url) {
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
+var elm$html$Html$Attributes$target = elm$html$Html$Attributes$stringProperty('target');
 var rundis$elm_bootstrap$Bootstrap$Navbar$Config = function (a) {
 	return {$: 'Config', a: a};
 };
@@ -12856,6 +12857,15 @@ var author$project$Main$viewNavbar = function (model) {
 				author$project$Main$SwitchTab(tab))
 			]);
 	};
+	var previewUrl = A2(
+		elm$core$String$join,
+		'/',
+		_List_fromArray(
+			[
+				'view',
+				elm$core$String$fromInt(model.exposition.id),
+				elm$core$String$fromInt(model.exposition.currentWeave)
+			]));
 	return A2(
 		rundis$elm_bootstrap$Bootstrap$Navbar$view,
 		model.navbarState,
@@ -12868,7 +12878,8 @@ var author$project$Main$viewNavbar = function (model) {
 					_List_fromArray(
 						[
 							rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm,
-							elm$html$Html$Attributes$href('#')
+							elm$html$Html$Attributes$href(previewUrl),
+							elm$html$Html$Attributes$target('_blank')
 						]),
 					_List_fromArray(
 						[
@@ -12879,7 +12890,7 @@ var author$project$Main$viewNavbar = function (model) {
 					_List_fromArray(
 						[
 							rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm,
-							elm$html$Html$Attributes$href('#')
+							elm$html$Html$Attributes$href('profile')
 						]),
 					_List_fromArray(
 						[
@@ -12890,7 +12901,7 @@ var author$project$Main$viewNavbar = function (model) {
 					_List_fromArray(
 						[
 							rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml2Sm,
-							elm$html$Html$Attributes$href('#')
+							elm$html$Html$Attributes$href('session/logout')
 						]),
 					_List_fromArray(
 						[
@@ -12932,7 +12943,7 @@ var author$project$Main$viewNavbar = function (model) {
 							rundis$elm_bootstrap$Bootstrap$Navbar$attrs,
 							_List_fromArray(
 								[
-									A2(elm$html$Html$Attributes$style, 'padding', '0')
+									A2(elm$html$Html$Attributes$style, 'padding-left', '0')
 								]),
 							rundis$elm_bootstrap$Bootstrap$Navbar$config(author$project$Main$NavbarMsg)))))));
 };
@@ -16620,7 +16631,6 @@ var author$project$View$optionalBlock = F2(
 			_List_fromArray(
 				[elem]));
 	});
-var elm$html$Html$Attributes$target = elm$html$Html$Attributes$stringProperty('target');
 var author$project$Main$view = function (model) {
 	var showMediaUpload = !author$project$Main$selectedEditorIsStyle(model);
 	var showButtons = author$project$Main$selectedEditorIsMarkdown(model);

@@ -985,8 +985,11 @@ viewNavbar model =
                         "nav-link"
             in
             [ class selectedClass, href "#", onClick (SwitchTab tab) ]
+
+        previewUrl =
+            String.join "/" [ "view", String.fromInt model.exposition.id, String.fromInt model.exposition.currentWeave ]
     in
-    Navbar.attrs [ Html.Attributes.style "padding" "0" ] (Navbar.config NavbarMsg)
+    Navbar.attrs [ Html.Attributes.style "padding-left" "0" ] (Navbar.config NavbarMsg)
         |> Navbar.withAnimation
         |> Navbar.collapseMedium
         |> Navbar.items
@@ -995,9 +998,9 @@ viewNavbar model =
             , Navbar.itemLink (tabLink EditorStyle) [ text "Style" ]
             ]
         |> Navbar.customItems
-            [ Navbar.textItem [ Spacing.ml2Sm, href "#" ] [ text "Preview" ]
-            , Navbar.textItem [ Spacing.ml2Sm, href "#" ] [ text "Profile" ]
-            , Navbar.textItem [ Spacing.ml2Sm, href "#" ] [ text "Logout" ]
+            [ Navbar.textItem [ Spacing.ml2Sm, href previewUrl, Html.Attributes.target "_blank" ] [ text "Preview" ]
+            , Navbar.textItem [ Spacing.ml2Sm, href "profile" ] [ text "Profile" ]
+            , Navbar.textItem [ Spacing.ml2Sm, href "session/logout" ] [ text "Logout" ]
             ]
         |> Navbar.view model.navbarState
 
