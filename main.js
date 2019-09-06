@@ -12014,7 +12014,6 @@ var elm$html$Html$Attributes$href = function (url) {
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
-var rundis$elm_bootstrap$Bootstrap$General$Internal$MD = {$: 'MD'};
 var rundis$elm_bootstrap$Bootstrap$Navbar$Config = function (a) {
 	return {$: 'Config', a: a};
 };
@@ -12028,6 +12027,20 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$updateOptions = F2(
 					options: mapper(conf.options)
 				}));
 	});
+var rundis$elm_bootstrap$Bootstrap$Navbar$attrs = F2(
+	function (attrs_, conf) {
+		return A2(
+			rundis$elm_bootstrap$Bootstrap$Navbar$updateOptions,
+			function (opt) {
+				return _Utils_update(
+					opt,
+					{
+						attributes: _Utils_ap(opt.attributes, attrs_)
+					});
+			},
+			conf);
+	});
+var rundis$elm_bootstrap$Bootstrap$General$Internal$MD = {$: 'MD'};
 var rundis$elm_bootstrap$Bootstrap$Navbar$toggleAt = F2(
 	function (size, conf) {
 		return A2(
@@ -12915,7 +12928,13 @@ var author$project$Main$viewNavbar = function (model) {
 					]),
 				rundis$elm_bootstrap$Bootstrap$Navbar$collapseMedium(
 					rundis$elm_bootstrap$Bootstrap$Navbar$withAnimation(
-						rundis$elm_bootstrap$Bootstrap$Navbar$config(author$project$Main$NavbarMsg))))));
+						A2(
+							rundis$elm_bootstrap$Bootstrap$Navbar$attrs,
+							_List_fromArray(
+								[
+									A2(elm$html$Html$Attributes$attribute, 'padding-left', '0')
+								]),
+							rundis$elm_bootstrap$Bootstrap$Navbar$config(author$project$Main$NavbarMsg)))))));
 };
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1 = elm$html$Html$Attributes$class('mb-1');
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1 = elm$html$Html$Attributes$class('mr-1');

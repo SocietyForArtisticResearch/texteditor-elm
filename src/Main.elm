@@ -986,7 +986,7 @@ viewNavbar model =
             in
             [ class selectedClass, href "#", onClick (SwitchTab tab) ]
     in
-    Navbar.config NavbarMsg
+    Navbar.attrs [ Html.Attributes.attribute "padding-left" "0" ] (Navbar.config NavbarMsg)
         |> Navbar.withAnimation
         |> Navbar.collapseMedium
         |> Navbar.items
