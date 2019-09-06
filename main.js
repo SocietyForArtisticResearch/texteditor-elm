@@ -12082,12 +12082,6 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$config = function (toMsg) {
 			withAnimation: false
 		});
 };
-var rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem = function (a) {
-	return {$: 'CustomItem', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Navbar$customItem = function (elem) {
-	return rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem(elem);
-};
 var rundis$elm_bootstrap$Bootstrap$Navbar$updateConfig = F2(
 	function (mapper, _n0) {
 		var conf = _n0.a;
@@ -12124,6 +12118,9 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$items = F2(
 			},
 			config_);
 	});
+var rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem = function (a) {
+	return {$: 'CustomItem', a: a};
+};
 var rundis$elm_bootstrap$Bootstrap$Navbar$textItem = F2(
 	function (attributes, children) {
 		return rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem(
@@ -12848,7 +12845,6 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$withAnimation = function (config_) {
 		config_);
 };
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0 = elm$html$Html$Attributes$class('ml-0');
-var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1Sm = elm$html$Html$Attributes$class('ml-sm-1');
 var author$project$Main$viewNavbar = function (model) {
 	var tabLink = function (tab) {
 		var selectedClass = _Utils_eq(model.editor.a, tab) ? 'nav-link active' : 'nav-link';
@@ -12876,21 +12872,6 @@ var author$project$Main$viewNavbar = function (model) {
 			rundis$elm_bootstrap$Bootstrap$Navbar$customItems,
 			_List_fromArray(
 				[
-					rundis$elm_bootstrap$Bootstrap$Navbar$customItem(
-					A2(
-						elm$html$Html$a,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('nav-link'),
-								elm$html$Html$Attributes$class('navbar-nav'),
-								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1Sm,
-								elm$html$Html$Attributes$href(previewUrl),
-								elm$html$Html$Attributes$target('_blank')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('Preview')
-							]))),
 					A2(
 					rundis$elm_bootstrap$Bootstrap$Navbar$textItem,
 					_List_Nil,
@@ -12902,7 +12883,27 @@ var author$project$Main$viewNavbar = function (model) {
 								[
 									elm$html$Html$Attributes$class('nav-link'),
 									elm$html$Html$Attributes$class('navbar-nav'),
-									rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1Sm,
+									rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0,
+									elm$html$Html$Attributes$href(previewUrl),
+									elm$html$Html$Attributes$target('_blank')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Preview')
+								]))
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Navbar$textItem,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$a,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('nav-link'),
+									elm$html$Html$Attributes$class('navbar-nav'),
+									rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0,
 									elm$html$Html$Attributes$href('profile')
 								]),
 							_List_fromArray(
@@ -12910,19 +12911,24 @@ var author$project$Main$viewNavbar = function (model) {
 									elm$html$Html$text('Profile')
 								]))
 						])),
-					rundis$elm_bootstrap$Bootstrap$Navbar$customItem(
 					A2(
-						elm$html$Html$a,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('nav-link'),
-								elm$html$Html$Attributes$class('navbar-nav'),
-								elm$html$Html$Attributes$href('session/logout')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('Logout')
-							])))
+					rundis$elm_bootstrap$Bootstrap$Navbar$textItem,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$a,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('nav-link'),
+									elm$html$Html$Attributes$class('navbar-nav'),
+									elm$html$Html$Attributes$href('session/logout')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Logout')
+								]))
+						]))
 				]),
 			A2(
 				rundis$elm_bootstrap$Bootstrap$Navbar$items,
