@@ -15782,7 +15782,7 @@ var author$project$RCMediaList$view = F2(
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('no objects yet, add by using + Media button')
+								elm$html$Html$text('no objects yet. Hint: add a file by using the \"add media\" button')
 							]))
 					]));
 		} else {
