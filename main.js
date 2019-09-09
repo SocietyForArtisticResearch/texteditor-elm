@@ -11416,7 +11416,7 @@ var author$project$Exposition$wordCount = function (expo) {
 var author$project$View$SaveIcon = {$: 'SaveIcon'};
 var author$project$Main$statusBar = function (model) {
 	var wc = author$project$Exposition$wordCount(model.exposition);
-	var status = 'Word count : ' + elm$core$String$fromInt(wc);
+	var status = 'word count : ' + elm$core$String$fromInt(wc);
 	var saveButtonText = model.saved ? 'Saved' : 'Not Saved';
 	var saveButton = A2(
 		rundis$elm_bootstrap$Bootstrap$Button$button,
