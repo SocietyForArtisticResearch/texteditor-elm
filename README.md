@@ -36,6 +36,8 @@ General:
 
 Casper:
 
+- bottom of plain text mode
+- inserting footnote
 - display title of exposition somewhere
 
 Luc:
