@@ -718,16 +718,16 @@ createToc expo =
             []
 
 
-
--- updateToc : RCExposition -> RCExposition
--- updateToc expo =
---     { expo | toc = createToc expo }
--- DEBUG: PERFORMANCE TESTING !!
-
-
 updateToc : RCExposition -> RCExposition
 updateToc expo =
-    expo
+    { expo | toc = createToc expo }
+
+
+
+-- DEBUG: PERFORMANCE TESTING !!
+-- updateToc : RCExposition -> RCExposition
+-- updateToc expo =
+--     expo
 
 
 wordCount : RCExposition -> Int
