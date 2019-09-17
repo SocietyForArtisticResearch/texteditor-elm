@@ -32,7 +32,7 @@ General:
 - What to do when people are logged out
 - Server problem when exporting?
 - When a large document is imported, there is a timeout from the server. Perhaps a size limit is necessary?
-- Table of contents is not displayed in "contents" menu of exposition.
+
 
 Casper:
 
@@ -130,3 +130,5 @@ Luc:
 - codemirror undo/redo as buttons
 - footnotes 
 - navbar bootstrap for preview
+- Table of contents is not displayed in "contents" menu of exposition.
+- insert header into old expose on first opening
