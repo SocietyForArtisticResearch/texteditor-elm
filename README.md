@@ -31,6 +31,7 @@ General:
 	
 - What to do when people are logged out
 - Server problem when exporting?
+- Preview hide/show
 
 Casper:
 
