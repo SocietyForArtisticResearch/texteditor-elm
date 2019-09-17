@@ -25,6 +25,8 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 #preview-container {

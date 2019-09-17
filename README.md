@@ -31,13 +31,17 @@ General:
 	
 - What to do when people are logged out
 - Server problem when exporting?
-- Preview hide/show
+- When a large document is imported, there is a timeout from the server. Perhaps a size limit is necessary?
+- Table of contents is not displayed in "contents" menu of exposition.
 
 Casper:
 
+- bottom of plain text mode
+- inserting footnote
 - display title of exposition somewhere
 
 Luc:
+
 
 - display something while transcoding (status: waiting for server fix)
 - json decoder/encoder for RCExposition type

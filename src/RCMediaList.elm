@@ -33,7 +33,7 @@ view objectList messages =
     case objectList of
         [] ->
             div [ id "media-list", style "display" "none" ]
-                [ Alert.simpleInfo [] [ text "no objects yet, add by using + Media button" ]
+                [ Alert.simpleInfo [] [ text "no objects yet. Hint: add a file by using the \"add media\" button" ]
                 ]
 
         _ ->

@@ -1126,7 +1126,7 @@ statusBar model =
             Exposition.wordCount model.exposition
 
         status =
-            "Word count : " ++ String.fromInt wc
+            "word count : " ++ String.fromInt wc
 
         saveButtonText =
             if model.saved then
