@@ -9888,6 +9888,7 @@ var author$project$RCAPI$toRCExposition = F3(
 		var exp = author$project$RCAPI$decodeMetadata(
 			author$project$RCAPI$decodeMedia(apiExpo));
 		var md = (author$project$RCAPI$getMetadata(exp).editorVersion < '2.0.0') ? _Utils_ap('# ' + (apiExpo.title + '\n\n'), apiExpo.markdown) : apiExpo.markdown;
+		var _n0 = A2(elm$core$Debug$log, 'decoded meta', exp);
 		return author$project$Exposition$updateToc(
 			{
 				authors: _List_Nil,

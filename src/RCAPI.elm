@@ -530,6 +530,9 @@ toRCExposition apiExpo id weave =
         exp =
             decodeMetadata (decodeMedia apiExpo)
 
+        _ =
+            Debug.log "decoded meta" exp
+
         md =
             if (getMetadata exp).editorVersion < "2.0.0" then
                 ("# " ++ apiExpo.title ++ "\n\n") ++ apiExpo.markdown
