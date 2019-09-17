@@ -692,17 +692,33 @@ getId attrs =
     Maybe.withDefault "" <| Maybe.map (\( _, val ) -> val) <| List.head id
 
 
+attrsOfNodes : List HtmlParser.Node -> List HtmlParser.Attribute
+attrsOfNodes nodes =
+    case nodes of
+        (HtmlParser.Text t) :: rest ->
+            attrsOfNodes rest
+
+        (HtmlParser.Comment _) :: rest ->
+            attrsOfNodes rest
+
+        (HtmlParser.Element _ attrs children) :: rest ->
+            attrs ++ attrsOfNodes rest
+
+        [] ->
+            []
+
+
 findHeaders : HtmlParser.Node -> List TOCEntry
 findHeaders node =
     case node of
         HtmlParser.Element "h1" attr children ->
-            [ TOCEntry 1 (getText children) (getId attr) ]
+            [ TOCEntry 1 (getText children) (getId (attrsOfNodes children)) ]
 
         HtmlParser.Element "h2" attr children ->
-            [ TOCEntry 2 (getText children) (getId attr) ]
+            [ TOCEntry 2 (getText children) (getId (attrsOfNodes children)) ]
 
         HtmlParser.Element "h3" attr children ->
-            [ TOCEntry 3 (getText children) (getId attr) ]
+            [ TOCEntry 3 (getText children) (getId (attrsOfNodes children)) ]
 
         HtmlParser.Element _ _ children ->
             List.concatMap findHeaders children

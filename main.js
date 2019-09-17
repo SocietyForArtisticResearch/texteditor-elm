@@ -9135,6 +9135,36 @@ var author$project$Exposition$TOCEntry = F3(
 	function (level, title, id) {
 		return {id: id, level: level, title: title};
 	});
+var author$project$Exposition$attrsOfNodes = function (nodes) {
+	attrsOfNodes:
+	while (true) {
+		if (nodes.b) {
+			switch (nodes.a.$) {
+				case 'Text':
+					var t = nodes.a.a;
+					var rest = nodes.b;
+					var $temp$nodes = rest;
+					nodes = $temp$nodes;
+					continue attrsOfNodes;
+				case 'Comment':
+					var rest = nodes.b;
+					var $temp$nodes = rest;
+					nodes = $temp$nodes;
+					continue attrsOfNodes;
+				default:
+					var _n1 = nodes.a;
+					var attrs = _n1.b;
+					var children = _n1.c;
+					var rest = nodes.b;
+					return _Utils_ap(
+						attrs,
+						author$project$Exposition$attrsOfNodes(rest));
+			}
+		} else {
+			return _List_Nil;
+		}
+	}
+};
 var author$project$Exposition$getId = function (attrs) {
 	var id = A2(
 		elm$core$List$filter,
@@ -9215,7 +9245,8 @@ var author$project$Exposition$findHeaders = function (node) {
 						author$project$Exposition$TOCEntry,
 						1,
 						author$project$Exposition$getText(children),
-						author$project$Exposition$getId(attr))
+						author$project$Exposition$getId(
+							author$project$Exposition$attrsOfNodes(children)))
 					]);
 			case 'h2':
 				var attr = node.b;
@@ -9226,7 +9257,8 @@ var author$project$Exposition$findHeaders = function (node) {
 						author$project$Exposition$TOCEntry,
 						2,
 						author$project$Exposition$getText(children),
-						author$project$Exposition$getId(attr))
+						author$project$Exposition$getId(
+							author$project$Exposition$attrsOfNodes(children)))
 					]);
 			case 'h3':
 				var attr = node.b;
@@ -9237,7 +9269,8 @@ var author$project$Exposition$findHeaders = function (node) {
 						author$project$Exposition$TOCEntry,
 						3,
 						author$project$Exposition$getText(children),
-						author$project$Exposition$getId(attr))
+						author$project$Exposition$getId(
+							author$project$Exposition$attrsOfNodes(children)))
 					]);
 			default:
 				var children = node.c;
