@@ -9138,18 +9138,19 @@ var author$project$Exposition$TOCEntry = F3(
 var author$project$Exposition$getId = function (attrs) {
 	var id = A2(
 		elm$core$List$filter,
-		function (_n1) {
-			var a = _n1.a;
+		function (_n2) {
+			var a = _n2.a;
 			return a === 'id';
 		},
 		attrs);
+	var _n0 = A2(elm$core$Debug$log, 'finding ids', attrs);
 	return A2(
 		elm$core$Maybe$withDefault,
 		'',
 		A2(
 			elm$core$Maybe$map,
-			function (_n0) {
-				var val = _n0.b;
+			function (_n1) {
+				var val = _n1.b;
 				return val;
 			},
 			elm$core$List$head(id)));
@@ -9213,8 +9214,8 @@ var author$project$Exposition$findHeaders = function (node) {
 						A3(
 						author$project$Exposition$TOCEntry,
 						1,
-						author$project$Exposition$getId(attr),
-						author$project$Exposition$getText(children))
+						author$project$Exposition$getText(children),
+						author$project$Exposition$getId(attr))
 					]);
 			case 'h2':
 				var attr = node.b;
@@ -9224,8 +9225,8 @@ var author$project$Exposition$findHeaders = function (node) {
 						A3(
 						author$project$Exposition$TOCEntry,
 						2,
-						author$project$Exposition$getId(attr),
-						author$project$Exposition$getText(children))
+						author$project$Exposition$getText(children),
+						author$project$Exposition$getId(attr))
 					]);
 			case 'h3':
 				var attr = node.b;
@@ -9235,8 +9236,8 @@ var author$project$Exposition$findHeaders = function (node) {
 						A3(
 						author$project$Exposition$TOCEntry,
 						3,
-						author$project$Exposition$getId(attr),
-						author$project$Exposition$getText(children))
+						author$project$Exposition$getText(children),
+						author$project$Exposition$getId(attr))
 					]);
 			default:
 				var children = node.c;

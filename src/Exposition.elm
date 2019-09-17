@@ -683,6 +683,9 @@ getText nodes =
 getId : List HtmlParser.Attribute -> String
 getId attrs =
     let
+        _ =
+            Debug.log "finding ids" attrs
+
         id =
             List.filter (\( a, _ ) -> a == "id") attrs
     in
@@ -693,13 +696,13 @@ findHeaders : HtmlParser.Node -> List TOCEntry
 findHeaders node =
     case node of
         HtmlParser.Element "h1" attr children ->
-            [ TOCEntry 1 (getId attr) (getText children) ]
+            [ TOCEntry 1 (getText children) (getId attr) ]
 
         HtmlParser.Element "h2" attr children ->
-            [ TOCEntry 2 (getId attr) (getText children) ]
+            [ TOCEntry 2 (getText children) (getId attr) ]
 
         HtmlParser.Element "h3" attr children ->
-            [ TOCEntry 3 (getId attr) (getText children) ]
+            [ TOCEntry 3 (getText children) (getId attr) ]
 
         HtmlParser.Element _ _ children ->
             List.concatMap findHeaders children
