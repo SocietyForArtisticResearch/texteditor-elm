@@ -9788,7 +9788,7 @@ var author$project$RCAPI$saveExposition = F2(
 										[
 											_Utils_Tuple2(
 											'editorVersion',
-											elm$json$Json$Encode$string(exposition.editorVersion)),
+											elm$json$Json$Encode$string(author$project$Settings$editorVersion)),
 											_Utils_Tuple2(
 											'contentVersion',
 											elm$json$Json$Encode$int(exposition.contentVersion))
@@ -9887,15 +9887,16 @@ var author$project$RCAPI$toRCExposition = F3(
 	function (apiExpo, id, weave) {
 		var exp = author$project$RCAPI$decodeMetadata(
 			author$project$RCAPI$decodeMedia(apiExpo));
+		var md = (author$project$RCAPI$getMetadata(exp).editorVersion < '2.0.0') ? _Utils_ap('# ' + (apiExpo.title + '\n\n'), apiExpo.markdown) : apiExpo.markdown;
 		return author$project$Exposition$updateToc(
 			{
 				authors: _List_Nil,
 				contentVersion: author$project$RCAPI$getMetadata(exp).contentVersion,
 				css: apiExpo.style,
 				currentWeave: weave,
-				editorVersion: author$project$RCAPI$getMetadata(exp).editorVersion,
+				editorVersion: author$project$Settings$editorVersion,
 				id: id,
-				markdownInput: apiExpo.markdown,
+				markdownInput: md,
 				media: _List_Nil,
 				renderedHtml: apiExpo.html,
 				title: apiExpo.title,

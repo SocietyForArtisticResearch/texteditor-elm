@@ -452,7 +452,7 @@ saveExposition exposition expect =
                     (Encode.encode
                         0
                         (Encode.object
-                            [ ( "editorVersion", Encode.string exposition.editorVersion )
+                            [ ( "editorVersion", Encode.string Settings.editorVersion )
                             , ( "contentVersion", Encode.int exposition.contentVersion )
                             ]
                         )
@@ -529,6 +529,13 @@ toRCExposition apiExpo id weave =
     let
         exp =
             decodeMetadata (decodeMedia apiExpo)
+
+        md =
+            if (getMetadata exp).editorVersion < "2.0.0" then
+                ("# " ++ apiExpo.title ++ "\n\n") ++ apiExpo.markdown
+
+            else
+                apiExpo.markdown
     in
     Exposition.updateToc
         { css = apiExpo.style
@@ -537,9 +544,9 @@ toRCExposition apiExpo id weave =
         , id = id
         , currentWeave = weave
         , renderedHtml = apiExpo.html
-        , markdownInput = apiExpo.markdown
+        , markdownInput = md
         , media = []
-        , editorVersion = (getMetadata exp).editorVersion
+        , editorVersion = Settings.editorVersion
         , contentVersion = (getMetadata exp).contentVersion
         , toc = []
         }
