@@ -232,7 +232,7 @@
      setEditorDisplay(editor);
  });
 
- app.ports.setDocumentTitle(function(title) {
+ app.ports.setDocumentTitle.subscribe(function(title) {
      document.title = title;
  });
   
