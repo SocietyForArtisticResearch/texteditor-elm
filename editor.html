@@ -232,6 +232,10 @@
      setEditorDisplay(editor);
  });
 
+ app.ports.setDocumentTitle(function(title) {
+     document.title = title;
+ });
+  
  app.ports.getContent.subscribe(function() {
      sendContent();
  });

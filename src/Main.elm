@@ -244,6 +244,9 @@ port cmUndo : () -> Cmd msg
 port cmRedo : () -> Cmd msg
 
 
+port setDocumentTitle : String -> Cmd msg
+
+
 
 --- markdown conversion using marked
 
@@ -323,6 +326,7 @@ type Msg
     | BadUploadFileType String
     | UndoCM
     | RedoCM
+    | SetDocumentTitle String
 
 
 
@@ -497,7 +501,11 @@ update msg model =
                             }
                     in
                     ( newModel
-                    , Cmd.batch [ updateEditorContent newModel, RCAPI.getMediaList model.research GotMediaList ]
+                    , Cmd.batch
+                        [ updateEditorContent newModel
+                        , RCAPI.getMediaList model.research GotMediaList
+                        , setDocumentTitle newModel.exposition.title
+                        ]
                     )
 
                 Err err ->
@@ -915,6 +923,9 @@ update msg model =
 
         RedoCM ->
             ( model, cmRedo () )
+
+        SetDocumentTitle title ->
+            ( model, setDocumentTitle title )
 
 
 viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg

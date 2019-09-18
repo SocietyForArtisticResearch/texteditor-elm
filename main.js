@@ -12694,6 +12694,7 @@ var author$project$Main$insertMdString = _Platform_outgoingPort(
 var elm$json$Json$Encode$bool = _Json_wrap;
 var author$project$Main$reportIsSaved = _Platform_outgoingPort('reportIsSaved', elm$json$Json$Encode$bool);
 var author$project$Main$setContent = _Platform_outgoingPort('setContent', elm$core$Basics$identity);
+var author$project$Main$setDocumentTitle = _Platform_outgoingPort('setDocumentTitle', elm$json$Json$Encode$string);
 var author$project$Main$setEditor = _Platform_outgoingPort('setEditor', elm$json$Json$Encode$int);
 var author$project$Main$setPreviewContent = _Platform_outgoingPort('setPreviewContent', elm$json$Json$Encode$string);
 var elm$json$Json$Encode$object = function (pairs) {
@@ -13581,7 +13582,8 @@ var author$project$Main$update = F2(
 								_List_fromArray(
 									[
 										author$project$Main$updateEditorContent(newModel),
-										A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList)
+										A2(author$project$RCAPI$getMediaList, model.research, author$project$Main$GotMediaList),
+										author$project$Main$setDocumentTitle(newModel.exposition.title)
 									])));
 					} else {
 						var err = exp.a;
@@ -14085,10 +14087,15 @@ var author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						model,
 						author$project$Main$cmUndo(_Utils_Tuple0));
-				default:
+				case 'RedoCM':
 					return _Utils_Tuple2(
 						model,
 						author$project$Main$cmRedo(_Utils_Tuple0));
+				default:
+					var title = msg.a;
+					return _Utils_Tuple2(
+						model,
+						author$project$Main$setDocumentTitle(title));
 			}
 		}
 	});
