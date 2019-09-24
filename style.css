@@ -52,6 +52,12 @@ body {
 .editor-status-bar {
     position: fixed;
     bottom: 0;
+    width: 100%;
+}
+
+#save-button {
+    position: absolute;
+    right: 10px;
 }
 
 /* .CodeMirror-scroll * { */
