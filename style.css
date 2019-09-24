@@ -52,7 +52,7 @@ body {
 .editor-status-bar {
     position: fixed;
     bottom: 0;
-    width: 100%;
+    width: 50%;
 }
 
 #save-button {
