@@ -57,8 +57,12 @@
     </div>
 </body>
 <script>
+ 
+ 
  var mdIt = window.markdownit({ html: true, typographer: true }).use(window.markdownitFootnote).use(window.markdownitCentertext).use(window.markdownitHeaders); 
 
+ mdIt.headers = [];
+ 
  var urlParams = new URLSearchParams(window.location.search);
 
  var toRender = false;
@@ -350,8 +354,8 @@
      if (toRender) {
          /* app.ports.getHtml.send(marked(mdToRender)); */
 	 app.ports.getHtml.send(mdIt.render(mdToRender));
-	 console.log(headers);
-	 headers = [];
+	 console.log(mdIt.headers);
+	 mdIt.headers = [];
          toRender = false;
 
      }
