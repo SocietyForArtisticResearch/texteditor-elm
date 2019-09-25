@@ -537,19 +537,18 @@ toRCExposition apiExpo id weave =
             else
                 apiExpo.markdown
     in
-    Exposition.updateToc
-        { css = apiExpo.style
-        , title = apiExpo.title
-        , authors = []
-        , id = id
-        , currentWeave = weave
-        , renderedHtml = apiExpo.html
-        , markdownInput = md
-        , media = []
-        , editorVersion = Settings.editorVersion
-        , contentVersion = (getMetadata exp).contentVersion
-        , toc = []
-        }
+    { css = apiExpo.style
+    , title = apiExpo.title
+    , authors = []
+    , id = id
+    , currentWeave = weave
+    , renderedHtml = apiExpo.html
+    , markdownInput = md
+    , media = []
+    , editorVersion = Settings.editorVersion
+    , contentVersion = (getMetadata exp).contentVersion
+    , toc = []
+    }
 
 
 toMediaClassesDict : APIExposition -> Dict.Dict Int String

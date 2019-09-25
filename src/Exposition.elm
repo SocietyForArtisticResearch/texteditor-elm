@@ -737,9 +737,28 @@ createToc expo =
             []
 
 
-updateToc : RCExposition -> RCExposition
-updateToc expo =
-    { expo | toc = createToc expo }
+makeTocEntries : List ( String, String, String ) -> List TOCEntry
+makeTocEntries lst =
+    case lst of
+        [] ->
+            []
+
+        ( "h1", title, id ) :: rest ->
+            TOCEntry 1 title id :: makeTocEntries rest
+
+        ( "h2", title, id ) :: rest ->
+            TOCEntry 2 title id :: makeTocEntries rest
+
+        ( "h3", title, id ) :: rest ->
+            TOCEntry 3 title id :: makeTocEntries rest
+
+        _ :: rest ->
+            makeTocEntries rest
+
+
+updateToc : RCExposition -> List ( String, String, String ) -> RCExposition
+updateToc expo tocJs =
+    { expo | toc = makeTocEntries tocJs }
 
 
 

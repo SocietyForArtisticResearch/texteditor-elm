@@ -261,7 +261,7 @@ port setPreviewContent : String -> Cmd msg
 -- Javascript to Elm
 
 
-port getHtml : ({ html : String, toc : List ( String, String ) } -> msg) -> Sub msg
+port getHtml : ({ html : String, toc : List ( String, String, String ) } -> msg) -> Sub msg
 
 
 port mediaDialog : (E.Value -> msg) -> Sub msg
@@ -291,7 +291,7 @@ type Msg
     | MdContent E.Value
     | MediaDialog String
     | CMOpenMediaDialog E.Value
-    | GotConvertedHtml { html : String, toc : List ( String, String ) }
+    | GotConvertedHtml { html : String, toc : List ( String, String, String ) }
     | MediaEdit ( String, Exposition.RCMediaObject )
     | MediaDelete Exposition.RCMediaObject
     | CloseMediaDialog
@@ -388,7 +388,7 @@ update msg model =
                 _ =
                     Debug.log "toc.." convObj.toc
             in
-            ( { model | exposition = Exposition.withHtml model.exposition convObj.html }
+            ( { model | exposition = Exposition.updateToc (Exposition.withHtml model.exposition convObj.html) convObj.toc }
             , setPreviewContent convObj.html
             )
 
@@ -520,15 +520,11 @@ update msg model =
                     ( model, Cmd.none )
 
         SaveExposition ->
-            let
-                modelWithToc =
-                    { model | exposition = Exposition.updateToc model.exposition }
-            in
             if not model.saved then
-                ( modelWithToc, RCAPI.saveExposition modelWithToc.exposition SavedExposition )
+                ( model, RCAPI.saveExposition model.exposition SavedExposition )
 
             else
-                ( modelWithToc, Cmd.none )
+                ( model, Cmd.none )
 
         SavedExposition result ->
             case result of
