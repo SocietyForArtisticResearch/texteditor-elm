@@ -236,7 +236,7 @@
  app.ports.setDocumentTitle.subscribe(function(title) {
      document.title = title;
  });
-  
+ 
  app.ports.getContent.subscribe(function() {
      sendContent();
  });
@@ -350,6 +350,8 @@
      if (toRender) {
          /* app.ports.getHtml.send(marked(mdToRender)); */
 	 app.ports.getHtml.send(mdIt.render(mdToRender));
+	 console.log(window.markdownitHeaders);
+	 window.markdownitHeaders = [];
          toRender = false;
 
      }
