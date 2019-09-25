@@ -350,8 +350,8 @@
      if (toRender) {
          /* app.ports.getHtml.send(marked(mdToRender)); */
 	 app.ports.getHtml.send(mdIt.render(mdToRender));
-	 console.log(window.markdownitHeaders);
-	 window.markdownitHeaders = [];
+	 console.log(window.markdownitHeaders.headers);
+	 window.markdownitHeaders.headers = [];
          toRender = false;
 
      }
