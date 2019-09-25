@@ -353,8 +353,8 @@
  setInterval(function() {
      if (toRender) {
          /* app.ports.getHtml.send(marked(mdToRender)); */
-	 app.ports.getHtml.send(mdIt.render(mdToRender));
-	 console.log(mdIt.headers);
+	 app.ports.getHtml.send({html: mdIt.render(mdToRender), toc : mdIt.headers});
+//	 console.log(mdIt.headers);
 	 mdIt.headers = [];
          toRender = false;
 

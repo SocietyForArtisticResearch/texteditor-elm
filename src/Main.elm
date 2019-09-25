@@ -261,7 +261,7 @@ port setPreviewContent : String -> Cmd msg
 -- Javascript to Elm
 
 
-port getHtml : (String -> msg) -> Sub msg
+port getHtml : ({ html : String, toc : List ( String, String ) } -> msg) -> Sub msg
 
 
 port mediaDialog : (E.Value -> msg) -> Sub msg
@@ -291,7 +291,7 @@ type Msg
     | MdContent E.Value
     | MediaDialog String
     | CMOpenMediaDialog E.Value
-    | GotConvertedHtml String
+    | GotConvertedHtml { html : String, toc : List ( String, String ) }
     | MediaEdit ( String, Exposition.RCMediaObject )
     | MediaDelete Exposition.RCMediaObject
     | CloseMediaDialog
@@ -383,9 +383,13 @@ decodeGeneration =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        GotConvertedHtml html ->
-            ( { model | exposition = Exposition.withHtml model.exposition html }
-            , setPreviewContent html
+        GotConvertedHtml convObj ->
+            let
+                _ =
+                    Debug.log "toc.." convObj.toc
+            in
+            ( { model | exposition = Exposition.withHtml model.exposition convObj.html }
+            , setPreviewContent convObj.html
             )
 
         EditGeneration val ->
