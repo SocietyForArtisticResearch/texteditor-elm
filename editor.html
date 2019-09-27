@@ -372,6 +372,16 @@
          };
      }
  });
+
+  function toggleFullScreen( shouldBecomeFull  ) {
+      let mainContainer = document.getElementsByClassName("container-fluid main");
+
+      if (shouldBecomeFull === true) {
+	  mainContainer.classList.add("fullscreen");
+      } else {
+	  mainContainer.classList.remove("fullscreen");
+      }
+  }
 </script>
 
 </html>

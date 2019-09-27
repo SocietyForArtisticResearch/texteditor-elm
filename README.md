@@ -32,13 +32,14 @@ General:
 - What to do when people are logged out
 - Server problem when exporting?
 - When a large document is imported, there is a timeout from the server. Perhaps a size limit is necessary?
+- add full screen mode (hide preview, adjust widths of codemirror etc..)
 
 
 Casper:
 
 - bottom of plain text mode
 - inserting footnote
-- display title of exposition somewhere
+
 
 Luc:
 

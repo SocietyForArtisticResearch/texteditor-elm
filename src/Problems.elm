@@ -15,6 +15,7 @@ type Problem
     | CannotImportFile Http.Error
     | UnkownUploadFileType String
     | MediaUploadFailed Http.Error
+    | FootnoteError String
 
 
 splitResultList : List (Result Problem a) -> ( List Problem, List a )
@@ -64,6 +65,9 @@ asString problem =
 
         MediaUploadFailed e ->
             "media upload failed with an http error, because of " ++ httpErrorString e
+
+        FootnoteError e ->
+            "problem with footnotes: " ++ e
 
 
 httpErrorString : Http.Error -> String
