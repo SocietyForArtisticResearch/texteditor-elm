@@ -50,6 +50,7 @@ type alias Model =
     , editor : ( EditorType, MarkdownEditor )
     , exportDropState : Dropdown.State
     , navbarState : Navbar.State
+    , fullscreenMode : Bool
     }
 
 
@@ -157,6 +158,7 @@ emptyModel navbarInitState research weave =
     , editor = ( EditorMarkdown, CodemirrorMarkdown )
     , exportDropState = Dropdown.initialState
     , navbarState = navbarInitState
+    , fullscreenMode = False
     }
 
 
@@ -247,6 +249,9 @@ port cmRedo : () -> Cmd msg
 port setDocumentTitle : String -> Cmd msg
 
 
+port setFullscreenMode : Bool -> Cmd msg
+
+
 
 --- markdown conversion using marked
 
@@ -327,6 +332,7 @@ type Msg
     | UndoCM
     | RedoCM
     | SetDocumentTitle String
+    | ToggleFullscreen Bool
 
 
 
@@ -927,6 +933,9 @@ update msg model =
         SetDocumentTitle title ->
             ( model, setDocumentTitle title )
 
+        ToggleFullscreen isFull ->
+            ( { model | fullscreenMode = isFull }, setFullscreenMode isFull )
+
 
 viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg
 viewUpload icon needsOffset onClickMsg buttonText status =
@@ -1062,6 +1071,16 @@ viewEditorCheckbox markdownEditor =
         , Checkbox.attrs [ class "editor-checkbox" ]
         ]
         "Plain text"
+
+
+viewFullscreenSwitch : Bool -> Html Msg
+viewFullscreenSwitch currentMode =
+    Checkbox.checkbox
+        [ Checkbox.onCheck ToggleFullscreen
+        , Checkbox.checked <| currentMode
+        , Checkbox.attrs [ class "fullscreen-checkbox" ]
+        ]
+        "fullscreen"
 
 
 viewLink : String -> String -> Html Msg
@@ -1269,7 +1288,7 @@ view model =
             <|
                 List.append
                     editorToolbar
-                    [ editorCheckbox ]
+                    [ editorCheckbox, viewFullscreenSwitch model.fullscreenMode ]
         , alert
         , mediaList
 

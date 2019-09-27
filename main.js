@@ -5538,6 +5538,7 @@ var author$project$Main$emptyModel = F3(
 			editor: _Utils_Tuple2(author$project$Main$EditorMarkdown, author$project$Main$CodemirrorMarkdown),
 			exportDropState: rundis$elm_bootstrap$Bootstrap$Dropdown$initialState,
 			exposition: author$project$Exposition$empty,
+			fullscreenMode: false,
 			importUploadStatus: author$project$Main$Ready,
 			mediaClassesDict: elm$core$Dict$empty,
 			mediaDialog: _Utils_Tuple3(rundis$elm_bootstrap$Bootstrap$Modal$hidden, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing),
@@ -9493,6 +9494,7 @@ var author$project$Main$reportIsSaved = _Platform_outgoingPort('reportIsSaved', 
 var author$project$Main$setContent = _Platform_outgoingPort('setContent', elm$core$Basics$identity);
 var author$project$Main$setDocumentTitle = _Platform_outgoingPort('setDocumentTitle', elm$json$Json$Encode$string);
 var author$project$Main$setEditor = _Platform_outgoingPort('setEditor', elm$json$Json$Encode$int);
+var author$project$Main$setFullscreenMode = _Platform_outgoingPort('setFullscreenMode', elm$json$Json$Encode$bool);
 var author$project$Main$setPreviewContent = _Platform_outgoingPort('setPreviewContent', elm$json$Json$Encode$string);
 var elm$json$Json$Encode$object = function (pairs) {
 	return _Json_wrap(
@@ -10886,11 +10888,18 @@ var author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						model,
 						author$project$Main$cmRedo(_Utils_Tuple0));
-				default:
+				case 'SetDocumentTitle':
 					var title = msg.a;
 					return _Utils_Tuple2(
 						model,
 						author$project$Main$setDocumentTitle(title));
+				default:
+					var isFull = msg.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{fullscreenMode: isFull}),
+						author$project$Main$setFullscreenMode(isFull));
 			}
 		}
 	});
@@ -11588,9 +11597,12 @@ var author$project$Problems$asString = function (problem) {
 		case 'UnkownUploadFileType':
 			var s = problem.a;
 			return 'unkown upload file type: ' + s;
-		default:
+		case 'MediaUploadFailed':
 			var e = problem.a;
 			return 'media upload failed with an http error, because of ' + author$project$Problems$httpErrorString(e);
+		default:
+			var e = problem.a;
+			return 'problem with footnotes: ' + e;
 	}
 };
 var rundis$elm_bootstrap$Bootstrap$Alert$Config = function (a) {
@@ -12096,6 +12108,24 @@ var author$project$Main$viewEditorCheckbox = function (markdownEditor) {
 					]))
 			]),
 		'Plain text');
+};
+var author$project$Main$ToggleFullscreen = function (a) {
+	return {$: 'ToggleFullscreen', a: a};
+};
+var author$project$Main$viewFullscreenSwitch = function (currentMode) {
+	return A2(
+		rundis$elm_bootstrap$Bootstrap$Form$Checkbox$checkbox,
+		_List_fromArray(
+			[
+				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$onCheck(author$project$Main$ToggleFullscreen),
+				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$checked(currentMode),
+				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$attrs(
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('fullscreen-checkbox')
+					]))
+			]),
+		'fullscreen');
 };
 var author$project$Main$EditorMedia = {$: 'EditorMedia'};
 var author$project$Main$EditorStyle = {$: 'EditorStyle'};
@@ -16879,7 +16909,10 @@ var author$project$Main$view = function (model) {
 						elm$core$List$append,
 						editorToolbar,
 						_List_fromArray(
-							[editorCheckbox])))),
+							[
+								editorCheckbox,
+								author$project$Main$viewFullscreenSwitch(model.fullscreenMode)
+							])))),
 				alert,
 				mediaList,
 				author$project$Main$statusBar(model)

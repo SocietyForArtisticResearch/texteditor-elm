@@ -229,7 +229,7 @@ body {
     max-width: unset;
 }
 
-.fullscreen .status-bar {
+.fullscreen .editor-status-bar {
     width: 100%;
 }
 
