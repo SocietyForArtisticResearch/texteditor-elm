@@ -1,19 +1,20 @@
-module FootnoteHelper exposing (Footnote(..), mdNextFootnoteNum, nextNote, testString)
+module FootnoteHelper exposing (Footnote(..), mdNextFootnoteNum, nextNote, parseAll, parseJunky, parseNumberedNote, testString)
 
 import Browser
 import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
-import Parser exposing ((|.), (|=), Parser, Step(..), chompIf, chompWhile, getChompedString, int, keyword, loop, map, oneOf, succeed, symbol)
+import Parser exposing ((|.), (|=), Parser, Step(..), chompIf, chompUntilEndOr, chompWhile, end, getChompedString, int, keyword, loop, map, oneOf, succeed, symbol)
 
 
 testString : String
 testString =
-    "Markdown text # hallo header [^1] en er is [^4] meer [^2] en meer [^3] [^44] [^55] [^23] "
+    "Markdown text # hallo header [.^1] en er is [^4] meer [^2] en meer [^3] [^44] [^55] [^23] "
 
 
 type Footnote
     = NumberedNote Int
     | NamedNote String
+    | Junk 
 
 
 type Sortable lst
@@ -28,6 +29,9 @@ getRank f =
             num
 
         NamedNote name ->
+            -1
+
+        Junk ->
             -1
 
 
@@ -46,16 +50,25 @@ sortNotes list =
             Sorted <| List.sortBy getRank lst
 
 
+
 parseNumberedNote : Parser Footnote
 parseNumberedNote =
-    succeed NumberedNote
-        |. chompWhile isUninteresting
-        |. symbol "["
-        |. symbol "^"
-        |= int
-        |. symbol "]"
-        |. chompWhile isUninteresting
+    succeed identity 
+        |. symbol "[^"
+        |= footnoteContent 
 
+
+footnoteContent : Parser Footnote
+footnoteContent =
+    oneOf
+        [ succeed NumberedNote 
+              |= int
+              |. chompWhile (\c -> c /= ']')
+              |. symbol "]"
+        , succeed Junk
+              |. chompWhile (\c -> c /= ']')
+              |. symbol "]"
+        ]
 
 ignoreText : Parser ()
 ignoreText =
@@ -74,13 +87,18 @@ parseName =
 parseNamedNote : Parser Footnote
 parseNamedNote =
     succeed NamedNote
-        |. chompWhile isUninteresting
         |. symbol "["
         |. symbol "^"
         |= parseName
         |. symbol "]"
-        |. chompWhile isUninteresting
 
+
+parseJunky : Parser Footnote
+parseJunky =
+    succeed Junk
+        |. symbol "["
+        |. chompIf (\char -> char /= '[')
+        
 
 isUninteresting : Char -> Bool
 isUninteresting char =
@@ -95,12 +113,15 @@ parseAll =
 footnotesHelp : List Footnote -> Parser (Step (List Footnote) (List Footnote))
 footnotesHelp footnotes =
     oneOf
-        [ succeed (\footnote -> Loop (footnote :: footnotes))
+        [ end
+            |> map (\_ -> Done (List.reverse footnotes))
+        , succeed (\footnote -> Loop (footnote :: footnotes))
             |= parseNumberedNote
         , succeed (\footnote -> Loop (footnote :: footnotes))
-            |= parseNamedNote
-        , succeed ()
-            |> map (\_ -> Done <| List.reverse <| footnotes)
+            |= parseJunky
+        , chompWhile isUninteresting
+            |> getChompedString
+            |> map (\chunk -> Loop (Junk :: footnotes))
         ]
 
 
