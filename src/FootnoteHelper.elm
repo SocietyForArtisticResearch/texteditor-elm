@@ -58,17 +58,32 @@ parseNumberedNote =
         |= footnoteContent 
 
 
+-- footnoteContent : Parser Footnote
+-- footnoteContent =
+--     oneOf
+--         [ succeed NumberedNote 
+--               |= int
+--               |. chompWhile (\c -> c /= ']')
+--               |. symbol "]"
+--         , succeed Junk
+--               |. chompWhile (\c -> c /= ']')
+--               |. symbol "]"
+--         ]
+
 footnoteContent : Parser Footnote
 footnoteContent =
-    oneOf
-        [ succeed NumberedNote 
-              |= int
-              |. chompWhile (\c -> c /= ']')
-              |. symbol "]"
-        , succeed Junk
-              |. chompWhile (\c -> c /= ']')
-              |. symbol "]"
-        ]
+    oneOf [
+        getChompedString (chompWhile (\c -> Char.isDigit c && c /= ']') 
+           |> andThen makeFootnote
+                         , chompWhile (\c -> c /= '[') succeed Junk ]
+                             
+
+makeFootNote : String -> Parser Footnote
+makeFootNote =
+    succeed NumberedFootnote
+        |= int
+           
+
 
 ignoreText : Parser ()
 ignoreText =
