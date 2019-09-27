@@ -193,24 +193,6 @@ body {
     font-family: Helvetica, Arial, sans-serif;
 }
 
-/* fullscreen mode */
-
-.fullscreen .editor-col {
-    width: 100%;
-}
-
-.fullscreen .codemirror {
-    width: unset;
-}
-
-.fullscreen .status-bar {
-    width: 100%;
-}
-
-.fullscreen #preview-container {
-    display: none;
-}
-
 @media only screen and (min-width: 576px) {
     .CodeMirror {
         max-width: 50vw;
@@ -234,4 +216,22 @@ body {
 .edit-media-dialog .media img {
     width: 368px;
     height: auto;
+}
+
+/* fullscreen mode */
+
+.fullscreen .editor-col {
+    width: 100%;
+}
+
+.fullscreen .codemirror {
+    width: 100%;
+}
+
+.fullscreen .status-bar {
+    width: 100%;
+}
+
+.fullscreen #preview-container {
+    display: none;
 }
