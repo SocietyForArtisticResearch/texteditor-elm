@@ -224,9 +224,9 @@ body {
     width: 100%;
 }
 
-.fullscreen .codemirror {
-    width: 100%;
-    max-width: 100%;
+.fullscreen .CodeMirror {
+    width: unset;
+    max-width: unset;
 }
 
 .fullscreen .status-bar {

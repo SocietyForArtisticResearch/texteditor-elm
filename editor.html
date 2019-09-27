@@ -375,13 +375,12 @@
 
   function toggleFullScreen( shouldBecomeFull  ) {
       let mainContainer = document.getElementsByClassName("container-fluid main");
-      let editorCol = document.getElementsByClassName("col-sm-6 editor-col");
+      let editorCol = document.getElementsByClassName("editor-col");
 
-      console.log(editorCol);
+      console.log(editorCol[0]);
       
       if (!mainContainer[0] || !editorCol[0]) {
 	  console.log("fullscreen cannot find elements");
-	  return;
       }
       
       if (shouldBecomeFull === true) {
@@ -393,7 +392,7 @@
 	  editorCol[0].classList.remove("col-sm-12");
 	  editorCol[0].classList.add("col-sm-6");
       }
-  }
+  };
 </script>
 
 </html>
