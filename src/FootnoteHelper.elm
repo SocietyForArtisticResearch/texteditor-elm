@@ -3,18 +3,18 @@ module FootnoteHelper exposing (Footnote(..), mdNextFootnoteNum, nextNote, parse
 import Browser
 import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
-import Parser exposing ((|.), (|=), Parser, Step(..), chompIf, chompUntilEndOr, chompWhile, end, getChompedString, int, keyword, loop, map, oneOf, succeed, symbol)
+import Parser exposing ((|.), (|=), Parser, Step(..), andThen, chompIf, chompUntilEndOr, chompWhile, end, getChompedString, int, keyword, loop, map, oneOf, succeed, symbol)
 
 
 testString : String
 testString =
-    "Markdown text # hallo header [.^1] en er is [^4] meer [^2] en meer [^3] [^44] [^55] [^23] "
+    "Markdown text # hallo header [^1] en er is [^4] meer [^2] en meer [^3] [^44] [^57] [^29] "
 
 
 type Footnote
     = NumberedNote Int
     | NamedNote String
-    | Junk 
+    | Junk
 
 
 type Sortable lst
@@ -50,39 +50,49 @@ sortNotes list =
             Sorted <| List.sortBy getRank lst
 
 
-
 parseNumberedNote : Parser Footnote
 parseNumberedNote =
-    succeed identity 
+    succeed identity
         |. symbol "[^"
-        |= footnoteContent 
+        |= strictNote
+
+
+strictNote : Parser Footnote
+strictNote =
+    getChompedString
+        (chompWhile
+            (\char ->
+                char /= ']' && char /= '['
+            )
+        )
+        |> andThen
+            (\str ->
+                case String.toInt str of
+                    Just int ->
+                        succeed <| NumberedNote int
+
+                    Nothing ->
+                        succeed <| NamedNote str
+            )
+
 
 
 -- footnoteContent : Parser Footnote
 -- footnoteContent =
+--     let
+--         note : String -> Parser Footnote
+--         note str =
+--             succeed NumberedNote
+--                 |= int
+--                 |. symbol "]"
+--     in
 --     oneOf
---         [ succeed NumberedNote 
---               |= int
---               |. chompWhile (\c -> c /= ']')
---               |. symbol "]"
+--         [ getChompedString (chompWhile (\c -> Char.isDigit c && c /= ']'))
+--             |> andThen
+--                 note
 --         , succeed Junk
---               |. chompWhile (\c -> c /= ']')
---               |. symbol "]"
+--             |. chompWhile (\c -> c /= '[')
 --         ]
-
-footnoteContent : Parser Footnote
-footnoteContent =
-    oneOf [
-        getChompedString (chompWhile (\c -> Char.isDigit c && c /= ']') 
-           |> andThen makeFootnote
-                         , chompWhile (\c -> c /= '[') succeed Junk ]
-                             
-
-makeFootNote : String -> Parser Footnote
-makeFootNote =
-    succeed NumberedFootnote
-        |= int
-           
 
 
 ignoreText : Parser ()
@@ -113,7 +123,7 @@ parseJunky =
     succeed Junk
         |. symbol "["
         |. chompIf (\char -> char /= '[')
-        
+
 
 isUninteresting : Char -> Bool
 isUninteresting char =
