@@ -29,6 +29,9 @@ be made outside of elm.
 
 General:
 	
+
+- when a media is direclty inserted after upload, it shorly appears as a previously uploaded media ?
+- media upload still not working for video.
 - What to do when people are logged out
 - Server problem when exporting?
 - When a large document is imported, there is a timeout from the server. Perhaps a size limit is necessary?
@@ -37,7 +40,9 @@ General:
 
 Casper:
 
-- bottom of plain text mode
+- placeholder for non-existing media
+- deal with untranscoded media
+- display preview for audio
 - inserting footnote
 
 
