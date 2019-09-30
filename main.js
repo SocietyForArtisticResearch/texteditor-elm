@@ -10203,8 +10203,7 @@ var author$project$RCAPI$uploadMedia = F5(
 								A2(elm$http$Http$stringPart, 'copyrightholder', 'copyright holder'),
 								A2(elm$http$Http$stringPart, 'description', 'description'),
 								A2(elm$http$Http$stringPart, 'license', 'all-rights-reserved'),
-								A2(elm$http$Http$filePart, 'media', file),
-								A2(elm$http$Http$stringPart, 'thumb', '')
+								A2(elm$http$Http$filePart, 'media', file)
 							])),
 					expect: expect,
 					headers: _List_Nil,

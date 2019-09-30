@@ -279,7 +279,6 @@ uploadMedia researchId mediaName file expect badFileTypeMsg =
                         , Http.stringPart "description" "description"
                         , Http.stringPart "license" "all-rights-reserved"
                         , Http.filePart "media" file
-                        , Http.stringPart "thumb" ""
                         ]
                 , expect = expect
                 , timeout = Nothing
