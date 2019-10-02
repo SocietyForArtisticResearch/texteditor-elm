@@ -321,9 +321,24 @@
          textareaMarkdown.selectionStart = sel + offset;
          textareaMarkdown.selectionEnd = sel + offset;
      }
-
  });
 
+  app.ports.insertFootnote.subscribe(function(insertFnTuple) {
+      let [fnNumber, fnContent] = insertFnTuple;
+      /* fnNumber for example : [^n] 
+         fnContent is [^n]: content */
+      if (selectedEditor == editorCmMd) {
+         cmMarkdown.replaceSelection(str);
+          cmMarkdown.focus();
+	  cmMarkdown.replaceRange(fnContent, editor.lastLine());
+	  textareaMarkdown.value = cmMarkdown.getValue();
+      } else if (selectedEditor == editorTxtMd) {
+          insertAtCursor(textareaMarkdown, fnNumber);
+	  textareaMarkdown.val(textareaMarkdown.val() + fnContent);
+         cmMarkdown.setValue(textareaMarkdown.value);
+         textareaMarkdown.focus();
+     }
+ });
 
  app.ports.convertMarkdown.subscribe(function(md) {
      mdToRender = md;

@@ -1,4 +1,4 @@
-module FootnoteHelper exposing (Footnote(..), mdNextFootnoteNum, nextNote, parseAll, parseJunky, parseNumberedNote, testString)
+module FootnoteHelper exposing (Footnote(..), mdNextFootnoteNum, parseAll, testString)
 
 import Browser
 import Html exposing (Html, button, div, text)
@@ -14,7 +14,7 @@ testString =
 type Footnote
     = NumberedNote Int
     | NamedNote String
-    | Junk
+    | Content
 
 
 type Sortable lst
@@ -31,7 +31,7 @@ getRank f =
         NamedNote name ->
             -1
 
-        Junk ->
+        Content ->
             -1
 
 
@@ -50,8 +50,8 @@ sortNotes list =
             Sorted <| List.sortBy getRank lst
 
 
-parseNumberedNote : Parser Footnote
-parseNumberedNote =
+footNote : Parser Footnote
+footNote =
     succeed identity
         |. symbol "[^"
         |= strictNote
@@ -118,9 +118,9 @@ parseNamedNote =
         |. symbol "]"
 
 
-parseJunky : Parser Footnote
-parseJunky =
-    succeed Junk
+content : Parser Footnote
+content =
+    succeed Content
         |. symbol "["
         |. chompIf (\char -> char /= '[')
 
@@ -141,12 +141,12 @@ footnotesHelp footnotes =
         [ end
             |> map (\_ -> Done (List.reverse footnotes))
         , succeed (\footnote -> Loop (footnote :: footnotes))
-            |= parseNumberedNote
+            |= footNote
         , succeed (\footnote -> Loop (footnote :: footnotes))
-            |= parseJunky
+            |= content
         , chompWhile isUninteresting
             |> getChompedString
-            |> map (\chunk -> Loop (Junk :: footnotes))
+            |> map (\chunk -> Loop (Content :: footnotes))
         ]
 
 
@@ -202,6 +202,15 @@ nextNote =
 
 
 -- check if list is correct, if there are gaps or doubles
+
+
+type FootnoteValidation
+    = ValidNumbering
+    | InvalidNumbering (List String)
+
+
+
+-- checking gaps, probably added later.
 
 
 testCount : Sortable (List Footnote) -> Bool

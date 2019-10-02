@@ -1,4 +1,4 @@
-module Settings exposing (Snippet(..), baseDomain, baseUrl, editorVersion, iconUrl, snippet)
+module Settings exposing (Snippet(..), baseDomain, baseUrl, editorVersion, footnoteSnippet, iconUrl, snippet)
 
 
 editorVersion : String
@@ -66,3 +66,14 @@ snippet s =
 
         Link ->
             ( "[Link text](http://)", -1 )
+
+
+footnoteSnippet : Int -> ( String, String )
+footnoteSnippet num =
+    let
+        numstr =
+            String.fromInt num
+    in
+    ( "[^" ++ numstr ++ "]"
+    , "[^" ++ numstr ++ "]: footnote-text"
+    )

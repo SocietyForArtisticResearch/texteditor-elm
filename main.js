@@ -9349,6 +9349,443 @@ var author$project$Exposition$withMd = F2(
 			exp,
 			{markdownInput: content});
 	});
+var author$project$FootnoteHelper$Sorted = function (a) {
+	return {$: 'Sorted', a: a};
+};
+var author$project$FootnoteHelper$getRank = function (f) {
+	switch (f.$) {
+		case 'NumberedNote':
+			var num = f.a;
+			return num;
+		case 'NamedNote':
+			var name = f.a;
+			return -1;
+		default:
+			return -1;
+	}
+};
+var author$project$FootnoteHelper$NumberedNote = function (a) {
+	return {$: 'NumberedNote', a: a};
+};
+var author$project$FootnoteHelper$dummy = author$project$FootnoteHelper$NumberedNote(-1);
+var author$project$FootnoteHelper$nextNote = function () {
+	var unpack = function (sortable) {
+		if (sortable.$ === 'Sorted') {
+			var x = sortable.a;
+			return x;
+		} else {
+			var x = sortable.a;
+			return _List_Nil;
+		}
+	};
+	return A2(
+		elm$core$Basics$composeR,
+		unpack,
+		A2(
+			elm$core$Basics$composeR,
+			elm$core$List$reverse,
+			A2(
+				elm$core$Basics$composeR,
+				elm$core$List$head,
+				A2(
+					elm$core$Basics$composeR,
+					elm$core$Maybe$withDefault(author$project$FootnoteHelper$dummy),
+					A2(
+						elm$core$Basics$composeR,
+						author$project$FootnoteHelper$getRank,
+						elm$core$Basics$add(1))))));
+}();
+var author$project$FootnoteHelper$Content = {$: 'Content'};
+var elm$parser$Parser$UnexpectedChar = {$: 'UnexpectedChar'};
+var elm$parser$Parser$Advanced$isSubChar = _Parser_isSubChar;
+var elm$parser$Parser$Advanced$chompIf = F2(
+	function (isGood, expecting) {
+		return elm$parser$Parser$Advanced$Parser(
+			function (s) {
+				var newOffset = A3(elm$parser$Parser$Advanced$isSubChar, isGood, s.offset, s.src);
+				return _Utils_eq(newOffset, -1) ? A2(
+					elm$parser$Parser$Advanced$Bad,
+					false,
+					A2(elm$parser$Parser$Advanced$fromState, s, expecting)) : (_Utils_eq(newOffset, -2) ? A3(
+					elm$parser$Parser$Advanced$Good,
+					true,
+					_Utils_Tuple0,
+					{col: 1, context: s.context, indent: s.indent, offset: s.offset + 1, row: s.row + 1, src: s.src}) : A3(
+					elm$parser$Parser$Advanced$Good,
+					true,
+					_Utils_Tuple0,
+					{col: s.col + 1, context: s.context, indent: s.indent, offset: newOffset, row: s.row, src: s.src}));
+			});
+	});
+var elm$parser$Parser$chompIf = function (isGood) {
+	return A2(elm$parser$Parser$Advanced$chompIf, isGood, elm$parser$Parser$UnexpectedChar);
+};
+var author$project$FootnoteHelper$content = A2(
+	elm$parser$Parser$ignorer,
+	A2(
+		elm$parser$Parser$ignorer,
+		elm$parser$Parser$succeed(author$project$FootnoteHelper$Content),
+		elm$parser$Parser$symbol('[')),
+	elm$parser$Parser$chompIf(
+		function (_char) {
+			return !_Utils_eq(
+				_char,
+				_Utils_chr('['));
+		}));
+var author$project$FootnoteHelper$NamedNote = function (a) {
+	return {$: 'NamedNote', a: a};
+};
+var elm$parser$Parser$Advanced$andThen = F2(
+	function (callback, _n0) {
+		var parseA = _n0.a;
+		return elm$parser$Parser$Advanced$Parser(
+			function (s0) {
+				var _n1 = parseA(s0);
+				if (_n1.$ === 'Bad') {
+					var p = _n1.a;
+					var x = _n1.b;
+					return A2(elm$parser$Parser$Advanced$Bad, p, x);
+				} else {
+					var p1 = _n1.a;
+					var a = _n1.b;
+					var s1 = _n1.c;
+					var _n2 = callback(a);
+					var parseB = _n2.a;
+					var _n3 = parseB(s1);
+					if (_n3.$ === 'Bad') {
+						var p2 = _n3.a;
+						var x = _n3.b;
+						return A2(elm$parser$Parser$Advanced$Bad, p1 || p2, x);
+					} else {
+						var p2 = _n3.a;
+						var b = _n3.b;
+						var s2 = _n3.c;
+						return A3(elm$parser$Parser$Advanced$Good, p1 || p2, b, s2);
+					}
+				}
+			});
+	});
+var elm$parser$Parser$andThen = elm$parser$Parser$Advanced$andThen;
+var elm$parser$Parser$Advanced$chompWhileHelp = F5(
+	function (isGood, offset, row, col, s0) {
+		chompWhileHelp:
+		while (true) {
+			var newOffset = A3(elm$parser$Parser$Advanced$isSubChar, isGood, offset, s0.src);
+			if (_Utils_eq(newOffset, -1)) {
+				return A3(
+					elm$parser$Parser$Advanced$Good,
+					_Utils_cmp(s0.offset, offset) < 0,
+					_Utils_Tuple0,
+					{col: col, context: s0.context, indent: s0.indent, offset: offset, row: row, src: s0.src});
+			} else {
+				if (_Utils_eq(newOffset, -2)) {
+					var $temp$isGood = isGood,
+						$temp$offset = offset + 1,
+						$temp$row = row + 1,
+						$temp$col = 1,
+						$temp$s0 = s0;
+					isGood = $temp$isGood;
+					offset = $temp$offset;
+					row = $temp$row;
+					col = $temp$col;
+					s0 = $temp$s0;
+					continue chompWhileHelp;
+				} else {
+					var $temp$isGood = isGood,
+						$temp$offset = newOffset,
+						$temp$row = row,
+						$temp$col = col + 1,
+						$temp$s0 = s0;
+					isGood = $temp$isGood;
+					offset = $temp$offset;
+					row = $temp$row;
+					col = $temp$col;
+					s0 = $temp$s0;
+					continue chompWhileHelp;
+				}
+			}
+		}
+	});
+var elm$parser$Parser$Advanced$chompWhile = function (isGood) {
+	return elm$parser$Parser$Advanced$Parser(
+		function (s) {
+			return A5(elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.offset, s.row, s.col, s);
+		});
+};
+var elm$parser$Parser$chompWhile = elm$parser$Parser$Advanced$chompWhile;
+var elm$parser$Parser$Advanced$mapChompedString = F2(
+	function (func, _n0) {
+		var parse = _n0.a;
+		return elm$parser$Parser$Advanced$Parser(
+			function (s0) {
+				var _n1 = parse(s0);
+				if (_n1.$ === 'Bad') {
+					var p = _n1.a;
+					var x = _n1.b;
+					return A2(elm$parser$Parser$Advanced$Bad, p, x);
+				} else {
+					var p = _n1.a;
+					var a = _n1.b;
+					var s1 = _n1.c;
+					return A3(
+						elm$parser$Parser$Advanced$Good,
+						p,
+						A2(
+							func,
+							A3(elm$core$String$slice, s0.offset, s1.offset, s0.src),
+							a),
+						s1);
+				}
+			});
+	});
+var elm$parser$Parser$Advanced$getChompedString = function (parser) {
+	return A2(elm$parser$Parser$Advanced$mapChompedString, elm$core$Basics$always, parser);
+};
+var elm$parser$Parser$getChompedString = elm$parser$Parser$Advanced$getChompedString;
+var author$project$FootnoteHelper$strictNote = A2(
+	elm$parser$Parser$andThen,
+	function (str) {
+		var _n0 = elm$core$String$toInt(str);
+		if (_n0.$ === 'Just') {
+			var _int = _n0.a;
+			return elm$parser$Parser$succeed(
+				author$project$FootnoteHelper$NumberedNote(_int));
+		} else {
+			return elm$parser$Parser$succeed(
+				author$project$FootnoteHelper$NamedNote(str));
+		}
+	},
+	elm$parser$Parser$getChompedString(
+		elm$parser$Parser$chompWhile(
+			function (_char) {
+				return (!_Utils_eq(
+					_char,
+					_Utils_chr(']'))) && (!_Utils_eq(
+					_char,
+					_Utils_chr('[')));
+			})));
+var author$project$FootnoteHelper$footNote = A2(
+	elm$parser$Parser$keeper,
+	A2(
+		elm$parser$Parser$ignorer,
+		elm$parser$Parser$succeed(elm$core$Basics$identity),
+		elm$parser$Parser$symbol('[^')),
+	author$project$FootnoteHelper$strictNote);
+var author$project$FootnoteHelper$isUninteresting = function (_char) {
+	return !_Utils_eq(
+		_char,
+		_Utils_chr('['));
+};
+var elm$parser$Parser$Done = function (a) {
+	return {$: 'Done', a: a};
+};
+var elm$parser$Parser$Loop = function (a) {
+	return {$: 'Loop', a: a};
+};
+var elm$parser$Parser$ExpectingEnd = {$: 'ExpectingEnd'};
+var elm$parser$Parser$Advanced$end = function (x) {
+	return elm$parser$Parser$Advanced$Parser(
+		function (s) {
+			return _Utils_eq(
+				elm$core$String$length(s.src),
+				s.offset) ? A3(elm$parser$Parser$Advanced$Good, false, _Utils_Tuple0, s) : A2(
+				elm$parser$Parser$Advanced$Bad,
+				false,
+				A2(elm$parser$Parser$Advanced$fromState, s, x));
+		});
+};
+var elm$parser$Parser$end = elm$parser$Parser$Advanced$end(elm$parser$Parser$ExpectingEnd);
+var elm$parser$Parser$Advanced$map = F2(
+	function (func, _n0) {
+		var parse = _n0.a;
+		return elm$parser$Parser$Advanced$Parser(
+			function (s0) {
+				var _n1 = parse(s0);
+				if (_n1.$ === 'Good') {
+					var p = _n1.a;
+					var a = _n1.b;
+					var s1 = _n1.c;
+					return A3(
+						elm$parser$Parser$Advanced$Good,
+						p,
+						func(a),
+						s1);
+				} else {
+					var p = _n1.a;
+					var x = _n1.b;
+					return A2(elm$parser$Parser$Advanced$Bad, p, x);
+				}
+			});
+	});
+var elm$parser$Parser$map = elm$parser$Parser$Advanced$map;
+var elm$parser$Parser$Advanced$Append = F2(
+	function (a, b) {
+		return {$: 'Append', a: a, b: b};
+	});
+var elm$parser$Parser$Advanced$oneOfHelp = F3(
+	function (s0, bag, parsers) {
+		oneOfHelp:
+		while (true) {
+			if (!parsers.b) {
+				return A2(elm$parser$Parser$Advanced$Bad, false, bag);
+			} else {
+				var parse = parsers.a.a;
+				var remainingParsers = parsers.b;
+				var _n1 = parse(s0);
+				if (_n1.$ === 'Good') {
+					var step = _n1;
+					return step;
+				} else {
+					var step = _n1;
+					var p = step.a;
+					var x = step.b;
+					if (p) {
+						return step;
+					} else {
+						var $temp$s0 = s0,
+							$temp$bag = A2(elm$parser$Parser$Advanced$Append, bag, x),
+							$temp$parsers = remainingParsers;
+						s0 = $temp$s0;
+						bag = $temp$bag;
+						parsers = $temp$parsers;
+						continue oneOfHelp;
+					}
+				}
+			}
+		}
+	});
+var elm$parser$Parser$Advanced$oneOf = function (parsers) {
+	return elm$parser$Parser$Advanced$Parser(
+		function (s) {
+			return A3(elm$parser$Parser$Advanced$oneOfHelp, s, elm$parser$Parser$Advanced$Empty, parsers);
+		});
+};
+var elm$parser$Parser$oneOf = elm$parser$Parser$Advanced$oneOf;
+var author$project$FootnoteHelper$footnotesHelp = function (footnotes) {
+	return elm$parser$Parser$oneOf(
+		_List_fromArray(
+			[
+				A2(
+				elm$parser$Parser$map,
+				function (_n0) {
+					return elm$parser$Parser$Done(
+						elm$core$List$reverse(footnotes));
+				},
+				elm$parser$Parser$end),
+				A2(
+				elm$parser$Parser$keeper,
+				elm$parser$Parser$succeed(
+					function (footnote) {
+						return elm$parser$Parser$Loop(
+							A2(elm$core$List$cons, footnote, footnotes));
+					}),
+				author$project$FootnoteHelper$footNote),
+				A2(
+				elm$parser$Parser$keeper,
+				elm$parser$Parser$succeed(
+					function (footnote) {
+						return elm$parser$Parser$Loop(
+							A2(elm$core$List$cons, footnote, footnotes));
+					}),
+				author$project$FootnoteHelper$content),
+				A2(
+				elm$parser$Parser$map,
+				function (chunk) {
+					return elm$parser$Parser$Loop(
+						A2(elm$core$List$cons, author$project$FootnoteHelper$Content, footnotes));
+				},
+				elm$parser$Parser$getChompedString(
+					elm$parser$Parser$chompWhile(author$project$FootnoteHelper$isUninteresting)))
+			]));
+};
+var elm$parser$Parser$Advanced$Done = function (a) {
+	return {$: 'Done', a: a};
+};
+var elm$parser$Parser$Advanced$Loop = function (a) {
+	return {$: 'Loop', a: a};
+};
+var elm$parser$Parser$toAdvancedStep = function (step) {
+	if (step.$ === 'Loop') {
+		var s = step.a;
+		return elm$parser$Parser$Advanced$Loop(s);
+	} else {
+		var a = step.a;
+		return elm$parser$Parser$Advanced$Done(a);
+	}
+};
+var elm$parser$Parser$Advanced$loopHelp = F4(
+	function (p, state, callback, s0) {
+		loopHelp:
+		while (true) {
+			var _n0 = callback(state);
+			var parse = _n0.a;
+			var _n1 = parse(s0);
+			if (_n1.$ === 'Good') {
+				var p1 = _n1.a;
+				var step = _n1.b;
+				var s1 = _n1.c;
+				if (step.$ === 'Loop') {
+					var newState = step.a;
+					var $temp$p = p || p1,
+						$temp$state = newState,
+						$temp$callback = callback,
+						$temp$s0 = s1;
+					p = $temp$p;
+					state = $temp$state;
+					callback = $temp$callback;
+					s0 = $temp$s0;
+					continue loopHelp;
+				} else {
+					var result = step.a;
+					return A3(elm$parser$Parser$Advanced$Good, p || p1, result, s1);
+				}
+			} else {
+				var p1 = _n1.a;
+				var x = _n1.b;
+				return A2(elm$parser$Parser$Advanced$Bad, p || p1, x);
+			}
+		}
+	});
+var elm$parser$Parser$Advanced$loop = F2(
+	function (state, callback) {
+		return elm$parser$Parser$Advanced$Parser(
+			function (s) {
+				return A4(elm$parser$Parser$Advanced$loopHelp, false, state, callback, s);
+			});
+	});
+var elm$parser$Parser$loop = F2(
+	function (state, callback) {
+		return A2(
+			elm$parser$Parser$Advanced$loop,
+			state,
+			function (s) {
+				return A2(
+					elm$parser$Parser$map,
+					elm$parser$Parser$toAdvancedStep,
+					callback(s));
+			});
+	});
+var author$project$FootnoteHelper$parseAll = A2(elm$parser$Parser$loop, _List_Nil, author$project$FootnoteHelper$footnotesHelp);
+var elm$core$Debug$toString = _Debug_toString;
+var elm$core$List$sortBy = _List_sortBy;
+var author$project$FootnoteHelper$mdNextFootnoteNum = function (md) {
+	var parsedNotes = A2(elm$parser$Parser$run, author$project$FootnoteHelper$parseAll, md);
+	var notes = function () {
+		if (parsedNotes.$ === 'Ok') {
+			var n = parsedNotes.a;
+			return author$project$FootnoteHelper$Sorted(
+				A2(elm$core$List$sortBy, author$project$FootnoteHelper$getRank, n));
+		} else {
+			var errors = parsedNotes.a;
+			var _n1 = A2(
+				elm$core$Debug$log,
+				'parse error',
+				elm$core$Debug$toString(errors));
+			return author$project$FootnoteHelper$Sorted(_List_Nil);
+		}
+	}();
+	return author$project$FootnoteHelper$nextNote(notes);
+};
 var author$project$Main$BadUploadFileType = function (a) {
 	return {$: 'BadUploadFileType', a: a};
 };
@@ -9465,7 +9902,6 @@ var author$project$Main$getTabState = function (state) {
 			return author$project$Main$MediaListTab;
 	}
 };
-var elm$json$Json$Encode$int = _Json_wrap;
 var elm$json$Json$Encode$list = F2(
 	function (func, entries) {
 		return _Json_wrap(
@@ -9475,6 +9911,21 @@ var elm$json$Json$Encode$list = F2(
 				_Json_emptyArray(_Utils_Tuple0),
 				entries));
 	});
+var author$project$Main$insertFootnote = _Platform_outgoingPort(
+	'insertFootnote',
+	function ($) {
+		var a = $.a;
+		var b = $.b;
+		return A2(
+			elm$json$Json$Encode$list,
+			elm$core$Basics$identity,
+			_List_fromArray(
+				[
+					elm$json$Json$Encode$string(a),
+					elm$json$Json$Encode$string(b)
+				]));
+	});
+var elm$json$Json$Encode$int = _Json_wrap;
 var author$project$Main$insertMdString = _Platform_outgoingPort(
 	'insertMdString',
 	function ($) {
@@ -10214,6 +10665,10 @@ var author$project$RCAPI$uploadMedia = F5(
 				});
 		}
 	});
+var author$project$Settings$footnoteSnippet = function (num) {
+	var numstr = elm$core$String$fromInt(num);
+	return _Utils_Tuple2('[^' + (numstr + ']'), '[^' + (numstr + ']: footnote-text'));
+};
 var elm$file$File$Select$file = F2(
 	function (mimes, toMsg) {
 		return A2(
@@ -10852,6 +11307,12 @@ var author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						model,
 						author$project$Main$insertMdString(insertTuple));
+				case 'InsertFootnoteAtCursor':
+					var nextNumber = author$project$FootnoteHelper$mdNextFootnoteNum(model.exposition.markdownInput);
+					var insertTuple = author$project$Settings$footnoteSnippet(nextNumber);
+					return _Utils_Tuple2(
+						model,
+						author$project$Main$insertFootnote(insertTuple));
 				case 'OpenMediaPicker':
 					return _Utils_Tuple2(
 						_Utils_update(
@@ -10969,6 +11430,7 @@ var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$C
 var author$project$Main$InsertAtCursor = function (a) {
 	return {$: 'InsertAtCursor', a: a};
 };
+var author$project$Main$InsertFootnoteAtCursor = {$: 'InsertFootnoteAtCursor'};
 var author$project$Main$RedoCM = {$: 'RedoCM'};
 var author$project$Main$UndoCM = {$: 'UndoCM'};
 var elm$html$Html$span = _VirtualDom_node('span');
@@ -11444,6 +11906,10 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 						onClickMsg: snippetMsg(author$project$Settings$Quote),
 						title: 'quote'
 					})),
+				author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{onClickMsg: author$project$Main$InsertFootnoteAtCursor, text: '*', title: 'insert footnote'})),
 				author$project$Main$separator
 			]),
 		cmEditor ? _List_fromArray(

@@ -14,6 +14,7 @@ import Dict
 import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectViewState, addMediaUserClasses, incContentVersion)
 import File exposing (File)
 import File.Select as Select
+import FootnoteHelper
 import Html exposing (Html, a, button, div, img, li, p, span, text, ul)
 import Html.Attributes exposing (attribute, class, for, href, id, src)
 import Html.Events exposing (on, onCheck, onClick, onInput)
@@ -240,6 +241,11 @@ port setEditor : Int -> Cmd msg
 port insertMdString : ( String, Int ) -> Cmd msg
 
 
+port insertFootnote :
+    ( String, String )
+    -> Cmd msg -- number, content
+
+
 port cmUndo : () -> Cmd msg
 
 
@@ -324,6 +330,7 @@ type Msg
     | SwitchMarkdownEditor MarkdownEditor
     | DownloadExport RCAPI.ConversionType
     | InsertAtCursor ( String, Int ) -- string and cursor offset after insert
+    | InsertFootnoteAtCursor
     | InsertMediaAtCursor RCMediaObject
     | OpenMediaPicker
     | CloseMediaPicker
@@ -910,6 +917,17 @@ update msg model =
         InsertAtCursor insertTuple ->
             ( model, insertMdString insertTuple )
 
+        InsertFootnoteAtCursor ->
+            let
+                nextNumber : Int
+                nextNumber =
+                    FootnoteHelper.mdNextFootnoteNum model.exposition.markdownInput
+
+                insertTuple =
+                    Settings.footnoteSnippet nextNumber
+            in
+            ( model, insertFootnote insertTuple )
+
         OpenMediaPicker ->
             ( { model | mediaPickerDialog = Modal.shown }, Cmd.none )
 
@@ -1136,6 +1154,7 @@ mkEditorToolbar tabState =
     , mkButton { default | onClickMsg = snippetMsg Settings.Numbered, icon = NumberedIcon, title = "numbered list" }
     , mkButton { default | onClickMsg = snippetMsg Settings.Link, icon = LinkIcon, title = "hyperlink" }
     , mkButton { default | onClickMsg = snippetMsg Settings.Quote, icon = QuoteIcon, title = "quote" }
+    , mkButton { default | onClickMsg = InsertFootnoteAtCursor, text = "*", title = "insert footnote" }
     , separator
     ]
         ++ (if cmEditor then
