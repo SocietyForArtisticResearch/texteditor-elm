@@ -330,7 +330,7 @@
       if (selectedEditor == editorCmMd) {
          cmMarkdown.replaceSelection(fnNumber);
           cmMarkdown.focus();
-	  cmMarkdown.replaceRange(fnContent, cmMarkdown.lastLine());
+	  appendToCodemirrorContent(fnContent);
 	  textareaMarkdown.value = cmMarkdown.getValue();
       } else if (selectedEditor == editorTxtMd) {
           insertAtCursor(textareaMarkdown, fnNumber);
@@ -338,7 +338,19 @@
          cmMarkdown.setValue(textareaMarkdown.value);
          textareaMarkdown.focus();
      }
- });
+  });
+
+  function appendToCodemirrorContent(data) {
+    var doc = cmMarkdown.getDoc();
+    var cursor = doc.getCursor(); // gets the line number in the cursor position
+    var line = doc.getLine(cursor.line); // get the line contents
+    var pos = { // create a new object to avoid mutation of the original selection
+        line: (doc.size+5),
+        ch: line.length - 1 // set the character position to the end of the line
+    }
+    doc.replaceRange('\n'+data+'\n', pos); // adds a new line
+ }
+
 
  app.ports.convertMarkdown.subscribe(function(md) {
      mdToRender = md;
