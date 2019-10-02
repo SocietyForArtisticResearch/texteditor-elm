@@ -328,7 +328,7 @@
       /* fnNumber for example : [^n] 
          fnContent is [^n]: content */
       if (selectedEditor == editorCmMd) {
-         cmMarkdown.replaceSelection(str);
+         cmMarkdown.replaceSelection(fnNumber);
           cmMarkdown.focus();
 	  cmMarkdown.replaceRange(fnContent, editor.lastLine());
 	  textareaMarkdown.value = cmMarkdown.getValue();
