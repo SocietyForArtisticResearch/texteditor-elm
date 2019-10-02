@@ -330,7 +330,7 @@
       if (selectedEditor == editorCmMd) {
          cmMarkdown.replaceSelection(fnNumber);
           cmMarkdown.focus();
-	  cmMarkdown.replaceRange(fnContent, editor.lastLine());
+	  cmMarkdown.replaceRange(fnContent, cmMarkdown.lastLine());
 	  textareaMarkdown.value = cmMarkdown.getValue();
       } else if (selectedEditor == editorTxtMd) {
           insertAtCursor(textareaMarkdown, fnNumber);

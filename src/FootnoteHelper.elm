@@ -3,7 +3,7 @@ module FootnoteHelper exposing (Footnote(..), mdNextFootnoteNum, parseAll, testS
 import Browser
 import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
-import Parser exposing ((|.), (|=), Parser, Step(..), andThen, chompIf, chompUntilEndOr, chompWhile, end, getChompedString, int, keyword, loop, map, oneOf, succeed, symbol)
+import Parser exposing ((|.), (|=), Parser, Step(..), andThen, chompIf, chompUntil, chompUntilEndOr, chompWhile, end, getChompedString, int, keyword, loop, map, oneOf, succeed, symbol)
 
 
 testString : String
@@ -15,6 +15,7 @@ type Footnote
     = NumberedNote Int
     | NamedNote String
     | Content
+    | NoteContent
 
 
 type Sortable lst
@@ -32,6 +33,9 @@ getRank f =
             -1
 
         Content ->
+            -1
+
+        NoteContent ->
             -1
 
 
@@ -57,14 +61,14 @@ footNote =
         |= strictNote
 
 
+
+-- if it is the fncontent
+
+
 strictNote : Parser Footnote
 strictNote =
-    getChompedString
-        (chompWhile
-            (\char ->
-                char /= ']' && char /= '['
-            )
-        )
+    chompWhile (\char -> char /= '[' && char /= ']')
+        |> getChompedString
         |> andThen
             (\str ->
                 case String.toInt str of
@@ -109,13 +113,14 @@ parseName =
             |. chompWhile (\c -> Char.isAlphaNum c || c == '_')
 
 
-parseNamedNote : Parser Footnote
-parseNamedNote =
-    succeed NamedNote
-        |. symbol "["
-        |. symbol "^"
-        |= parseName
-        |. symbol "]"
+
+-- parseNamedNote : Parser Footnote
+-- parseNamedNote =
+--     succeed NamedNote
+--         |. symbol "["
+--         |. symbol "^"
+--         |= parseName
+--         |. symbol "]"
 
 
 content : Parser Footnote

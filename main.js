@@ -9360,6 +9360,8 @@ var author$project$FootnoteHelper$getRank = function (f) {
 		case 'NamedNote':
 			var name = f.a;
 			return -1;
+		case 'Content':
+			return -1;
 		default:
 			return -1;
 	}
@@ -9560,9 +9562,9 @@ var author$project$FootnoteHelper$strictNote = A2(
 			function (_char) {
 				return (!_Utils_eq(
 					_char,
-					_Utils_chr(']'))) && (!_Utils_eq(
+					_Utils_chr('['))) && (!_Utils_eq(
 					_char,
-					_Utils_chr('[')));
+					_Utils_chr(']')));
 			})));
 var author$project$FootnoteHelper$footNote = A2(
 	elm$parser$Parser$keeper,
