@@ -15792,28 +15792,81 @@ var author$project$Exposition$customThumbUrl = F2(
 		var sizeStr = elm$core$String$fromInt(size);
 		return '/text-editor/simple-media-thumb?research=' + (elm$core$String$fromInt(data.expositionId) + ('&simple-media=' + (elm$core$String$fromInt(data.id) + ('&width=' + (sizeStr + ('&height=' + sizeStr))))));
 	});
+var elm$html$Html$audio = _VirtualDom_node('audio');
+var elm$html$Html$source = _VirtualDom_node('source');
+var elm$html$Html$video = _VirtualDom_node('video');
+var elm$html$Html$Attributes$autoplay = elm$html$Html$Attributes$boolProperty('autoplay');
+var elm$html$Html$Attributes$controls = elm$html$Html$Attributes$boolProperty('controls');
+var elm$html$Html$Attributes$loop = elm$html$Html$Attributes$boolProperty('loop');
 var author$project$RCMediaList$viewThumbnail = function (object) {
 	var _n0 = object.mediaType;
-	if (_n0.$ === 'RCImage') {
-		var thumburl = A2(author$project$Exposition$customThumbUrl, 120, object);
-		return A2(
-			elm$html$Html$img,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$src(thumburl),
-					A2(elm$html$Html$Attributes$style, 'object-fit', 'cover'),
-					A2(elm$html$Html$Attributes$style, 'width', '60px'),
-					A2(elm$html$Html$Attributes$style, 'height', '60px')
-				]),
-			_List_Nil);
-	} else {
-		return A2(
-			elm$html$Html$span,
-			_List_Nil,
-			_List_fromArray(
-				[
-					elm$html$Html$text('no preview')
-				]));
+	switch (_n0.$) {
+		case 'RCImage':
+			var thumburl = A2(author$project$Exposition$customThumbUrl, 120, object);
+			return A2(
+				elm$html$Html$img,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$src(thumburl),
+						A2(elm$html$Html$Attributes$style, 'object-fit', 'cover'),
+						A2(elm$html$Html$Attributes$style, 'width', '60px'),
+						A2(elm$html$Html$Attributes$style, 'height', '60px')
+					]),
+				_List_Nil);
+		case 'RCAudio':
+			var settings = _n0.a;
+			var audioUrl = author$project$Exposition$mediaUrl(object);
+			return A2(
+				elm$html$Html$audio,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$title('preview'),
+						elm$html$Html$Attributes$controls(false),
+						elm$html$Html$Attributes$loop(settings.loop),
+						elm$html$Html$Attributes$autoplay(settings.autoplay)
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$source,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$src(audioUrl),
+								elm$html$Html$Attributes$type_('audio/mpeg')
+							]),
+						_List_Nil)
+					]));
+		case 'RCVideo':
+			var settings = _n0.a;
+			var videoUrl = author$project$Exposition$mediaUrl(object);
+			return A2(
+				elm$html$Html$video,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$title('preview'),
+						elm$html$Html$Attributes$controls(false),
+						elm$html$Html$Attributes$loop(settings.loop),
+						elm$html$Html$Attributes$autoplay(settings.autoplay)
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$source,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$src(videoUrl),
+								elm$html$Html$Attributes$type_('video/mpeg')
+							]),
+						_List_Nil)
+					]));
+		default:
+			return A2(
+				elm$html$Html$span,
+				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$text('no preview')
+					]));
 	}
 };
 var rundis$elm_bootstrap$Bootstrap$Alert$attrs = F2(

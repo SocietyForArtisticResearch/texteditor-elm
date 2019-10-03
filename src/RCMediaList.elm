@@ -6,8 +6,8 @@ import Bootstrap.Modal as Modal
 import Bootstrap.Table as Table
 import Bootstrap.Utilities.Spacing as Spacing
 import Exposition exposing (RCMediaObject)
-import Html exposing (Html, div, img, span, text)
-import Html.Attributes exposing (class, id, src, style)
+import Html exposing (Html, audio, div, img, source, span, text, video)
+import Html.Attributes exposing (autoplay, class, controls, id, loop, src, style, title, type_)
 import Html.Events exposing (onClick, onDoubleClick)
 
 
@@ -171,6 +171,32 @@ viewThumbnail object =
                 , style "height" "60px"
                 ]
                 []
+
+        Exposition.RCAudio settings ->
+            let
+                audioUrl =
+                    Exposition.mediaUrl object
+            in
+            audio
+                [ title "preview"
+                , controls False
+                , loop settings.loop
+                , autoplay settings.autoplay
+                ]
+                [ source [ src audioUrl, type_ "audio/mpeg" ] [] ]
+
+        Exposition.RCVideo settings ->
+            let
+                videoUrl =
+                    Exposition.mediaUrl object
+            in
+            video
+                [ title "preview"
+                , controls False
+                , loop settings.loop
+                , autoplay settings.autoplay
+                ]
+                [ source [ src videoUrl, type_ "video/mpeg" ] [] ]
 
         _ ->
             span [] [ text "no preview" ]
