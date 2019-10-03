@@ -554,7 +554,7 @@ insertToolHtml md exp =
                 (\m ->
                     case m.submatches of
                         (Just sub) :: _ ->
-                            Maybe.withDefault ("<label title=\"you can add a file by using add media button\" style=\"padding: 10px; border: 1px dashed rgb(119, 119, 119); background-color: rgb(255, 183, 183);\">[ problem: media with name \"" ++ sub ++ "\" does not exist in media ]</label>") <|
+                            Maybe.withDefault (missingMediaPlaceholder sub) <|
                                 Maybe.map
                                     (\o ->
                                         Html.toString 0 (asHtml o ("media-" ++ String.fromInt m.number))

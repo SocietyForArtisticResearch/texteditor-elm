@@ -1,4 +1,4 @@
-module Settings exposing (Snippet(..), baseDomain, baseUrl, editorVersion, footnoteSnippet, iconUrl, snippet)
+module Settings exposing (Snippet(..), baseDomain, baseUrl, editorVersion, footnoteSnippet, iconUrl, missingMediaPlaceholder, snippet)
 
 
 editorVersion : String
@@ -77,3 +77,8 @@ footnoteSnippet num =
     ( "[^" ++ numstr ++ "]"
     , "[^" ++ numstr ++ "]: footnote-text"
     )
+
+
+missingMediaPlaceholder : String -> String
+missingMediaPlaceholder mediaName =
+    "<label title=\"you can add a file by using add media button\" style=\"padding: 10px; border: 1px dashed rgb(119, 119, 119); background-color: rgb(255, 183, 183);\">[ problem: media with name \"" ++ mediaName ++ "\" does not exist in media ]</label>"
