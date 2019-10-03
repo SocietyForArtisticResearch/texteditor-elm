@@ -554,7 +554,7 @@ insertToolHtml md exp =
                 (\m ->
                     case m.submatches of
                         (Just sub) :: _ ->
-                            Maybe.withDefault "" <|
+                            Maybe.withDefault ("[object " ++ sub ++ " does not exist]") <|
                                 Maybe.map
                                     (\o ->
                                         Html.toString 0 (asHtml o ("media-" ++ String.fromInt m.number))
