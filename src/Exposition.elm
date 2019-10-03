@@ -554,7 +554,7 @@ insertToolHtml md exp =
                 (\m ->
                     case m.submatches of
                         (Just sub) :: _ ->
-                            Maybe.withDefault (missingMediaPlaceholder sub) <|
+                            Maybe.withDefault (Settings.missingMediaPlaceholder sub) <|
                                 Maybe.map
                                     (\o ->
                                         Html.toString 0 (asHtml o ("media-" ++ String.fromInt m.number))

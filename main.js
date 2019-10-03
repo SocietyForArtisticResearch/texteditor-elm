@@ -8153,6 +8153,9 @@ var author$project$Exposition$objectByNameOrId = F2(
 			return elm$core$List$head(nameLst);
 		}
 	});
+var author$project$Settings$missingMediaPlaceholder = function (mediaName) {
+	return '<label title=\"you can add a file by using add media button\" style=\"padding: 10px; border: 1px dashed rgb(119, 119, 119); background-color: rgb(255, 183, 183);\">[ problem: media with name \"' + (mediaName + '\" does not exist in media ]</label>');
+};
 var elm$core$Maybe$map = F2(
 	function (f, maybe) {
 		if (maybe.$ === 'Just') {
@@ -8591,7 +8594,7 @@ var author$project$Exposition$insertToolHtml = F2(
 						var sub = _n1.a.a;
 						return A2(
 							elm$core$Maybe$withDefault,
-							'<label title=\"you can add a file by using add media button\" style=\"padding: 10px; border: 1px dashed rgb(119, 119, 119); background-color: rgb(255, 183, 183);\">[ problem: media with name \"' + (sub + '\" does not exist in media ]</label>'),
+							author$project$Settings$missingMediaPlaceholder(sub),
 							A2(
 								elm$core$Maybe$map,
 								function (o) {
