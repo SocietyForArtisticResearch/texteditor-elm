@@ -179,7 +179,7 @@ viewThumbnail object =
             in
             audio
                 [ title "preview"
-                , controls False
+                , controls True
                 , loop settings.loop
                 , autoplay settings.autoplay
                 ]
@@ -192,7 +192,7 @@ viewThumbnail object =
             in
             video
                 [ title "preview"
-                , controls False
+                , controls True
                 , loop settings.loop
                 , autoplay settings.autoplay
                 ]

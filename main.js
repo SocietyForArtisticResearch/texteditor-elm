@@ -15821,7 +15821,7 @@ var author$project$RCMediaList$viewThumbnail = function (object) {
 				_List_fromArray(
 					[
 						elm$html$Html$Attributes$title('preview'),
-						elm$html$Html$Attributes$controls(false),
+						elm$html$Html$Attributes$controls(true),
 						elm$html$Html$Attributes$loop(settings.loop),
 						elm$html$Html$Attributes$autoplay(settings.autoplay)
 					]),
@@ -15844,7 +15844,7 @@ var author$project$RCMediaList$viewThumbnail = function (object) {
 				_List_fromArray(
 					[
 						elm$html$Html$Attributes$title('preview'),
-						elm$html$Html$Attributes$controls(false),
+						elm$html$Html$Attributes$controls(true),
 						elm$html$Html$Attributes$loop(settings.loop),
 						elm$html$Html$Attributes$autoplay(settings.autoplay)
 					]),
