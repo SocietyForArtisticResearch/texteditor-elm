@@ -8591,7 +8591,7 @@ var author$project$Exposition$insertToolHtml = F2(
 						var sub = _n1.a.a;
 						return A2(
 							elm$core$Maybe$withDefault,
-							'[object ' + (sub + ' does not exist]'),
+							'[ cannot find !{' + (sub + '} in media ]'),
 							A2(
 								elm$core$Maybe$map,
 								function (o) {
