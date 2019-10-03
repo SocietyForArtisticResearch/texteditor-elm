@@ -8591,7 +8591,7 @@ var author$project$Exposition$insertToolHtml = F2(
 						var sub = _n1.a.a;
 						return A2(
 							elm$core$Maybe$withDefault,
-							'[ cannot find !{' + (sub + '} in media ]'),
+							'<label title=\"you can add a file by using add media button\" style=\"padding: 10px; border: 1px dashed rgb(119, 119, 119); background-color: rgb(255, 183, 183);\">[ problem: media with name \"' + (sub + '\" does not exist in media ]</label>'),
 							A2(
 								elm$core$Maybe$map,
 								function (o) {
