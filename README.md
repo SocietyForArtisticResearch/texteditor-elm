@@ -40,10 +40,6 @@ General:
 
 Casper:
 
-- placeholder for non-existing 
-- display preview for audio
-- inserting footnote
-
 
 Luc:
 
