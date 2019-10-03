@@ -201,8 +201,15 @@ nextNote =
 
                 Unsorted x ->
                     []
+
+        replaceZero x =
+            if x == 0 then
+                1
+
+            else
+                x
     in
-    unpack >> List.reverse >> List.head >> Maybe.withDefault dummy >> getRank >> (+) 1
+    unpack >> List.reverse >> List.head >> Maybe.withDefault dummy >> getRank >> (+) 1 >> replaceZero
 
 
 

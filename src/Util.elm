@@ -35,7 +35,6 @@ wordCount str =
         splitChars =
             String.toList " .,!?()"
 
-        -- Wish I had some Monads !
         splitter : Char -> List String -> List String
         splitter char z =
             List.concatMap (String.split (String.fromChar char)) z

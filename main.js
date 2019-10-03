@@ -9380,6 +9380,9 @@ var author$project$FootnoteHelper$nextNote = function () {
 			return _List_Nil;
 		}
 	};
+	var replaceZero = function (x) {
+		return (!x) ? 1 : x;
+	};
 	return A2(
 		elm$core$Basics$composeR,
 		unpack,
@@ -9395,7 +9398,10 @@ var author$project$FootnoteHelper$nextNote = function () {
 					A2(
 						elm$core$Basics$composeR,
 						author$project$FootnoteHelper$getRank,
-						elm$core$Basics$add(1))))));
+						A2(
+							elm$core$Basics$composeR,
+							elm$core$Basics$add(1),
+							replaceZero))))));
 }();
 var author$project$FootnoteHelper$Content = {$: 'Content'};
 var elm$parser$Parser$UnexpectedChar = {$: 'UnexpectedChar'};
