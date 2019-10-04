@@ -11581,8 +11581,12 @@ var author$project$View$renderIcon = function (icon) {
 			return iconImg('eye.svg');
 		case 'UndoIcon':
 			return iconImg('undo.svg');
-		default:
+		case 'RedoIcon':
 			return iconImg('redo.svg');
+		case 'FullScreenIcon':
+			return iconImg('screen-full.svg');
+		default:
+			return iconImg('screen-normal.svg');
 	}
 };
 var elm$core$List$append = F2(
@@ -12590,18 +12594,20 @@ var author$project$Main$ToggleFullscreen = function (a) {
 };
 var author$project$Main$viewFullscreenSwitch = function (currentMode) {
 	return A2(
-		rundis$elm_bootstrap$Bootstrap$Form$Checkbox$checkbox,
+		elm$html$Html$div,
 		_List_fromArray(
 			[
-				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$onCheck(author$project$Main$ToggleFullscreen),
-				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$checked(currentMode),
-				rundis$elm_bootstrap$Bootstrap$Form$Checkbox$attrs(
+				elm$html$Html$Events$onClick(
+				author$project$Main$ToggleFullscreen(!currentMode)),
+				elm$html$Html$Attributes$classList(
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$class('fullscreen-checkbox')
+						_Utils_Tuple2('fullscreenToggle', true),
+						_Utils_Tuple2('fullScreenMode', currentMode),
+						_Utils_Tuple2('normalScreenMode', !currentMode)
 					]))
 			]),
-		'fullscreen');
+		_List_Nil);
 };
 var author$project$Main$EditorMedia = {$: 'EditorMedia'};
 var author$project$Main$EditorStyle = {$: 'EditorStyle'};

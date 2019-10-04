@@ -16,7 +16,7 @@ import File exposing (File)
 import File.Select as Select
 import FootnoteHelper
 import Html exposing (Html, a, button, div, img, li, p, span, text, ul)
-import Html.Attributes exposing (attribute, class, for, href, id, src)
+import Html.Attributes exposing (attribute, class, classList, for, href, id, src)
 import Html.Events exposing (on, onCheck, onClick, onInput)
 import Http
 import Json.Decode as D
@@ -1093,12 +1093,15 @@ viewEditorCheckbox markdownEditor =
 
 viewFullscreenSwitch : Bool -> Html Msg
 viewFullscreenSwitch currentMode =
-    Checkbox.checkbox
-        [ Checkbox.onCheck ToggleFullscreen
-        , Checkbox.checked <| currentMode
-        , Checkbox.attrs [ class "fullscreen-checkbox" ]
+    div
+        [ onClick <| ToggleFullscreen (not currentMode)
+        , classList
+            [ ( "fullscreenToggle", True )
+            , ( "fullScreenMode", currentMode )
+            , ( "normalScreenMode", not currentMode )
+            ]
         ]
-        "fullscreen"
+        []
 
 
 viewLink : String -> String -> Html Msg

@@ -220,6 +220,20 @@ body {
 
 /* fullscreen mode */
 
+.fullscreenToggle {
+    width: 25px;
+    height: 1em;
+}
+
+.fullScreenMode {
+    background-image: url("lib/icons/screen-full.svg");
+}
+
+.normalScreenMode {
+    background-image: url("lib/icon/screen-normal.svg");
+}
+
+
 .fullscreen .editor-col {
     width: 100%;
 }
