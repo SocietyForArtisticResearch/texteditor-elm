@@ -1101,14 +1101,14 @@ viewFullscreenSwitch currentMode =
             defaultButton message
 
         icn =
-            if currentMode then
+            if not currentMode then
                 FullScreenIcon
 
             else
                 NormalScreenIcon
 
         tit =
-            if currentMode then
+            if not currentMode then
                 "go fullscreen"
 
             else
