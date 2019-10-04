@@ -12592,22 +12592,17 @@ var author$project$Main$viewEditorCheckbox = function (markdownEditor) {
 var author$project$Main$ToggleFullscreen = function (a) {
 	return {$: 'ToggleFullscreen', a: a};
 };
+var author$project$View$FullScreenIcon = {$: 'FullScreenIcon'};
+var author$project$View$NormalScreenIcon = {$: 'NormalScreenIcon'};
 var author$project$Main$viewFullscreenSwitch = function (currentMode) {
-	return A2(
-		elm$html$Html$div,
-		_List_fromArray(
-			[
-				elm$html$Html$Events$onClick(
-				author$project$Main$ToggleFullscreen(!currentMode)),
-				elm$html$Html$Attributes$classList(
-				_List_fromArray(
-					[
-						_Utils_Tuple2('fullscreenToggle', true),
-						_Utils_Tuple2('fullScreenMode', currentMode),
-						_Utils_Tuple2('normalScreenMode', !currentMode)
-					]))
-			]),
-		_List_Nil);
+	var tit = currentMode ? 'go fullscreen' : 'close fullscreen';
+	var message = author$project$Main$ToggleFullscreen(!currentMode);
+	var icn = currentMode ? author$project$View$FullScreenIcon : author$project$View$NormalScreenIcon;
+	var btn = author$project$View$defaultButton(message);
+	return author$project$View$mkButton(
+		_Utils_update(
+			btn,
+			{icon: icn, title: tit}));
 };
 var author$project$Main$EditorMedia = {$: 'EditorMedia'};
 var author$project$Main$EditorStyle = {$: 'EditorStyle'};

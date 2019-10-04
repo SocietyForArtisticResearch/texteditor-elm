@@ -1093,15 +1093,28 @@ viewEditorCheckbox markdownEditor =
 
 viewFullscreenSwitch : Bool -> Html Msg
 viewFullscreenSwitch currentMode =
-    div
-        [ onClick <| ToggleFullscreen (not currentMode)
-        , classList
-            [ ( "fullscreenToggle", True )
-            , ( "fullScreenMode", currentMode )
-            , ( "normalScreenMode", not currentMode )
-            ]
-        ]
-        []
+    let
+        message =
+            ToggleFullscreen (not currentMode)
+
+        btn =
+            defaultButton message
+
+        icn =
+            if currentMode then
+                FullScreenIcon
+
+            else
+                NormalScreenIcon
+
+        tit =
+            if currentMode then
+                "go fullscreen"
+
+            else
+                "close fullscreen"
+    in
+    mkButton { btn | icon = icn, title = tit }
 
 
 viewLink : String -> String -> Html Msg
