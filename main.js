@@ -12595,9 +12595,9 @@ var author$project$Main$ToggleFullscreen = function (a) {
 var author$project$View$FullScreenIcon = {$: 'FullScreenIcon'};
 var author$project$View$NormalScreenIcon = {$: 'NormalScreenIcon'};
 var author$project$Main$viewFullscreenSwitch = function (currentMode) {
-	var tit = currentMode ? 'go fullscreen' : 'close fullscreen';
+	var tit = (!currentMode) ? 'go fullscreen' : 'close fullscreen';
 	var message = author$project$Main$ToggleFullscreen(!currentMode);
-	var icn = currentMode ? author$project$View$FullScreenIcon : author$project$View$NormalScreenIcon;
+	var icn = (!currentMode) ? author$project$View$FullScreenIcon : author$project$View$NormalScreenIcon;
 	var btn = author$project$View$defaultButton(message);
 	return author$project$View$mkButton(
 		_Utils_update(
