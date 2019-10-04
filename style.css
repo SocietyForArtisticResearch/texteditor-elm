@@ -221,16 +221,18 @@ body {
 /* fullscreen mode */
 
 .fullscreenToggle {
-    width: 25px;
+    width: 18.75px;
     height: 1em;
 }
 
 .fullScreenMode {
     background-image: url("lib/icons/screen-full.svg");
+    background-repeat: no-repeat;
 }
 
 .normalScreenMode {
     background-image: url("lib/icons/screen-normal.svg");
+    background-repeat: no-repeat;
 }
 
 
