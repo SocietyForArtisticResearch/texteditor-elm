@@ -196,7 +196,7 @@ viewThumbnail object =
                 , loop settings.loop
                 , autoplay settings.autoplay
                 ]
-                [ source [ src videoUrl, type_ "video/mpeg" ] [] ]
+                [ source [ src videoUrl, type_ "video/mp4" ] [] ]
 
         _ ->
             span [] [ text "no preview" ]

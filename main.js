@@ -15856,7 +15856,7 @@ var author$project$RCMediaList$viewThumbnail = function (object) {
 						_List_fromArray(
 							[
 								elm$html$Html$Attributes$src(videoUrl),
-								elm$html$Html$Attributes$type_('video/mpeg')
+								elm$html$Html$Attributes$type_('video/mp4')
 							]),
 						_List_Nil)
 					]));
