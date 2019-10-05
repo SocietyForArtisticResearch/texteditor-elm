@@ -213,6 +213,10 @@ body {
     width: 100px;
 }
 
+#media-list video {
+    width: 5%;
+}
+
 .edit-media-dialog .media img {
     width: 368px;
     height: auto;
