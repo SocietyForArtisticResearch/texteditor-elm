@@ -17383,7 +17383,7 @@ var author$project$Main$view = function (model) {
 						A2(
 						author$project$View$optionalBlock,
 						showMediaUpload,
-						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, false, author$project$Main$UploadMediaFileSelect, 'Add Media', model.mediaUploadStatus)),
+						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, false, author$project$Main$UploadMediaFileSelect, 'Upload Media', model.mediaUploadStatus)),
 						author$project$View$mkButton(
 						_Utils_update(
 							insertButton,
