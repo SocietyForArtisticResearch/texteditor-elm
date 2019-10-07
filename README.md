@@ -36,16 +36,14 @@ General:
 - Server problem when exporting?
 - When a large document is imported, there is a timeout from the server. Perhaps a size limit is necessary?
 - add full screen mode (hide preview, adjust widths of codemirror etc..)
-
+- `<meta name="viewport" content="width=device-width, initial-scale=1.0">` (ask devs)
+- structure, settings should be only settings
 
 Casper:
 
 
 Luc:
 
-- display something while transcoding (status: waiting for server fix)
-- json decoder/encoder for RCExposition type
-- `<meta name="viewport" content="width=device-width, initial-scale=1.0">`
 
 
 
@@ -62,6 +60,7 @@ Luc:
 - Real-time collaborative editing
 - autofocus on right hand side
 - wikipedia-style footnotes
+- json decoder/encoder for RCExposition type
 
 ## DONE
 

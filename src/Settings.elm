@@ -81,4 +81,4 @@ footnoteSnippet num =
 
 missingMediaPlaceholder : String -> String
 missingMediaPlaceholder mediaName =
-    "<label title=\"you can add a file by using add media button\" style=\"padding: 10px; border: 1px dashed rgb(119, 119, 119); background-color: rgb(255, 183, 183); font-size:0.8em;\">[ problem: media with name \"" ++ mediaName ++ "\" does not exist in media ]</label>"
+    "<label title=\"You can add a file by using add media button.\" style=\"padding: 10px; border: 1px dashed rgb(119, 119, 119); background-color: rgb(255, 183, 183); font-size:0.8em;\"> Problem: media file with name \"" ++ mediaName ++ "\" does not exist in the media list. </label>"
