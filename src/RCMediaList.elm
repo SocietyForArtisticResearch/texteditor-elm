@@ -182,6 +182,7 @@ viewThumbnail object =
                 , controls True
                 , loop settings.loop
                 , autoplay settings.autoplay
+                , class "audio-preview"
                 ]
                 [ source [ src audioUrl, type_ "audio/mpeg" ] [] ]
 
@@ -195,6 +196,7 @@ viewThumbnail object =
                 , controls True
                 , loop settings.loop
                 , autoplay settings.autoplay
+                , class "video-preview"
                 ]
                 [ source [ src videoUrl, type_ "video/mp4" ] [] ]
 

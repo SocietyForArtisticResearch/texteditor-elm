@@ -217,6 +217,14 @@ body {
     width: 20%;
 }
 
+.audio-preview {
+    width: 20%;
+}
+
+.video-preview {
+    width: 20%;
+}
+
 .edit-media-dialog .media img {
     width: 368px;
     height: auto;
