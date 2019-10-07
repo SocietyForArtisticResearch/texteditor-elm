@@ -28,6 +28,7 @@ type Icon
     | RedoIcon
     | FullScreenIcon
     | NormalScreenIcon
+    | MediaIcon
 
 
 renderIcon : Icon -> Html msg
@@ -98,6 +99,9 @@ renderIcon icon =
 
         NormalScreenIcon ->
             iconImg "screen-normal.svg"
+
+        MediaIcon ->
+            iconImg "file-media.svg"
 
 
 type alias ButtonInfo msg =

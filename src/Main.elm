@@ -1171,6 +1171,7 @@ mkEditorToolbar tabState =
     , mkButton { default | onClickMsg = snippetMsg Settings.Link, icon = LinkIcon, title = "Hyperlink" }
     , mkButton { default | onClickMsg = snippetMsg Settings.Quote, icon = QuoteIcon, title = "Quote" }
     , mkButton { default | onClickMsg = InsertFootnoteAtCursor, text = "*", title = "Insert footnote" }
+    , mkButton { default | onClickMsg = OpenMediaPicker, icon = MediaIcon, title = "Insert media object" }
     , separator
     ]
         ++ (if cmEditor then
@@ -1280,9 +1281,6 @@ view model =
 
         editorToolbar =
             mkEditorToolbar (getTabState model.editor)
-
-        insertButton =
-            defaultButton OpenMediaPicker
     in
     div []
         [ viewNavbar model
@@ -1293,14 +1291,6 @@ view model =
         , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
         , div [ class "btn-toolbar", class "import-export-toolbar", attribute "role" "toolbar" ]
             [ optionalBlock showMediaUpload <| viewUpload UploadCloud False UploadMediaFileSelect "Upload Media" model.mediaUploadStatus
-            , mkButton
-                { insertButton
-                    | icon = ArrowDown
-                    , primary = True
-                    , text = "Insert Media"
-                    , offset = True
-                    , hidden = not showButtons
-                }
             , optionalBlock showButtons <| viewUpload ImportIcon True UploadImportFileSelect "Import Doc" model.importUploadStatus
             , optionalBlock showButtons <|
                 mkDropdown model.exportDropState

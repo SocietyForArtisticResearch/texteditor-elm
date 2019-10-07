@@ -11424,7 +11424,6 @@ var author$project$Main$DownloadExport = function (a) {
 var author$project$Main$InsertMediaAtCursor = function (a) {
 	return {$: 'InsertMediaAtCursor', a: a};
 };
-var author$project$Main$OpenMediaPicker = {$: 'OpenMediaPicker'};
 var author$project$Main$UploadImportFileSelect = {$: 'UploadImportFileSelect'};
 var author$project$Main$UploadMediaFileSelect = {$: 'UploadMediaFileSelect'};
 var author$project$Main$MediaEdit = function (a) {
@@ -11485,6 +11484,7 @@ var author$project$Main$InsertAtCursor = function (a) {
 	return {$: 'InsertAtCursor', a: a};
 };
 var author$project$Main$InsertFootnoteAtCursor = {$: 'InsertFootnoteAtCursor'};
+var author$project$Main$OpenMediaPicker = {$: 'OpenMediaPicker'};
 var author$project$Main$RedoCM = {$: 'RedoCM'};
 var author$project$Main$UndoCM = {$: 'UndoCM'};
 var elm$html$Html$span = _VirtualDom_node('span');
@@ -11545,6 +11545,7 @@ var author$project$View$BoldIcon = {$: 'BoldIcon'};
 var author$project$View$ItalicIcon = {$: 'ItalicIcon'};
 var author$project$View$LinkIcon = {$: 'LinkIcon'};
 var author$project$View$ListIcon = {$: 'ListIcon'};
+var author$project$View$MediaIcon = {$: 'MediaIcon'};
 var author$project$View$NumberedIcon = {$: 'NumberedIcon'};
 var author$project$View$QuoteIcon = {$: 'QuoteIcon'};
 var author$project$View$RedoIcon = {$: 'RedoIcon'};
@@ -11628,8 +11629,10 @@ var author$project$View$renderIcon = function (icon) {
 			return iconImg('redo.svg');
 		case 'FullScreenIcon':
 			return iconImg('screen-full.svg');
-		default:
+		case 'NormalScreenIcon':
 			return iconImg('screen-normal.svg');
+		default:
+			return iconImg('file-media.svg');
 	}
 };
 var elm$core$List$append = F2(
@@ -11968,6 +11971,10 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 				_Utils_update(
 					_default,
 					{onClickMsg: author$project$Main$InsertFootnoteAtCursor, text: '*', title: 'Insert footnote'})),
+				author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{icon: author$project$View$MediaIcon, onClickMsg: author$project$Main$OpenMediaPicker, title: 'Insert media object'})),
 				author$project$Main$separator
 			]),
 		cmEditor ? _List_fromArray(
@@ -16861,7 +16868,6 @@ var author$project$UserConfirm$view = F3(
 						rundis$elm_bootstrap$Bootstrap$Modal$small(
 							rundis$elm_bootstrap$Bootstrap$Modal$config(messages.reject))))));
 	});
-var author$project$View$ArrowDown = {$: 'ArrowDown'};
 var author$project$View$EyeIcon = {$: 'EyeIcon'};
 var author$project$View$ImportIcon = {$: 'ImportIcon'};
 var author$project$View$UploadCloud = {$: 'UploadCloud'};
@@ -17374,7 +17380,6 @@ var author$project$Main$view = function (model) {
 			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
 		}
 	}();
-	var insertButton = author$project$View$defaultButton(author$project$Main$OpenMediaPicker);
 	var editorToolbar = author$project$Main$mkEditorToolbar(
 		author$project$Main$getTabState(model.editor));
 	var editorCheckbox = function () {
@@ -17429,10 +17434,6 @@ var author$project$Main$view = function (model) {
 						author$project$View$optionalBlock,
 						showMediaUpload,
 						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, false, author$project$Main$UploadMediaFileSelect, 'Upload Media', model.mediaUploadStatus)),
-						author$project$View$mkButton(
-						_Utils_update(
-							insertButton,
-							{hidden: !showButtons, icon: author$project$View$ArrowDown, offset: true, primary: true, text: 'Insert Media'})),
 						A2(
 						author$project$View$optionalBlock,
 						showButtons,
