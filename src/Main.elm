@@ -1089,7 +1089,7 @@ viewEditorCheckbox markdownEditor =
         , Checkbox.checked <| markdownEditor == TextareaMarkdown
         , Checkbox.attrs [ class "editor-checkbox" ]
         ]
-        "Plain text"
+        "txt-mode"
 
 
 viewFullscreenSwitch : Bool -> Html Msg

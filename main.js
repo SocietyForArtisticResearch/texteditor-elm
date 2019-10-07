@@ -12637,7 +12637,7 @@ var author$project$Main$viewEditorCheckbox = function (markdownEditor) {
 						elm$html$Html$Attributes$class('editor-checkbox')
 					]))
 			]),
-		'Plain text');
+		'txt-mode');
 };
 var author$project$Main$ToggleFullscreen = function (a) {
 	return {$: 'ToggleFullscreen', a: a};
