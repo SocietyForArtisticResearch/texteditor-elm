@@ -626,6 +626,7 @@ toRCMediaObject researchId mediaEntry =
                 , description = mediaEntry.description
                 , copyright = mediaEntry.copyright
                 , license = mediaEntry.license
+                , status = mediaEntry.media.status
                 , caption = "" -- needd?
                 , version = 0 -- needed?
                 , mediaType = mtype

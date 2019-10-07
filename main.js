@@ -10510,6 +10510,7 @@ var author$project$RCAPI$toRCMediaObject = F2(
 					license: mediaEntry.license,
 					mediaType: mtype,
 					name: mediaEntry.name,
+					status: mediaEntry.media.status,
 					userClass: '',
 					version: 0
 				});

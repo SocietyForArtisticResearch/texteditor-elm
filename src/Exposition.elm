@@ -165,6 +165,7 @@ type alias RCMediaObject =
     , description : String
     , copyright : String
     , license : Licenses.License
+    , status : String
     , caption : String
     , version : Int
     , mediaType : RCMediaType

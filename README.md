@@ -45,7 +45,7 @@ Luc:
 
 - display something while transcoding (status: waiting for server fix)
 - json decoder/encoder for RCExposition type
-- <meta name="viewport" content="width=device-width, initial-scale=1.0">
+- `<meta name="viewport" content="width=device-width, initial-scale=1.0">`
 
 
 
