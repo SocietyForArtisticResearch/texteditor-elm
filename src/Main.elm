@@ -1109,10 +1109,10 @@ viewFullscreenSwitch currentMode =
 
         tit =
             if not currentMode then
-                "go fullscreen"
+                "Enter fullscreen"
 
             else
-                "close fullscreen"
+                "Exit fullscreen"
     in
     mkButton { btn | icon = icn, title = tit }
 
@@ -1163,19 +1163,19 @@ mkEditorToolbar tabState =
     , mkButton { default | onClickMsg = snippetMsg Settings.H2, text = "H2", title = "Header 2" }
     , mkButton { default | onClickMsg = snippetMsg Settings.H3, text = "H3", title = "Header 3" }
     , separator
-    , mkButton { default | onClickMsg = snippetMsg Settings.Bold, icon = BoldIcon, title = "bold" }
-    , mkButton { default | onClickMsg = snippetMsg Settings.Italic, icon = ItalicIcon, title = "italic" }
+    , mkButton { default | onClickMsg = snippetMsg Settings.Bold, icon = BoldIcon, title = "Bold" }
+    , mkButton { default | onClickMsg = snippetMsg Settings.Italic, icon = ItalicIcon, title = "Italic" }
     , separator
-    , mkButton { default | onClickMsg = snippetMsg Settings.Bullet, icon = ListIcon, title = "unordered list" }
-    , mkButton { default | onClickMsg = snippetMsg Settings.Numbered, icon = NumberedIcon, title = "numbered list" }
-    , mkButton { default | onClickMsg = snippetMsg Settings.Link, icon = LinkIcon, title = "hyperlink" }
-    , mkButton { default | onClickMsg = snippetMsg Settings.Quote, icon = QuoteIcon, title = "quote" }
-    , mkButton { default | onClickMsg = InsertFootnoteAtCursor, text = "*", title = "insert footnote" }
+    , mkButton { default | onClickMsg = snippetMsg Settings.Bullet, icon = ListIcon, title = "Unordered list" }
+    , mkButton { default | onClickMsg = snippetMsg Settings.Numbered, icon = NumberedIcon, title = "Numbered list" }
+    , mkButton { default | onClickMsg = snippetMsg Settings.Link, icon = LinkIcon, title = "Hyperlink" }
+    , mkButton { default | onClickMsg = snippetMsg Settings.Quote, icon = QuoteIcon, title = "Quote" }
+    , mkButton { default | onClickMsg = InsertFootnoteAtCursor, text = "*", title = "Insert footnote" }
     , separator
     ]
         ++ (if cmEditor then
-                [ mkButton { default | onClickMsg = UndoCM, icon = UndoIcon, title = "undo", hidden = not cmEditor }
-                , mkButton { default | onClickMsg = RedoCM, icon = RedoIcon, title = "redo", hidden = not cmEditor }
+                [ mkButton { default | onClickMsg = UndoCM, icon = UndoIcon, title = "Undo", hidden = not cmEditor }
+                , mkButton { default | onClickMsg = RedoCM, icon = RedoIcon, title = "Redo", hidden = not cmEditor }
                 , separator
                 ]
 
@@ -1191,7 +1191,7 @@ statusBar model =
             Exposition.wordCount model.exposition
 
         status =
-            "word count : " ++ String.fromInt wc
+            "Word count: " ++ String.fromInt wc
 
         saveButtonText =
             if model.saved then

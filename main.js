@@ -11921,7 +11921,7 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 					{
 						icon: author$project$View$BoldIcon,
 						onClickMsg: snippetMsg(author$project$Settings$Bold),
-						title: 'bold'
+						title: 'Bold'
 					})),
 				author$project$View$mkButton(
 				_Utils_update(
@@ -11929,7 +11929,7 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 					{
 						icon: author$project$View$ItalicIcon,
 						onClickMsg: snippetMsg(author$project$Settings$Italic),
-						title: 'italic'
+						title: 'Italic'
 					})),
 				author$project$Main$separator,
 				author$project$View$mkButton(
@@ -11938,7 +11938,7 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 					{
 						icon: author$project$View$ListIcon,
 						onClickMsg: snippetMsg(author$project$Settings$Bullet),
-						title: 'unordered list'
+						title: 'Unordered list'
 					})),
 				author$project$View$mkButton(
 				_Utils_update(
@@ -11946,7 +11946,7 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 					{
 						icon: author$project$View$NumberedIcon,
 						onClickMsg: snippetMsg(author$project$Settings$Numbered),
-						title: 'numbered list'
+						title: 'Numbered list'
 					})),
 				author$project$View$mkButton(
 				_Utils_update(
@@ -11954,7 +11954,7 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 					{
 						icon: author$project$View$LinkIcon,
 						onClickMsg: snippetMsg(author$project$Settings$Link),
-						title: 'hyperlink'
+						title: 'Hyperlink'
 					})),
 				author$project$View$mkButton(
 				_Utils_update(
@@ -11962,12 +11962,12 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 					{
 						icon: author$project$View$QuoteIcon,
 						onClickMsg: snippetMsg(author$project$Settings$Quote),
-						title: 'quote'
+						title: 'Quote'
 					})),
 				author$project$View$mkButton(
 				_Utils_update(
 					_default,
-					{onClickMsg: author$project$Main$InsertFootnoteAtCursor, text: '*', title: 'insert footnote'})),
+					{onClickMsg: author$project$Main$InsertFootnoteAtCursor, text: '*', title: 'Insert footnote'})),
 				author$project$Main$separator
 			]),
 		cmEditor ? _List_fromArray(
@@ -11975,11 +11975,11 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 				author$project$View$mkButton(
 				_Utils_update(
 					_default,
-					{hidden: !cmEditor, icon: author$project$View$UndoIcon, onClickMsg: author$project$Main$UndoCM, title: 'undo'})),
+					{hidden: !cmEditor, icon: author$project$View$UndoIcon, onClickMsg: author$project$Main$UndoCM, title: 'Undo'})),
 				author$project$View$mkButton(
 				_Utils_update(
 					_default,
-					{hidden: !cmEditor, icon: author$project$View$RedoIcon, onClickMsg: author$project$Main$RedoCM, title: 'redo'})),
+					{hidden: !cmEditor, icon: author$project$View$RedoIcon, onClickMsg: author$project$Main$RedoCM, title: 'Redo'})),
 				author$project$Main$separator
 			]) : _List_Nil);
 };
@@ -12042,7 +12042,7 @@ var author$project$View$SaveIcon = {$: 'SaveIcon'};
 var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var author$project$Main$statusBar = function (model) {
 	var wc = author$project$Exposition$wordCount(model.exposition);
-	var status = 'word count : ' + elm$core$String$fromInt(wc);
+	var status = 'Word count: ' + elm$core$String$fromInt(wc);
 	var saveButtonText = model.saved ? 'Saved' : 'Not Saved';
 	var saveButton = A2(
 		rundis$elm_bootstrap$Bootstrap$Button$button,
@@ -12638,7 +12638,7 @@ var author$project$Main$ToggleFullscreen = function (a) {
 var author$project$View$FullScreenIcon = {$: 'FullScreenIcon'};
 var author$project$View$NormalScreenIcon = {$: 'NormalScreenIcon'};
 var author$project$Main$viewFullscreenSwitch = function (currentMode) {
-	var tit = (!currentMode) ? 'go fullscreen' : 'close fullscreen';
+	var tit = (!currentMode) ? 'Enter fullscreen' : 'Exit fullscreen';
 	var message = author$project$Main$ToggleFullscreen(!currentMode);
 	var icn = (!currentMode) ? author$project$View$FullScreenIcon : author$project$View$NormalScreenIcon;
 	var btn = author$project$View$defaultButton(message);

@@ -38,6 +38,7 @@ General:
 - add full screen mode (hide preview, adjust widths of codemirror etc..)
 - `<meta name="viewport" content="width=device-width, initial-scale=1.0">` (ask devs)
 - structure, settings should be only settings
+- tooltips "button"
 
 Casper:
 
