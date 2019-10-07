@@ -9,6 +9,7 @@ import Exposition exposing (RCMediaObject)
 import Html exposing (Html, audio, div, img, source, span, text, video)
 import Html.Attributes exposing (autoplay, class, controls, id, loop, src, style, title, type_)
 import Html.Events exposing (onClick, onDoubleClick)
+import View exposing (defaultButton, mkButton)
 
 
 type alias TableMessages msg =
@@ -21,6 +22,7 @@ type alias TableMessages msg =
 type alias PickerMessages msg =
     { insertObject : RCMediaObject -> msg
     , closeModal : msg
+    , uploadMediaFileSelect : msg
     }
 
 
@@ -133,13 +135,26 @@ viewModalMediaPicker visibility objectList messages =
 
                         rows =
                             List.map rowFromRCObject objectList
+
+                        uploadButton =
+                            defaultButton messages.uploadMediaFileSelect
                     in
-                    Table.table
-                        { options = [ Table.hover, Table.striped, Table.small ]
-                        , thead = head
-                        , tbody =
-                            Table.tbody [] rows
-                        }
+                    div []
+                        [ mkButton
+                            { uploadButton
+                                | icon = View.UploadCloud
+                                , offset = False
+                                , title = "upload media"
+                                , text = "upload media"
+                                , primary = False
+                            }
+                        , Table.table
+                            { options = [ Table.hover, Table.striped, Table.small ]
+                            , thead = head
+                            , tbody =
+                                Table.tbody [] rows
+                            }
+                        ]
     in
     Modal.config messages.closeModal
         |> Modal.large

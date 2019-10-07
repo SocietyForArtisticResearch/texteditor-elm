@@ -379,7 +379,8 @@ makeTableMessages =
 
 makePickerMessages : RCMediaList.PickerMessages Msg
 makePickerMessages =
-    { insertObject = InsertMediaAtCursor
+    { uploadMediaFileSelect = UploadMediaFileSelect
+    , insertObject = InsertMediaAtCursor
     , closeModal = CloseMediaPicker
     }
 

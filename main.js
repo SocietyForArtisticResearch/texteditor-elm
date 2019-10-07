@@ -11475,7 +11475,7 @@ var author$project$Main$makeMediaEditFun = F3(
 		}
 	});
 var author$project$Main$CloseMediaPicker = {$: 'CloseMediaPicker'};
-var author$project$Main$makePickerMessages = {closeModal: author$project$Main$CloseMediaPicker, insertObject: author$project$Main$InsertMediaAtCursor};
+var author$project$Main$makePickerMessages = {closeModal: author$project$Main$CloseMediaPicker, insertObject: author$project$Main$InsertMediaAtCursor, uploadMediaFileSelect: author$project$Main$UploadMediaFileSelect};
 var author$project$Main$ConfirmMediaDelete = function (a) {
 	return {$: 'ConfirmMediaDelete', a: a};
 };
@@ -16619,6 +16619,7 @@ var author$project$RCMediaList$view = F2(
 					]));
 		}
 	});
+var author$project$View$UploadCloud = {$: 'UploadCloud'};
 var elm$html$Html$Events$onDoubleClick = function (msg) {
 	return A2(
 		elm$html$Html$Events$on,
@@ -16650,6 +16651,7 @@ var author$project$RCMediaList$viewModalMediaPicker = F3(
 							elm$html$Html$text('There are no objects yet, add by using the \"upload media\" button.')
 						]));
 			} else {
+				var uploadButton = author$project$View$defaultButton(messages.uploadMediaFileSelect);
 				var rowFromRCObject = function (object) {
 					var insertButton = A2(
 						rundis$elm_bootstrap$Bootstrap$Button$button,
@@ -16741,13 +16743,23 @@ var author$project$RCMediaList$viewModalMediaPicker = F3(
 									elm$html$Html$text('Insert')
 								]))
 						]));
-				return rundis$elm_bootstrap$Bootstrap$Table$table(
-					{
-						options: _List_fromArray(
-							[rundis$elm_bootstrap$Bootstrap$Table$hover, rundis$elm_bootstrap$Bootstrap$Table$striped, rundis$elm_bootstrap$Bootstrap$Table$small]),
-						tbody: A2(rundis$elm_bootstrap$Bootstrap$Table$tbody, _List_Nil, rows),
-						thead: head
-					});
+				return A2(
+					elm$html$Html$div,
+					_List_Nil,
+					_List_fromArray(
+						[
+							author$project$View$mkButton(
+							_Utils_update(
+								uploadButton,
+								{icon: author$project$View$UploadCloud, offset: false, primary: false, text: 'upload media', title: 'upload media'})),
+							rundis$elm_bootstrap$Bootstrap$Table$table(
+							{
+								options: _List_fromArray(
+									[rundis$elm_bootstrap$Bootstrap$Table$hover, rundis$elm_bootstrap$Bootstrap$Table$striped, rundis$elm_bootstrap$Bootstrap$Table$small]),
+								tbody: A2(rundis$elm_bootstrap$Bootstrap$Table$tbody, _List_Nil, rows),
+								thead: head
+							})
+						]));
 			}
 		}();
 		return A2(
@@ -16870,7 +16882,6 @@ var author$project$UserConfirm$view = F3(
 	});
 var author$project$View$EyeIcon = {$: 'EyeIcon'};
 var author$project$View$ImportIcon = {$: 'ImportIcon'};
-var author$project$View$UploadCloud = {$: 'UploadCloud'};
 var rundis$elm_bootstrap$Bootstrap$Dropdown$Attrs = function (a) {
 	return {$: 'Attrs', a: a};
 };
