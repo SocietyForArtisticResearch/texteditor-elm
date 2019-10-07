@@ -16751,7 +16751,7 @@ var author$project$RCMediaList$viewModalMediaPicker = F3(
 							author$project$View$mkButton(
 							_Utils_update(
 								uploadButton,
-								{icon: author$project$View$UploadCloud, offset: false, primary: false, text: 'upload media', title: 'upload media'})),
+								{icon: author$project$View$UploadCloud, offset: false, primary: false, text: 'Upload Media', title: 'Add video, audio, pdf or images files'})),
 							rundis$elm_bootstrap$Bootstrap$Table$table(
 							{
 								options: _List_fromArray(

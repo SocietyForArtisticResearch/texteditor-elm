@@ -144,8 +144,8 @@ viewModalMediaPicker visibility objectList messages =
                             { uploadButton
                                 | icon = View.UploadCloud
                                 , offset = False
-                                , title = "upload media"
-                                , text = "upload media"
+                                , title = "Add video, audio, pdf or images files"
+                                , text = "Upload Media"
                                 , primary = False
                             }
                         , Table.table
