@@ -15864,7 +15864,7 @@ var author$project$RCMediaList$viewThumbnail = function (object) {
 				elm$html$Html$audio,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$title('preview'),
+						elm$html$Html$Attributes$title('Preview'),
 						elm$html$Html$Attributes$controls(true),
 						elm$html$Html$Attributes$loop(settings.loop),
 						elm$html$Html$Attributes$autoplay(settings.autoplay)
@@ -15887,7 +15887,7 @@ var author$project$RCMediaList$viewThumbnail = function (object) {
 				elm$html$Html$video,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$title('preview'),
+						elm$html$Html$Attributes$title('Preview'),
 						elm$html$Html$Attributes$controls(true),
 						elm$html$Html$Attributes$loop(settings.loop),
 						elm$html$Html$Attributes$autoplay(settings.autoplay)
@@ -15909,7 +15909,7 @@ var author$project$RCMediaList$viewThumbnail = function (object) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						elm$html$Html$text('no preview')
+						elm$html$Html$text('No preview')
 					]));
 	}
 };
@@ -16478,7 +16478,7 @@ var author$project$RCMediaList$view = F2(
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('no objects yet. Hint: add a file by using the \"add media\" button')
+								elm$html$Html$text('There are no objects yet. Hint: add a file by using the \"upload media\" button.')
 							]))
 					]));
 		} else {
@@ -16499,7 +16499,7 @@ var author$project$RCMediaList$view = F2(
 						]),
 					_List_fromArray(
 						[
-							elm$html$Html$text('x')
+							elm$html$Html$text('Delete')
 						]));
 				var editButton = A2(
 					rundis$elm_bootstrap$Bootstrap$Button$button,
@@ -16563,21 +16563,21 @@ var author$project$RCMediaList$view = F2(
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('preview')
+								elm$html$Html$text('Preview')
 							])),
 						A2(
 						rundis$elm_bootstrap$Bootstrap$Table$th,
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('id')
+								elm$html$Html$text('Id')
 							])),
 						A2(
 						rundis$elm_bootstrap$Bootstrap$Table$th,
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('name')
+								elm$html$Html$text('Name')
 							])),
 						A2(
 						rundis$elm_bootstrap$Bootstrap$Table$th,
@@ -16588,7 +16588,7 @@ var author$project$RCMediaList$view = F2(
 							]),
 						_List_fromArray(
 							[
-								elm$html$Html$text('edit')
+								elm$html$Html$text('Edit')
 							]))
 					]));
 			return A2(
@@ -16638,7 +16638,7 @@ var author$project$RCMediaList$viewModalMediaPicker = F3(
 					_List_Nil,
 					_List_fromArray(
 						[
-							elm$html$Html$text('no objects yet, add by using + Media button')
+							elm$html$Html$text('There are no objects yet, add by using the \"upload media\" button.')
 						]));
 			} else {
 				var rowFromRCObject = function (object) {
@@ -16658,7 +16658,7 @@ var author$project$RCMediaList$viewModalMediaPicker = F3(
 							]),
 						_List_fromArray(
 							[
-								elm$html$Html$text('insert')
+								elm$html$Html$text('Insert')
 							]));
 					return A2(
 						rundis$elm_bootstrap$Bootstrap$Table$tr,
@@ -16708,28 +16708,28 @@ var author$project$RCMediaList$viewModalMediaPicker = F3(
 							_List_Nil,
 							_List_fromArray(
 								[
-									elm$html$Html$text('preview')
+									elm$html$Html$text('Preview')
 								])),
 							A2(
 							rundis$elm_bootstrap$Bootstrap$Table$th,
 							_List_Nil,
 							_List_fromArray(
 								[
-									elm$html$Html$text('id')
+									elm$html$Html$text('Id')
 								])),
 							A2(
 							rundis$elm_bootstrap$Bootstrap$Table$th,
 							_List_Nil,
 							_List_fromArray(
 								[
-									elm$html$Html$text('name')
+									elm$html$Html$text('Name')
 								])),
 							A2(
 							rundis$elm_bootstrap$Bootstrap$Table$th,
 							_List_Nil,
 							_List_fromArray(
 								[
-									elm$html$Html$text('insert')
+									elm$html$Html$text('Insert')
 								]))
 						]));
 				return rundis$elm_bootstrap$Bootstrap$Table$table(
@@ -16762,7 +16762,7 @@ var author$project$RCMediaList$viewModalMediaPicker = F3(
 							]),
 						_List_fromArray(
 							[
-								elm$html$Html$text('cancel')
+								elm$html$Html$text('Cancel')
 							]))
 					]),
 				A3(
@@ -16775,7 +16775,7 @@ var author$project$RCMediaList$viewModalMediaPicker = F3(
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('select a media to insert')
+								elm$html$Html$text('Select a media object to insert.')
 							]),
 						A2(
 							rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
