@@ -7875,6 +7875,35 @@ var author$project$Exposition$preloadToString = function (p) {
 			return 'none';
 	}
 };
+var zwilias$elm_html_string$Html$String$label = zwilias$elm_html_string$Html$String$node('label');
+var zwilias$elm_html_string$Html$Types$TextNode = function (a) {
+	return {$: 'TextNode', a: a};
+};
+var zwilias$elm_html_string$Html$String$text = zwilias$elm_html_string$Html$Types$TextNode;
+var zwilias$elm_html_string$Html$Types$Style = F2(
+	function (a, b) {
+		return {$: 'Style', a: a, b: b};
+	});
+var zwilias$elm_html_string$Html$String$Attributes$style = zwilias$elm_html_string$Html$Types$Style;
+var zwilias$elm_html_string$Html$String$Attributes$title = function (val) {
+	return A2(zwilias$elm_html_string$Html$String$Attributes$stringProperty, 'title', val);
+};
+var author$project$Exposition$transcodingMediaPlaceholder = function (transcodingString) {
+	return A2(
+		zwilias$elm_html_string$Html$String$label,
+		_List_fromArray(
+			[
+				zwilias$elm_html_string$Html$String$Attributes$title('Wait for transcoding to finish or upload media again.'),
+				A2(zwilias$elm_html_string$Html$String$Attributes$style, 'padding', '10px'),
+				A2(zwilias$elm_html_string$Html$String$Attributes$style, 'border', '1px dashed rgb(119, 119, 119)'),
+				A2(zwilias$elm_html_string$Html$String$Attributes$style, 'background-color', 'rgb(255, 183, 183)'),
+				A2(zwilias$elm_html_string$Html$String$Attributes$style, 'font-size', '0.8em')
+			]),
+		_List_fromArray(
+			[
+				zwilias$elm_html_string$Html$String$text(transcodingString)
+			]));
+};
 var zwilias$elm_html_string$Html$String$audio = zwilias$elm_html_string$Html$String$node('audio');
 var zwilias$elm_html_string$Html$String$figcaption = zwilias$elm_html_string$Html$String$node('figcaption');
 var zwilias$elm_html_string$Html$String$figure = zwilias$elm_html_string$Html$String$node('figure');
@@ -7886,10 +7915,6 @@ var zwilias$elm_html_string$Html$String$nodeWithoutChildren = F3(
 var zwilias$elm_html_string$Html$String$img = zwilias$elm_html_string$Html$String$nodeWithoutChildren('img');
 var zwilias$elm_html_string$Html$String$object = zwilias$elm_html_string$Html$String$node('object');
 var zwilias$elm_html_string$Html$String$source = zwilias$elm_html_string$Html$String$nodeWithoutChildren('source');
-var zwilias$elm_html_string$Html$Types$TextNode = function (a) {
-	return {$: 'TextNode', a: a};
-};
-var zwilias$elm_html_string$Html$String$text = zwilias$elm_html_string$Html$Types$TextNode;
 var zwilias$elm_html_string$Html$String$video = zwilias$elm_html_string$Html$String$node('video');
 var zwilias$elm_html_string$Html$String$Attributes$alt = function (val) {
 	return A2(zwilias$elm_html_string$Html$String$Attributes$stringProperty, 'alt', val);
@@ -7916,210 +7941,216 @@ var zwilias$elm_html_string$Html$String$Attributes$src = function (val) {
 };
 var author$project$Exposition$asHtml = F2(
 	function (media, mediaId) {
-		var _n0 = _Utils_Tuple2(media.mediaType, media);
-		switch (_n0.a.$) {
-			case 'RCImage':
-				var _n1 = _n0.a;
-				var data = _n0.b;
-				return A2(
-					author$project$Exposition$objectDiv,
-					data,
-					A2(
-						zwilias$elm_html_string$Html$String$figure,
-						_List_fromArray(
-							[
-								zwilias$elm_html_string$Html$String$Attributes$id(mediaId)
-							]),
-						_List_fromArray(
-							[
-								A2(
-								zwilias$elm_html_string$Html$String$img,
-								A2(
-									author$project$Exposition$addDimensions,
-									data.dimensions,
-									_List_fromArray(
-										[
-											zwilias$elm_html_string$Html$String$Attributes$src(
-											author$project$Exposition$mediaUrl(data)),
-											zwilias$elm_html_string$Html$String$Attributes$alt(data.name)
-										])),
-								_List_Nil),
-								A2(
-								zwilias$elm_html_string$Html$String$figcaption,
-								_List_Nil,
-								_List_fromArray(
-									[
-										zwilias$elm_html_string$Html$String$text(data.caption)
-									]))
-							])));
-			case 'RCPdf':
-				var _n2 = _n0.a;
-				var data = _n0.b;
-				return A2(
-					author$project$Exposition$objectDiv,
-					data,
-					A2(
-						zwilias$elm_html_string$Html$String$figure,
-						_List_fromArray(
-							[
-								zwilias$elm_html_string$Html$String$Attributes$id(mediaId)
-							]),
-						_List_fromArray(
-							[
-								A2(
-								zwilias$elm_html_string$Html$String$object,
-								A2(
-									author$project$Exposition$addDimensions,
-									data.dimensions,
-									_List_fromArray(
-										[
-											A2(
-											zwilias$elm_html_string$Html$String$Attributes$attribute,
-											'data',
-											author$project$Exposition$mediaUrl(data)),
-											A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'type', 'application/pdf'),
-											A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'title', data.name)
-										])),
-								_List_Nil),
-								A2(
-								zwilias$elm_html_string$Html$String$figcaption,
-								_List_Nil,
-								_List_fromArray(
-									[
-										zwilias$elm_html_string$Html$String$text(data.caption)
-									]))
-							])));
-			case 'RCSvg':
-				var _n3 = _n0.a;
-				var data = _n0.b;
-				return A2(
-					author$project$Exposition$objectDiv,
-					data,
-					A2(
-						zwilias$elm_html_string$Html$String$figure,
-						_List_fromArray(
-							[
-								zwilias$elm_html_string$Html$String$Attributes$id(mediaId)
-							]),
-						_List_fromArray(
-							[
-								A2(
-								zwilias$elm_html_string$Html$String$object,
-								A2(
-									author$project$Exposition$addDimensions,
-									data.dimensions,
-									_List_fromArray(
-										[
-											A2(
-											zwilias$elm_html_string$Html$String$Attributes$attribute,
-											'data',
-											author$project$Exposition$mediaUrl(data)),
-											A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'type', 'application/svg+xml'),
-											A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'title', data.name)
-										])),
-								_List_Nil),
-								A2(
-								zwilias$elm_html_string$Html$String$figcaption,
-								_List_Nil,
-								_List_fromArray(
-									[
-										zwilias$elm_html_string$Html$String$text(data.caption)
-									]))
-							])));
-			case 'RCAudio':
-				var playerData = _n0.a.a;
-				var data = _n0.b;
-				return A2(
-					author$project$Exposition$objectDiv,
-					data,
-					A2(
-						zwilias$elm_html_string$Html$String$figure,
-						_List_fromArray(
-							[
-								zwilias$elm_html_string$Html$String$Attributes$id(mediaId)
-							]),
-						_List_fromArray(
-							[
-								A2(
-								zwilias$elm_html_string$Html$String$audio,
-								A2(
-									author$project$Exposition$addDimensions,
-									data.dimensions,
-									_List_fromArray(
-										[
-											zwilias$elm_html_string$Html$String$Attributes$controls(true),
-											zwilias$elm_html_string$Html$String$Attributes$preload(
-											author$project$Exposition$preloadToString(playerData.preload)),
-											zwilias$elm_html_string$Html$String$Attributes$autoplay(playerData.autoplay),
-											zwilias$elm_html_string$Html$String$Attributes$loop(playerData.loop),
-											zwilias$elm_html_string$Html$String$Attributes$class('rcaudio')
-										])),
-								_List_fromArray(
-									[
-										A2(
-										zwilias$elm_html_string$Html$String$source,
-										_List_fromArray(
-											[
-												zwilias$elm_html_string$Html$String$Attributes$src(
-												author$project$Exposition$mediaUrl(data))
-											]),
-										_List_Nil)
-									])),
-								A2(
-								zwilias$elm_html_string$Html$String$figcaption,
-								_List_Nil,
-								_List_fromArray(
-									[
-										zwilias$elm_html_string$Html$String$text(data.caption)
-									]))
-							])));
-			default:
-				var playerData = _n0.a.a;
-				var data = _n0.b;
-				return A2(
-					author$project$Exposition$objectDiv,
-					data,
-					A2(
-						zwilias$elm_html_string$Html$String$figure,
-						_List_fromArray(
-							[
-								zwilias$elm_html_string$Html$String$Attributes$id(mediaId)
-							]),
-						_List_fromArray(
-							[
-								A2(
-								zwilias$elm_html_string$Html$String$video,
-								A2(
-									author$project$Exposition$addDimensions,
-									data.dimensions,
-									_List_fromArray(
-										[
-											zwilias$elm_html_string$Html$String$Attributes$controls(true),
-											zwilias$elm_html_string$Html$String$Attributes$preload(
-											author$project$Exposition$preloadToString(playerData.preload)),
-											zwilias$elm_html_string$Html$String$Attributes$autoplay(playerData.autoplay),
-											zwilias$elm_html_string$Html$String$Attributes$loop(playerData.loop)
-										])),
-								_List_fromArray(
-									[
-										A2(
-										zwilias$elm_html_string$Html$String$source,
+		var _n0 = media.status;
+		if (_n0.$ === 'NotTranscoded') {
+			var str = _n0.a;
+			return author$project$Exposition$transcodingMediaPlaceholder(str);
+		} else {
+			var _n1 = _Utils_Tuple2(media.mediaType, media);
+			switch (_n1.a.$) {
+				case 'RCImage':
+					var _n2 = _n1.a;
+					var data = _n1.b;
+					return A2(
+						author$project$Exposition$objectDiv,
+						data,
+						A2(
+							zwilias$elm_html_string$Html$String$figure,
+							_List_fromArray(
+								[
+									zwilias$elm_html_string$Html$String$Attributes$id(mediaId)
+								]),
+							_List_fromArray(
+								[
+									A2(
+									zwilias$elm_html_string$Html$String$img,
+									A2(
+										author$project$Exposition$addDimensions,
+										data.dimensions,
 										_List_fromArray(
 											[
 												zwilias$elm_html_string$Html$String$Attributes$src(
 												author$project$Exposition$mediaUrl(data)),
-												A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'type', 'video/mp4')
-											]),
-										_List_Nil)
-									])),
-								A2(
-								zwilias$elm_html_string$Html$String$figcaption,
-								_List_Nil,
-								_List_fromArray(
-									[
-										zwilias$elm_html_string$Html$String$text(data.caption)
-									]))
-							])));
+												zwilias$elm_html_string$Html$String$Attributes$alt(data.name)
+											])),
+									_List_Nil),
+									A2(
+									zwilias$elm_html_string$Html$String$figcaption,
+									_List_Nil,
+									_List_fromArray(
+										[
+											zwilias$elm_html_string$Html$String$text(data.caption)
+										]))
+								])));
+				case 'RCPdf':
+					var _n3 = _n1.a;
+					var data = _n1.b;
+					return A2(
+						author$project$Exposition$objectDiv,
+						data,
+						A2(
+							zwilias$elm_html_string$Html$String$figure,
+							_List_fromArray(
+								[
+									zwilias$elm_html_string$Html$String$Attributes$id(mediaId)
+								]),
+							_List_fromArray(
+								[
+									A2(
+									zwilias$elm_html_string$Html$String$object,
+									A2(
+										author$project$Exposition$addDimensions,
+										data.dimensions,
+										_List_fromArray(
+											[
+												A2(
+												zwilias$elm_html_string$Html$String$Attributes$attribute,
+												'data',
+												author$project$Exposition$mediaUrl(data)),
+												A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'type', 'application/pdf'),
+												A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'title', data.name)
+											])),
+									_List_Nil),
+									A2(
+									zwilias$elm_html_string$Html$String$figcaption,
+									_List_Nil,
+									_List_fromArray(
+										[
+											zwilias$elm_html_string$Html$String$text(data.caption)
+										]))
+								])));
+				case 'RCSvg':
+					var _n4 = _n1.a;
+					var data = _n1.b;
+					return A2(
+						author$project$Exposition$objectDiv,
+						data,
+						A2(
+							zwilias$elm_html_string$Html$String$figure,
+							_List_fromArray(
+								[
+									zwilias$elm_html_string$Html$String$Attributes$id(mediaId)
+								]),
+							_List_fromArray(
+								[
+									A2(
+									zwilias$elm_html_string$Html$String$object,
+									A2(
+										author$project$Exposition$addDimensions,
+										data.dimensions,
+										_List_fromArray(
+											[
+												A2(
+												zwilias$elm_html_string$Html$String$Attributes$attribute,
+												'data',
+												author$project$Exposition$mediaUrl(data)),
+												A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'type', 'application/svg+xml'),
+												A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'title', data.name)
+											])),
+									_List_Nil),
+									A2(
+									zwilias$elm_html_string$Html$String$figcaption,
+									_List_Nil,
+									_List_fromArray(
+										[
+											zwilias$elm_html_string$Html$String$text(data.caption)
+										]))
+								])));
+				case 'RCAudio':
+					var playerData = _n1.a.a;
+					var data = _n1.b;
+					return A2(
+						author$project$Exposition$objectDiv,
+						data,
+						A2(
+							zwilias$elm_html_string$Html$String$figure,
+							_List_fromArray(
+								[
+									zwilias$elm_html_string$Html$String$Attributes$id(mediaId)
+								]),
+							_List_fromArray(
+								[
+									A2(
+									zwilias$elm_html_string$Html$String$audio,
+									A2(
+										author$project$Exposition$addDimensions,
+										data.dimensions,
+										_List_fromArray(
+											[
+												zwilias$elm_html_string$Html$String$Attributes$controls(true),
+												zwilias$elm_html_string$Html$String$Attributes$preload(
+												author$project$Exposition$preloadToString(playerData.preload)),
+												zwilias$elm_html_string$Html$String$Attributes$autoplay(playerData.autoplay),
+												zwilias$elm_html_string$Html$String$Attributes$loop(playerData.loop),
+												zwilias$elm_html_string$Html$String$Attributes$class('rcaudio')
+											])),
+									_List_fromArray(
+										[
+											A2(
+											zwilias$elm_html_string$Html$String$source,
+											_List_fromArray(
+												[
+													zwilias$elm_html_string$Html$String$Attributes$src(
+													author$project$Exposition$mediaUrl(data))
+												]),
+											_List_Nil)
+										])),
+									A2(
+									zwilias$elm_html_string$Html$String$figcaption,
+									_List_Nil,
+									_List_fromArray(
+										[
+											zwilias$elm_html_string$Html$String$text(data.caption)
+										]))
+								])));
+				default:
+					var playerData = _n1.a.a;
+					var data = _n1.b;
+					return A2(
+						author$project$Exposition$objectDiv,
+						data,
+						A2(
+							zwilias$elm_html_string$Html$String$figure,
+							_List_fromArray(
+								[
+									zwilias$elm_html_string$Html$String$Attributes$id(mediaId)
+								]),
+							_List_fromArray(
+								[
+									A2(
+									zwilias$elm_html_string$Html$String$video,
+									A2(
+										author$project$Exposition$addDimensions,
+										data.dimensions,
+										_List_fromArray(
+											[
+												zwilias$elm_html_string$Html$String$Attributes$controls(true),
+												zwilias$elm_html_string$Html$String$Attributes$preload(
+												author$project$Exposition$preloadToString(playerData.preload)),
+												zwilias$elm_html_string$Html$String$Attributes$autoplay(playerData.autoplay),
+												zwilias$elm_html_string$Html$String$Attributes$loop(playerData.loop)
+											])),
+									_List_fromArray(
+										[
+											A2(
+											zwilias$elm_html_string$Html$String$source,
+											_List_fromArray(
+												[
+													zwilias$elm_html_string$Html$String$Attributes$src(
+													author$project$Exposition$mediaUrl(data)),
+													A2(zwilias$elm_html_string$Html$String$Attributes$attribute, 'type', 'video/mp4')
+												]),
+											_List_Nil)
+										])),
+									A2(
+									zwilias$elm_html_string$Html$String$figcaption,
+									_List_Nil,
+									_List_fromArray(
+										[
+											zwilias$elm_html_string$Html$String$text(data.caption)
+										]))
+								])));
+			}
 		}
 	});
 var elm$core$List$head = function (list) {
@@ -8154,7 +8185,7 @@ var author$project$Exposition$objectByNameOrId = F2(
 		}
 	});
 var author$project$Settings$missingMediaPlaceholder = function (mediaName) {
-	return '<label title=\"you can add a file by using add media button\" style=\"padding: 10px; border: 1px dashed rgb(119, 119, 119); background-color: rgb(255, 183, 183); font-size:0.8em;\">[ problem: media with name \"' + (mediaName + '\" does not exist in media ]</label>');
+	return '<label title=\"You can add a file by using add media button.\" style=\"padding: 10px; border: 1px dashed rgb(119, 119, 119); background-color: rgb(255, 183, 183); font-size:0.8em;\"> Problem: media file with name \"' + (mediaName + '\" does not exist in the media list. </label>');
 };
 var elm$core$Maybe$map = F2(
 	function (f, maybe) {
@@ -10454,6 +10485,10 @@ var author$project$RCAPI$toRCExposition = F3(
 			toc: _List_Nil
 		};
 	});
+var author$project$Exposition$NotTranscoded = function (a) {
+	return {$: 'NotTranscoded', a: a};
+};
+var author$project$Exposition$Transcoded = {$: 'Transcoded'};
 var author$project$RCAPI$getDimensions = function (media) {
 	var _n0 = _Utils_Tuple2(media.width, media.height);
 	if ((_n0.a.$ === 'Just') && (_n0.b.$ === 'Just')) {
@@ -10495,6 +10530,13 @@ var author$project$RCAPI$getType = function (media) {
 };
 var author$project$RCAPI$toRCMediaObject = F2(
 	function (researchId, mediaEntry) {
+		var stringToTranscoding = function (str) {
+			if (str === 'Transcoded') {
+				return author$project$Exposition$Transcoded;
+			} else {
+				return author$project$Exposition$NotTranscoded(str);
+			}
+		};
 		var mediaT = author$project$RCAPI$getType(mediaEntry.media);
 		if (mediaT.$ === 'Ok') {
 			var mtype = mediaT.a;
@@ -10510,6 +10552,7 @@ var author$project$RCAPI$toRCMediaObject = F2(
 					license: mediaEntry.license,
 					mediaType: mtype,
 					name: mediaEntry.name,
+					status: stringToTranscoding(mediaEntry.media.status),
 					userClass: '',
 					version: 0
 				});
@@ -11878,7 +11921,7 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 					{
 						icon: author$project$View$BoldIcon,
 						onClickMsg: snippetMsg(author$project$Settings$Bold),
-						title: 'bold'
+						title: 'Bold'
 					})),
 				author$project$View$mkButton(
 				_Utils_update(
@@ -11886,7 +11929,7 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 					{
 						icon: author$project$View$ItalicIcon,
 						onClickMsg: snippetMsg(author$project$Settings$Italic),
-						title: 'italic'
+						title: 'Italic'
 					})),
 				author$project$Main$separator,
 				author$project$View$mkButton(
@@ -11895,7 +11938,7 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 					{
 						icon: author$project$View$ListIcon,
 						onClickMsg: snippetMsg(author$project$Settings$Bullet),
-						title: 'unordered list'
+						title: 'Unordered list'
 					})),
 				author$project$View$mkButton(
 				_Utils_update(
@@ -11903,7 +11946,7 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 					{
 						icon: author$project$View$NumberedIcon,
 						onClickMsg: snippetMsg(author$project$Settings$Numbered),
-						title: 'numbered list'
+						title: 'Numbered list'
 					})),
 				author$project$View$mkButton(
 				_Utils_update(
@@ -11911,7 +11954,7 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 					{
 						icon: author$project$View$LinkIcon,
 						onClickMsg: snippetMsg(author$project$Settings$Link),
-						title: 'hyperlink'
+						title: 'Hyperlink'
 					})),
 				author$project$View$mkButton(
 				_Utils_update(
@@ -11919,12 +11962,12 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 					{
 						icon: author$project$View$QuoteIcon,
 						onClickMsg: snippetMsg(author$project$Settings$Quote),
-						title: 'quote'
+						title: 'Quote'
 					})),
 				author$project$View$mkButton(
 				_Utils_update(
 					_default,
-					{onClickMsg: author$project$Main$InsertFootnoteAtCursor, text: '*', title: 'insert footnote'})),
+					{onClickMsg: author$project$Main$InsertFootnoteAtCursor, text: '*', title: 'Insert footnote'})),
 				author$project$Main$separator
 			]),
 		cmEditor ? _List_fromArray(
@@ -11932,11 +11975,11 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 				author$project$View$mkButton(
 				_Utils_update(
 					_default,
-					{hidden: !cmEditor, icon: author$project$View$UndoIcon, onClickMsg: author$project$Main$UndoCM, title: 'undo'})),
+					{hidden: !cmEditor, icon: author$project$View$UndoIcon, onClickMsg: author$project$Main$UndoCM, title: 'Undo'})),
 				author$project$View$mkButton(
 				_Utils_update(
 					_default,
-					{hidden: !cmEditor, icon: author$project$View$RedoIcon, onClickMsg: author$project$Main$RedoCM, title: 'redo'})),
+					{hidden: !cmEditor, icon: author$project$View$RedoIcon, onClickMsg: author$project$Main$RedoCM, title: 'Redo'})),
 				author$project$Main$separator
 			]) : _List_Nil);
 };
@@ -11999,7 +12042,7 @@ var author$project$View$SaveIcon = {$: 'SaveIcon'};
 var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var author$project$Main$statusBar = function (model) {
 	var wc = author$project$Exposition$wordCount(model.exposition);
-	var status = 'word count : ' + elm$core$String$fromInt(wc);
+	var status = 'Word count: ' + elm$core$String$fromInt(wc);
 	var saveButtonText = model.saved ? 'Saved' : 'Not Saved';
 	var saveButton = A2(
 		rundis$elm_bootstrap$Bootstrap$Button$button,
@@ -12595,7 +12638,7 @@ var author$project$Main$ToggleFullscreen = function (a) {
 var author$project$View$FullScreenIcon = {$: 'FullScreenIcon'};
 var author$project$View$NormalScreenIcon = {$: 'NormalScreenIcon'};
 var author$project$Main$viewFullscreenSwitch = function (currentMode) {
-	var tit = (!currentMode) ? 'go fullscreen' : 'close fullscreen';
+	var tit = (!currentMode) ? 'Enter fullscreen' : 'Exit fullscreen';
 	var message = author$project$Main$ToggleFullscreen(!currentMode);
 	var icn = (!currentMode) ? author$project$View$FullScreenIcon : author$project$View$NormalScreenIcon;
 	var btn = author$project$View$defaultButton(message);
@@ -15821,7 +15864,7 @@ var author$project$RCMediaList$viewThumbnail = function (object) {
 				elm$html$Html$audio,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$title('preview'),
+						elm$html$Html$Attributes$title('Preview'),
 						elm$html$Html$Attributes$controls(true),
 						elm$html$Html$Attributes$loop(settings.loop),
 						elm$html$Html$Attributes$autoplay(settings.autoplay)
@@ -15844,7 +15887,7 @@ var author$project$RCMediaList$viewThumbnail = function (object) {
 				elm$html$Html$video,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$title('preview'),
+						elm$html$Html$Attributes$title('Preview'),
 						elm$html$Html$Attributes$controls(true),
 						elm$html$Html$Attributes$loop(settings.loop),
 						elm$html$Html$Attributes$autoplay(settings.autoplay)
@@ -15866,7 +15909,7 @@ var author$project$RCMediaList$viewThumbnail = function (object) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						elm$html$Html$text('no preview')
+						elm$html$Html$text('No preview')
 					]));
 	}
 };
@@ -16435,7 +16478,7 @@ var author$project$RCMediaList$view = F2(
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('no objects yet. Hint: add a file by using the \"add media\" button')
+								elm$html$Html$text('There are no objects yet. Hint: add a file by using the \"upload media\" button.')
 							]))
 					]));
 		} else {
@@ -16456,7 +16499,7 @@ var author$project$RCMediaList$view = F2(
 						]),
 					_List_fromArray(
 						[
-							elm$html$Html$text('x')
+							elm$html$Html$text('Delete')
 						]));
 				var editButton = A2(
 					rundis$elm_bootstrap$Bootstrap$Button$button,
@@ -16520,21 +16563,21 @@ var author$project$RCMediaList$view = F2(
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('preview')
+								elm$html$Html$text('Preview')
 							])),
 						A2(
 						rundis$elm_bootstrap$Bootstrap$Table$th,
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('id')
+								elm$html$Html$text('Id')
 							])),
 						A2(
 						rundis$elm_bootstrap$Bootstrap$Table$th,
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('name')
+								elm$html$Html$text('Name')
 							])),
 						A2(
 						rundis$elm_bootstrap$Bootstrap$Table$th,
@@ -16545,7 +16588,7 @@ var author$project$RCMediaList$view = F2(
 							]),
 						_List_fromArray(
 							[
-								elm$html$Html$text('edit')
+								elm$html$Html$text('Edit')
 							]))
 					]));
 			return A2(
@@ -16595,7 +16638,7 @@ var author$project$RCMediaList$viewModalMediaPicker = F3(
 					_List_Nil,
 					_List_fromArray(
 						[
-							elm$html$Html$text('no objects yet, add by using + Media button')
+							elm$html$Html$text('There are no objects yet, add by using the \"upload media\" button.')
 						]));
 			} else {
 				var rowFromRCObject = function (object) {
@@ -16615,7 +16658,7 @@ var author$project$RCMediaList$viewModalMediaPicker = F3(
 							]),
 						_List_fromArray(
 							[
-								elm$html$Html$text('insert')
+								elm$html$Html$text('Insert')
 							]));
 					return A2(
 						rundis$elm_bootstrap$Bootstrap$Table$tr,
@@ -16665,28 +16708,28 @@ var author$project$RCMediaList$viewModalMediaPicker = F3(
 							_List_Nil,
 							_List_fromArray(
 								[
-									elm$html$Html$text('preview')
+									elm$html$Html$text('Preview')
 								])),
 							A2(
 							rundis$elm_bootstrap$Bootstrap$Table$th,
 							_List_Nil,
 							_List_fromArray(
 								[
-									elm$html$Html$text('id')
+									elm$html$Html$text('Id')
 								])),
 							A2(
 							rundis$elm_bootstrap$Bootstrap$Table$th,
 							_List_Nil,
 							_List_fromArray(
 								[
-									elm$html$Html$text('name')
+									elm$html$Html$text('Name')
 								])),
 							A2(
 							rundis$elm_bootstrap$Bootstrap$Table$th,
 							_List_Nil,
 							_List_fromArray(
 								[
-									elm$html$Html$text('insert')
+									elm$html$Html$text('Insert')
 								]))
 						]));
 				return rundis$elm_bootstrap$Bootstrap$Table$table(
@@ -16719,7 +16762,7 @@ var author$project$RCMediaList$viewModalMediaPicker = F3(
 							]),
 						_List_fromArray(
 							[
-								elm$html$Html$text('cancel')
+								elm$html$Html$text('Cancel')
 							]))
 					]),
 				A3(
@@ -16732,7 +16775,7 @@ var author$project$RCMediaList$viewModalMediaPicker = F3(
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('select a media to insert')
+								elm$html$Html$text('Select a media object to insert.')
 							]),
 						A2(
 							rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,

@@ -33,20 +33,20 @@ view objectList messages =
     case objectList of
         [] ->
             div [ id "media-list", style "display" "none" ]
-                [ Alert.simpleInfo [] [ text "no objects yet. Hint: add a file by using the \"add media\" button" ]
+                [ Alert.simpleInfo [] [ text "There are no objects yet. Hint: add a file by using the \"upload media\" button." ]
                 ]
 
         _ ->
             let
                 head =
                     Table.simpleThead
-                        [ Table.th [] [ text "preview" ]
-                        , Table.th [] [ text "id" ]
-                        , Table.th [] [ text "name" ]
+                        [ Table.th [] [ text "Preview" ]
+                        , Table.th [] [ text "Id" ]
+                        , Table.th [] [ text "Name" ]
                         , Table.th
                             [ Table.cellAttr <| class "edit-button-column"
                             ]
-                            [ text "edit" ]
+                            [ text "Edit" ]
                         ]
 
                 rowFromRCObject : RCMediaObject -> Table.Row msg
@@ -73,7 +73,7 @@ view objectList messages =
                                 , Button.outlineDanger
                                 , Button.attrs [ Spacing.ml1, onClick <| messages.deleteObject object ]
                                 ]
-                                [ text "x" ]
+                                [ text "Delete" ]
                     in
                     Table.tr []
                         [ Table.td [] [ viewThumbnail object ]
@@ -101,16 +101,16 @@ viewModalMediaPicker visibility objectList messages =
         tableList =
             case objectList of
                 [] ->
-                    Alert.simpleInfo [] [ text "no objects yet, add by using + Media button" ]
+                    Alert.simpleInfo [] [ text "There are no objects yet, add by using the \"upload media\" button." ]
 
                 _ ->
                     let
                         head =
                             Table.simpleThead
-                                [ Table.th [] [ text "preview" ]
-                                , Table.th [] [ text "id" ]
-                                , Table.th [] [ text "name" ]
-                                , Table.th [] [ text "insert" ]
+                                [ Table.th [] [ text "Preview" ]
+                                , Table.th [] [ text "Id" ]
+                                , Table.th [] [ text "Name" ]
+                                , Table.th [] [ text "Insert" ]
                                 ]
 
                         rowFromRCObject : RCMediaObject -> Table.Row msg
@@ -122,7 +122,7 @@ viewModalMediaPicker visibility objectList messages =
                                         , Button.outlineSuccess
                                         , Button.attrs [ Spacing.ml1, onClick <| messages.insertObject object ]
                                         ]
-                                        [ text "insert" ]
+                                        [ text "Insert" ]
                             in
                             Table.tr [ Table.rowAttr <| onDoubleClick <| messages.insertObject object ]
                                 [ Table.td [] [ viewThumbnail object ]
@@ -144,12 +144,12 @@ viewModalMediaPicker visibility objectList messages =
     Modal.config messages.closeModal
         |> Modal.large
         |> Modal.hideOnBackdropClick True
-        |> Modal.h1 [] [ text "select a media to insert" ]
+        |> Modal.h1 [] [ text "Select a media object to insert." ]
         |> Modal.body [] [ tableList ]
         |> Modal.footer []
             [ Button.button
                 [ Button.secondary, Button.attrs [ onClick messages.closeModal ] ]
-                [ text "cancel" ]
+                [ text "Cancel" ]
             ]
         |> Modal.view visibility
 
@@ -178,7 +178,7 @@ viewThumbnail object =
                     Exposition.mediaUrl object
             in
             audio
-                [ title "preview"
+                [ title "Preview"
                 , controls True
                 , loop settings.loop
                 , autoplay settings.autoplay
@@ -191,7 +191,7 @@ viewThumbnail object =
                     Exposition.mediaUrl object
             in
             video
-                [ title "preview"
+                [ title "Preview"
                 , controls True
                 , loop settings.loop
                 , autoplay settings.autoplay
@@ -199,4 +199,4 @@ viewThumbnail object =
                 [ source [ src videoUrl, type_ "video/mp4" ] [] ]
 
         _ ->
-            span [] [ text "no preview" ]
+            span [] [ text "No preview" ]

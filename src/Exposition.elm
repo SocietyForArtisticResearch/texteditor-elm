@@ -1,9 +1,9 @@
-module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, customThumbUrl, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, mkMediaName, objectByNameOrId, parseToolCaptions, removeObjectWithID, renameDuplicateMedia, replaceImagesWithTools, replaceObject, replaceToolsWithImages, thumbUrl, updateToc, validateMediaObject, withCSS, withHtml, withMd, wordCount)
+module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, TranscodingStatus(..), addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, customThumbUrl, defaultPlayerSettings, empty, incContentVersion, insertToolHtml, isValid, mediaUrl, mkMediaName, objectByNameOrId, parseToolCaptions, removeObjectWithID, renameDuplicateMedia, replaceImagesWithTools, replaceObject, replaceToolsWithImages, thumbUrl, updateToc, validateMediaObject, withCSS, withHtml, withMd, wordCount)
 
 import Dict
 import Html.Parser as HtmlParser
-import Html.String as Html
-import Html.String.Attributes as Attr
+import Html.String as Html exposing (label, text)
+import Html.String.Attributes as Attr exposing (style, title)
 import Licenses
 import Parser exposing ((|.), (|=))
 import Regex
@@ -155,6 +155,11 @@ type RCMediaType
     | RCImage
 
 
+type TranscodingStatus
+    = Transcoded
+    | NotTranscoded String
+
+
 type alias RCMediaObject =
     { userClass : String
     , dimensions : OptionalDimensions
@@ -165,6 +170,7 @@ type alias RCMediaObject =
     , description : String
     , copyright : String
     , license : Licenses.License
+    , status : TranscodingStatus
     , caption : String
     , version : Int
     , mediaType : RCMediaType
@@ -434,76 +440,93 @@ asMarkdown media =
     "![" ++ media.name ++ "](" ++ mediaUrl media ++ ")"
 
 
+transcodingMediaPlaceholder : String -> Html.Html msg
+transcodingMediaPlaceholder transcodingString =
+    label
+        [ title "Wait for transcoding to finish or upload media again."
+        , style "padding" "10px"
+        , style "border" "1px dashed rgb(119, 119, 119)"
+        , style "background-color" "rgb(255, 183, 183)"
+        , style "font-size" "0.8em"
+        ]
+        [ text transcodingString ]
+
+
 asHtml : RCMediaObject -> String -> Html.Html msg
 asHtml media mediaId =
-    case ( media.mediaType, media ) of
-        ( RCImage, data ) ->
-            objectDiv data <|
-                Html.figure [ Attr.id mediaId ]
-                    [ Html.img (addDimensions data.dimensions [ Attr.src (mediaUrl data), Attr.alt data.name ]) []
-                    , Html.figcaption [] [ Html.text data.caption ]
-                    ]
+    case media.status of
+        NotTranscoded str ->
+            transcodingMediaPlaceholder str
 
-        ( RCPdf, data ) ->
-            objectDiv data <|
-                Html.figure [ Attr.id mediaId ]
-                    [ Html.object
-                        (addDimensions data.dimensions
-                            [ Attr.attribute "data" (mediaUrl data)
-                            , Attr.attribute "type" "application/pdf"
-                            , Attr.attribute "title" data.name
+        _ ->
+            case ( media.mediaType, media ) of
+                ( RCImage, data ) ->
+                    objectDiv data <|
+                        Html.figure [ Attr.id mediaId ]
+                            [ Html.img (addDimensions data.dimensions [ Attr.src (mediaUrl data), Attr.alt data.name ]) []
+                            , Html.figcaption [] [ Html.text data.caption ]
                             ]
-                        )
-                        []
-                    , Html.figcaption [] [ Html.text data.caption ]
-                    ]
 
-        ( RCSvg, data ) ->
-            objectDiv data <|
-                Html.figure [ Attr.id mediaId ]
-                    [ Html.object
-                        (addDimensions data.dimensions
-                            [ Attr.attribute "data" (mediaUrl data)
-                            , Attr.attribute "type" "application/svg+xml"
-                            , Attr.attribute "title" data.name
+                ( RCPdf, data ) ->
+                    objectDiv data <|
+                        Html.figure [ Attr.id mediaId ]
+                            [ Html.object
+                                (addDimensions data.dimensions
+                                    [ Attr.attribute "data" (mediaUrl data)
+                                    , Attr.attribute "type" "application/pdf"
+                                    , Attr.attribute "title" data.name
+                                    ]
+                                )
+                                []
+                            , Html.figcaption [] [ Html.text data.caption ]
                             ]
-                        )
-                        []
-                    , Html.figcaption [] [ Html.text data.caption ]
-                    ]
 
-        ( RCAudio playerData, data ) ->
-            objectDiv data <|
-                Html.figure [ Attr.id mediaId ]
-                    [ Html.audio
-                        (addDimensions data.dimensions
-                            [ Attr.controls True
-                            , Attr.preload (preloadToString playerData.preload)
-                            , Attr.autoplay playerData.autoplay
-                            , Attr.loop playerData.loop
-                            , Attr.class "rcaudio"
+                ( RCSvg, data ) ->
+                    objectDiv data <|
+                        Html.figure [ Attr.id mediaId ]
+                            [ Html.object
+                                (addDimensions data.dimensions
+                                    [ Attr.attribute "data" (mediaUrl data)
+                                    , Attr.attribute "type" "application/svg+xml"
+                                    , Attr.attribute "title" data.name
+                                    ]
+                                )
+                                []
+                            , Html.figcaption [] [ Html.text data.caption ]
                             ]
-                        )
-                        [ Html.source [ Attr.src (mediaUrl data) ] []
-                        ]
-                    , Html.figcaption [] [ Html.text data.caption ]
-                    ]
 
-        ( RCVideo playerData, data ) ->
-            objectDiv data <|
-                Html.figure [ Attr.id mediaId ]
-                    [ Html.video
-                        (addDimensions data.dimensions
-                            [ Attr.controls True
-                            , Attr.preload (preloadToString playerData.preload)
-                            , Attr.autoplay playerData.autoplay
-                            , Attr.loop playerData.loop
+                ( RCAudio playerData, data ) ->
+                    objectDiv data <|
+                        Html.figure [ Attr.id mediaId ]
+                            [ Html.audio
+                                (addDimensions data.dimensions
+                                    [ Attr.controls True
+                                    , Attr.preload (preloadToString playerData.preload)
+                                    , Attr.autoplay playerData.autoplay
+                                    , Attr.loop playerData.loop
+                                    , Attr.class "rcaudio"
+                                    ]
+                                )
+                                [ Html.source [ Attr.src (mediaUrl data) ] []
+                                ]
+                            , Html.figcaption [] [ Html.text data.caption ]
                             ]
-                        )
-                        [ Html.source [ Attr.src (mediaUrl data), Attr.attribute "type" "video/mp4" ] []
-                        ]
-                    , Html.figcaption [] [ Html.text data.caption ]
-                    ]
+
+                ( RCVideo playerData, data ) ->
+                    objectDiv data <|
+                        Html.figure [ Attr.id mediaId ]
+                            [ Html.video
+                                (addDimensions data.dimensions
+                                    [ Attr.controls True
+                                    , Attr.preload (preloadToString playerData.preload)
+                                    , Attr.autoplay playerData.autoplay
+                                    , Attr.loop playerData.loop
+                                    ]
+                                )
+                                [ Html.source [ Attr.src (mediaUrl data), Attr.attribute "type" "video/mp4" ] []
+                                ]
+                            , Html.figcaption [] [ Html.text data.caption ]
+                            ]
 
 
 

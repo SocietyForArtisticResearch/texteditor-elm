@@ -613,6 +613,14 @@ toRCMediaObject researchId mediaEntry =
     let
         mediaT =
             getType mediaEntry.media
+
+        stringToTranscoding str =
+            case str of
+                "Transcoded" ->
+                    Exposition.Transcoded
+
+                _ ->
+                    Exposition.NotTranscoded str
     in
     case mediaT of
         Ok mtype ->
@@ -626,6 +634,7 @@ toRCMediaObject researchId mediaEntry =
                 , description = mediaEntry.description
                 , copyright = mediaEntry.copyright
                 , license = mediaEntry.license
+                , status = stringToTranscoding mediaEntry.media.status
                 , caption = "" -- needd?
                 , version = 0 -- needed?
                 , mediaType = mtype
