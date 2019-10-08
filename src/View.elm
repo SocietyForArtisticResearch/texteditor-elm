@@ -168,7 +168,7 @@ mkDropdown modelState openMsg mainTxt itemMsgLst =
     div [ class "d-inline-block" ]
         [ Dropdown.dropdown
             modelState
-            { options = [ Dropdown.attrs [ Spacing.m1 ] ]
+            { options = [ Dropdown.attrs (List.map class [ "m-0", "mb-1", "mt-1", "mr-1" ]) ]
             , toggleMsg = openMsg
             , toggleButton =
                 Dropdown.toggle [ Button.outlineDark ] [ text mainTxt ]

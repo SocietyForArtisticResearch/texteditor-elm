@@ -17287,7 +17287,6 @@ var rundis$elm_bootstrap$Bootstrap$Dropdown$toggle = F2(
 		return rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownToggle(
 			A2(rundis$elm_bootstrap$Bootstrap$Dropdown$togglePrivate, buttonOptions, children));
 	});
-var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1 = elm$html$Html$Attributes$class('m-1');
 var author$project$View$mkDropdown = F4(
 	function (modelState, openMsg, mainTxt, itemMsgLst) {
 		return A2(
@@ -17322,8 +17321,11 @@ var author$project$View$mkDropdown = F4(
 						options: _List_fromArray(
 							[
 								rundis$elm_bootstrap$Bootstrap$Dropdown$attrs(
-								_List_fromArray(
-									[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1]))
+								A2(
+									elm$core$List$map,
+									elm$html$Html$Attributes$class,
+									_List_fromArray(
+										['m-0', 'mb-1', 'mt-1', 'mr-1'])))
 							]),
 						toggleButton: A2(
 							rundis$elm_bootstrap$Bootstrap$Dropdown$toggle,
