@@ -13601,24 +13601,10 @@ var author$project$Main$viewNavbar = function (model) {
 								]),
 							rundis$elm_bootstrap$Bootstrap$Navbar$config(author$project$Main$NavbarMsg)))))));
 };
-var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1 = elm$html$Html$Attributes$class('mb-1');
-var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1 = elm$html$Html$Attributes$class('mr-1');
-var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1 = elm$html$Html$Attributes$class('mt-1');
-var author$project$Main$viewUpload = F5(
-	function (icon, needsOffset, onClickMsg, buttonText, status) {
-		var btn = author$project$View$defaultButton(onClickMsg);
+var author$project$Main$viewUpload = F2(
+	function (buttonInfo, status) {
 		if (status.$ === 'Ready') {
-			return author$project$View$mkButton(
-				_Utils_update(
-					btn,
-					{
-						icon: icon,
-						offset: needsOffset,
-						otherAttrs: _List_fromArray(
-							[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1, rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1, rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1]),
-						primary: true,
-						text: buttonText
-					}));
+			return author$project$View$mkButton(buttonInfo);
 		} else {
 			var fraction = status.a;
 			var uploadStatusMessage = (fraction < 0.99) ? (elm$core$String$fromInt(
@@ -17353,7 +17339,24 @@ var author$project$View$optionalBlock = F2(
 			_List_fromArray(
 				[elem]));
 	});
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1 = elm$html$Html$Attributes$class('mb-1');
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1 = elm$html$Html$Attributes$class('mr-1');
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1 = elm$html$Html$Attributes$class('mt-1');
 var author$project$Main$view = function (model) {
+	var uploadMediaButtonInfo = function () {
+		var bttn = author$project$View$defaultButton(author$project$Main$UploadMediaFileSelect);
+		return _Utils_update(
+			bttn,
+			{
+				icon: author$project$View$UploadCloud,
+				offset: true,
+				otherAttrs: _List_fromArray(
+					[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1, rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1, rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1]),
+				primary: true,
+				text: 'Upload Media',
+				title: 'Add media files: images, video, audio or pdf'
+			});
+	}();
 	var showMediaUpload = !author$project$Main$selectedEditorIsStyle(model);
 	var showButtons = author$project$Main$selectedEditorIsMarkdown(model);
 	var previewButton = function () {
@@ -17398,6 +17401,20 @@ var author$project$Main$view = function (model) {
 		} else {
 			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
 		}
+	}();
+	var importDocButtonInfo = function () {
+		var bttn = author$project$View$defaultButton(author$project$Main$UploadImportFileSelect);
+		return _Utils_update(
+			bttn,
+			{
+				icon: author$project$View$ImportIcon,
+				offset: true,
+				otherAttrs: _List_fromArray(
+					[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1, rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1, rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1]),
+				primary: true,
+				text: 'Import Doc',
+				title: 'Import external documents (Word, Open office, Markdown, LaTeX etc..'
+			});
 	}();
 	var editorToolbar = author$project$Main$mkEditorToolbar(
 		author$project$Main$getTabState(model.editor));
@@ -17452,11 +17469,11 @@ var author$project$Main$view = function (model) {
 						A2(
 						author$project$View$optionalBlock,
 						showMediaUpload,
-						A5(author$project$Main$viewUpload, author$project$View$UploadCloud, false, author$project$Main$UploadMediaFileSelect, 'Upload Media', model.mediaUploadStatus)),
+						A2(author$project$Main$viewUpload, uploadMediaButtonInfo, model.mediaUploadStatus)),
 						A2(
 						author$project$View$optionalBlock,
 						showButtons,
-						A5(author$project$Main$viewUpload, author$project$View$ImportIcon, true, author$project$Main$UploadImportFileSelect, 'Import Doc', model.importUploadStatus)),
+						A2(author$project$Main$viewUpload, importDocButtonInfo, model.importUploadStatus)),
 						A2(
 						author$project$View$optionalBlock,
 						showButtons,

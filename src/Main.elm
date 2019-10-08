@@ -956,15 +956,11 @@ update msg model =
             ( { model | fullscreenMode = isFull }, setFullscreenMode isFull )
 
 
-viewUpload : Icon -> Bool -> Msg -> String -> UploadStatus -> Html Msg
-viewUpload icon needsOffset onClickMsg buttonText status =
-    let
-        btn =
-            defaultButton onClickMsg
-    in
+viewUpload : ButtonInfo Msg -> UploadStatus -> Html Msg
+viewUpload buttonInfo status =
     case status of
         Ready ->
-            mkButton { btn | icon = icon, offset = needsOffset, text = buttonText, primary = True, otherAttrs = [ Spacing.mb1, Spacing.mt1, Spacing.mr1 ] }
+            mkButton buttonInfo
 
         Uploading fraction ->
             let
@@ -1297,6 +1293,34 @@ view model =
 
         editorToolbar =
             mkEditorToolbar (getTabState model.editor)
+
+        uploadMediaButtonInfo =
+            let
+                bttn =
+                    defaultButton UploadMediaFileSelect
+            in
+            { bttn
+                | icon = UploadCloud
+                , offset = True
+                , text = "Upload Media"
+                , primary = True
+                , otherAttrs = [ Spacing.mb1, Spacing.mt1, Spacing.mr1 ]
+                , title = "Add media files: images, video, audio or pdf"
+            }
+
+        importDocButtonInfo =
+            let
+                bttn =
+                    defaultButton UploadImportFileSelect
+            in
+            { bttn
+                | icon = ImportIcon
+                , offset = True
+                , text = "Import Doc"
+                , primary = True
+                , otherAttrs = [ Spacing.mb1, Spacing.mt1, Spacing.mr1 ]
+                , title = "Import external documents (Word, Open office, Markdown, LaTeX etc.."
+            }
     in
     div []
         [ viewNavbar model
@@ -1306,8 +1330,8 @@ view model =
         , confirmDialogHtml
         , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
         , div [ class "btn-toolbar", class "import-export-toolbar", attribute "role" "toolbar" ]
-            [ optionalBlock showMediaUpload <| viewUpload UploadCloud False UploadMediaFileSelect "Upload Media" model.mediaUploadStatus
-            , optionalBlock showButtons <| viewUpload ImportIcon True UploadImportFileSelect "Import Doc" model.importUploadStatus
+            [ optionalBlock showMediaUpload <| viewUpload uploadMediaButtonInfo model.mediaUploadStatus
+            , optionalBlock showButtons <| viewUpload importDocButtonInfo model.importUploadStatus
             , optionalBlock showButtons <|
                 mkDropdown model.exportDropState
                     ExportDropMsg
