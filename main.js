@@ -16527,7 +16527,7 @@ var author$project$RCMediaList$view = F2(
 						]),
 					_List_fromArray(
 						[
-							elm$html$Html$text('edit')
+							elm$html$Html$text('Edit')
 						]));
 				return A2(
 					rundis$elm_bootstrap$Bootstrap$Table$tr,

@@ -60,7 +60,7 @@ view objectList messages =
                                 , Button.outlineSecondary
                                 , Button.attrs [ Spacing.ml1, onClick <| messages.editObject (String.fromInt object.id) ]
                                 ]
-                                [ text "edit" ]
+                                [ text "Edit" ]
 
                         -- insertButton =
                         --     Button.button

@@ -30,22 +30,23 @@ be made outside of elm.
 General:
 	
 
-- when a media is direclty inserted after upload, it shorly appears as a previously uploaded media ?
-- media upload still not working for video.
+- when a media is direclty inserted after upload, it shorly appears as a previously uploaded media ? (seems to occur on ff)
 - What to do when people are logged out
-- Server problem when exporting?
 - When a large document is imported, there is a timeout from the server. Perhaps a size limit is necessary?
-- add full screen mode (hide preview, adjust widths of codemirror etc..)
-- `<meta name="viewport" content="width=device-width, initial-scale=1.0">` (ask devs)
-- structure, settings should be only settings
-- tooltips "button"
+
+
 
 Casper:
 
+- structure, settings should be only settings
+- tooltips "button"
+- "Waiting" message
 
 Luc:
 
-
+- `<meta name="viewport" content="width=device-width, initial-scale=1.0">` (ask devs), also on live server
+- icons for right hand side navbar
+- Server problem when exporting?, 414 Request-URI Too Large (json, body??)
 
 
 ## To test
@@ -134,3 +135,5 @@ Luc:
 - navbar bootstrap for preview
 - Table of contents is not displayed in "contents" menu of exposition.
 - insert header into old expose on first opening
+- add full screen mode (hide preview, adjust widths of codemirror etc..)
+- media upload still not working for video.
