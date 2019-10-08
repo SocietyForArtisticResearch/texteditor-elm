@@ -1344,6 +1344,7 @@ view model =
                     , ( "html", DownloadExport RCAPI.Html )
                     , ( "markdown", DownloadExport RCAPI.Md )
                     ]
+                    "Export the current exposition"
             ]
         , optionalBlock showButtons <|
             div

@@ -17273,8 +17273,8 @@ var rundis$elm_bootstrap$Bootstrap$Dropdown$toggle = F2(
 		return rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownToggle(
 			A2(rundis$elm_bootstrap$Bootstrap$Dropdown$togglePrivate, buttonOptions, children));
 	});
-var author$project$View$mkDropdown = F4(
-	function (modelState, openMsg, mainTxt, itemMsgLst) {
+var author$project$View$mkDropdown = F5(
+	function (modelState, openMsg, mainTxt, itemMsgLst, titleText) {
 		return A2(
 			elm$html$Html$div,
 			_List_fromArray(
@@ -17316,7 +17316,14 @@ var author$project$View$mkDropdown = F4(
 						toggleButton: A2(
 							rundis$elm_bootstrap$Bootstrap$Dropdown$toggle,
 							_List_fromArray(
-								[rundis$elm_bootstrap$Bootstrap$Button$outlineDark]),
+								[
+									rundis$elm_bootstrap$Bootstrap$Button$outlineDark,
+									rundis$elm_bootstrap$Bootstrap$Button$attrs(
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$title(titleText)
+										]))
+								]),
 							_List_fromArray(
 								[
 									elm$html$Html$text(mainTxt)
@@ -17477,7 +17484,7 @@ var author$project$Main$view = function (model) {
 						A2(
 						author$project$View$optionalBlock,
 						showButtons,
-						A4(
+						A5(
 							author$project$View$mkDropdown,
 							model.exportDropState,
 							author$project$Main$ExportDropMsg,
@@ -17505,7 +17512,8 @@ var author$project$Main$view = function (model) {
 									_Utils_Tuple2(
 									'markdown',
 									author$project$Main$DownloadExport(author$project$RCAPI$Md))
-								])))
+								]),
+							'Export the current exposition'))
 					])),
 				A2(
 				author$project$View$optionalBlock,

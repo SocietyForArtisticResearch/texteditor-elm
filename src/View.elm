@@ -163,15 +163,15 @@ mkButton props =
         ]
 
 
-mkDropdown : Dropdown.State -> (Dropdown.State -> msg) -> String -> List ( String, msg ) -> Html msg
-mkDropdown modelState openMsg mainTxt itemMsgLst =
+mkDropdown : Dropdown.State -> (Dropdown.State -> msg) -> String -> List ( String, msg ) -> String -> Html msg
+mkDropdown modelState openMsg mainTxt itemMsgLst titleText =
     div [ class "d-inline-block" ]
         [ Dropdown.dropdown
             modelState
             { options = [ Dropdown.attrs (List.map class [ "m-0", "mb-1", "mt-1", "mr-1" ]) ]
             , toggleMsg = openMsg
             , toggleButton =
-                Dropdown.toggle [ Button.outlineDark ] [ text mainTxt ]
+                Dropdown.toggle [ Button.outlineDark, Button.attrs [ title titleText ] ] [ text mainTxt ]
             , items =
                 List.map
                     (\( buttonTxt, clickMsg ) ->
