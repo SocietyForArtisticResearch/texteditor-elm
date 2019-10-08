@@ -1125,7 +1125,7 @@ viewFullscreenSwitch currentMode =
 
         attrs =
             if currentMode then
-                [ class "enabled" ]
+                [ class "enabled", class "ml-1" ]
 
             else
                 []
