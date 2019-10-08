@@ -1117,13 +1117,20 @@ viewFullscreenSwitch currentMode =
                 NormalScreenIcon
 
         tit =
-            if not currentMode then
-                "Enter fullscreen"
+            if currentMode then
+                "Exit Fullscreen"
 
             else
-                "Exit fullscreen"
+                "Enter Fullscreen"
+
+        attrs =
+            if currentMode then
+                [ class "enabled" ]
+
+            else
+                []
     in
-    mkButton { btn | icon = icn, title = tit }
+    mkButton { btn | icon = icn, title = tit, otherAttrs = attrs }
 
 
 viewLink : String -> String -> Html Msg

@@ -12645,14 +12645,18 @@ var author$project$Main$ToggleFullscreen = function (a) {
 var author$project$View$FullScreenIcon = {$: 'FullScreenIcon'};
 var author$project$View$NormalScreenIcon = {$: 'NormalScreenIcon'};
 var author$project$Main$viewFullscreenSwitch = function (currentMode) {
-	var tit = (!currentMode) ? 'Enter fullscreen' : 'Exit fullscreen';
+	var tit = currentMode ? 'Exit Fullscreen' : 'Enter Fullscreen';
 	var message = author$project$Main$ToggleFullscreen(!currentMode);
 	var icn = (!currentMode) ? author$project$View$FullScreenIcon : author$project$View$NormalScreenIcon;
 	var btn = author$project$View$defaultButton(message);
+	var attrs = currentMode ? _List_fromArray(
+		[
+			elm$html$Html$Attributes$class('enabled')
+		]) : _List_Nil;
 	return author$project$View$mkButton(
 		_Utils_update(
 			btn,
-			{icon: icn, title: tit}));
+			{icon: icn, otherAttrs: attrs, title: tit}));
 };
 var author$project$Main$EditorMedia = {$: 'EditorMedia'};
 var author$project$Main$EditorStyle = {$: 'EditorStyle'};
