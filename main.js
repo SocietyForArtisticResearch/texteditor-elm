@@ -12651,7 +12651,8 @@ var author$project$Main$viewFullscreenSwitch = function (currentMode) {
 	var btn = author$project$View$defaultButton(message);
 	var attrs = currentMode ? _List_fromArray(
 		[
-			elm$html$Html$Attributes$class('enabled')
+			elm$html$Html$Attributes$class('enabled'),
+			elm$html$Html$Attributes$class('ml-1')
 		]) : _List_Nil;
 	return author$project$View$mkButton(
 		_Utils_update(
