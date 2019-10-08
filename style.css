@@ -182,7 +182,7 @@ body {
     color: black;
 }
 
-.btn-outline-dark .enabled {
+.btn-light .enabled {
     border-color: #c8cfe3;
     background-color: #d6d6d6;
     color: black;
