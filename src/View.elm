@@ -134,7 +134,7 @@ mkButton props =
     let
         spacing =
             if props.offset then
-                [ Spacing.m1 ]
+                [ Spacing.m0 ]
 
             else
                 []
