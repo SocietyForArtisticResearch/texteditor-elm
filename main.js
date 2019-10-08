@@ -11841,10 +11841,10 @@ var rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
 };
 var rundis$elm_bootstrap$Bootstrap$Button$outlineDark = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark));
-var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1 = elm$html$Html$Attributes$class('m-1');
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0 = elm$html$Html$Attributes$class('m-0');
 var author$project$View$mkButton = function (props) {
 	var spacing = props.offset ? _List_fromArray(
-		[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1]) : _List_Nil;
+		[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0]) : _List_Nil;
 	return A2(
 		rundis$elm_bootstrap$Bootstrap$Button$button,
 		_List_fromArray(
@@ -17287,6 +17287,7 @@ var rundis$elm_bootstrap$Bootstrap$Dropdown$toggle = F2(
 		return rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownToggle(
 			A2(rundis$elm_bootstrap$Bootstrap$Dropdown$togglePrivate, buttonOptions, children));
 	});
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m1 = elm$html$Html$Attributes$class('m-1');
 var author$project$View$mkDropdown = F4(
 	function (modelState, openMsg, mainTxt, itemMsgLst) {
 		return A2(
