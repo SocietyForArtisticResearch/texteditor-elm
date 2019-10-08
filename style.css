@@ -183,7 +183,7 @@ body {
 }
 
 btn.btn-light.enabled {
-    border-color: #c8cfe3;
+    border-color: #aaa #efefef #efefef #aaa;
     background-color: #d6d6d6;
     color: black;
 }
