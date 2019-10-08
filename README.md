@@ -31,7 +31,6 @@ General:
 	
 
 - when a media is direclty inserted after upload, it shorly appears as a previously uploaded media ? (seems to occur on ff)
-- What to do when people are logged out
 - When a large document is imported, there is a timeout from the server. Perhaps a size limit is necessary?
 
 
@@ -47,7 +46,7 @@ Luc:
 - `<meta name="viewport" content="width=device-width, initial-scale=1.0">` (ask devs), also on live server
 - icons for right hand side navbar
 - Server problem when exporting?, 414 Request-URI Too Large (json, body??)
-
+- when logged out error http codes request form devs
 
 ## To test
 - tables?
