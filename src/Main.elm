@@ -925,7 +925,7 @@ update msg model =
                     FootnoteHelper.mdNextFootnoteNum model.exposition.markdownInput
 
                 insertTuple =
-                    Settings.footnoteSnippet nextNumber
+                    FootnoteHelper.footnoteSnippet nextNumber
             in
             ( model, insertFootnote insertTuple )
 

@@ -1,4 +1,4 @@
-module FootnoteHelper exposing (Footnote(..), mdNextFootnoteNum, parseAll, testString)
+module FootnoteHelper exposing (Footnote(..), footnoteSnippet, mdNextFootnoteNum, parseAll, testString)
 
 import Browser
 import Html exposing (Html, button, div, text)
@@ -259,3 +259,14 @@ testCount list =
                     True
     in
     checkGaps <| List.map getRank sorted
+
+
+footnoteSnippet : Int -> ( String, String )
+footnoteSnippet num =
+    let
+        numstr =
+            String.fromInt num
+    in
+    ( "[^" ++ numstr ++ "]"
+    , "[^" ++ numstr ++ "]: footnote-text"
+    )

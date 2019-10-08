@@ -577,7 +577,7 @@ insertToolHtml md exp =
                 (\m ->
                     case m.submatches of
                         (Just sub) :: _ ->
-                            Maybe.withDefault (Settings.missingMediaPlaceholder sub) <|
+                            Maybe.withDefault (missingMediaPlaceholder sub) <|
                                 Maybe.map
                                     (\o ->
                                         Html.toString 0 (asHtml o ("media-" ++ String.fromInt m.number))
@@ -794,3 +794,8 @@ updateToc expo tocJs =
 wordCount : RCExposition -> Int
 wordCount expo =
     Util.wordCount expo.markdownInput
+
+
+missingMediaPlaceholder : String -> String
+missingMediaPlaceholder mediaName =
+    "<label title=\"You can add a file by using add media button.\" style=\"padding: 10px; border: 1px dashed rgb(119, 119, 119); background-color: rgb(255, 183, 183); font-size:0.8em;\"> Problem: media file with name \"" ++ mediaName ++ "\" does not exist in the media list. </label>"

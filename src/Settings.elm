@@ -1,4 +1,4 @@
-module Settings exposing (Snippet(..), baseDomain, baseUrl, editorVersion, footnoteSnippet, iconUrl, missingMediaPlaceholder, snippet)
+module Settings exposing (Snippet(..), baseDomain, baseUrl, editorVersion, iconUrl, snippet)
 
 
 editorVersion : String
@@ -66,19 +66,3 @@ snippet s =
 
         Link ->
             ( "[Link text](http://)", -1 )
-
-
-footnoteSnippet : Int -> ( String, String )
-footnoteSnippet num =
-    let
-        numstr =
-            String.fromInt num
-    in
-    ( "[^" ++ numstr ++ "]"
-    , "[^" ++ numstr ++ "]: footnote-text"
-    )
-
-
-missingMediaPlaceholder : String -> String
-missingMediaPlaceholder mediaName =
-    "<label title=\"You can add a file by using add media button.\" style=\"padding: 10px; border: 1px dashed rgb(119, 119, 119); background-color: rgb(255, 183, 183); font-size:0.8em;\"> Problem: media file with name \"" ++ mediaName ++ "\" does not exist in the media list. </label>"

@@ -8153,6 +8153,9 @@ var author$project$Exposition$asHtml = F2(
 			}
 		}
 	});
+var author$project$Exposition$missingMediaPlaceholder = function (mediaName) {
+	return '<label title=\"You can add a file by using add media button.\" style=\"padding: 10px; border: 1px dashed rgb(119, 119, 119); background-color: rgb(255, 183, 183); font-size:0.8em;\"> Problem: media file with name \"' + (mediaName + '\" does not exist in the media list. </label>');
+};
 var elm$core$List$head = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -8184,9 +8187,6 @@ var author$project$Exposition$objectByNameOrId = F2(
 			return elm$core$List$head(nameLst);
 		}
 	});
-var author$project$Settings$missingMediaPlaceholder = function (mediaName) {
-	return '<label title=\"You can add a file by using add media button.\" style=\"padding: 10px; border: 1px dashed rgb(119, 119, 119); background-color: rgb(255, 183, 183); font-size:0.8em;\"> Problem: media file with name \"' + (mediaName + '\" does not exist in the media list. </label>');
-};
 var elm$core$Maybe$map = F2(
 	function (f, maybe) {
 		if (maybe.$ === 'Just') {
@@ -8625,7 +8625,7 @@ var author$project$Exposition$insertToolHtml = F2(
 						var sub = _n1.a.a;
 						return A2(
 							elm$core$Maybe$withDefault,
-							author$project$Settings$missingMediaPlaceholder(sub),
+							author$project$Exposition$missingMediaPlaceholder(sub),
 							A2(
 								elm$core$Maybe$map,
 								function (o) {
@@ -9383,6 +9383,10 @@ var author$project$Exposition$withMd = F2(
 			exp,
 			{markdownInput: content});
 	});
+var author$project$FootnoteHelper$footnoteSnippet = function (num) {
+	var numstr = elm$core$String$fromInt(num);
+	return _Utils_Tuple2('[^' + (numstr + ']'), '[^' + (numstr + ']: footnote-text'));
+};
 var author$project$FootnoteHelper$Sorted = function (a) {
 	return {$: 'Sorted', a: a};
 };
@@ -10719,10 +10723,6 @@ var author$project$RCAPI$uploadMedia = F5(
 				});
 		}
 	});
-var author$project$Settings$footnoteSnippet = function (num) {
-	var numstr = elm$core$String$fromInt(num);
-	return _Utils_Tuple2('[^' + (numstr + ']'), '[^' + (numstr + ']: footnote-text'));
-};
 var elm$file$File$Select$file = F2(
 	function (mimes, toMsg) {
 		return A2(
@@ -11363,7 +11363,7 @@ var author$project$Main$update = F2(
 						author$project$Main$insertMdString(insertTuple));
 				case 'InsertFootnoteAtCursor':
 					var nextNumber = author$project$FootnoteHelper$mdNextFootnoteNum(model.exposition.markdownInput);
-					var insertTuple = author$project$Settings$footnoteSnippet(nextNumber);
+					var insertTuple = author$project$FootnoteHelper$footnoteSnippet(nextNumber);
 					return _Utils_Tuple2(
 						model,
 						author$project$Main$insertFootnote(insertTuple));
