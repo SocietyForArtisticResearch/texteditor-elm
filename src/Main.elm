@@ -967,7 +967,15 @@ viewUpload icon needsOffset onClickMsg buttonText status =
             mkButton { btn | icon = icon, offset = needsOffset, text = buttonText, primary = True, otherAttrs = [ Spacing.mb1, Spacing.mt1, Spacing.mr1 ] }
 
         Uploading fraction ->
-            div [ class "upload-percentage" ] [ text (String.fromInt (round (100 * fraction)) ++ "%") ]
+            let
+                uploadStatusMessage =
+                    if fraction < 0.99 then
+                        String.fromInt (round (100 * fraction)) ++ "%"
+
+                    else
+                        "processing.."
+            in
+            div [ class "upload-percentage" ] [ text uploadStatusMessage ]
 
 
 enumTabState : TabState -> Int
@@ -1089,7 +1097,7 @@ viewEditorCheckbox markdownEditor =
         , Checkbox.checked <| markdownEditor == TextareaMarkdown
         , Checkbox.attrs [ class "editor-checkbox" ]
         ]
-        "txt-mode"
+        "txt"
 
 
 viewFullscreenSwitch : Bool -> Html Msg

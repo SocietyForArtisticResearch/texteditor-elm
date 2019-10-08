@@ -12637,7 +12637,7 @@ var author$project$Main$viewEditorCheckbox = function (markdownEditor) {
 						elm$html$Html$Attributes$class('editor-checkbox')
 					]))
 			]),
-		'txt-mode');
+		'txt');
 };
 var author$project$Main$ToggleFullscreen = function (a) {
 	return {$: 'ToggleFullscreen', a: a};
@@ -13616,6 +13616,8 @@ var author$project$Main$viewUpload = F5(
 					}));
 		} else {
 			var fraction = status.a;
+			var uploadStatusMessage = (fraction < 0.99) ? (elm$core$String$fromInt(
+				elm$core$Basics$round(100 * fraction)) + '%') : 'processing..';
 			return A2(
 				elm$html$Html$div,
 				_List_fromArray(
@@ -13624,9 +13626,7 @@ var author$project$Main$viewUpload = F5(
 					]),
 				_List_fromArray(
 					[
-						elm$html$Html$text(
-						elm$core$String$fromInt(
-							elm$core$Basics$round(100 * fraction)) + '%')
+						elm$html$Html$text(uploadStatusMessage)
 					]));
 		}
 	});
