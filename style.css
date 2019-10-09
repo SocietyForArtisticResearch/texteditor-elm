@@ -183,6 +183,8 @@ body {
 }
 
 .markdown-toolbar .btn.btn-light.enabled {
+    position: absolute;
+    right: 5px;
     border-color: #aaa #efefef #efefef #aaa;
     background-color: #d6d6d6;
     color: black;

@@ -1,4 +1,4 @@
-module RCMediaEdit exposing (Field(..), MediaEditMessage, viewMediaDialog)
+module RCMediaEdit exposing (Field(..), MediaEditMessage, Model, empty, showWithObject, view)
 
 import Bootstrap.Button as Button
 import Bootstrap.CDN as CDN
@@ -25,9 +25,27 @@ type Field
     | LicenseField
 
 
+type alias Model =
+    { visibility : Modal.Visibility
+    , object : Maybe RCMediaObject
+    , objectViewState : Maybe RCMediaObjectViewState
+    }
 
--- luc: file needs to updated differently?
---    | File
+
+empty : Model
+empty =
+    { visibility = Modal.hidden
+    , object = Nothing
+    , objectViewState = Nothing
+    }
+
+
+showWithObject : RCMediaObject -> RCMediaObjectViewState -> Model
+showWithObject obj state =
+    { visibility = Modal.shown
+    , object = Just obj
+    , objectViewState = Just state
+    }
 
 
 type alias MediaEditMessage msg =
@@ -298,27 +316,36 @@ type alias InsertMediaMessage msg =
 -- object ObjectId field newValue -> msg
 
 
-viewMediaDialog : MakeMediaEditFun msg -> msg -> InsertMediaMessage msg -> RCExposition -> ( Modal.Visibility, RCMediaObject, RCMediaObjectViewState ) -> Html msg
-viewMediaDialog makeMediaEditFun closeMediaDialogMsg insertMediaMsg exposition ( visibility, object, viewObjectState ) =
+view : MakeMediaEditFun msg -> msg -> InsertMediaMessage msg -> RCExposition -> Model -> Html msg
+view makeMediaEditFun closeMediaDialogMsg insertMediaMsg exposition model =
     let
-        mediaEditView =
-            viewBody viewObjectState (makeMediaEditFun object) object
+        { visibility, object, objectViewState } =
+            model
     in
-    Modal.config closeMediaDialogMsg
-        |> Modal.h2 [] [ text <| "Edit " ++ object.name ]
-        |> Modal.large
-        |> Modal.hideOnBackdropClick True
-        |> Modal.body [] [ p [] [ mediaEditView ] ]
-        |> Modal.footer []
-            [ Button.button
-                [ Button.outlinePrimary
-                , Button.attrs [ Events.onClick <| insertMediaMsg object ]
-                ]
-                [ text "Insert" ]
-            , Button.button
-                [ Button.outlineSecondary
-                , Button.attrs [ Events.onClick closeMediaDialogMsg ]
-                ]
-                [ text "Close" ]
-            ]
-        |> Modal.view visibility
+    case ( visibility, object, objectViewState ) of
+        ( vis, Just obj, Just objState ) ->
+            let
+                mediaEditView =
+                    viewBody objState (makeMediaEditFun obj) obj
+            in
+            Modal.config closeMediaDialogMsg
+                |> Modal.h2 [] [ text <| "Edit " ++ obj.name ]
+                |> Modal.large
+                |> Modal.hideOnBackdropClick True
+                |> Modal.body [] [ p [] [ mediaEditView ] ]
+                |> Modal.footer []
+                    [ Button.button
+                        [ Button.outlinePrimary
+                        , Button.attrs [ Events.onClick <| insertMediaMsg obj ]
+                        ]
+                        [ text "Insert" ]
+                    , Button.button
+                        [ Button.outlineSecondary
+                        , Button.attrs [ Events.onClick closeMediaDialogMsg ]
+                        ]
+                        [ text "Close" ]
+                    ]
+                |> Modal.view vis
+
+        _ ->
+            div [] []

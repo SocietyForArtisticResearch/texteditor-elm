@@ -37,7 +37,7 @@ import View exposing (..)
 type alias Model =
     { exposition : RCExposition
     , editGeneration : ( Int, Int )
-    , mediaDialog : ( Modal.Visibility, Maybe RCMediaObject, Maybe RCMediaObjectViewState )
+    , mediaDialog : RCMediaEdit.Model
     , confirmDialog : ( Modal.Visibility, Maybe ConfirmDialogContent, Maybe (UserConfirm.Messages Msg) )
     , mediaPickerDialog : Modal.Visibility
     , alertVisibility : Alert.Visibility
@@ -145,7 +145,7 @@ emptyModel : Navbar.State -> Int -> Int -> Model
 emptyModel navbarInitState research weave =
     { editGeneration = ( -1, -1 )
     , exposition = Exposition.empty
-    , mediaDialog = ( Modal.hidden, Nothing, Nothing )
+    , mediaDialog = RCMediaEdit.empty
     , confirmDialog = ( Modal.hidden, Nothing, Nothing )
     , mediaPickerDialog = Modal.hidden
     , alertVisibility = Alert.closed
@@ -476,10 +476,7 @@ update msg model =
                     in
                     ( { model
                         | mediaDialog =
-                            ( Modal.shown
-                            , Just obj
-                            , Just viewObjectState
-                            )
+                            RCMediaEdit.showWithObject obj viewObjectState
                       }
                     , Cmd.none
                     )
@@ -494,13 +491,13 @@ update msg model =
                             Debug.log "no object" model
                     in
                     ( { modelWithProblem
-                        | mediaDialog = ( Modal.hidden, Nothing, Nothing )
+                        | mediaDialog = RCMediaEdit.empty
                       }
                     , Cmd.none
                     )
 
         CloseMediaDialog ->
-            ( { model | mediaDialog = ( Modal.hidden, Nothing, Nothing ) }, Cmd.none )
+            ( { model | mediaDialog = RCMediaEdit.empty }, Cmd.none )
 
         GotExposition exp ->
             case exp of
@@ -628,16 +625,16 @@ update msg model =
 
                 Just objInModel ->
                     let
-                        viewObjectState =
+                        objViewState =
                             Exposition.validateMediaObject model.exposition objInModel objFromDialog
 
-                        ( viewStatus, objInEdit, _ ) =
+                        dialog =
                             model.mediaDialog
                     in
-                    case Exposition.isValid viewObjectState.validation of
+                    case Exposition.isValid objViewState.validation of
                         False ->
                             ( { model
-                                | mediaDialog = ( viewStatus, Just objFromDialog, Just viewObjectState )
+                                | mediaDialog = { dialog | objectViewState = Just objViewState }
                               }
                             , Cmd.none
                             )
@@ -646,8 +643,7 @@ update msg model =
                             let
                                 newModel =
                                     { model
-                                        | mediaDialog =
-                                            ( viewStatus, Just objFromDialog, Just viewObjectState )
+                                        | mediaDialog = { dialog | objectViewState = Just objViewState }
                                         , exposition =
                                             Exposition.replaceObject objFromDialog model.exposition
                                         , mediaClassesDict = model.mediaClassesDict |> Dict.update objFromDialog.id (Maybe.map (\_ -> objFromDialog.userClass))
@@ -884,7 +880,7 @@ update msg model =
             in
             ( { model
                 | mediaPickerDialog = Modal.hidden
-                , mediaDialog = ( Modal.hidden, Nothing, Nothing )
+                , mediaDialog = RCMediaEdit.empty
               }
               -- close mediapicker if insert
               -- this is simply to make sure the object is in the exposition media
@@ -1229,13 +1225,14 @@ statusBar model =
 view : Model -> Html Msg
 view model =
     let
+        -- todo : simplify arguments
         mediaDialogHtml =
-            case model.mediaDialog of
-                ( vis, Just obj, Just valid ) ->
-                    RCMediaEdit.viewMediaDialog makeMediaEditFun CloseMediaDialog InsertMediaAtCursor model.exposition ( vis, obj, valid )
-
-                _ ->
-                    div [] []
+            RCMediaEdit.view
+                makeMediaEditFun
+                CloseMediaDialog
+                InsertMediaAtCursor
+                model.exposition
+                model.mediaDialog
 
         confirmDialogHtml =
             case model.confirmDialog of
