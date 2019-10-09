@@ -11017,6 +11017,7 @@ var author$project$Main$update = F2(
 										mediaDialog: _Utils_update(
 											dialog,
 											{
+												object: elm$core$Maybe$Just(objFromDialog),
 												objectViewState: elm$core$Maybe$Just(objViewState)
 											})
 									}),
@@ -11037,6 +11038,7 @@ var author$project$Main$update = F2(
 									mediaDialog: _Utils_update(
 										dialog,
 										{
+											object: elm$core$Maybe$Just(objFromDialog),
 											objectViewState: elm$core$Maybe$Just(objViewState)
 										})
 								});

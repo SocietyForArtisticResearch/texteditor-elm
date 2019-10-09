@@ -634,7 +634,7 @@ update msg model =
                     case Exposition.isValid objViewState.validation of
                         False ->
                             ( { model
-                                | mediaDialog = { dialog | object = objFromDialog, objectViewState = Just objViewState }
+                                | mediaDialog = { dialog | object = Just objFromDialog, objectViewState = Just objViewState }
                               }
                             , Cmd.none
                             )
@@ -643,7 +643,7 @@ update msg model =
                             let
                                 newModel =
                                     { model
-                                        | mediaDialog = { dialog | object = objFromDialog, objectViewState = Just objViewState }
+                                        | mediaDialog = { dialog | object = Just objFromDialog, objectViewState = Just objViewState }
                                         , exposition =
                                             Exposition.replaceObject objFromDialog model.exposition
                                         , mediaClassesDict = model.mediaClassesDict |> Dict.update objFromDialog.id (Maybe.map (\_ -> objFromDialog.userClass))
