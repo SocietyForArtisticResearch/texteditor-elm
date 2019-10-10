@@ -15236,7 +15236,7 @@ var author$project$RCMediaPreview$viewThumbnail = F2(
 					if (size.$ === 'PreviewBig') {
 						return 500;
 					} else {
-						return 60;
+						return 120;
 					}
 				}();
 				var thumburl = A2(author$project$Exposition$customThumbUrl, reso, object);
@@ -15973,79 +15973,7 @@ var author$project$RCMediaEdit$view = F6(
 			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
 		}
 	});
-var author$project$RCMediaList$viewThumbnail = function (object) {
-	var _n0 = object.mediaType;
-	switch (_n0.$) {
-		case 'RCImage':
-			var thumburl = A2(author$project$Exposition$customThumbUrl, 120, object);
-			return A2(
-				elm$html$Html$img,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$src(thumburl),
-						A2(elm$html$Html$Attributes$style, 'object-fit', 'cover'),
-						A2(elm$html$Html$Attributes$style, 'width', '60px'),
-						A2(elm$html$Html$Attributes$style, 'height', '60px')
-					]),
-				_List_Nil);
-		case 'RCAudio':
-			var settings = _n0.a;
-			var audioUrl = author$project$Exposition$mediaUrl(object);
-			return A2(
-				elm$html$Html$audio,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$title('Preview'),
-						elm$html$Html$Attributes$controls(true),
-						elm$html$Html$Attributes$loop(settings.loop),
-						elm$html$Html$Attributes$autoplay(settings.autoplay),
-						elm$html$Html$Attributes$class('audio-preview')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$source,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$src(audioUrl),
-								elm$html$Html$Attributes$type_('audio/mpeg')
-							]),
-						_List_Nil)
-					]));
-		case 'RCVideo':
-			var settings = _n0.a;
-			var videoUrl = author$project$Exposition$mediaUrl(object);
-			return A2(
-				elm$html$Html$video,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$title('Preview'),
-						elm$html$Html$Attributes$controls(true),
-						elm$html$Html$Attributes$loop(settings.loop),
-						elm$html$Html$Attributes$autoplay(settings.autoplay),
-						elm$html$Html$Attributes$class('video-preview')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$source,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$src(videoUrl),
-								elm$html$Html$Attributes$type_('video/mp4')
-							]),
-						_List_Nil)
-					]));
-		default:
-			return A2(
-				elm$html$Html$span,
-				_List_Nil,
-				_List_fromArray(
-					[
-						elm$html$Html$text('No preview')
-					]));
-	}
-};
+var author$project$RCMediaPreview$PreviewSmall = {$: 'PreviewSmall'};
 var rundis$elm_bootstrap$Bootstrap$Alert$attrs = F2(
 	function (attributes, _n0) {
 		var configRec = _n0.a;
@@ -16663,7 +16591,7 @@ var author$project$RCMediaList$view = F2(
 							_List_Nil,
 							_List_fromArray(
 								[
-									author$project$RCMediaList$viewThumbnail(object)
+									A2(author$project$RCMediaPreview$viewThumbnail, object, author$project$RCMediaPreview$PreviewSmall)
 								])),
 							A2(
 							rundis$elm_bootstrap$Bootstrap$Table$td,
@@ -16810,7 +16738,7 @@ var author$project$RCMediaList$viewModalMediaPicker = F3(
 								_List_Nil,
 								_List_fromArray(
 									[
-										author$project$RCMediaList$viewThumbnail(object)
+										A2(author$project$RCMediaPreview$viewThumbnail, object, author$project$RCMediaPreview$PreviewSmall)
 									])),
 								A2(
 								rundis$elm_bootstrap$Bootstrap$Table$td,

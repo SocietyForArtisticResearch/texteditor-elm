@@ -9,6 +9,7 @@ import Exposition exposing (RCMediaObject)
 import Html exposing (Html, audio, div, img, source, span, text, video)
 import Html.Attributes exposing (autoplay, class, controls, id, loop, src, style, title, type_)
 import Html.Events exposing (onClick, onDoubleClick)
+import RCMediaPreview exposing (PreviewSize(..), viewThumbnail)
 import View exposing (defaultButton, mkButton)
 
 
@@ -78,7 +79,7 @@ view objectList messages =
                                 [ text "Delete" ]
                     in
                     Table.tr []
-                        [ Table.td [] [ viewThumbnail object ]
+                        [ Table.td [] [ viewThumbnail object PreviewSmall ]
                         , Table.td [] [ text <| String.fromInt object.id ]
                         , Table.td [] [ text object.name ]
                         , Table.td [] [ editButton, removeButton ]
@@ -127,7 +128,7 @@ viewModalMediaPicker visibility objectList messages =
                                         [ text "Insert" ]
                             in
                             Table.tr [ Table.rowAttr <| onDoubleClick <| messages.insertObject object ]
-                                [ Table.td [] [ viewThumbnail object ]
+                                [ Table.td [] [ viewThumbnail object PreviewSmall ]
                                 , Table.td [] [ text <| String.fromInt object.id ]
                                 , Table.td [] [ text object.name ]
                                 , Table.td [] [ insertButton ]
@@ -168,53 +169,3 @@ viewModalMediaPicker visibility objectList messages =
                 [ text "Cancel" ]
             ]
         |> Modal.view visibility
-
-
-viewThumbnail : RCMediaObject -> Html msg
-viewThumbnail object =
-    case object.mediaType of
-        Exposition.RCImage ->
-            let
-                thumburl =
-                    Exposition.customThumbUrl 120 object
-
-                -- double for high-res screens
-            in
-            img
-                [ src thumburl
-                , style "object-fit" "cover"
-                , style "width" "60px"
-                , style "height" "60px"
-                ]
-                []
-
-        Exposition.RCAudio settings ->
-            let
-                audioUrl =
-                    Exposition.mediaUrl object
-            in
-            audio
-                [ title "Preview"
-                , controls True
-                , loop settings.loop
-                , autoplay settings.autoplay
-                , class "audio-preview"
-                ]
-                [ source [ src audioUrl, type_ "audio/mpeg" ] [] ]
-
-        Exposition.RCVideo settings ->
-            let
-                videoUrl =
-                    Exposition.mediaUrl object
-            in
-            video
-                [ title "Preview"
-                , controls True
-                , loop settings.loop
-                , autoplay settings.autoplay
-                , class "video-preview"
-                ]
-                [ source [ src videoUrl, type_ "video/mp4" ] [] ]
-
-        _ ->
-            span [] [ text "No preview" ]

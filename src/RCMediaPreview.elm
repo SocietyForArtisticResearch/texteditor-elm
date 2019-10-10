@@ -37,7 +37,7 @@ viewThumbnail object size =
                             500
 
                         _ ->
-                            60
+                            120
 
                 thumburl =
                     Exposition.customThumbUrl reso object
