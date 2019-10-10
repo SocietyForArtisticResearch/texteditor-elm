@@ -78,7 +78,7 @@ view objectList messages =
                                 ]
                                 [ text "Delete" ]
                     in
-                    Table.tr []
+                    Table.tr [ Table.rowAttr <| onDoubleClick <| messages.editObject (String.fromInt object.id) ]
                         [ Table.td [] [ viewThumbnail object PreviewSmall ]
                         , Table.td [] [ text <| String.fromInt object.id ]
                         , Table.td [] [ text object.name ]
