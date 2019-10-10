@@ -663,7 +663,9 @@ update msg model =
                         _ =
                             Debug.log "saved media result: " s
                     in
-                    update SaveExposition model
+                    -- TO BE TESTED, SEE IF CLASSES ARE NOT OVERWRITTEN BY BACKEND BETWEEN EXPOSITION SAVINGS
+                    --                    update SaveExposition model
+                    ( model, Cmd.none )
 
                 Err s ->
                     let

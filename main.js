@@ -11064,11 +11064,7 @@ var author$project$Main$update = F2(
 					if (result.$ === 'Ok') {
 						var s = result.a;
 						var _n25 = A2(elm$core$Debug$log, 'saved media result: ', s);
-						var $temp$msg = author$project$Main$SaveExposition,
-							$temp$model = model;
-						msg = $temp$msg;
-						model = $temp$model;
-						continue update;
+						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					} else {
 						var s = result.a;
 						var _n26 = A2(elm$core$Debug$log, 'update media error: ', s);
