@@ -15209,7 +15209,7 @@ var author$project$RCMediaPreview$getStyle = function (size) {
 		return _List_fromArray(
 			[
 				A2(elm$html$Html$Attributes$style, 'width', '100%'),
-				A2(elm$html$Html$Attributes$style, 'height', 'auto'),
+				A2(elm$html$Html$Attributes$style, 'height', '250px'),
 				A2(elm$html$Html$Attributes$style, 'object-fit', 'cover')
 			]);
 	} else {
@@ -15232,7 +15232,14 @@ var author$project$RCMediaPreview$viewThumbnail = F2(
 		var _n0 = object.mediaType;
 		switch (_n0.$) {
 			case 'RCImage':
-				var thumburl = A2(author$project$Exposition$customThumbUrl, 120, object);
+				var reso = function () {
+					if (size.$ === 'PreviewBig') {
+						return 250;
+					} else {
+						return 60;
+					}
+				}();
+				var thumburl = A2(author$project$Exposition$customThumbUrl, reso, object);
 				return A2(
 					elm$html$Html$img,
 					_Utils_ap(

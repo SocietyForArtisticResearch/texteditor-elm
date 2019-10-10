@@ -15,7 +15,7 @@ getStyle size =
     case size of
         PreviewBig ->
             [ style "width" "100%"
-            , style "height" "auto"
+            , style "height" "250px"
             , style "object-fit" "cover"
             ]
 
@@ -31,8 +31,16 @@ viewThumbnail object size =
     case object.mediaType of
         Exposition.RCImage ->
             let
+                reso =
+                    case size of
+                        PreviewBig ->
+                            250
+
+                        _ ->
+                            60
+
                 thumburl =
-                    Exposition.customThumbUrl 120 object
+                    Exposition.customThumbUrl reso object
 
                 -- double for high-res screens
             in
