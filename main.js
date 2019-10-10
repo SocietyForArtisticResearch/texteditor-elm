@@ -15234,7 +15234,7 @@ var author$project$RCMediaPreview$viewThumbnail = F2(
 			case 'RCImage':
 				var reso = function () {
 					if (size.$ === 'PreviewBig') {
-						return 250;
+						return 500;
 					} else {
 						return 60;
 					}

@@ -34,7 +34,7 @@ viewThumbnail object size =
                 reso =
                     case size of
                         PreviewBig ->
-                            250
+                            500
 
                         _ ->
                             60
