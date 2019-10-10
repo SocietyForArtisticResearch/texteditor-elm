@@ -95,6 +95,16 @@ selectedEditorIsStyle model =
             False
 
 
+selectedEditorIsMedia : Model -> Bool
+selectedEditorIsMedia model =
+    case model.editor of
+        ( EditorMedia, _ ) ->
+            True
+
+        _ ->
+            False
+
+
 type MarkdownEditor
     = CodemirrorMarkdown
     | TextareaMarkdown
@@ -340,10 +350,6 @@ type Msg
     | RedoCM
     | SetDocumentTitle String
     | ToggleFullscreen Bool
-
-
-
--- not yet validated, only update request
 
 
 makeMediaEditFun : Exposition.RCMediaObject -> RCMediaEdit.Field -> String -> Msg
@@ -649,9 +655,12 @@ update msg model =
                                         , mediaClassesDict = model.mediaClassesDict |> Dict.update objFromDialog.id (Maybe.map (\_ -> objFromDialog.userClass))
                                     }
                             in
-                            update (SaveMediaEdit objFromDialog) newModel
+                            ( { newModel | saved = False }
+                            , RCAPI.updateMedia objFromDialog (Http.expectString SavedMediaEdit)
+                            )
 
         SaveMediaEdit obj ->
+            -- no longer used
             ( { model | saved = False }
             , RCAPI.updateMedia obj (Http.expectString SavedMediaEdit)
             )
@@ -1235,6 +1244,7 @@ view model =
                 InsertMediaAtCursor
                 model.exposition
                 model.mediaDialog
+                (not (selectedEditorIsMedia model))
 
         confirmDialogHtml =
             case model.confirmDialog of

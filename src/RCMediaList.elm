@@ -157,6 +157,7 @@ viewModalMediaPicker visibility objectList messages =
                         ]
     in
     Modal.config messages.closeModal
+        |> Modal.scrollableBody True
         |> Modal.large
         |> Modal.hideOnBackdropClick True
         |> Modal.h1 [] [ text "Select a media object to insert." ]
