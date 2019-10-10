@@ -37,11 +37,11 @@ General:
 
 Casper:
 
-- structure, settings should be only settings
-- tooltips "button"
-- "Waiting" message
-- "insert" button in media edit from media list should be removed
-- scrollableBody in modals
+
+
+
+
+
 
 Luc:
 
