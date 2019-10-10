@@ -41,6 +41,7 @@ Casper:
 - tooltips "button"
 - "Waiting" message
 - "insert" button in media edit from media list should be removed
+- scrollableBody in modals
 
 Luc:
 
