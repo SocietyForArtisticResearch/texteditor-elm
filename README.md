@@ -40,6 +40,7 @@ Casper:
 - structure, settings should be only settings
 - tooltips "button"
 - "Waiting" message
+- "insert" button in media edit from media list should be removed
 
 Luc:
 
@@ -47,6 +48,7 @@ Luc:
 - icons for right hand side navbar
 - Server problem when exporting?, 414 Request-URI Too Large (json, body??)
 - when logged out error http codes request form devs
+- period in media name (remove periods on upload and whitespace)
 
 ## To test
 - tables?
