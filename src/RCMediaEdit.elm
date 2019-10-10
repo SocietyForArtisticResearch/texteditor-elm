@@ -15,6 +15,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events as Events
 import Licenses exposing (..)
+import RCMediaPreview
 
 
 type Field
@@ -300,6 +301,7 @@ viewBody objectState editTool objectInEdit =
                         [ Form.label [ for "licensePicker" ] [ text "license type" ]
                         , viewLicensePicker "licensePicker" allLicenses currentLicense (editTool LicenseField)
                         ]
+                    , RCMediaPreview.viewThumbnail objectInEdit RCMediaPreview.PreviewBig
                     ]
         ]
 

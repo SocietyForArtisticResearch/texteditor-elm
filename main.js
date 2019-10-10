@@ -15198,6 +15198,110 @@ var author$project$RCMediaEdit$viewTextAreaWithLabel = function (props) {
 					]))
 			]));
 };
+var author$project$RCMediaPreview$PreviewBig = {$: 'PreviewBig'};
+var author$project$Exposition$customThumbUrl = F2(
+	function (size, data) {
+		var sizeStr = elm$core$String$fromInt(size);
+		return '/text-editor/simple-media-thumb?research=' + (elm$core$String$fromInt(data.expositionId) + ('&simple-media=' + (elm$core$String$fromInt(data.id) + ('&width=' + (sizeStr + ('&height=' + sizeStr))))));
+	});
+var author$project$RCMediaPreview$getStyle = function (size) {
+	if (size.$ === 'PreviewBig') {
+		return _List_fromArray(
+			[
+				A2(elm$html$Html$Attributes$style, 'width', '100%'),
+				A2(elm$html$Html$Attributes$style, 'height', 'auto'),
+				A2(elm$html$Html$Attributes$style, 'object-fit', 'cover')
+			]);
+	} else {
+		return _List_fromArray(
+			[
+				A2(elm$html$Html$Attributes$style, 'width', '60px'),
+				A2(elm$html$Html$Attributes$style, 'hieght', '60px'),
+				A2(elm$html$Html$Attributes$style, 'object-fit', 'cover')
+			]);
+	}
+};
+var elm$html$Html$audio = _VirtualDom_node('audio');
+var elm$html$Html$source = _VirtualDom_node('source');
+var elm$html$Html$video = _VirtualDom_node('video');
+var elm$html$Html$Attributes$autoplay = elm$html$Html$Attributes$boolProperty('autoplay');
+var elm$html$Html$Attributes$controls = elm$html$Html$Attributes$boolProperty('controls');
+var elm$html$Html$Attributes$loop = elm$html$Html$Attributes$boolProperty('loop');
+var author$project$RCMediaPreview$viewThumbnail = F2(
+	function (object, size) {
+		var _n0 = object.mediaType;
+		switch (_n0.$) {
+			case 'RCImage':
+				var thumburl = A2(author$project$Exposition$customThumbUrl, 120, object);
+				return A2(
+					elm$html$Html$img,
+					_Utils_ap(
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$src(thumburl)
+							]),
+						author$project$RCMediaPreview$getStyle(size)),
+					_List_Nil);
+			case 'RCAudio':
+				var settings = _n0.a;
+				var audioUrl = author$project$Exposition$mediaUrl(object);
+				return A2(
+					elm$html$Html$audio,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$title('Preview'),
+							elm$html$Html$Attributes$controls(true),
+							elm$html$Html$Attributes$loop(settings.loop),
+							elm$html$Html$Attributes$autoplay(settings.autoplay),
+							elm$html$Html$Attributes$class('audio-preview')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$source,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$src(audioUrl),
+									elm$html$Html$Attributes$type_('audio/mpeg')
+								]),
+							_List_Nil)
+						]));
+			case 'RCVideo':
+				var settings = _n0.a;
+				var videoUrl = author$project$Exposition$mediaUrl(object);
+				return A2(
+					elm$html$Html$video,
+					_Utils_ap(
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$title('Preview'),
+								elm$html$Html$Attributes$controls(true),
+								elm$html$Html$Attributes$loop(settings.loop),
+								elm$html$Html$Attributes$autoplay(settings.autoplay),
+								elm$html$Html$Attributes$class('video-preview')
+							]),
+						author$project$RCMediaPreview$getStyle(size)),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$source,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$src(videoUrl),
+									elm$html$Html$Attributes$type_('video/mp4')
+								]),
+							_List_Nil)
+						]));
+			default:
+				return A2(
+					elm$html$Html$span,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text('No preview')
+						]));
+		}
+	});
 var elm$core$List$singleton = function (value) {
 	return _List_fromArray(
 		[value]);
@@ -15321,7 +15425,8 @@ var author$project$RCMediaEdit$viewBody = F3(
 											author$project$Licenses$allLicenses,
 											currentLicense,
 											editTool(author$project$RCMediaEdit$LicenseField))
-										]))
+										])),
+									A2(author$project$RCMediaPreview$viewThumbnail, objectInEdit, author$project$RCMediaPreview$PreviewBig)
 								]))))
 				]));
 	});
@@ -15861,17 +15966,6 @@ var author$project$RCMediaEdit$view = F6(
 			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
 		}
 	});
-var author$project$Exposition$customThumbUrl = F2(
-	function (size, data) {
-		var sizeStr = elm$core$String$fromInt(size);
-		return '/text-editor/simple-media-thumb?research=' + (elm$core$String$fromInt(data.expositionId) + ('&simple-media=' + (elm$core$String$fromInt(data.id) + ('&width=' + (sizeStr + ('&height=' + sizeStr))))));
-	});
-var elm$html$Html$audio = _VirtualDom_node('audio');
-var elm$html$Html$source = _VirtualDom_node('source');
-var elm$html$Html$video = _VirtualDom_node('video');
-var elm$html$Html$Attributes$autoplay = elm$html$Html$Attributes$boolProperty('autoplay');
-var elm$html$Html$Attributes$controls = elm$html$Html$Attributes$boolProperty('controls');
-var elm$html$Html$Attributes$loop = elm$html$Html$Attributes$boolProperty('loop');
 var author$project$RCMediaList$viewThumbnail = function (object) {
 	var _n0 = object.mediaType;
 	switch (_n0.$) {
