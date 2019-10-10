@@ -15974,6 +15974,12 @@ var author$project$RCMediaEdit$view = F6(
 		}
 	});
 var author$project$RCMediaPreview$PreviewSmall = {$: 'PreviewSmall'};
+var elm$html$Html$Events$onDoubleClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'dblclick',
+		elm$json$Json$Decode$succeed(msg));
+};
 var rundis$elm_bootstrap$Bootstrap$Alert$attrs = F2(
 	function (attributes, _n0) {
 		var configRec = _n0.a;
@@ -16011,6 +16017,12 @@ var rundis$elm_bootstrap$Bootstrap$Table$cellAttr = function (attr_) {
 };
 var rundis$elm_bootstrap$Bootstrap$Table$Hover = {$: 'Hover'};
 var rundis$elm_bootstrap$Bootstrap$Table$hover = rundis$elm_bootstrap$Bootstrap$Table$Hover;
+var rundis$elm_bootstrap$Bootstrap$Table$RowAttr = function (a) {
+	return {$: 'RowAttr', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Table$rowAttr = function (attr_) {
+	return rundis$elm_bootstrap$Bootstrap$Table$RowAttr(attr_);
+};
 var rundis$elm_bootstrap$Bootstrap$Table$THead = function (a) {
 	return {$: 'THead', a: a};
 };
@@ -16583,7 +16595,13 @@ var author$project$RCMediaList$view = F2(
 						]));
 				return A2(
 					rundis$elm_bootstrap$Bootstrap$Table$tr,
-					_List_Nil,
+					_List_fromArray(
+						[
+							rundis$elm_bootstrap$Bootstrap$Table$rowAttr(
+							elm$html$Html$Events$onDoubleClick(
+								messages.editObject(
+									elm$core$String$fromInt(object.id))))
+						]),
 					_List_fromArray(
 						[
 							A2(
@@ -16672,12 +16690,6 @@ var author$project$RCMediaList$view = F2(
 		}
 	});
 var author$project$View$UploadCloud = {$: 'UploadCloud'};
-var elm$html$Html$Events$onDoubleClick = function (msg) {
-	return A2(
-		elm$html$Html$Events$on,
-		'dblclick',
-		elm$json$Json$Decode$succeed(msg));
-};
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Success = {$: 'Success'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Success));
@@ -16685,12 +16697,6 @@ var rundis$elm_bootstrap$Bootstrap$Button$secondary = rundis$elm_bootstrap$Boots
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
 var elm$html$Html$h1 = _VirtualDom_node('h1');
 var rundis$elm_bootstrap$Bootstrap$Modal$h1 = rundis$elm_bootstrap$Bootstrap$Modal$titledHeader(elm$html$Html$h1);
-var rundis$elm_bootstrap$Bootstrap$Table$RowAttr = function (a) {
-	return {$: 'RowAttr', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Table$rowAttr = function (attr_) {
-	return rundis$elm_bootstrap$Bootstrap$Table$RowAttr(attr_);
-};
 var author$project$RCMediaList$viewModalMediaPicker = F3(
 	function (visibility, objectList, messages) {
 		var tableList = function () {
