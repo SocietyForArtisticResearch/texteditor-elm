@@ -411,6 +411,10 @@ resolve toResult response =
 
 convertExposition : ConversionType -> RCExposition -> (ConversionType -> Result Http.Error Bytes -> msg) -> Cmd msg
 convertExposition ctype expo expectMsg =
+    let
+        exportExpoMd =
+            Exposition.replaceToolsWithImages expo (Just Settings.baseDomain)
+    in
     Http.post
         { url =
             "text-editor/export"
@@ -418,9 +422,7 @@ convertExposition ctype expo expectMsg =
                 ++ typeEnding ctype
         , body =
             Http.multipartBody
-                [ Http.stringPart "markdown" expo.markdownInput ]
-
-        --        Http.stringBody expo.markdownInput
+                [ Http.stringPart "markdown" exportExpoMd ]
         , expect = Http.expectBytesResponse (expectMsg ctype) (resolve Ok)
         }
 
