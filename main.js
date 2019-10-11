@@ -10168,20 +10168,31 @@ var elm$http$Http$expectBytesResponse = F2(
 			_Http_toDataView,
 			A2(elm$core$Basics$composeR, toResult, toMsg));
 	});
+var elm$http$Http$multipartBody = function (parts) {
+	return A2(
+		_Http_pair,
+		'',
+		_Http_toFormData(parts));
+};
 var elm$http$Http$post = function (r) {
 	return elm$http$Http$request(
 		{body: r.body, expect: r.expect, headers: _List_Nil, method: 'POST', timeout: elm$core$Maybe$Nothing, tracker: elm$core$Maybe$Nothing, url: r.url});
 };
+var elm$http$Http$stringPart = _Http_pair;
 var author$project$RCAPI$convertExposition = F3(
 	function (ctype, expo, expectMsg) {
 		return elm$http$Http$post(
 			{
-				body: elm$http$Http$emptyBody,
+				body: elm$http$Http$multipartBody(
+					_List_fromArray(
+						[
+							A2(elm$http$Http$stringPart, 'markdown', expo.markdownInput)
+						])),
 				expect: A2(
 					elm$http$Http$expectBytesResponse,
 					expectMsg(ctype),
 					author$project$RCAPI$resolve(elm$core$Result$Ok)),
-				url: 'text-editor/export' + ('?type=' + (author$project$RCAPI$typeEnding(ctype) + ('&markdown=' + expo.markdownInput)))
+				url: 'text-editor/export' + ('?type=' + author$project$RCAPI$typeEnding(ctype))
 			});
 	});
 var elm$http$Http$expectWhatever = function (toMsg) {
@@ -10254,13 +10265,6 @@ var elm$http$Http$expectString = function (toMsg) {
 		toMsg,
 		elm$http$Http$resolve(elm$core$Result$Ok));
 };
-var elm$http$Http$multipartBody = function (parts) {
-	return A2(
-		_Http_pair,
-		'',
-		_Http_toFormData(parts));
-};
-var elm$http$Http$stringPart = _Http_pair;
 var author$project$RCAPI$saveExposition = F2(
 	function (exposition, expect) {
 		var url = 'text-editor/save' + ('?research=' + (elm$core$String$fromInt(exposition.id) + ('&weave=' + elm$core$String$fromInt(exposition.currentWeave))));

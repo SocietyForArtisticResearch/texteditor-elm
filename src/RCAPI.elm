@@ -416,9 +416,11 @@ convertExposition ctype expo expectMsg =
             "text-editor/export"
                 ++ "?type="
                 ++ typeEnding ctype
-                ++ "&markdown="
-                ++ expo.markdownInput
-        , body = Http.emptyBody
+        , body =
+            Http.multipartBody
+                [ Http.stringPart "markdown" expo.markdownInput ]
+
+        --        Http.stringBody expo.markdownInput
         , expect = Http.expectBytesResponse (expectMsg ctype) (resolve Ok)
         }
 
