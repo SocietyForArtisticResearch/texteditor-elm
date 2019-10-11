@@ -38,16 +38,11 @@ General:
 Casper:
 
 
-
-
-
 Luc:
 
-- `<meta name="viewport" content="width=device-width, initial-scale=1.0">` (ask devs), also on live server
 - icons for right hand side navbar
-- Server problem when exporting?, 414 Request-URI Too Large (json, body??)
-- when logged out error http codes request form devs
-- period in media name (remove periods on upload and whitespace)
+- when logged out error http codes request form devs -- what to display?
+- period in media name (remove periods on upload and whitespace) -- actually only validator in mediaedit has to be adjusted
 
 ## To test
 - tables?
@@ -137,3 +132,5 @@ Luc:
 - insert header into old expose on first opening
 - add full screen mode (hide preview, adjust widths of codemirror etc..)
 - media upload still not working for video.
+- `<meta name="viewport" content="width=device-width, initial-scale=1.0">` (ask devs), also on live server
+- Server problem when exporting?, 414 Request-URI Too Large (json, body??)

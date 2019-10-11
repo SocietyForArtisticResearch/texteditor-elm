@@ -414,9 +414,6 @@ convertExposition ctype expo expectMsg =
     let
         exportExpoMd =
             Exposition.replaceToolsWithImages expo (Just Settings.baseDomain)
-
-        _ =
-            Debug.log "exporting" exportExpoMd
     in
     Http.post
         { url =
