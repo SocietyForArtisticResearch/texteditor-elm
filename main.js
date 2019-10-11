@@ -10119,6 +10119,49 @@ var author$project$RCAPI$apiMediaEntry = A7(
 	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
 	elm$json$Json$Decode$maybe(
 		A2(elm$json$Json$Decode$field, 'license', elm$json$Json$Decode$string)));
+var author$project$Exposition$withPrefix = F2(
+	function (prefix, str) {
+		if (prefix.$ === 'Nothing') {
+			return str;
+		} else {
+			var pre = prefix.a;
+			return _Utils_ap(pre, str);
+		}
+	});
+var author$project$Exposition$replaceToolsWithImages = F2(
+	function (exp, urlPrefix) {
+		var r = elm$regex$Regex$fromString('!{([^}]*)}');
+		var md = exp.markdownInput;
+		if (r.$ === 'Nothing') {
+			return md;
+		} else {
+			var reg = r.a;
+			return A3(
+				elm$regex$Regex$replace,
+				reg,
+				function (m) {
+					var _n1 = m.submatches;
+					if (_n1.b && (_n1.a.$ === 'Just')) {
+						var sub = _n1.a.a;
+						return A2(
+							elm$core$Maybe$withDefault,
+							'default...media',
+							A2(
+								elm$core$Maybe$map,
+								function (s) {
+									return '![' + (s.name + ('](' + (A2(
+										author$project$Exposition$withPrefix,
+										urlPrefix,
+										author$project$Exposition$mediaUrl(s)) + ')')));
+								},
+								A2(author$project$Exposition$objectByNameOrId, sub, exp)));
+					} else {
+						return '';
+					}
+				},
+				md);
+		}
+	});
 var author$project$RCAPI$resolve = F2(
 	function (toResult, response) {
 		switch (response.$) {
@@ -10160,6 +10203,7 @@ var author$project$RCAPI$typeEnding = function (t) {
 			return 'epub';
 	}
 };
+var author$project$Settings$baseDomain = 'https://dev.researchcatalogue.net';
 var elm$http$Http$expectBytesResponse = F2(
 	function (toMsg, toResult) {
 		return A3(
@@ -10181,12 +10225,17 @@ var elm$http$Http$post = function (r) {
 var elm$http$Http$stringPart = _Http_pair;
 var author$project$RCAPI$convertExposition = F3(
 	function (ctype, expo, expectMsg) {
+		var exportExpoMd = A2(
+			author$project$Exposition$replaceToolsWithImages,
+			expo,
+			elm$core$Maybe$Just(author$project$Settings$baseDomain));
+		var _n0 = A2(elm$core$Debug$log, 'exporting', exportExpoMd);
 		return elm$http$Http$post(
 			{
 				body: elm$http$Http$multipartBody(
 					_List_fromArray(
 						[
-							A2(elm$http$Http$stringPart, 'markdown', expo.markdownInput)
+							A2(elm$http$Http$stringPart, 'markdown', exportExpoMd)
 						])),
 				expect: A2(
 					elm$http$Http$expectBytesResponse,
