@@ -1,7 +1,8 @@
-module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, APIPandocImport, ConversionType(..), apiMediaEntry, convertExposition, deleteMedia, getExposition, getMediaList, saveExposition, toMediaClassesDict, toRCExposition, toRCMediaObject, updateMedia, uploadImport, uploadMedia)
+module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, APIPandocImport, ConversionType(..), apiMediaEntry, convertExposition, deleteMedia, downloadExport, getExposition, getMediaList, saveExposition, toMediaClassesDict, toRCExposition, toRCMediaObject, updateMedia, uploadImport, uploadMedia)
 
 --import Bytes.Decode
 
+import Bytes exposing (Bytes)
 import Bytes.Encode
 import Dict
 import Exposition exposing (OptionalDimensions, RCExposition, RCMediaObject, RCMediaType(..), TOC, TOCEntry, defaultPlayerSettings)
@@ -374,32 +375,85 @@ typeEnding t =
             "epub"
 
 
-convertExposition : ConversionType -> RCExposition -> Cmd msg
-convertExposition ctype expo =
-    -- TODO tools to images
+
+-- CONVERSION
+-- convertExposition : ConversionType -> RCExposition -> Cmd msg
+-- convertExposition ctype expo =
+--     -- TODO tools to images
+--     let
+--         path =
+--             Url.Builder.relative [ "text-editor", "export" ]
+--                 [ Url.Builder.string "type" (typeEnding ctype)
+--                 , Url.Builder.string "markdown" (Exposition.replaceToolsWithImages expo (Just Settings.baseDomain))
+--                 ]
+--     in
+--     File.Download.url path
+
+
+resolve : (body -> Result String a) -> Http.Response body -> Result Http.Error a
+resolve toResult response =
+    case response of
+        Http.BadUrl_ url ->
+            Err (Http.BadUrl url)
+
+        Http.Timeout_ ->
+            Err Http.Timeout
+
+        Http.NetworkError_ ->
+            Err Http.NetworkError
+
+        Http.BadStatus_ metadata _ ->
+            Err (Http.BadStatus metadata.statusCode)
+
+        Http.GoodStatus_ _ body ->
+            Result.mapError Http.BadBody (toResult body)
+
+
+convertExposition : ConversionType -> RCExposition -> (ConversionType -> Result Http.Error Bytes -> msg) -> Cmd msg
+convertExposition ctype expo expectMsg =
+    Http.post
+        { url =
+            "text-editor/export"
+                ++ "?type="
+                ++ typeEnding ctype
+                ++ "&markdown="
+                ++ expo.markdownInput
+        , body = Http.emptyBody
+        , expect = Http.expectBytesResponse (expectMsg ctype) (resolve Ok)
+        }
+
+
+downloadExport : ConversionType -> Bytes -> Cmd msg
+downloadExport ctype content =
     let
-        path =
-            Url.Builder.relative [ "text-editor", "export" ]
-                [ Url.Builder.string "type" (typeEnding ctype)
-                , Url.Builder.string "markdown" (Exposition.replaceToolsWithImages expo (Just Settings.baseDomain))
-                ]
+        ( fname, mime ) =
+            case ctype of
+                Pdf ->
+                    ( "export.pdf", "application/pdf" )
+
+                Odt ->
+                    ( "export.odt", "application/vnd.oasis.opendocument.text" )
+
+                Docx ->
+                    ( "export.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document" )
+
+                Html ->
+                    ( "export.html", "text/html" )
+
+                Md ->
+                    ( "export.md", "text/plain" )
+
+                Epub ->
+                    ( "export.epub", "application/epub+zip" )
+
+                Latex ->
+                    ( "export.tex", "application/x-latex" )
     in
-    File.Download.url path
+    File.Download.bytes fname mime content
 
 
 
--- convertExposition : ConversionType -> RCExposition -> (Result Http.Error a -> msg) -> Cmd msg
--- convertExposition ctype expo expectMsg =
---     Http.post
---         { url =
---             "text-editor/export"
---                 ++ "?type="
---                 ++ typeEnding ctype
---                 ++ "&markdown="
---                 ++ expo.markdownInput
---         , body = Http.emptyBody
---         , expect = Http.expectBytes expectMsg Bytes.Decode.bytes
---         }
+-- SAVING
 
 
 saveExposition exposition expect =

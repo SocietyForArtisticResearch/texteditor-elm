@@ -4977,24 +4977,7 @@ function _File_toUrl(blob)
 	});
 }
 
-
-
-function _Url_percentEncode(string)
-{
-	return encodeURIComponent(string);
-}
-
-function _Url_percentDecode(string)
-{
-	try
-	{
-		return elm$core$Maybe$Just(decodeURIComponent(string));
-	}
-	catch (e)
-	{
-		return elm$core$Maybe$Nothing;
-	}
-}var author$project$Main$GotExposition = function (a) {
+var author$project$Main$GotExposition = function (a) {
 	return {$: 'GotExposition', a: a};
 };
 var author$project$Main$NavbarMsg = function (a) {
@@ -9837,6 +9820,10 @@ var author$project$Main$BadUploadFileType = function (a) {
 	return {$: 'BadUploadFileType', a: a};
 };
 var author$project$Main$CloseConfirmDialog = {$: 'CloseConfirmDialog'};
+var author$project$Main$DownloadExport = F2(
+	function (a, b) {
+		return {$: 'DownloadExport', a: a, b: b};
+	});
 var author$project$Main$GotMediaList = function (a) {
 	return {$: 'GotMediaList', a: a};
 };
@@ -10029,6 +10016,7 @@ var author$project$Problems$CannotLoadMedia = function (a) {
 };
 var author$project$Problems$CannotSave = {$: 'CannotSave'};
 var author$project$Problems$CannotUpdateMedia = {$: 'CannotUpdateMedia'};
+var author$project$Problems$ExportFailed = {$: 'ExportFailed'};
 var author$project$Problems$MediaUploadFailed = function (a) {
 	return {$: 'MediaUploadFailed', a: a};
 };
@@ -10134,47 +10122,27 @@ var author$project$RCAPI$apiMediaEntry = A7(
 	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
 	elm$json$Json$Decode$maybe(
 		A2(elm$json$Json$Decode$field, 'license', elm$json$Json$Decode$string)));
-var author$project$Exposition$withPrefix = F2(
-	function (prefix, str) {
-		if (prefix.$ === 'Nothing') {
-			return str;
-		} else {
-			var pre = prefix.a;
-			return _Utils_ap(pre, str);
-		}
-	});
-var author$project$Exposition$replaceToolsWithImages = F2(
-	function (exp, urlPrefix) {
-		var r = elm$regex$Regex$fromString('!{([^}]*)}');
-		var md = exp.markdownInput;
-		if (r.$ === 'Nothing') {
-			return md;
-		} else {
-			var reg = r.a;
-			return A3(
-				elm$regex$Regex$replace,
-				reg,
-				function (m) {
-					var _n1 = m.submatches;
-					if (_n1.b && (_n1.a.$ === 'Just')) {
-						var sub = _n1.a.a;
-						return A2(
-							elm$core$Maybe$withDefault,
-							'default...media',
-							A2(
-								elm$core$Maybe$map,
-								function (s) {
-									return '![' + (s.name + ('](' + (A2(
-										author$project$Exposition$withPrefix,
-										urlPrefix,
-										author$project$Exposition$mediaUrl(s)) + ')')));
-								},
-								A2(author$project$Exposition$objectByNameOrId, sub, exp)));
-					} else {
-						return '';
-					}
-				},
-				md);
+var author$project$RCAPI$resolve = F2(
+	function (toResult, response) {
+		switch (response.$) {
+			case 'BadUrl_':
+				var url = response.a;
+				return elm$core$Result$Err(
+					elm$http$Http$BadUrl(url));
+			case 'Timeout_':
+				return elm$core$Result$Err(elm$http$Http$Timeout);
+			case 'NetworkError_':
+				return elm$core$Result$Err(elm$http$Http$NetworkError);
+			case 'BadStatus_':
+				var metadata = response.a;
+				return elm$core$Result$Err(
+					elm$http$Http$BadStatus(metadata.statusCode));
+			default:
+				var body = response.b;
+				return A2(
+					elm$core$Result$mapError,
+					elm$http$Http$BadBody,
+					toResult(body));
 		}
 	});
 var author$project$RCAPI$typeEnding = function (t) {
@@ -10195,68 +10163,6 @@ var author$project$RCAPI$typeEnding = function (t) {
 			return 'epub';
 	}
 };
-var author$project$Settings$baseDomain = 'https://dev.researchcatalogue.net';
-var elm$file$File$Download$url = function (href) {
-	return A2(
-		elm$core$Task$perform,
-		elm$core$Basics$never,
-		_File_downloadUrl(href));
-};
-var elm$url$Url$Builder$toQueryPair = function (_n0) {
-	var key = _n0.a;
-	var value = _n0.b;
-	return key + ('=' + value);
-};
-var elm$url$Url$Builder$toQuery = function (parameters) {
-	if (!parameters.b) {
-		return '';
-	} else {
-		return '?' + A2(
-			elm$core$String$join,
-			'&',
-			A2(elm$core$List$map, elm$url$Url$Builder$toQueryPair, parameters));
-	}
-};
-var elm$url$Url$Builder$relative = F2(
-	function (pathSegments, parameters) {
-		return _Utils_ap(
-			A2(elm$core$String$join, '/', pathSegments),
-			elm$url$Url$Builder$toQuery(parameters));
-	});
-var elm$url$Url$percentEncode = _Url_percentEncode;
-var elm$url$Url$Builder$QueryParameter = F2(
-	function (a, b) {
-		return {$: 'QueryParameter', a: a, b: b};
-	});
-var elm$url$Url$Builder$string = F2(
-	function (key, value) {
-		return A2(
-			elm$url$Url$Builder$QueryParameter,
-			elm$url$Url$percentEncode(key),
-			elm$url$Url$percentEncode(value));
-	});
-var author$project$RCAPI$convertExposition = F2(
-	function (ctype, expo) {
-		var path = A2(
-			elm$url$Url$Builder$relative,
-			_List_fromArray(
-				['text-editor', 'export']),
-			_List_fromArray(
-				[
-					A2(
-					elm$url$Url$Builder$string,
-					'type',
-					author$project$RCAPI$typeEnding(ctype)),
-					A2(
-					elm$url$Url$Builder$string,
-					'markdown',
-					A2(
-						author$project$Exposition$replaceToolsWithImages,
-						expo,
-						elm$core$Maybe$Just(author$project$Settings$baseDomain)))
-				]));
-		return elm$file$File$Download$url(path);
-	});
 var elm$http$Http$expectBytesResponse = F2(
 	function (toMsg, toResult) {
 		return A3(
@@ -10264,6 +10170,22 @@ var elm$http$Http$expectBytesResponse = F2(
 			'arraybuffer',
 			_Http_toDataView,
 			A2(elm$core$Basics$composeR, toResult, toMsg));
+	});
+var elm$http$Http$post = function (r) {
+	return elm$http$Http$request(
+		{body: r.body, expect: r.expect, headers: _List_Nil, method: 'POST', timeout: elm$core$Maybe$Nothing, tracker: elm$core$Maybe$Nothing, url: r.url});
+};
+var author$project$RCAPI$convertExposition = F3(
+	function (ctype, expo, expectMsg) {
+		return elm$http$Http$post(
+			{
+				body: elm$http$Http$emptyBody,
+				expect: A2(
+					elm$http$Http$expectBytesResponse,
+					expectMsg(ctype),
+					author$project$RCAPI$resolve(elm$core$Result$Ok)),
+				url: 'text-editor/export' + ('?type=' + (author$project$RCAPI$typeEnding(ctype) + ('&markdown=' + expo.markdownInput)))
+			});
 	});
 var elm$http$Http$expectWhatever = function (toMsg) {
 	return A2(
@@ -10274,10 +10196,6 @@ var elm$http$Http$expectWhatever = function (toMsg) {
 				return elm$core$Result$Ok(_Utils_Tuple0);
 			}));
 };
-var elm$http$Http$post = function (r) {
-	return elm$http$Http$request(
-		{body: r.body, expect: r.expect, headers: _List_Nil, method: 'POST', timeout: elm$core$Maybe$Nothing, tracker: elm$core$Maybe$Nothing, url: r.url});
-};
 var author$project$RCAPI$deleteMedia = F2(
 	function (mediaObject, expect) {
 		return elm$http$Http$post(
@@ -10286,6 +10204,41 @@ var author$project$RCAPI$deleteMedia = F2(
 				expect: elm$http$Http$expectWhatever(expect),
 				url: 'text-editor/simple-media-remove?research=' + (elm$core$String$fromInt(mediaObject.expositionId) + ('&simple-media=' + elm$core$String$fromInt(mediaObject.id)))
 			});
+	});
+var elm$file$File$Download$bytes = F3(
+	function (name, mime, content) {
+		return A2(
+			elm$core$Task$perform,
+			elm$core$Basics$never,
+			A3(
+				_File_download,
+				name,
+				mime,
+				_File_makeBytesSafeForInternetExplorer(content)));
+	});
+var author$project$RCAPI$downloadExport = F2(
+	function (ctype, content) {
+		var _n0 = function () {
+			switch (ctype.$) {
+				case 'Pdf':
+					return _Utils_Tuple2('export.pdf', 'application/pdf');
+				case 'Odt':
+					return _Utils_Tuple2('export.odt', 'application/vnd.oasis.opendocument.text');
+				case 'Docx':
+					return _Utils_Tuple2('export.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+				case 'Html':
+					return _Utils_Tuple2('export.html', 'text/html');
+				case 'Md':
+					return _Utils_Tuple2('export.md', 'text/plain');
+				case 'Epub':
+					return _Utils_Tuple2('export.epub', 'application/epub+zip');
+				default:
+					return _Utils_Tuple2('export.tex', 'application/x-latex');
+			}
+		}();
+		var fname = _n0.a;
+		var mime = _n0.b;
+		return A3(elm$file$File$Download$bytes, fname, mime, content);
 	});
 var author$project$RCAPI$getMediaList = F2(
 	function (id, msg) {
@@ -11128,11 +11081,25 @@ var author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						model,
 						A3(author$project$RCAPI$uploadImport, model.research, file, author$project$Main$UploadedImport));
-				case 'DownloadExport':
+				case 'ConvertExposition':
 					var ctype = msg.a;
 					return _Utils_Tuple2(
 						model,
-						A2(author$project$RCAPI$convertExposition, ctype, model.exposition));
+						A3(author$project$RCAPI$convertExposition, ctype, model.exposition, author$project$Main$DownloadExport));
+				case 'DownloadExport':
+					var ctype = msg.a;
+					var result = msg.b;
+					if (result.$ === 'Err') {
+						var err = result.a;
+						return _Utils_Tuple2(
+							A2(author$project$Main$addProblem, model, author$project$Problems$ExportFailed),
+							elm$core$Platform$Cmd$none);
+					} else {
+						var bytes = result.a;
+						return _Utils_Tuple2(
+							model,
+							A2(author$project$RCAPI$downloadExport, ctype, bytes));
+					}
 				case 'GotMediaUploadProgress':
 					var progress = msg.a;
 					if (progress.$ === 'Sending') {
@@ -11220,7 +11187,7 @@ var author$project$Main$update = F2(
 										importResult.media)),
 								importUploadStatus: author$project$Main$Ready
 							});
-						var _n35 = A2(elm$core$Debug$log, 'import result: ', importResult);
+						var _n36 = A2(elm$core$Debug$log, 'import result: ', importResult);
 						return _Utils_Tuple2(
 							newModel,
 							elm$core$Platform$Cmd$batch(
@@ -11231,7 +11198,7 @@ var author$project$Main$update = F2(
 									])));
 					} else {
 						var e = result.a;
-						var _n36 = A2(elm$core$Debug$log, 'error uploading: ', e);
+						var _n37 = A2(elm$core$Debug$log, 'error uploading: ', e);
 						return _Utils_Tuple2(
 							A2(
 								author$project$Main$addProblem,
@@ -11266,8 +11233,8 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				case 'SwitchTab':
 					var tab = msg.a;
-					var _n37 = model.editor;
-					var mdEditor = _n37.b;
+					var _n38 = model.editor;
+					var mdEditor = _n38.b;
 					var newModel = _Utils_update(
 						model,
 						{
@@ -11299,8 +11266,8 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				case 'SwitchMarkdownEditor':
 					var editor = msg.a;
-					var _n38 = model.editor;
-					var tab = _n38.a;
+					var _n39 = model.editor;
+					var tab = _n39.a;
 					var newModel = _Utils_update(
 						model,
 						{
@@ -11317,7 +11284,7 @@ var author$project$Main$update = F2(
 						author$project$Exposition$objectByNameOrId,
 						elm$core$String$fromInt(obj.id),
 						model.exposition);
-					var _n39 = A2(elm$core$Debug$log, 'trying to insert:', foundObj);
+					var _n40 = A2(elm$core$Debug$log, 'trying to insert:', foundObj);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -11326,15 +11293,15 @@ var author$project$Main$update = F2(
 							if (foundObj.$ === 'Just') {
 								var o = foundObj.a;
 								var closeMediaListIfOpen = function () {
-									var _n41 = model.editor;
-									if (_n41.a.$ === 'EditorMedia') {
-										if (_n41.b.$ === 'CodemirrorMarkdown') {
-											var _n42 = _n41.a;
-											var _n43 = _n41.b;
+									var _n42 = model.editor;
+									if (_n42.a.$ === 'EditorMedia') {
+										if (_n42.b.$ === 'CodemirrorMarkdown') {
+											var _n43 = _n42.a;
+											var _n44 = _n42.b;
 											return author$project$Main$setEditor(0);
 										} else {
-											var _n44 = _n41.a;
-											var _n45 = _n41.b;
+											var _n45 = _n42.a;
+											var _n46 = _n42.b;
 											return author$project$Main$setEditor(1);
 										}
 									} else {
@@ -11349,7 +11316,7 @@ var author$project$Main$update = F2(
 											closeMediaListIfOpen
 										]));
 							} else {
-								var _n46 = elm$core$Debug$log('not inserted, because object not found');
+								var _n47 = elm$core$Debug$log('not inserted, because object not found');
 								return elm$core$Platform$Cmd$none;
 							}
 						}());
@@ -11415,8 +11382,8 @@ var author$project$Main$update = F2(
 		}
 	});
 var author$project$Main$CloseMediaDialog = {$: 'CloseMediaDialog'};
-var author$project$Main$DownloadExport = function (a) {
-	return {$: 'DownloadExport', a: a};
+var author$project$Main$ConvertExposition = function (a) {
+	return {$: 'ConvertExposition', a: a};
 };
 var author$project$Main$InsertMediaAtCursor = function (a) {
 	return {$: 'InsertMediaAtCursor', a: a};
@@ -12090,46 +12057,48 @@ var author$project$Problems$httpErrorString = function (err) {
 	switch (err.$) {
 		case 'BadUrl':
 			var url = err.a;
-			return 'bad url: ' + url;
+			return 'Bad url: ' + url;
 		case 'Timeout':
-			return 'timeout';
+			return 'Timeout';
 		case 'NetworkError':
-			return 'a networkerror';
+			return 'A network error';
 		case 'BadStatus':
 			var status = err.a;
-			return 'bad status: ' + elm$core$String$fromInt(status);
+			return 'Bad status: ' + elm$core$String$fromInt(status);
 		default:
 			var body = err.a;
-			return 'bad body:' + body;
+			return 'Bad body:' + body;
 	}
 };
 var author$project$Problems$asString = function (problem) {
 	switch (problem.$) {
 		case 'WrongExpositionUrl':
-			return 'unknown exposition url';
+			return 'Unknown exposition url';
 		case 'CannotLoadMedia':
 			var name = problem.a;
 			return 'cannot load media ' + name;
 		case 'NoMediaWithNameOrId':
 			var name = problem.a;
-			return 'media \"' + (name + '\" cannot be found');
+			return 'Media object \"' + (name + '\" cannot be found');
 		case 'CannotSave':
-			return 'saving error';
+			return 'Saving error';
 		case 'CannotUpdateMedia':
-			return 'problem updating media';
+			return 'Problem updating media';
 		case 'CannotFindMediaFieldInJson':
-			return 'unkown media field in the json';
+			return 'Unkown media field in the json';
 		case 'CannotImportFile':
-			return 'import http error';
+			return 'Import http error';
 		case 'UnkownUploadFileType':
 			var s = problem.a;
-			return 'unkown upload file type: ' + s;
+			return 'Unkown upload file type: ' + s;
 		case 'MediaUploadFailed':
 			var e = problem.a;
-			return 'media upload failed with an http error, because of ' + author$project$Problems$httpErrorString(e);
-		default:
+			return 'Media upload failed with an http error, because of ' + author$project$Problems$httpErrorString(e);
+		case 'FootnoteError':
 			var e = problem.a;
-			return 'problem with footnotes: ' + e;
+			return 'Problem with footnotes: ' + e;
+		default:
+			return 'Exposition export failed ';
 	}
 };
 var rundis$elm_bootstrap$Bootstrap$Alert$Config = function (a) {
@@ -17483,25 +17452,25 @@ var author$project$Main$view = function (model) {
 								[
 									_Utils_Tuple2(
 									'doc',
-									author$project$Main$DownloadExport(author$project$RCAPI$Docx)),
+									author$project$Main$ConvertExposition(author$project$RCAPI$Docx)),
 									_Utils_Tuple2(
 									'pdf',
-									author$project$Main$DownloadExport(author$project$RCAPI$Pdf)),
+									author$project$Main$ConvertExposition(author$project$RCAPI$Pdf)),
 									_Utils_Tuple2(
 									'epub',
-									author$project$Main$DownloadExport(author$project$RCAPI$Epub)),
+									author$project$Main$ConvertExposition(author$project$RCAPI$Epub)),
 									_Utils_Tuple2(
 									'odt',
-									author$project$Main$DownloadExport(author$project$RCAPI$Odt)),
+									author$project$Main$ConvertExposition(author$project$RCAPI$Odt)),
 									_Utils_Tuple2(
 									'latex',
-									author$project$Main$DownloadExport(author$project$RCAPI$Latex)),
+									author$project$Main$ConvertExposition(author$project$RCAPI$Latex)),
 									_Utils_Tuple2(
 									'html',
-									author$project$Main$DownloadExport(author$project$RCAPI$Html)),
+									author$project$Main$ConvertExposition(author$project$RCAPI$Html)),
 									_Utils_Tuple2(
 									'markdown',
-									author$project$Main$DownloadExport(author$project$RCAPI$Md))
+									author$project$Main$ConvertExposition(author$project$RCAPI$Md))
 								]),
 							'Export the current exposition'))
 					])),

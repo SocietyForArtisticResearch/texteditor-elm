@@ -16,6 +16,7 @@ type Problem
     | UnkownUploadFileType String
     | MediaUploadFailed Http.Error
     | FootnoteError String
+    | ExportFailed
 
 
 splitResultList : List (Result Problem a) -> ( List Problem, List a )
@@ -40,50 +41,53 @@ asString : Problem -> String
 asString problem =
     case problem of
         WrongExpositionUrl ->
-            "unknown exposition url"
+            "Unknown exposition url"
 
         CannotLoadMedia name ->
             "cannot load media " ++ name
 
         NoMediaWithNameOrId name ->
-            "media \"" ++ name ++ "\" cannot be found"
+            "Media object \"" ++ name ++ "\" cannot be found"
 
         CannotSave ->
-            "saving error"
+            "Saving error"
 
         CannotUpdateMedia ->
-            "problem updating media"
+            "Problem updating media"
 
         CannotFindMediaFieldInJson ->
-            "unkown media field in the json"
+            "Unkown media field in the json"
 
         CannotImportFile _ ->
-            "import http error"
+            "Import http error"
 
         UnkownUploadFileType s ->
-            "unkown upload file type: " ++ s
+            "Unkown upload file type: " ++ s
 
         MediaUploadFailed e ->
-            "media upload failed with an http error, because of " ++ httpErrorString e
+            "Media upload failed with an http error, because of " ++ httpErrorString e
 
         FootnoteError e ->
-            "problem with footnotes: " ++ e
+            "Problem with footnotes: " ++ e
+
+        ExportFailed ->
+            "Exposition export failed "
 
 
 httpErrorString : Http.Error -> String
 httpErrorString err =
     case err of
         Http.BadUrl url ->
-            "bad url: " ++ url
+            "Bad url: " ++ url
 
         Http.Timeout ->
-            "timeout"
+            "Timeout"
 
         Http.NetworkError ->
-            "a networkerror"
+            "A network error"
 
         Http.BadStatus status ->
-            "bad status: " ++ String.fromInt status
+            "Bad status: " ++ String.fromInt status
 
         Http.BadBody body ->
-            "bad body:" ++ body
+            "Bad body:" ++ body

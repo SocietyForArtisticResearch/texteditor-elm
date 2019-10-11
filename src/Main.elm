@@ -10,6 +10,7 @@ import Bootstrap.Modal as Modal
 import Bootstrap.Navbar as Navbar
 import Bootstrap.Utilities.Spacing as Spacing
 import Browser
+import Bytes
 import Dict
 import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectViewState, addMediaUserClasses, incContentVersion)
 import File exposing (File)
@@ -328,7 +329,8 @@ type Msg
     | MediaDeleted (Result Http.Error ())
     | AlertMsg Alert.Visibility
     | SwitchMarkdownEditor MarkdownEditor
-    | DownloadExport RCAPI.ConversionType
+    | DownloadExport RCAPI.ConversionType (Result Http.Error Bytes.Bytes)
+    | ConvertExposition RCAPI.ConversionType
     | InsertAtCursor ( String, Int ) -- string and cursor offset after insert
     | InsertFootnoteAtCursor
     | InsertMediaAtCursor RCMediaObject
@@ -739,8 +741,16 @@ update msg model =
             , RCAPI.uploadImport model.research file UploadedImport
             )
 
-        DownloadExport ctype ->
-            ( model, RCAPI.convertExposition ctype model.exposition )
+        ConvertExposition ctype ->
+            ( model, RCAPI.convertExposition ctype model.exposition DownloadExport )
+
+        DownloadExport ctype result ->
+            case result of
+                Err err ->
+                    ( addProblem model <| Problems.ExportFailed, Cmd.none )
+
+                Ok bytes ->
+                    ( model, RCAPI.downloadExport ctype bytes )
 
         GotMediaUploadProgress progress ->
             case progress of
@@ -1335,13 +1345,13 @@ view model =
                 mkDropdown model.exportDropState
                     ExportDropMsg
                     "Export Doc"
-                    [ ( "doc", DownloadExport RCAPI.Docx )
-                    , ( "pdf", DownloadExport RCAPI.Pdf )
-                    , ( "epub", DownloadExport RCAPI.Epub )
-                    , ( "odt", DownloadExport RCAPI.Odt )
-                    , ( "latex", DownloadExport RCAPI.Latex )
-                    , ( "html", DownloadExport RCAPI.Html )
-                    , ( "markdown", DownloadExport RCAPI.Md )
+                    [ ( "doc", ConvertExposition RCAPI.Docx )
+                    , ( "pdf", ConvertExposition RCAPI.Pdf )
+                    , ( "epub", ConvertExposition RCAPI.Epub )
+                    , ( "odt", ConvertExposition RCAPI.Odt )
+                    , ( "latex", ConvertExposition RCAPI.Latex )
+                    , ( "html", ConvertExposition RCAPI.Html )
+                    , ( "markdown", ConvertExposition RCAPI.Md )
                     ]
                     "Export the current exposition"
             ]
