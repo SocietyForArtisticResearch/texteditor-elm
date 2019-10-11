@@ -32,16 +32,14 @@ General:
 
 - when a media is direclty inserted after upload, it shorly appears as a previously uploaded media ? (seems to occur on ff)
 - When a large document is imported, there is a timeout from the server. Perhaps a size limit is necessary?
-
+- we should force an update of DOM when the css "userclass" is changed.
 
 
 Casper:
 
-- structure, settings should be only settings
-- tooltips "button"
-- "Waiting" message
-- "insert" button in media edit from media list should be removed
-- scrollableBody in modals
+
+
+
 
 Luc:
 

@@ -15,6 +15,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events as Events
 import Licenses exposing (..)
+import RCMediaPreview
 
 
 type Field
@@ -300,6 +301,7 @@ viewBody objectState editTool objectInEdit =
                         [ Form.label [ for "licensePicker" ] [ text "license type" ]
                         , viewLicensePicker "licensePicker" allLicenses currentLicense (editTool LicenseField)
                         ]
+                    , RCMediaPreview.viewThumbnail objectInEdit RCMediaPreview.PreviewBig
                     ]
         ]
 
@@ -316,8 +318,8 @@ type alias InsertMediaMessage msg =
 -- object ObjectId field newValue -> msg
 
 
-view : MakeMediaEditFun msg -> msg -> InsertMediaMessage msg -> RCExposition -> Model -> Html msg
-view makeMediaEditFun closeMediaDialogMsg insertMediaMsg exposition model =
+view : MakeMediaEditFun msg -> msg -> InsertMediaMessage msg -> RCExposition -> Model -> Bool -> Html msg
+view makeMediaEditFun closeMediaDialogMsg insertMediaMsg exposition model canInsert =
     let
         { visibility, object, objectViewState } =
             model
@@ -327,24 +329,36 @@ view makeMediaEditFun closeMediaDialogMsg insertMediaMsg exposition model =
             let
                 mediaEditView =
                     viewBody objState (makeMediaEditFun obj) obj
+
+                insertButton =
+                    Button.button
+                        [ Button.outlinePrimary
+                        , Button.attrs [ Events.onClick <| insertMediaMsg obj ]
+                        ]
+                        [ text "Insert" ]
+
+                closeButton =
+                    Button.button
+                        [ Button.outlineSecondary
+                        , Button.attrs [ Events.onClick closeMediaDialogMsg ]
+                        ]
+                        [ text "Close" ]
+
+                buttons =
+                    if canInsert then
+                        [ insertButton, closeButton ]
+
+                    else
+                        [ closeButton ]
             in
             Modal.config closeMediaDialogMsg
+                |> Modal.scrollableBody True
                 |> Modal.h2 [] [ text <| "Edit " ++ obj.name ]
                 |> Modal.large
                 |> Modal.hideOnBackdropClick True
                 |> Modal.body [] [ p [] [ mediaEditView ] ]
                 |> Modal.footer []
-                    [ Button.button
-                        [ Button.outlinePrimary
-                        , Button.attrs [ Events.onClick <| insertMediaMsg obj ]
-                        ]
-                        [ text "Insert" ]
-                    , Button.button
-                        [ Button.outlineSecondary
-                        , Button.attrs [ Events.onClick closeMediaDialogMsg ]
-                        ]
-                        [ text "Close" ]
-                    ]
+                    buttons
                 |> Modal.view vis
 
         _ ->
