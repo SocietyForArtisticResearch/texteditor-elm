@@ -30,6 +30,7 @@ type alias Model =
     { visibility : Modal.Visibility
     , object : Maybe RCMediaObject
     , objectViewState : Maybe RCMediaObjectViewState
+    , allowInsert : Bool
     }
 
 
@@ -38,14 +39,16 @@ empty =
     { visibility = Modal.hidden
     , object = Nothing
     , objectViewState = Nothing
+    , allowInsert = False
     }
 
 
-showWithObject : RCMediaObject -> RCMediaObjectViewState -> Model
-showWithObject obj state =
+showWithObject : RCMediaObject -> RCMediaObjectViewState -> Bool -> Model
+showWithObject obj state allowInsert =
     { visibility = Modal.shown
     , object = Just obj
     , objectViewState = Just state
+    , allowInsert = allowInsert
     }
 
 
@@ -318,48 +321,56 @@ type alias InsertMediaMessage msg =
 -- object ObjectId field newValue -> msg
 
 
-view : MakeMediaEditFun msg -> msg -> InsertMediaMessage msg -> RCExposition -> Model -> Bool -> Html msg
-view makeMediaEditFun closeMediaDialogMsg insertMediaMsg exposition model canInsert =
+view : MakeMediaEditFun msg -> msg -> InsertMediaMessage msg -> RCExposition -> Model -> Html msg
+view makeMediaEditFun closeMediaDialogMsg insertMediaMsg exposition model =
     let
-        { visibility, object, objectViewState } =
+        { visibility, object, objectViewState, allowInsert } =
             model
+
+        emptyDiv =
+            div [] []
     in
-    case ( visibility, object, objectViewState ) of
-        ( vis, Just obj, Just objState ) ->
-            let
-                mediaEditView =
-                    viewBody objState (makeMediaEditFun obj) obj
+    case object of
+        Just obj ->
+            case objectViewState of
+                Just objViewState ->
+                    let
+                        mediaEditView =
+                            viewBody objViewState (makeMediaEditFun obj) obj
 
-                insertButton =
-                    Button.button
-                        [ Button.outlinePrimary
-                        , Button.attrs [ Events.onClick <| insertMediaMsg obj ]
-                        ]
-                        [ text "Insert" ]
+                        insertButton =
+                            Button.button
+                                [ Button.outlinePrimary
+                                , Button.attrs [ Events.onClick <| insertMediaMsg obj ]
+                                ]
+                                [ text "Insert" ]
 
-                closeButton =
-                    Button.button
-                        [ Button.outlineSecondary
-                        , Button.attrs [ Events.onClick closeMediaDialogMsg ]
-                        ]
-                        [ text "Close" ]
+                        closeButton =
+                            Button.button
+                                [ Button.outlineSecondary
+                                , Button.attrs [ Events.onClick closeMediaDialogMsg ]
+                                ]
+                                [ text "Close" ]
 
-                buttons =
-                    if canInsert then
-                        [ insertButton, closeButton ]
+                        buttons =
+                            if allowInsert then
+                                [ insertButton, closeButton ]
 
-                    else
-                        [ closeButton ]
-            in
-            Modal.config closeMediaDialogMsg
-                |> Modal.scrollableBody True
-                |> Modal.h2 [] [ text <| "Edit " ++ obj.name ]
-                |> Modal.large
-                |> Modal.hideOnBackdropClick True
-                |> Modal.body [] [ p [] [ mediaEditView ] ]
-                |> Modal.footer []
-                    buttons
-                |> Modal.view vis
+                            else
+                                [ closeButton ]
+                    in
+                    Modal.config closeMediaDialogMsg
+                        |> Modal.scrollableBody True
+                        |> Modal.h2 [] [ text <| "Edit " ++ obj.name ]
+                        |> Modal.large
+                        |> Modal.hideOnBackdropClick True
+                        |> Modal.body [] [ p [] [ mediaEditView ] ]
+                        |> Modal.footer []
+                            buttons
+                        |> Modal.view visibility
+
+                _ ->
+                    emptyDiv
 
         _ ->
-            div [] []
+            emptyDiv

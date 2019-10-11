@@ -311,7 +311,7 @@ subscriptions model =
 type Msg
     = EditGeneration E.Value
     | MdContent E.Value
-    | MediaDialog String
+    | MediaDialog Bool String
     | CMOpenMediaDialog E.Value
     | GotConvertedHtml { html : String, toc : List ( String, String, String ) }
     | MediaEdit ( String, Exposition.RCMediaObject )
@@ -379,7 +379,7 @@ makeMediaEditFun obj field input =
 
 makeTableMessages : RCMediaList.TableMessages Msg
 makeTableMessages =
-    { editObject = MediaDialog
+    { editObject = MediaDialog False
     , deleteObject = ConfirmMediaDelete
     , insertObject = InsertMediaAtCursor
     }
@@ -466,7 +466,7 @@ update msg model =
         CMOpenMediaDialog val ->
             case D.decodeValue (D.field "media" D.string) val of
                 Ok mediaNameOrId ->
-                    update (MediaDialog mediaNameOrId) model
+                    update (MediaDialog False mediaNameOrId) model
 
                 Err _ ->
                     let
@@ -475,7 +475,7 @@ update msg model =
                     in
                     ( addProblem model Problems.CannotFindMediaFieldInJson, Cmd.none )
 
-        MediaDialog mediaNameOrId ->
+        MediaDialog allowInsert mediaNameOrId ->
             case Exposition.objectByNameOrId mediaNameOrId model.exposition of
                 Just obj ->
                     let
@@ -484,7 +484,7 @@ update msg model =
                     in
                     ( { model
                         | mediaDialog =
-                            RCMediaEdit.showWithObject obj viewObjectState
+                            RCMediaEdit.showWithObject obj viewObjectState allowInsert
                       }
                     , Cmd.none
                     )
@@ -620,7 +620,7 @@ update msg model =
                 ( modelWithNewMedia, _ ) =
                     update (GotMediaList mediaList) model
             in
-            update (MediaDialog id) modelWithNewMedia
+            update (MediaDialog True id) modelWithNewMedia
 
         MediaEdit ( objInModelName, objFromDialog ) ->
             case Exposition.objectByNameOrId objInModelName model.exposition of
@@ -1254,7 +1254,6 @@ view model =
                 InsertMediaAtCursor
                 model.exposition
                 model.mediaDialog
-                (not (selectedEditorIsMedia model))
 
         confirmDialogHtml =
             case model.confirmDialog of

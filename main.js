@@ -5488,7 +5488,7 @@ var author$project$Main$EditorMarkdown = {$: 'EditorMarkdown'};
 var author$project$Main$Ready = {$: 'Ready'};
 var rundis$elm_bootstrap$Bootstrap$Modal$Hide = {$: 'Hide'};
 var rundis$elm_bootstrap$Bootstrap$Modal$hidden = rundis$elm_bootstrap$Bootstrap$Modal$Hide;
-var author$project$RCMediaEdit$empty = {object: elm$core$Maybe$Nothing, objectViewState: elm$core$Maybe$Nothing, visibility: rundis$elm_bootstrap$Bootstrap$Modal$hidden};
+var author$project$RCMediaEdit$empty = {allowInsert: false, object: elm$core$Maybe$Nothing, objectViewState: elm$core$Maybe$Nothing, visibility: rundis$elm_bootstrap$Bootstrap$Modal$hidden};
 var elm$core$Basics$negate = function (n) {
 	return -n;
 };
@@ -9833,9 +9833,10 @@ var author$project$Main$MediaDelete = function (a) {
 var author$project$Main$MediaDeleted = function (a) {
 	return {$: 'MediaDeleted', a: a};
 };
-var author$project$Main$MediaDialog = function (a) {
-	return {$: 'MediaDialog', a: a};
-};
+var author$project$Main$MediaDialog = F2(
+	function (a, b) {
+		return {$: 'MediaDialog', a: a, b: b};
+	});
 var author$project$Main$OpenNewMediaGotMediaList = F2(
 	function (a, b) {
 		return {$: 'OpenNewMediaGotMediaList', a: a, b: b};
@@ -10229,7 +10230,6 @@ var author$project$RCAPI$convertExposition = F3(
 			author$project$Exposition$replaceToolsWithImages,
 			expo,
 			elm$core$Maybe$Just(author$project$Settings$baseDomain));
-		var _n0 = A2(elm$core$Debug$log, 'exporting', exportExpoMd);
 		return elm$http$Http$post(
 			{
 				body: elm$http$Http$multipartBody(
@@ -10729,9 +10729,10 @@ var author$project$RCAPI$uploadMedia = F5(
 	});
 var rundis$elm_bootstrap$Bootstrap$Modal$Show = {$: 'Show'};
 var rundis$elm_bootstrap$Bootstrap$Modal$shown = rundis$elm_bootstrap$Bootstrap$Modal$Show;
-var author$project$RCMediaEdit$showWithObject = F2(
-	function (obj, state) {
+var author$project$RCMediaEdit$showWithObject = F3(
+	function (obj, state, allowInsert) {
 		return {
+			allowInsert: allowInsert,
 			object: elm$core$Maybe$Just(obj),
 			objectViewState: elm$core$Maybe$Just(state),
 			visibility: rundis$elm_bootstrap$Bootstrap$Modal$shown
@@ -10837,7 +10838,7 @@ var author$project$Main$update = F2(
 						val);
 					if (_n4.$ === 'Ok') {
 						var mediaNameOrId = _n4.a;
-						var $temp$msg = author$project$Main$MediaDialog(mediaNameOrId),
+						var $temp$msg = A2(author$project$Main$MediaDialog, false, mediaNameOrId),
 							$temp$model = model;
 						msg = $temp$msg;
 						model = $temp$model;
@@ -10849,7 +10850,8 @@ var author$project$Main$update = F2(
 							elm$core$Platform$Cmd$none);
 					}
 				case 'MediaDialog':
-					var mediaNameOrId = msg.a;
+					var allowInsert = msg.a;
+					var mediaNameOrId = msg.b;
 					var _n6 = A2(author$project$Exposition$objectByNameOrId, mediaNameOrId, model.exposition);
 					if (_n6.$ === 'Just') {
 						var obj = _n6.a;
@@ -10858,7 +10860,7 @@ var author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									mediaDialog: A2(author$project$RCMediaEdit$showWithObject, obj, viewObjectState)
+									mediaDialog: A3(author$project$RCMediaEdit$showWithObject, obj, viewObjectState, allowInsert)
 								}),
 							elm$core$Platform$Cmd$none);
 					} else {
@@ -10991,7 +10993,7 @@ var author$project$Main$update = F2(
 						author$project$Main$GotMediaList(mediaList),
 						model);
 					var modelWithNewMedia = _n19.a;
-					var $temp$msg = author$project$Main$MediaDialog(id),
+					var $temp$msg = A2(author$project$Main$MediaDialog, true, id),
 						$temp$model = modelWithNewMedia;
 					msg = $temp$msg;
 					model = $temp$model;
@@ -11496,7 +11498,11 @@ var author$project$Main$makePickerMessages = {closeModal: author$project$Main$Cl
 var author$project$Main$ConfirmMediaDelete = function (a) {
 	return {$: 'ConfirmMediaDelete', a: a};
 };
-var author$project$Main$makeTableMessages = {deleteObject: author$project$Main$ConfirmMediaDelete, editObject: author$project$Main$MediaDialog, insertObject: author$project$Main$InsertMediaAtCursor};
+var author$project$Main$makeTableMessages = {
+	deleteObject: author$project$Main$ConfirmMediaDelete,
+	editObject: author$project$Main$MediaDialog(false),
+	insertObject: author$project$Main$InsertMediaAtCursor
+};
 var author$project$Main$InsertAtCursor = function (a) {
 	return {$: 'InsertAtCursor', a: a};
 };
@@ -12010,15 +12016,6 @@ var author$project$Main$mkEditorToolbar = function (tabState) {
 var author$project$Main$selectedEditorIsMarkdown = function (model) {
 	var _n0 = model.editor;
 	if (_n0.a.$ === 'EditorMarkdown') {
-		var _n1 = _n0.a;
-		return true;
-	} else {
-		return false;
-	}
-};
-var author$project$Main$selectedEditorIsMedia = function (model) {
-	var _n0 = model.editor;
-	if (_n0.a.$ === 'EditorMedia') {
 		var _n1 = _n0.a;
 		return true;
 	} else {
@@ -15908,91 +15905,95 @@ var rundis$elm_bootstrap$Bootstrap$Modal$view = F2(
 					]),
 				A2(rundis$elm_bootstrap$Bootstrap$Modal$backdrop, visibility, conf)));
 	});
-var author$project$RCMediaEdit$view = F6(
-	function (makeMediaEditFun, closeMediaDialogMsg, insertMediaMsg, exposition, model, canInsert) {
+var author$project$RCMediaEdit$view = F5(
+	function (makeMediaEditFun, closeMediaDialogMsg, insertMediaMsg, exposition, model) {
+		var emptyDiv = A2(elm$html$Html$div, _List_Nil, _List_Nil);
 		var _n0 = model;
 		var visibility = _n0.visibility;
 		var object = _n0.object;
 		var objectViewState = _n0.objectViewState;
-		var _n1 = _Utils_Tuple3(visibility, object, objectViewState);
-		if ((_n1.b.$ === 'Just') && (_n1.c.$ === 'Just')) {
-			var vis = _n1.a;
-			var obj = _n1.b.a;
-			var objState = _n1.c.a;
-			var mediaEditView = A3(
-				author$project$RCMediaEdit$viewBody,
-				objState,
-				makeMediaEditFun(obj),
-				obj);
-			var insertButton = A2(
-				rundis$elm_bootstrap$Bootstrap$Button$button,
-				_List_fromArray(
-					[
-						rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary,
-						rundis$elm_bootstrap$Bootstrap$Button$attrs(
-						_List_fromArray(
-							[
-								elm$html$Html$Events$onClick(
-								insertMediaMsg(obj))
-							]))
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text('Insert')
-					]));
-			var closeButton = A2(
-				rundis$elm_bootstrap$Bootstrap$Button$button,
-				_List_fromArray(
-					[
-						rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary,
-						rundis$elm_bootstrap$Bootstrap$Button$attrs(
-						_List_fromArray(
-							[
-								elm$html$Html$Events$onClick(closeMediaDialogMsg)
-							]))
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text('Close')
-					]));
-			var buttons = canInsert ? _List_fromArray(
-				[insertButton, closeButton]) : _List_fromArray(
-				[closeButton]);
-			return A2(
-				rundis$elm_bootstrap$Bootstrap$Modal$view,
-				vis,
-				A3(
-					rundis$elm_bootstrap$Bootstrap$Modal$footer,
-					_List_Nil,
-					buttons,
+		var allowInsert = _n0.allowInsert;
+		if (object.$ === 'Just') {
+			var obj = object.a;
+			if (objectViewState.$ === 'Just') {
+				var objViewState = objectViewState.a;
+				var mediaEditView = A3(
+					author$project$RCMediaEdit$viewBody,
+					objViewState,
+					makeMediaEditFun(obj),
+					obj);
+				var insertButton = A2(
+					rundis$elm_bootstrap$Bootstrap$Button$button,
+					_List_fromArray(
+						[
+							rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary,
+							rundis$elm_bootstrap$Bootstrap$Button$attrs(
+							_List_fromArray(
+								[
+									elm$html$Html$Events$onClick(
+									insertMediaMsg(obj))
+								]))
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Insert')
+						]));
+				var closeButton = A2(
+					rundis$elm_bootstrap$Bootstrap$Button$button,
+					_List_fromArray(
+						[
+							rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary,
+							rundis$elm_bootstrap$Bootstrap$Button$attrs(
+							_List_fromArray(
+								[
+									elm$html$Html$Events$onClick(closeMediaDialogMsg)
+								]))
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Close')
+						]));
+				var buttons = allowInsert ? _List_fromArray(
+					[insertButton, closeButton]) : _List_fromArray(
+					[closeButton]);
+				return A2(
+					rundis$elm_bootstrap$Bootstrap$Modal$view,
+					visibility,
 					A3(
-						rundis$elm_bootstrap$Bootstrap$Modal$body,
+						rundis$elm_bootstrap$Bootstrap$Modal$footer,
 						_List_Nil,
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$p,
-								_List_Nil,
-								_List_fromArray(
-									[mediaEditView]))
-							]),
-						A2(
-							rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
-							true,
-							rundis$elm_bootstrap$Bootstrap$Modal$large(
-								A3(
-									rundis$elm_bootstrap$Bootstrap$Modal$h2,
+						buttons,
+						A3(
+							rundis$elm_bootstrap$Bootstrap$Modal$body,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$p,
 									_List_Nil,
 									_List_fromArray(
-										[
-											elm$html$Html$text('Edit ' + obj.name)
-										]),
-									A2(
-										rundis$elm_bootstrap$Bootstrap$Modal$scrollableBody,
-										true,
-										rundis$elm_bootstrap$Bootstrap$Modal$config(closeMediaDialogMsg))))))));
+										[mediaEditView]))
+								]),
+							A2(
+								rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
+								true,
+								rundis$elm_bootstrap$Bootstrap$Modal$large(
+									A3(
+										rundis$elm_bootstrap$Bootstrap$Modal$h2,
+										_List_Nil,
+										_List_fromArray(
+											[
+												elm$html$Html$text('Edit ' + obj.name)
+											]),
+										A2(
+											rundis$elm_bootstrap$Bootstrap$Modal$scrollableBody,
+											true,
+											rundis$elm_bootstrap$Bootstrap$Modal$config(closeMediaDialogMsg))))))));
+			} else {
+				return emptyDiv;
+			}
 		} else {
-			return A2(elm$html$Html$div, _List_Nil, _List_Nil);
+			return emptyDiv;
 		}
 	});
 var author$project$RCMediaPreview$PreviewSmall = {$: 'PreviewSmall'};
@@ -17484,14 +17485,7 @@ var author$project$Main$view = function (model) {
 				]));
 	}();
 	var mediaList = A2(author$project$RCMediaList$view, model.exposition.media, author$project$Main$makeTableMessages);
-	var mediaDialogHtml = A6(
-		author$project$RCMediaEdit$view,
-		author$project$Main$makeMediaEditFun,
-		author$project$Main$CloseMediaDialog,
-		author$project$Main$InsertMediaAtCursor,
-		model.exposition,
-		model.mediaDialog,
-		!author$project$Main$selectedEditorIsMedia(model));
+	var mediaDialogHtml = A5(author$project$RCMediaEdit$view, author$project$Main$makeMediaEditFun, author$project$Main$CloseMediaDialog, author$project$Main$InsertMediaAtCursor, model.exposition, model.mediaDialog);
 	var importDocButtonInfo = function () {
 		var bttn = author$project$View$defaultButton(author$project$Main$UploadImportFileSelect);
 		return _Utils_update(
