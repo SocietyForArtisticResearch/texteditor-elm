@@ -1066,7 +1066,7 @@ viewNavbar model =
                         , class "d-inline-block align-top"
                         , style "width" "30px"
                         ]
-                        [ text "Preview"
+                        [--text "Preview"
                         ]
                     ]
                 )

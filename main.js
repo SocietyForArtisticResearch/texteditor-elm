@@ -13563,10 +13563,7 @@ var author$project$Main$viewNavbar = function (model) {
 										elm$html$Html$Attributes$class('d-inline-block align-top'),
 										A2(elm$html$Html$Attributes$style, 'width', '30px')
 									]),
-								_List_fromArray(
-									[
-										elm$html$Html$text('Preview')
-									]))
+								_List_Nil)
 							]))),
 					rundis$elm_bootstrap$Bootstrap$Navbar$customItem(
 					A2(
