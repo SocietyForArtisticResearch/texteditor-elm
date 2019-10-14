@@ -40,7 +40,7 @@ Casper:
 
 Luc:
 
-- when logged out error http codes request form devs -- what to display?
+- when logged out error http codes request form devs -- currently we get 500 instead of 401. (requested) 
 
 
 ## To test

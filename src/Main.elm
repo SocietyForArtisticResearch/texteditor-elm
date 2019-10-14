@@ -212,6 +212,13 @@ main =
 
 
 -- PORTS
+-- general
+
+
+port reloadPage : () -> Cmd msg
+
+
+
 -- code mirror markdown
 
 
