@@ -9,7 +9,7 @@ import Exposition exposing (OptionalDimensions, RCExposition, RCMediaObject, RCM
 import File exposing (File)
 import File.Download
 import Html exposing (Html, span)
-import Http
+import Http exposing (header)
 import Json.Decode exposing (..)
 import Json.Encode as Encode
 import Licenses
@@ -158,17 +158,27 @@ apiPandocImport =
 
 
 getMediaList id msg =
-    Http.get
-        { url = "/text-editor/simple-media-list?research=" ++ String.fromInt id
+    Http.request
+        { method = "GET"
+        , headers = [ header "X-Requested-With" "XMLHttpRequest" ]
+        , body = Http.emptyBody
+        , url = "/text-editor/simple-media-list?research=" ++ String.fromInt id
         , expect = Http.expectJson msg (list apiMediaEntry)
+        , timeout = Nothing
+        , tracker = Nothing
         }
 
 
 getExposition : Int -> Int -> (Result Http.Error APIExposition -> msg) -> Cmd msg
 getExposition researchId weave msg =
-    Http.get
-        { url = "text-editor/load?research=" ++ String.fromInt researchId ++ "&weave=" ++ String.fromInt weave
+    Http.request
+        { method = "GET"
+        , headers = [ header "X-Requested-With" "XMLHttpRequest" ]
+        , body = Http.emptyBody
+        , url = "text-editor/load?research=" ++ String.fromInt researchId ++ "&weave=" ++ String.fromInt weave
         , expect = Http.expectJson msg apiExposition
+        , timeout = Nothing
+        , tracker = Nothing
         }
 
 
@@ -271,7 +281,7 @@ uploadMedia researchId mediaName file expect badFileTypeMsg =
             Http.request
                 { method = "POST"
                 , url = "text-editor/simple-media-add" ++ "?research=" ++ String.fromInt researchId
-                , headers = []
+                , headers = [ header "X-Requested-With" "XMLHttpRequest" ]
                 , body =
                     Http.multipartBody
                         [ Http.stringPart "mediatype" (stringOfUploadMediaType m)
@@ -297,7 +307,7 @@ updateMedia mediaObject expect =
                 ++ String.fromInt mediaObject.expositionId
                 ++ "&simple-media="
                 ++ String.fromInt mediaObject.id
-        , headers = []
+        , headers = [ header "X-Requested-With" "XMLHttpRequest" ]
         , body =
             Http.multipartBody
                 [ Http.stringPart "name" mediaObject.name
@@ -329,7 +339,7 @@ uploadImport researchId file expectMsg =
     Http.request
         { method = "POST"
         , url = "text-editor/import" ++ "?research=" ++ String.fromInt researchId
-        , headers = []
+        , headers = [ header "X-Requested-With" "XMLHttpRequest" ]
         , body =
             Http.multipartBody
                 [ Http.filePart "file" file
@@ -486,7 +496,7 @@ saveExposition exposition expect =
     Http.request
         { method = "POST"
         , url = url
-        , headers = []
+        , headers = [ header "X-Requested-With" "XMLHttpRequest" ]
         , body =
             Http.multipartBody
                 [ Http.stringPart "html" exposition.renderedHtml

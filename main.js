@@ -5640,22 +5640,6 @@ var author$project$RCAPI$apiExposition = A7(
 	elm$json$Json$Decode$maybe(
 		A2(elm$json$Json$Decode$field, 'style', elm$json$Json$Decode$string)),
 	A2(elm$json$Json$Decode$field, 'title', elm$json$Json$Decode$string));
-var elm$core$Result$mapError = F2(
-	function (f, result) {
-		if (result.$ === 'Ok') {
-			var v = result.a;
-			return elm$core$Result$Ok(v);
-		} else {
-			var e = result.a;
-			return elm$core$Result$Err(
-				f(e));
-		}
-	});
-var elm$core$Basics$composeR = F3(
-	function (f, g, x) {
-		return g(
-			f(x));
-	});
 var elm$core$Basics$compare = _Utils_compare;
 var elm$core$Dict$get = F2(
 	function (targetKey, dict) {
@@ -6208,6 +6192,23 @@ var elm$http$Http$Sending = function (a) {
 	return {$: 'Sending', a: a};
 };
 var elm$http$Http$Timeout_ = {$: 'Timeout_'};
+var elm$http$Http$emptyBody = _Http_emptyBody;
+var elm$core$Result$mapError = F2(
+	function (f, result) {
+		if (result.$ === 'Ok') {
+			var v = result.a;
+			return elm$core$Result$Ok(v);
+		} else {
+			var e = result.a;
+			return elm$core$Result$Err(
+				f(e));
+		}
+	});
+var elm$core$Basics$composeR = F3(
+	function (f, g, x) {
+		return g(
+			f(x));
+	});
 var elm$http$Http$expectStringResponse = F2(
 	function (toMsg, toResult) {
 		return A3(
@@ -6264,7 +6265,11 @@ var elm$http$Http$expectJson = F2(
 						A2(elm$json$Json$Decode$decodeString, decoder, string));
 				}));
 	});
-var elm$http$Http$emptyBody = _Http_emptyBody;
+var elm$http$Http$Header = F2(
+	function (a, b) {
+		return {$: 'Header', a: a, b: b};
+	});
+var elm$http$Http$header = elm$http$Http$Header;
 var elm$http$Http$Request = function (a) {
 	return {$: 'Request', a: a};
 };
@@ -6512,15 +6517,19 @@ var elm$http$Http$request = function (r) {
 		elm$http$Http$Request(
 			{allowCookiesFromOtherDomains: false, body: r.body, expect: r.expect, headers: r.headers, method: r.method, timeout: r.timeout, tracker: r.tracker, url: r.url}));
 };
-var elm$http$Http$get = function (r) {
-	return elm$http$Http$request(
-		{body: elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: elm$core$Maybe$Nothing, tracker: elm$core$Maybe$Nothing, url: r.url});
-};
 var author$project$RCAPI$getExposition = F3(
 	function (researchId, weave, msg) {
-		return elm$http$Http$get(
+		return elm$http$Http$request(
 			{
+				body: elm$http$Http$emptyBody,
 				expect: A2(elm$http$Http$expectJson, msg, author$project$RCAPI$apiExposition),
+				headers: _List_fromArray(
+					[
+						A2(elm$http$Http$header, 'X-Requested-With', 'XMLHttpRequest')
+					]),
+				method: 'GET',
+				timeout: elm$core$Maybe$Nothing,
+				tracker: elm$core$Maybe$Nothing,
 				url: 'text-editor/load?research=' + (elm$core$String$fromInt(researchId) + ('&weave=' + elm$core$String$fromInt(weave)))
 			});
 	});
@@ -10299,12 +10308,20 @@ var author$project$RCAPI$downloadExport = F2(
 	});
 var author$project$RCAPI$getMediaList = F2(
 	function (id, msg) {
-		return elm$http$Http$get(
+		return elm$http$Http$request(
 			{
+				body: elm$http$Http$emptyBody,
 				expect: A2(
 					elm$http$Http$expectJson,
 					msg,
 					elm$json$Json$Decode$list(author$project$RCAPI$apiMediaEntry)),
+				headers: _List_fromArray(
+					[
+						A2(elm$http$Http$header, 'X-Requested-With', 'XMLHttpRequest')
+					]),
+				method: 'GET',
+				timeout: elm$core$Maybe$Nothing,
+				tracker: elm$core$Maybe$Nothing,
 				url: '/text-editor/simple-media-list?research=' + elm$core$String$fromInt(id)
 			});
 	});
@@ -10387,7 +10404,10 @@ var author$project$RCAPI$saveExposition = F2(
 							A2(elm$http$Http$stringPart, 'toc', encodedToc)
 						])),
 				expect: elm$http$Http$expectString(expect),
-				headers: _List_Nil,
+				headers: _List_fromArray(
+					[
+						A2(elm$http$Http$header, 'X-Requested-With', 'XMLHttpRequest')
+					]),
 				method: 'POST',
 				timeout: elm$core$Maybe$Nothing,
 				tracker: elm$core$Maybe$Nothing,
@@ -10593,7 +10613,10 @@ var author$project$RCAPI$updateMedia = F2(
 							author$project$Licenses$asString(mediaObject.license))
 						])),
 				expect: expect,
-				headers: _List_Nil,
+				headers: _List_fromArray(
+					[
+						A2(elm$http$Http$header, 'X-Requested-With', 'XMLHttpRequest')
+					]),
 				method: 'POST',
 				timeout: elm$core$Maybe$Nothing,
 				tracker: elm$core$Maybe$Nothing,
@@ -10623,7 +10646,10 @@ var author$project$RCAPI$uploadImport = F3(
 							A2(elm$http$Http$filePart, 'file', file)
 						])),
 				expect: A2(elm$http$Http$expectJson, expectMsg, author$project$RCAPI$apiPandocImport),
-				headers: _List_Nil,
+				headers: _List_fromArray(
+					[
+						A2(elm$http$Http$header, 'X-Requested-With', 'XMLHttpRequest')
+					]),
 				method: 'POST',
 				timeout: elm$core$Maybe$Nothing,
 				tracker: elm$core$Maybe$Just('uploadImport'),
@@ -10719,7 +10745,10 @@ var author$project$RCAPI$uploadMedia = F5(
 								A2(elm$http$Http$filePart, 'media', file)
 							])),
 					expect: expect,
-					headers: _List_Nil,
+					headers: _List_fromArray(
+						[
+							A2(elm$http$Http$header, 'X-Requested-With', 'XMLHttpRequest')
+						]),
 					method: 'POST',
 					timeout: elm$core$Maybe$Nothing,
 					tracker: elm$core$Maybe$Just('uploadMedia'),

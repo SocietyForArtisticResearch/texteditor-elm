@@ -1408,11 +1408,5 @@ view model =
                     [ editorCheckbox, viewFullscreenSwitch model.fullscreenMode ]
         , alert
         , mediaList
-
-        -- , div [ class "navigation-links" ]
-        --     [ previewButton
-        --     , viewLink "Profile" "profile"
-        --     , viewLink "Logout" "session/logout"
-        --     ]
         , statusBar model
         ]
