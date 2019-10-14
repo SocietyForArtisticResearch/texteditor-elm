@@ -13517,6 +13517,7 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$withAnimation = function (config_) {
 		config_);
 };
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0 = elm$html$Html$Attributes$class('ml-0');
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml3 = elm$html$Html$Attributes$class('ml-3');
 var author$project$Main$viewNavbar = function (model) {
 	var tabLink = function (tab) {
 		var selectedClass = _Utils_eq(model.editor.a, tab) ? 'nav-link active' : 'nav-link';
@@ -13571,7 +13572,7 @@ var author$project$Main$viewNavbar = function (model) {
 						elm$html$Html$a,
 						_List_fromArray(
 							[
-								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0,
+								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml3,
 								elm$html$Html$Attributes$href('profile'),
 								elm$html$Html$Attributes$target('_blank')
 							]),
@@ -13593,7 +13594,7 @@ var author$project$Main$viewNavbar = function (model) {
 						elm$html$Html$a,
 						_List_fromArray(
 							[
-								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0,
+								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml3,
 								elm$html$Html$Attributes$href('session/logout'),
 								elm$html$Html$Attributes$target('_blank')
 							]),
@@ -13603,7 +13604,7 @@ var author$project$Main$viewNavbar = function (model) {
 								elm$html$Html$img,
 								_List_fromArray(
 									[
-										elm$html$Html$Attributes$src(author$project$Settings$iconUrl + 'profile_metro.svg'),
+										elm$html$Html$Attributes$src(author$project$Settings$iconUrl + 'logout_metro.svg'),
 										elm$html$Html$Attributes$class('d-inline-block align-top'),
 										A2(elm$html$Html$Attributes$style, 'width', '30px'),
 										elm$html$Html$Attributes$title('Logout')

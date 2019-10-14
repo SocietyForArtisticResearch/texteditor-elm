@@ -1072,7 +1072,7 @@ viewNavbar model =
                 )
             , Navbar.customItem
                 (a
-                    [ Spacing.ml0, href "profile", Html.Attributes.target "_blank" ]
+                    [ Spacing.ml3, href "profile", Html.Attributes.target "_blank" ]
                     [ img
                         [ src (iconUrl ++ "profile_metro.svg")
                         , class "d-inline-block align-top"
@@ -1084,9 +1084,9 @@ viewNavbar model =
                 )
             , Navbar.customItem
                 (a
-                    [ Spacing.ml0, href "session/logout", Html.Attributes.target "_blank" ]
+                    [ Spacing.ml3, href "session/logout", Html.Attributes.target "_blank" ]
                     [ img
-                        [ src (iconUrl ++ "profile_metro.svg")
+                        [ src (iconUrl ++ "logout_metro.svg")
                         , class "d-inline-block align-top"
                         , style "width" "30px"
                         , title "Logout"
