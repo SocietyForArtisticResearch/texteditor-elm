@@ -17,7 +17,7 @@ import File exposing (File)
 import File.Select as Select
 import FootnoteHelper
 import Html exposing (Html, a, button, div, img, li, p, span, text, ul)
-import Html.Attributes exposing (attribute, class, classList, for, href, id, src)
+import Html.Attributes exposing (attribute, class, classList, for, href, id, src, style)
 import Html.Events exposing (on, onCheck, onClick, onInput)
 import Http
 import Json.Decode as D
@@ -1058,7 +1058,20 @@ viewNavbar model =
             , Navbar.itemLink (tabLink EditorStyle) [ text "Style" ]
             ]
         |> Navbar.customItems
-            [ Navbar.customItem (a [ class "nav-link", class "navbar-nav", Spacing.ml0, href previewUrl, Html.Attributes.target "_blank" ] [ text "Preview" ])
+            [ Navbar.customItem
+                (a
+                    [ Spacing.ml0, href previewUrl, Html.Attributes.target "_blank" ]
+                    [ img
+                        [ src "lib/icons/eye_metro.svg"
+                        , class "d-inline-block align-top"
+                        , style "width" "30px"
+                        ]
+                        [ text "Preview"
+                        ]
+                    ]
+                )
+
+            -- [ Navbar.customItem (a [ class "nav-link", class "navbar-nav", Spacing.ml0, href previewUrl, Html.Attributes.target "_blank" ] [ text "Preview" ])
             , Navbar.customItem (a [ class "nav-link", class "navbar-nav", Spacing.ml0, href "profile" ] [ text "Profile" ])
             , Navbar.customItem (a [ class "nav-link", class "navbar-nav", href "session/logout" ] [ text "Logout" ])
             ]

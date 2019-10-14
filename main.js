@@ -9272,7 +9272,7 @@ var author$project$Exposition$validateName = F3(
 					return m.name;
 				},
 				exp.media);
-			return (_Utils_eq(obj.name, newName) || (!A2(elm$core$List$member, newName, mediaNames))) ? elm$core$Result$Ok(newName) : elm$core$Result$Err('Another media object already has this name');
+			return (_Utils_eq(obj.name, newName) || (!A2(elm$core$List$member, newName, mediaNames))) ? (A2(elm$core$String$all, elm$core$Char$isAlphaNum, newName) ? elm$core$Result$Ok(newName) : elm$core$Result$Err('The name must only contain alphanumeric characters.')) : elm$core$Result$Err('Another media object already has this name.');
 		}
 	});
 var author$project$Licenses$AllRightsReserved = {$: 'AllRightsReserved'};
@@ -13549,15 +13549,24 @@ var author$project$Main$viewNavbar = function (model) {
 						elm$html$Html$a,
 						_List_fromArray(
 							[
-								elm$html$Html$Attributes$class('nav-link'),
-								elm$html$Html$Attributes$class('navbar-nav'),
 								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0,
 								elm$html$Html$Attributes$href(previewUrl),
 								elm$html$Html$Attributes$target('_blank')
 							]),
 						_List_fromArray(
 							[
-								elm$html$Html$text('Preview')
+								A2(
+								elm$html$Html$img,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$src('lib/icons/eye_metro.svg'),
+										elm$html$Html$Attributes$class('d-inline-block align-top'),
+										A2(elm$html$Html$Attributes$style, 'width', '30px')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text('Preview')
+									]))
 							]))),
 					rundis$elm_bootstrap$Bootstrap$Navbar$customItem(
 					A2(

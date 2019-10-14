@@ -358,10 +358,14 @@ validateName exp obj newName =
                 obj.name
         in
         if (obj.name == newName) || not (List.member newName mediaNames) then
-            Ok newName
+            if String.all Char.isAlphaNum newName then
+                Ok newName
+
+            else
+                Err "The name must only contain alphanumeric characters."
 
         else
-            Err "Another media object already has this name"
+            Err "Another media object already has this name."
 
 
 validateCopyright : String -> Result String String

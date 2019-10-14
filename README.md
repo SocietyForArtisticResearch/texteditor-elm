@@ -42,7 +42,7 @@ Luc:
 
 - icons for right hand side navbar
 - when logged out error http codes request form devs -- what to display?
-- period in media name (remove periods on upload and whitespace) -- actually only validator in mediaedit has to be adjusted
+
 
 ## To test
 - tables?
@@ -134,3 +134,4 @@ Luc:
 - media upload still not working for video.
 - `<meta name="viewport" content="width=device-width, initial-scale=1.0">` (ask devs), also on live server
 - Server problem when exporting?, 414 Request-URI Too Large (json, body??)
+- period in media name (remove periods on upload and whitespace) -- actually only validator in mediaedit has to be adjusted
