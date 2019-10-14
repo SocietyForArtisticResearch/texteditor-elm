@@ -13561,7 +13561,8 @@ var author$project$Main$viewNavbar = function (model) {
 									[
 										elm$html$Html$Attributes$src(author$project$Settings$iconUrl + 'eye_metro.svg'),
 										elm$html$Html$Attributes$class('d-inline-block align-top'),
-										A2(elm$html$Html$Attributes$style, 'width', '30px')
+										A2(elm$html$Html$Attributes$style, 'width', '30px'),
+										elm$html$Html$Attributes$title('Preview')
 									]),
 								_List_Nil)
 							]))),
@@ -13570,27 +13571,44 @@ var author$project$Main$viewNavbar = function (model) {
 						elm$html$Html$a,
 						_List_fromArray(
 							[
-								elm$html$Html$Attributes$class('nav-link'),
-								elm$html$Html$Attributes$class('navbar-nav'),
 								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0,
-								elm$html$Html$Attributes$href('profile')
+								elm$html$Html$Attributes$href('profile'),
+								elm$html$Html$Attributes$target('_blank')
 							]),
 						_List_fromArray(
 							[
-								elm$html$Html$text('Profile')
+								A2(
+								elm$html$Html$img,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$src(author$project$Settings$iconUrl + 'profile_metro.svg'),
+										elm$html$Html$Attributes$class('d-inline-block align-top'),
+										A2(elm$html$Html$Attributes$style, 'width', '30px'),
+										elm$html$Html$Attributes$title('Profile')
+									]),
+								_List_Nil)
 							]))),
 					rundis$elm_bootstrap$Bootstrap$Navbar$customItem(
 					A2(
 						elm$html$Html$a,
 						_List_fromArray(
 							[
-								elm$html$Html$Attributes$class('nav-link'),
-								elm$html$Html$Attributes$class('navbar-nav'),
-								elm$html$Html$Attributes$href('session/logout')
+								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0,
+								elm$html$Html$Attributes$href('session/logout'),
+								elm$html$Html$Attributes$target('_blank')
 							]),
 						_List_fromArray(
 							[
-								elm$html$Html$text('Logout')
+								A2(
+								elm$html$Html$img,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$src(author$project$Settings$iconUrl + 'profile_metro.svg'),
+										elm$html$Html$Attributes$class('d-inline-block align-top'),
+										A2(elm$html$Html$Attributes$style, 'width', '30px'),
+										elm$html$Html$Attributes$title('Logout')
+									]),
+								_List_Nil)
 							])))
 				]),
 			A2(

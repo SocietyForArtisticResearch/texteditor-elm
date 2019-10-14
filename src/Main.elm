@@ -17,7 +17,7 @@ import File exposing (File)
 import File.Select as Select
 import FootnoteHelper
 import Html exposing (Html, a, button, div, img, li, p, span, text, ul)
-import Html.Attributes exposing (attribute, class, classList, for, href, id, src, style)
+import Html.Attributes exposing (attribute, class, classList, for, href, id, src, style, title)
 import Html.Events exposing (on, onCheck, onClick, onInput)
 import Http
 import Json.Decode as D
@@ -1065,15 +1065,35 @@ viewNavbar model =
                         [ src (iconUrl ++ "eye_metro.svg")
                         , class "d-inline-block align-top"
                         , style "width" "30px"
+                        , title "Preview"
                         ]
-                        [--text "Preview"
-                        ]
+                        []
                     ]
                 )
-
-            -- [ Navbar.customItem (a [ class "nav-link", class "navbar-nav", Spacing.ml0, href previewUrl, Html.Attributes.target "_blank" ] [ text "Preview" ])
-            , Navbar.customItem (a [ class "nav-link", class "navbar-nav", Spacing.ml0, href "profile" ] [ text "Profile" ])
-            , Navbar.customItem (a [ class "nav-link", class "navbar-nav", href "session/logout" ] [ text "Logout" ])
+            , Navbar.customItem
+                (a
+                    [ Spacing.ml0, href "profile", Html.Attributes.target "_blank" ]
+                    [ img
+                        [ src (iconUrl ++ "profile_metro.svg")
+                        , class "d-inline-block align-top"
+                        , style "width" "30px"
+                        , title "Profile"
+                        ]
+                        []
+                    ]
+                )
+            , Navbar.customItem
+                (a
+                    [ Spacing.ml0, href "session/logout", Html.Attributes.target "_blank" ]
+                    [ img
+                        [ src (iconUrl ++ "profile_metro.svg")
+                        , class "d-inline-block align-top"
+                        , style "width" "30px"
+                        , title "Logout"
+                        ]
+                        []
+                    ]
+                )
             ]
         |> Navbar.view model.navbarState
 
