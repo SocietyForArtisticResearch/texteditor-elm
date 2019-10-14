@@ -13559,7 +13559,7 @@ var author$project$Main$viewNavbar = function (model) {
 								elm$html$Html$img,
 								_List_fromArray(
 									[
-										elm$html$Html$Attributes$src('lib/icons/eye_metro.svg'),
+										elm$html$Html$Attributes$src(author$project$Settings$iconUrl + 'eye_metro.svg'),
 										elm$html$Html$Attributes$class('d-inline-block align-top'),
 										A2(elm$html$Html$Attributes$style, 'width', '30px')
 									]),

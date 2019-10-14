@@ -1062,7 +1062,7 @@ viewNavbar model =
                 (a
                     [ Spacing.ml0, href previewUrl, Html.Attributes.target "_blank" ]
                     [ img
-                        [ src "lib/icons/eye_metro.svg"
+                        [ src (iconUrl ++ "eye_metro.svg")
                         , class "d-inline-block align-top"
                         , style "width" "30px"
                         ]
