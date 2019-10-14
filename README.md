@@ -34,6 +34,12 @@ General:
 - When a large document is imported, there is a timeout from the server. Perhaps a size limit is necessary?
 - we should force an update of DOM when the css "userclass" is changed.
 
+- If a tag is used twice, deleting the second tag is not resulting in removal in dom.
+https://www.youtube.com/watch?v=w3gsKylySoo&feature=youtu.be
+
+I noticed we give unique id’s to the figures, but not to the encapsulating div, which uses the RC media number as id. Probably morphdom really requires id’s to be unique. Maybe we should switch to “class” instead of “id”?
+
+
 
 Casper:
 
