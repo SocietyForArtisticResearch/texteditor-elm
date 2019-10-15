@@ -429,11 +429,12 @@ isValid st =
 objectDiv : RCMediaObject -> Html.Html msg -> Html.Html msg
 objectDiv obj child =
     Html.div
-        [ Attr.id (String.fromInt obj.id)
-        , Attr.classList
+        [ --  Attr.id (String.fromInt obj.id) Casper > Object could be used twice, better use class !
+          Attr.classList
             [ ( "rcobject", True )
             , ( obj.userClass, obj.userClass /= "" )
             , ( rcClass obj.mediaType, True )
+            , ( "rc-id-" ++ String.fromInt obj.id, True )
             ]
         ]
         [ child ]

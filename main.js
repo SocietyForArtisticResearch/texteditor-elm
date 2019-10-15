@@ -7834,17 +7834,12 @@ var zwilias$elm_html_string$Html$String$Attributes$classList = function (conditi
 				elm$core$Tuple$first,
 				A2(elm$core$List$filter, elm$core$Tuple$second, conditionalClasses))));
 };
-var zwilias$elm_html_string$Html$String$Attributes$id = function (val) {
-	return A2(zwilias$elm_html_string$Html$String$Attributes$stringProperty, 'id', val);
-};
 var author$project$Exposition$objectDiv = F2(
 	function (obj, child) {
 		return A2(
 			zwilias$elm_html_string$Html$String$div,
 			_List_fromArray(
 				[
-					zwilias$elm_html_string$Html$String$Attributes$id(
-					elm$core$String$fromInt(obj.id)),
 					zwilias$elm_html_string$Html$String$Attributes$classList(
 					_List_fromArray(
 						[
@@ -7852,6 +7847,9 @@ var author$project$Exposition$objectDiv = F2(
 							_Utils_Tuple2(obj.userClass, obj.userClass !== ''),
 							_Utils_Tuple2(
 							author$project$Exposition$rcClass(obj.mediaType),
+							true),
+							_Utils_Tuple2(
+							'rc-id-' + elm$core$String$fromInt(obj.id),
 							true)
 						]))
 				]),
@@ -7922,6 +7920,9 @@ var zwilias$elm_html_string$Html$String$Attributes$autoplay = function (bool) {
 };
 var zwilias$elm_html_string$Html$String$Attributes$controls = function (bool) {
 	return A2(zwilias$elm_html_string$Html$String$Attributes$boolProperty, 'controls', bool);
+};
+var zwilias$elm_html_string$Html$String$Attributes$id = function (val) {
+	return A2(zwilias$elm_html_string$Html$String$Attributes$stringProperty, 'id', val);
 };
 var zwilias$elm_html_string$Html$String$Attributes$loop = function (bool) {
 	return A2(zwilias$elm_html_string$Html$String$Attributes$boolProperty, 'loop', bool);
