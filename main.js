@@ -7849,7 +7849,7 @@ var author$project$Exposition$objectDiv = F2(
 							author$project$Exposition$rcClass(obj.mediaType),
 							true),
 							_Utils_Tuple2(
-							'rc-id-' + elm$core$String$fromInt(obj.id),
+							'rc-media-' + elm$core$String$fromInt(obj.id),
 							true)
 						]))
 				]),
