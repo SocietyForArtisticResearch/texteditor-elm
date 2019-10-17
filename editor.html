@@ -366,7 +366,7 @@
      newTo.classList.add("exposition-content");
      newTo.innerHTML = content;
      morphdom(preview, newTo,
-	      { onElUpdated: function(el) {
+	      { onNodeAdded: function(el) {
 		  el.scrollIntoView();
               }
      });
@@ -430,10 +430,10 @@
      }
  };
 
-
- app.ports.reloadPage.subscribe(function () {
-     location.reload();
- });
+ /* 
+  *  app.ports.reloadPage.subscribe(function () {
+  *      location.reload();
+  *  }); */
  
 </script>
 
