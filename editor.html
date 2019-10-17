@@ -365,7 +365,9 @@
      newTo.classList.add("exposition");
      newTo.classList.add("exposition-content");
      newTo.innerHTML = content;
-     morphdom(preview, newTo);
+     morphdom(preview, newTo, onElUpdated: function(el) {
+	 el.scrollIntoView();
+     });
  });
 
 
