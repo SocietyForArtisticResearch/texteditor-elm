@@ -358,6 +358,18 @@
      toRender = true;
  });
 
+
+ // scrolling
+
+ var observer = new MutationObserver(function(mutations) {
+     mutations.forEach(function(mutation) {
+         if (mutation.type == "characterData")
+             mutation.target.parentElement.className = "rcedit-changed-element"
+     });
+ });
+ var observerConfig = { attributes: true, childList: true, characterData: true, subtree: true }
+ observer.observe(document.getElementById("preview"), observerConfig);
+
  app.ports.setPreviewContent.subscribe(function(content) {
      var preview = document.getElementById("preview")
      var newTo = document.createElement('div');
@@ -365,11 +377,14 @@
      newTo.classList.add("exposition");
      newTo.classList.add("exposition-content");
      newTo.innerHTML = content;
-     morphdom(preview, newTo,
-	      { onNodeAdded: function(el) {
-		  el.scrollIntoView();
-              }
-     });
+     morphdom(preview, newTo);
+
+     let changedEl = document.getElementsByClassName('rcedit-changed-element');
+     if (changedEl.length > 1 ) {
+	 changedEl[0].scrollIntoView();
+     };
+
+     
  });
 
 
