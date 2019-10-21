@@ -35,20 +35,20 @@
                 <div id="elm">
                 </div>
 
-                <div id="editors">
-                    <textarea id="cm-markdown">
+                <div class="editors">
+                    <textarea id="js-cm-markdown" class="textarea-markdown">
 		    </textarea>
 
-                    <textarea id="textarea-markdown">
+                    <textarea id="js-textarea-markdown">
 		    </textarea>
 
-                    <textarea id="cm-style">
+                    <textarea id="js-cm-style">
 		    </textarea>
                 </div>
 
 
             </div>
-            <div class="col-sm-6" id="preview-container">
+            <div class="col-sm-6" class="preview-container">
                 <!-- <h2>Preview</h2> -->
                 <div class="exposition exposition-content" id="preview">
                 </div>
@@ -88,12 +88,12 @@
 
  var selectedEditor = editorCmMd;
 
- var cmMarkdown = CodeMirror.fromTextArea(document.getElementById("cm-markdown"), {
+ var cmMarkdown = CodeMirror.fromTextArea(document.getElementById("js-cm-markdown"), {
      mode: "markdown",
      lineWrapping: true
  });
 
- var cmStyle = CodeMirror.fromTextArea(document.getElementById("cm-style"), {
+ var cmStyle = CodeMirror.fromTextArea(document.getElementById("js-cm-style"), {
      mode: "css",
      lineWrapping: true
  });
@@ -109,7 +109,7 @@
  // cmMarkdown.setSize(null, "480px"); // fill available vertical space ?
  // cmStyle.setSize(null, "480px");
 
- var textareaMarkdown = document.getElementById("textarea-markdown");
+ var textareaMarkdown = document.getElementById("js-textarea-markdown");
 
  var app = Elm.Main.init({
      node: document.getElementById('elm'),

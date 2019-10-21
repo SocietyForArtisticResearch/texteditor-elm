@@ -35,7 +35,7 @@ view : List RCMediaObject -> TableMessages msg -> Html msg
 view objectList messages =
     case objectList of
         [] ->
-            div [ id "media-list", style "display" "none" ]
+            div [ class "media-list", style "display" "none" ]
                 [ Alert.simpleInfo [] [ text "There are no objects yet. Hint: add a file by using the \"upload media\" button." ]
                 ]
 

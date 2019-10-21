@@ -1268,7 +1268,7 @@ statusBar model =
         saveButton =
             Button.button
                 [ Button.light
-                , Button.attrs [ id "save-button", onClick SaveExposition ]
+                , Button.attrs [ class "save-button", onClick SaveExposition ]
                 ]
                 [ renderIcon SaveIcon, text saveButtonText ]
     in
