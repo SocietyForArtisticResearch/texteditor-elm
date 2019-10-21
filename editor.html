@@ -364,14 +364,11 @@
  var observer = new MutationObserver(function(mutations) {
      mutations.forEach(function(mutation) {
          if (mutation.type == "characterData")
-             mutation.target.parentElement.className = "rcedit-changed-element"
 
-	 // :)
-	 if (typeof mutation.target.scrollIntoView === 'function') {
-	     mutation.target.scrollIntoView();
-	 }
-
-
+	     // :)
+	     if (typeof mutation.target.scrollIntoView === 'function') {
+		 mutation.target.scrollIntoView();
+	     }
      });
  });
  var observerConfig = { attributes: true, childList: true, characterData: true, subtree: true }
