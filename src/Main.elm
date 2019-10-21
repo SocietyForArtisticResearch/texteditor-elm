@@ -1083,9 +1083,9 @@ viewNavbar model =
             ]
         |> Navbar.customItems
             [ viewNavbarItem "https://guide.researchcatalogue.net/#text-based-editor" "question.svg" "Help documentation" Spacing.ml0
-            , viewNavbarItem previewUrl "eye_metro.svg" "Preview" Spacing.ml1
-            , viewNavbarItem "profile" "profile_metro.svg" "Profile" Spacing.ml1
-            , viewNavbarItem "session/logout" "logout_metro.svg" "Logout" Spacing.ml1
+            , viewNavbarItem previewUrl "eye_metro.svg" "Preview" Spacing.ml3
+            , viewNavbarItem "profile" "profile_metro.svg" "Profile" Spacing.ml3
+            , viewNavbarItem "session/logout" "logout_metro.svg" "Logout" Spacing.ml3
             ]
         |> Navbar.view model.navbarState
 
