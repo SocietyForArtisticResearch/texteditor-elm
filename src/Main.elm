@@ -1033,6 +1033,22 @@ viewTabs model =
         ]
 
 
+viewNavbarItem : String -> String -> String -> Navbar.CustomItem Msg
+viewNavbarItem link iconFileName title =
+    Navbar.customItem
+        (a
+            [ Spacing.ml0, href link, Html.Attributes.target "_blank" ]
+            [ img
+                [ src (iconUrl ++ iconFileName)
+                , class "d-inline-block align-top"
+                , style "width" "30px"
+                , Html.Attributes.title title
+                ]
+                []
+            ]
+        )
+
+
 viewNavbar : Model -> Html Msg
 viewNavbar model =
     let
@@ -1060,42 +1076,10 @@ viewNavbar model =
             , Navbar.itemLink (tabLink EditorStyle) [ text "Style" ]
             ]
         |> Navbar.customItems
-            [ Navbar.customItem
-                (a
-                    [ Spacing.ml0, href previewUrl, Html.Attributes.target "_blank" ]
-                    [ img
-                        [ src (iconUrl ++ "eye_metro.svg")
-                        , class "d-inline-block align-top"
-                        , style "width" "30px"
-                        , title "Preview"
-                        ]
-                        []
-                    ]
-                )
-            , Navbar.customItem
-                (a
-                    [ Spacing.ml3, href "profile", Html.Attributes.target "_blank" ]
-                    [ img
-                        [ src (iconUrl ++ "profile_metro.svg")
-                        , class "d-inline-block align-top"
-                        , style "width" "30px"
-                        , title "Profile"
-                        ]
-                        []
-                    ]
-                )
-            , Navbar.customItem
-                (a
-                    [ Spacing.ml3, href "session/logout", Html.Attributes.target "_blank" ]
-                    [ img
-                        [ src (iconUrl ++ "logout_metro.svg")
-                        , class "d-inline-block align-top"
-                        , style "width" "30px"
-                        , title "Logout"
-                        ]
-                        []
-                    ]
-                )
+            [ viewNavbarItem "https://guide.researchcatalogue.net/#text-based-editor" "question.svg" "Help documentation"
+            , viewNavbarItem previewUrl "eye_metro.svg" "Preview"
+            , viewNavbarItem "profile" "profile_metro.svg" "Profile"
+            , viewNavbarItem "session/logout" "logout_metro.svg" "Logout"
             ]
         |> Navbar.view model.navbarState
 

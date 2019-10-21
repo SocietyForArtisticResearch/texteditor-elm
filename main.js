@@ -12727,6 +12727,39 @@ var elm$html$Html$Attributes$href = function (url) {
 		_VirtualDom_noJavaScriptUri(url));
 };
 var elm$html$Html$Attributes$target = elm$html$Html$Attributes$stringProperty('target');
+var rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem = function (a) {
+	return {$: 'CustomItem', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$customItem = function (elem) {
+	return rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem(elem);
+};
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0 = elm$html$Html$Attributes$class('ml-0');
+var author$project$Main$viewNavbarItem = F3(
+	function (link, iconFileName, title) {
+		return rundis$elm_bootstrap$Bootstrap$Navbar$customItem(
+			A2(
+				elm$html$Html$a,
+				_List_fromArray(
+					[
+						rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0,
+						elm$html$Html$Attributes$href(link),
+						elm$html$Html$Attributes$target('_blank')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$img,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$src(
+								_Utils_ap(author$project$Settings$iconUrl, iconFileName)),
+								elm$html$Html$Attributes$class('d-inline-block align-top'),
+								A2(elm$html$Html$Attributes$style, 'width', '30px'),
+								elm$html$Html$Attributes$title(title)
+							]),
+						_List_Nil)
+					])));
+	});
 var rundis$elm_bootstrap$Bootstrap$Navbar$Config = function (a) {
 	return {$: 'Config', a: a};
 };
@@ -12792,12 +12825,6 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$config = function (toMsg) {
 			toMsg: toMsg,
 			withAnimation: false
 		});
-};
-var rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem = function (a) {
-	return {$: 'CustomItem', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Navbar$customItem = function (elem) {
-	return rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem(elem);
 };
 var rundis$elm_bootstrap$Bootstrap$Navbar$updateConfig = F2(
 	function (mapper, _n0) {
@@ -13546,8 +13573,6 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$withAnimation = function (config_) {
 		},
 		config_);
 };
-var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0 = elm$html$Html$Attributes$class('ml-0');
-var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml3 = elm$html$Html$Attributes$class('ml-3');
 var author$project$Main$viewNavbar = function (model) {
 	var tabLink = function (tab) {
 		var selectedClass = _Utils_eq(model.editor.a, tab) ? 'nav-link active' : 'nav-link';
@@ -13575,72 +13600,10 @@ var author$project$Main$viewNavbar = function (model) {
 			rundis$elm_bootstrap$Bootstrap$Navbar$customItems,
 			_List_fromArray(
 				[
-					rundis$elm_bootstrap$Bootstrap$Navbar$customItem(
-					A2(
-						elm$html$Html$a,
-						_List_fromArray(
-							[
-								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0,
-								elm$html$Html$Attributes$href(previewUrl),
-								elm$html$Html$Attributes$target('_blank')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$img,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$src(author$project$Settings$iconUrl + 'eye_metro.svg'),
-										elm$html$Html$Attributes$class('d-inline-block align-top'),
-										A2(elm$html$Html$Attributes$style, 'width', '30px'),
-										elm$html$Html$Attributes$title('Preview')
-									]),
-								_List_Nil)
-							]))),
-					rundis$elm_bootstrap$Bootstrap$Navbar$customItem(
-					A2(
-						elm$html$Html$a,
-						_List_fromArray(
-							[
-								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml3,
-								elm$html$Html$Attributes$href('profile'),
-								elm$html$Html$Attributes$target('_blank')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$img,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$src(author$project$Settings$iconUrl + 'profile_metro.svg'),
-										elm$html$Html$Attributes$class('d-inline-block align-top'),
-										A2(elm$html$Html$Attributes$style, 'width', '30px'),
-										elm$html$Html$Attributes$title('Profile')
-									]),
-								_List_Nil)
-							]))),
-					rundis$elm_bootstrap$Bootstrap$Navbar$customItem(
-					A2(
-						elm$html$Html$a,
-						_List_fromArray(
-							[
-								rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml3,
-								elm$html$Html$Attributes$href('session/logout'),
-								elm$html$Html$Attributes$target('_blank')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$img,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$src(author$project$Settings$iconUrl + 'logout_metro.svg'),
-										elm$html$Html$Attributes$class('d-inline-block align-top'),
-										A2(elm$html$Html$Attributes$style, 'width', '30px'),
-										elm$html$Html$Attributes$title('Logout')
-									]),
-								_List_Nil)
-							])))
+					A3(author$project$Main$viewNavbarItem, 'https://guide.researchcatalogue.net/#text-based-editor', 'question.svg', 'Help documentation'),
+					A3(author$project$Main$viewNavbarItem, previewUrl, 'eye_metro.svg', 'Preview'),
+					A3(author$project$Main$viewNavbarItem, 'profile', 'profile_metro.svg', 'Profile'),
+					A3(author$project$Main$viewNavbarItem, 'session/logout', 'logout_metro.svg', 'Logout')
 				]),
 			A2(
 				rundis$elm_bootstrap$Bootstrap$Navbar$items,
