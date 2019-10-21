@@ -12099,7 +12099,6 @@ var author$project$Exposition$wordCount = function (expo) {
 	return author$project$Util$wordCount(expo.markdownInput);
 };
 var author$project$View$SaveIcon = {$: 'SaveIcon'};
-var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var author$project$Main$statusBar = function (model) {
 	var wc = author$project$Exposition$wordCount(model.exposition);
 	var status = 'Word count: ' + elm$core$String$fromInt(wc);
@@ -12112,7 +12111,7 @@ var author$project$Main$statusBar = function (model) {
 				rundis$elm_bootstrap$Bootstrap$Button$attrs(
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$id('save-button'),
+						elm$html$Html$Attributes$class('save-button'),
 						elm$html$Html$Events$onClick(author$project$Main$SaveExposition)
 					]))
 			]),
@@ -12520,6 +12519,7 @@ var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$applyModifier = F2(
 	});
 var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Off = {$: 'Off'};
 var rundis$elm_bootstrap$Bootstrap$Form$Checkbox$defaultOptions = {attributes: _List_Nil, custom: false, disabled: false, id: elm$core$Maybe$Nothing, inline: false, onChecked: elm$core$Maybe$Nothing, state: rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Off, validation: elm$core$Maybe$Nothing};
+var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var elm$json$Json$Decode$at = F2(
 	function (fields, decoder) {
 		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
@@ -16619,7 +16619,7 @@ var author$project$RCMediaList$view = F2(
 				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$id('media-list'),
+						elm$html$Html$Attributes$class('media-list'),
 						A2(elm$html$Html$Attributes$style, 'display', 'none')
 					]),
 				_List_fromArray(

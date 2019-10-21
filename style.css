@@ -7,7 +7,7 @@ body {
     heigth: 100%;
 }
 
-#editors {
+.editors {
     width: 100%;
     height: 100%;
     overflow-y: hidden;
@@ -29,7 +29,7 @@ body {
     padding-right: 5px;
 }
 
-#preview-container {
+.preview-container {
     max-height: calc(100vh - 50px);
     top: 50px;
     overflow-y: scroll;
@@ -55,7 +55,7 @@ body {
     width: 50%;
 }
 
-#save-button {
+.save-button {
     position: absolute;
     right: 10px;
 }
@@ -63,7 +63,7 @@ body {
 /* .CodeMirror-scroll * { */
 /*     white-space: pre-wrap; */
 /* } */
-#textarea-markdown {
+.textarea-markdown {
     resize: none;
     flex: 1;
     width: 100%;
@@ -212,16 +212,16 @@ body {
 @media only screen and (max-width: 576px) {
 
     /* hide the preview on mobile, bigger phones have a width of 750px */
-    #preview-container {
+    .preview-container {
         display: none;
     }
 }
 
-#media-list th.edit-button-column {
+.media-list th.edit-button-column {
     width: 130px;
 }
 
-#media-list video {
+.media-list video {
     width: 20%;
 }
 
@@ -254,6 +254,6 @@ body {
     width: 100%;
 }
 
-.fullscreen #preview-container {
+.fullscreen .preview-container {
     display: none;
 }
