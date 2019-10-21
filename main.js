@@ -12738,15 +12738,14 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem = function (a) {
 var rundis$elm_bootstrap$Bootstrap$Navbar$customItem = function (elem) {
 	return rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem(elem);
 };
-var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0 = elm$html$Html$Attributes$class('ml-0');
-var author$project$Main$viewNavbarItem = F3(
-	function (link, iconFileName, title) {
+var author$project$Main$viewNavbarItem = F4(
+	function (link, iconFileName, title, spacing) {
 		return rundis$elm_bootstrap$Bootstrap$Navbar$customItem(
 			A2(
 				elm$html$Html$a,
 				_List_fromArray(
 					[
-						rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0,
+						spacing,
 						elm$html$Html$Attributes$href(link),
 						elm$html$Html$Attributes$target('_blank')
 					]),
@@ -13578,6 +13577,8 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$withAnimation = function (config_) {
 		},
 		config_);
 };
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0 = elm$html$Html$Attributes$class('ml-0');
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1 = elm$html$Html$Attributes$class('ml-1');
 var author$project$Main$viewNavbar = function (model) {
 	var tabLink = function (tab) {
 		var selectedClass = _Utils_eq(model.editor.a, tab) ? 'nav-link active' : 'nav-link';
@@ -13605,10 +13606,10 @@ var author$project$Main$viewNavbar = function (model) {
 			rundis$elm_bootstrap$Bootstrap$Navbar$customItems,
 			_List_fromArray(
 				[
-					A3(author$project$Main$viewNavbarItem, 'https://guide.researchcatalogue.net/#text-based-editor', 'question.svg', 'Help documentation'),
-					A3(author$project$Main$viewNavbarItem, previewUrl, 'eye_metro.svg', 'Preview'),
-					A3(author$project$Main$viewNavbarItem, 'profile', 'profile_metro.svg', 'Profile'),
-					A3(author$project$Main$viewNavbarItem, 'session/logout', 'logout_metro.svg', 'Logout')
+					A4(author$project$Main$viewNavbarItem, 'https://guide.researchcatalogue.net/#text-based-editor', 'question.svg', 'Help documentation', rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0),
+					A4(author$project$Main$viewNavbarItem, previewUrl, 'eye_metro.svg', 'Preview', rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1),
+					A4(author$project$Main$viewNavbarItem, 'profile', 'profile_metro.svg', 'Profile', rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1),
+					A4(author$project$Main$viewNavbarItem, 'session/logout', 'logout_metro.svg', 'Logout', rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1)
 				]),
 			A2(
 				rundis$elm_bootstrap$Bootstrap$Navbar$items,
@@ -16579,7 +16580,6 @@ var rundis$elm_bootstrap$Bootstrap$Table$th = F2(
 		return rundis$elm_bootstrap$Bootstrap$Table$Th(
 			{children: children, options: options});
 	});
-var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1 = elm$html$Html$Attributes$class('ml-1');
 var author$project$RCMediaList$view = F2(
 	function (objectList, messages) {
 		if (!objectList.b) {

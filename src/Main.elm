@@ -1039,11 +1039,11 @@ viewTabs model =
         ]
 
 
-viewNavbarItem : String -> String -> String -> Navbar.CustomItem Msg
-viewNavbarItem link iconFileName title =
+viewNavbarItem : String -> String -> String -> Html.Attribute Msg -> Navbar.CustomItem Msg
+viewNavbarItem link iconFileName title spacing =
     Navbar.customItem
         (a
-            [ Spacing.ml0, href link, Html.Attributes.target "_blank" ]
+            [ spacing, href link, Html.Attributes.target "_blank" ]
             [ img
                 [ src (iconUrl ++ iconFileName)
                 , class "d-inline-block align-top"
@@ -1082,10 +1082,10 @@ viewNavbar model =
             , Navbar.itemLink (tabLink EditorStyle) [ text "Style" ]
             ]
         |> Navbar.customItems
-            [ viewNavbarItem "https://guide.researchcatalogue.net/#text-based-editor" "question.svg" "Help documentation"
-            , viewNavbarItem previewUrl "eye_metro.svg" "Preview"
-            , viewNavbarItem "profile" "profile_metro.svg" "Profile"
-            , viewNavbarItem "session/logout" "logout_metro.svg" "Logout"
+            [ viewNavbarItem "https://guide.researchcatalogue.net/#text-based-editor" "question.svg" "Help documentation" Spacing.ml0
+            , viewNavbarItem previewUrl "eye_metro.svg" "Preview" Spacing.ml1
+            , viewNavbarItem "profile" "profile_metro.svg" "Profile" Spacing.ml1
+            , viewNavbarItem "session/logout" "logout_metro.svg" "Logout" Spacing.ml1
             ]
         |> Navbar.view model.navbarState
 
