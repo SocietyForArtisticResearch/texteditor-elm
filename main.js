@@ -12738,32 +12738,31 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem = function (a) {
 var rundis$elm_bootstrap$Bootstrap$Navbar$customItem = function (elem) {
 	return rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem(elem);
 };
-var author$project$Main$viewNavbarItem = F4(
-	function (link, iconFileName, title, spacing) {
-		return rundis$elm_bootstrap$Bootstrap$Navbar$customItem(
-			A2(
-				elm$html$Html$a,
-				_List_fromArray(
-					[
-						spacing,
-						elm$html$Html$Attributes$href(link),
-						elm$html$Html$Attributes$target('_blank')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$img,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$src(
-								_Utils_ap(author$project$Settings$iconUrl, iconFileName)),
-								elm$html$Html$Attributes$class('d-inline-block align-top'),
-								A2(elm$html$Html$Attributes$style, 'width', '30px'),
-								elm$html$Html$Attributes$title(title)
-							]),
-						_List_Nil)
-					])));
-	});
+var author$project$Main$viewNavbarItem = function (props) {
+	return rundis$elm_bootstrap$Bootstrap$Navbar$customItem(
+		A2(
+			elm$html$Html$a,
+			_List_fromArray(
+				[
+					props.spacing,
+					elm$html$Html$Attributes$href(props.link),
+					elm$html$Html$Attributes$target('_blank')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$img,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$src(
+							_Utils_ap(author$project$Settings$iconUrl, props.icon)),
+							elm$html$Html$Attributes$class('d-inline-block align-top'),
+							A2(elm$html$Html$Attributes$style, 'width', '30px'),
+							elm$html$Html$Attributes$title(props.title)
+						]),
+					_List_Nil)
+				])));
+};
 var rundis$elm_bootstrap$Bootstrap$Navbar$Config = function (a) {
 	return {$: 'Config', a: a};
 };
@@ -13606,10 +13605,14 @@ var author$project$Main$viewNavbar = function (model) {
 			rundis$elm_bootstrap$Bootstrap$Navbar$customItems,
 			_List_fromArray(
 				[
-					A4(author$project$Main$viewNavbarItem, 'https://guide.researchcatalogue.net/#text-based-editor', 'question.svg', 'Help documentation', rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0),
-					A4(author$project$Main$viewNavbarItem, previewUrl, 'eye_metro.svg', 'Preview', rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml3),
-					A4(author$project$Main$viewNavbarItem, 'profile', 'profile_metro.svg', 'Profile', rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml3),
-					A4(author$project$Main$viewNavbarItem, 'session/logout', 'logout_metro.svg', 'Logout', rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml3)
+					author$project$Main$viewNavbarItem(
+					{icon: 'question.svg', link: 'https://guide.researchcatalogue.net/#text-based-editor', spacing: rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0, title: 'Help'}),
+					author$project$Main$viewNavbarItem(
+					{icon: 'eye_metro.svg', link: previewUrl, spacing: rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml3, title: 'Preview'}),
+					author$project$Main$viewNavbarItem(
+					{icon: 'profile_metro.svg', link: 'profile', spacing: rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml3, title: 'Profile'}),
+					author$project$Main$viewNavbarItem(
+					{icon: 'logout_metro.svg', link: 'session/logout', spacing: rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml3, title: 'Logout'})
 				]),
 			A2(
 				rundis$elm_bootstrap$Bootstrap$Navbar$items,

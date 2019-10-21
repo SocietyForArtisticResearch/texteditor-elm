@@ -1039,16 +1039,24 @@ viewTabs model =
         ]
 
 
-viewNavbarItem : String -> String -> String -> Html.Attribute Msg -> Navbar.CustomItem Msg
-viewNavbarItem link iconFileName title spacing =
+type alias NavbarItemProps =
+    { link : String
+    , icon : String -- is a filename
+    , title : String
+    , spacing : Html.Attribute Msg
+    }
+
+
+viewNavbarItem : NavbarItemProps -> Navbar.CustomItem Msg
+viewNavbarItem props =
     Navbar.customItem
         (a
-            [ spacing, href link, Html.Attributes.target "_blank" ]
+            [ props.spacing, href props.link, Html.Attributes.target "_blank" ]
             [ img
-                [ src (iconUrl ++ iconFileName)
+                [ src (iconUrl ++ props.icon)
                 , class "d-inline-block align-top"
                 , style "width" "30px"
-                , Html.Attributes.title title
+                , Html.Attributes.title props.title
                 ]
                 []
             ]
@@ -1082,10 +1090,10 @@ viewNavbar model =
             , Navbar.itemLink (tabLink EditorStyle) [ text "Style" ]
             ]
         |> Navbar.customItems
-            [ viewNavbarItem "https://guide.researchcatalogue.net/#text-based-editor" "question.svg" "Help documentation" Spacing.ml0
-            , viewNavbarItem previewUrl "eye_metro.svg" "Preview" Spacing.ml3
-            , viewNavbarItem "profile" "profile_metro.svg" "Profile" Spacing.ml3
-            , viewNavbarItem "session/logout" "logout_metro.svg" "Logout" Spacing.ml3
+            [ viewNavbarItem { link = "https://guide.researchcatalogue.net/#text-based-editor", icon = "question.svg", title = "Help", spacing = Spacing.ml0 }
+            , viewNavbarItem { link = previewUrl, icon = "eye_metro.svg", title = "Preview", spacing = Spacing.ml3 }
+            , viewNavbarItem { link = "profile", icon = "profile_metro.svg", title = "Profile", spacing = Spacing.ml3 }
+            , viewNavbarItem { link = "session/logout", icon = "logout_metro.svg", title = "Logout", spacing = Spacing.ml3 }
             ]
         |> Navbar.view model.navbarState
 
