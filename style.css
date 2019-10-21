@@ -63,7 +63,7 @@ body {
 /* .CodeMirror-scroll * { */
 /*     white-space: pre-wrap; */
 /* } */
-#textarea-markdown {
+.textarea-markdown {
     resize: none;
     flex: 1;
     width: 100%;
