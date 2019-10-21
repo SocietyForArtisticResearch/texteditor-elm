@@ -10,6 +10,7 @@ import Bootstrap.Modal as Modal
 import Bootstrap.Navbar as Navbar
 import Bootstrap.Utilities.Spacing as Spacing
 import Browser
+import Browser.Navigation as Nav
 import Bytes
 import Dict
 import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectViewState, addMediaUserClasses, incContentVersion)
@@ -561,7 +562,12 @@ update msg model =
                         _ =
                             Debug.log "save error: " s
                     in
-                    ( addProblem model Problems.CannotSave, Cmd.none )
+                    case s of
+                        Http.BadStatus 401 ->
+                            ( model, Nav.reload )
+
+                        _ ->
+                            ( addProblem model Problems.CannotSave, Cmd.none )
 
         GotMediaList mediaResult ->
             case mediaResult of
