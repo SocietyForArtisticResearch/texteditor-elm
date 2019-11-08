@@ -214,7 +214,6 @@ main =
 
 -- PORTS
 -- general
--- port reloadPage : () -> Cmd msg
 -- code mirror markdown
 
 
@@ -400,6 +399,25 @@ makePickerMessages =
 -- UPDATE
 
 
+forceRerender : Model -> ( Model, Cmd Msg )
+forceRerender model =
+    let
+        newHtml =
+            Exposition.insertToolHtml model.exposition.markdownInput model.exposition
+    in
+    ( { model
+        | exposition =
+            Exposition.withCSS
+                (Exposition.withHtml
+                    (Exposition.withMd model.exposition model.exposition.markdownInput)
+                    newHtml
+                )
+                model.exposition.css
+      }
+    , convertMarkdown newHtml
+    )
+
+
 decodeGeneration : D.Decoder ( Int, Int )
 decodeGeneration =
     D.map2 Tuple.pair (D.field "md" D.int) (D.field "style" D.int)
@@ -508,7 +526,7 @@ update msg model =
                     )
 
         CloseMediaDialog ->
-            ( { model | mediaDialog = RCMediaEdit.empty }, Cmd.none )
+            forceRerender { model | mediaDialog = RCMediaEdit.empty }
 
         GotExposition exp ->
             case exp of
