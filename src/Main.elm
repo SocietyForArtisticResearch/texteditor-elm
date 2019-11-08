@@ -1055,7 +1055,7 @@ viewNavbarItem props =
             [ img
                 [ src (iconUrl ++ props.icon)
                 , class "d-inline-block align-top"
-                , style "width" "30px"
+                , style "width" "25px"
                 , Html.Attributes.title props.title
                 ]
                 []

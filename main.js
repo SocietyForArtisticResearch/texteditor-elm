@@ -12757,7 +12757,7 @@ var author$project$Main$viewNavbarItem = function (props) {
 							elm$html$Html$Attributes$src(
 							_Utils_ap(author$project$Settings$iconUrl, props.icon)),
 							elm$html$Html$Attributes$class('d-inline-block align-top'),
-							A2(elm$html$Html$Attributes$style, 'width', '30px'),
+							A2(elm$html$Html$Attributes$style, 'width', '25px'),
 							elm$html$Html$Attributes$title(props.title)
 						]),
 					_List_Nil)
