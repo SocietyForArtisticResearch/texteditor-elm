@@ -187,11 +187,7 @@ init flags =
             , Cmd.batch [ navCmd, RCAPI.getExposition fl.research fl.weave GotExposition ]
             )
 
-        Err str ->
-            let
-                _ =
-                    Debug.log "err" str
-            in
+        Err _ ->
             ( addProblem (emptyModel navbarState -1 -1) Problems.WrongExpositionUrl
             , Cmd.none
             )
@@ -427,10 +423,6 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         GotConvertedHtml convObj ->
-            let
-                _ =
-                    Debug.log "toc.." convObj.toc
-            in
             ( { model | exposition = Exposition.updateToc (Exposition.withHtml model.exposition convObj.html) convObj.toc }
             , setPreviewContent convObj.html
             )
@@ -490,10 +482,6 @@ update msg model =
                     update (MediaDialog False mediaNameOrId) model
 
                 Err _ ->
-                    let
-                        _ =
-                            Debug.log "no mediaName or ID" val
-                    in
                     ( addProblem model Problems.CannotFindMediaFieldInJson, Cmd.none )
 
         MediaDialog allowInsert mediaNameOrId ->
@@ -515,10 +503,6 @@ update msg model =
                         modelWithProblem =
                             addProblem model <| Problems.NoMediaWithNameOrId mediaNameOrId
                     in
-                    let
-                        _ =
-                            Debug.log "no object" model
-                    in
                     ( { modelWithProblem
                         | mediaDialog = RCMediaEdit.empty
                       }
@@ -535,14 +519,24 @@ update msg model =
                         newExposition =
                             RCAPI.toRCExposition e model.research model.weave
 
-                        _ =
-                            Debug.log "loaded: " newExposition
+                        mediaClassesDict = RCAPI.toMediaClassesDict e
 
                         newModel =
-                            { model
-                                | exposition = newExposition
-                                , mediaClassesDict = RCAPI.toMediaClassesDict e
-                            }
+                            case mediaClassesDict of
+                                Ok dict ->
+                                    { model
+                                        | exposition = newExposition
+                                        , mediaClassesDict = dict
+                                    }
+
+                                Err emptyDict ->
+                                    let
+                                        problemModel = 
+                                            addProblem model Problems.MediaUserClassesProblem
+                                    in
+                                    { problemModel
+                                        | exposition = newExposition
+                                        , mediaClassesDict = emptyDict }
                     in
                     ( newModel
                     , Cmd.batch
@@ -553,11 +547,7 @@ update msg model =
                     )
 
                 Err err ->
-                    let
-                        _ =
-                            Debug.log "could not load exposition: " err
-                    in
-                    ( model, Cmd.none )
+                    ( addProblem model <| Problems.CannotLoadExposition err, Cmd.none )
 
         SaveExposition ->
             if not model.saved then
@@ -569,17 +559,10 @@ update msg model =
         SavedExposition result ->
             case result of
                 Ok r ->
-                    let
-                        _ =
-                            Debug.log "save result: " r
-                    in
+                    
                     ( { model | saved = True }, reportIsSaved True )
 
-                Err s ->
-                    let
-                        _ =
-                            Debug.log "save error: " s
-                    in
+                Err s ->                    
                     case s of
                         Http.BadStatus 401 ->
                             ( model, Nav.reload )
@@ -589,20 +572,12 @@ update msg model =
 
         GotMediaList mediaResult ->
             case mediaResult of
-                Err e ->
-                    let
-                        _ =
-                            Debug.log "media list loading issue: " e
-                    in
-                    ( addProblem model (Problems.CannotLoadMedia "http request failed")
+                Err err ->
+                    ( addProblem model (Problems.CannotLoadMedia err)
                     , Cmd.none
                     )
 
                 Ok media ->
-                    let
-                        _ =
-                            Debug.log "loaded media: " media
-                    in
                     let
                         ( problems, mediaEntries ) =
                             Problems.splitResultList
@@ -617,9 +592,6 @@ update msg model =
                         expositionWithClasses =
                             Exposition.renameDuplicateMedia <|
                                 addMediaUserClasses expositionWithMedia model.mediaClassesDict
-
-                        _ =
-                            Debug.log "loaded exposition with media: " expositionWithClasses
                     in
                     ( { modelWithProblems
                         | exposition = expositionWithClasses
@@ -696,20 +668,10 @@ update msg model =
         SavedMediaEdit result ->
             case result of
                 Ok s ->
-                    let
-                        _ =
-                            Debug.log "saved media result: " s
-                    in
-                    -- TO BE TESTED, SEE IF CLASSES ARE NOT OVERWRITTEN BY BACKEND BETWEEN EXPOSITION SAVINGS
-                    --                    update SaveExposition model
                     ( model, Cmd.none )
 
-                Err s ->
-                    let
-                        _ =
-                            Debug.log "update media error: " s
-                    in
-                    ( addProblem model Problems.CannotUpdateMedia, Cmd.none )
+                Err e ->
+                    ( addProblem model <| Problems.CannotUpdateMedia e, Cmd.none )
 
         MediaDelete obj ->
             let
@@ -722,10 +684,7 @@ update msg model =
             ( modelWithClosedWindow, Cmd.batch [ cmd, RCAPI.deleteMedia obj MediaDeleted ] )
 
         MediaDeleted obj ->
-            let
-                _ =
-                    Debug.log "MediaDeleted api" obj
-            in
+            -- todo, maybe show a message that object was deleted ?
             ( model, RCAPI.getMediaList model.research GotMediaList )
 
         UploadMediaFileSelect ->
@@ -811,31 +770,19 @@ update msg model =
                         decoded : Result D.Error RCAPI.APIMediaEntry
                         decoded =
                             D.decodeString RCAPI.apiMediaEntry apiMedia
-
-                        maybeId : Maybe String
-                        maybeId =
-                            case decoded of
-                                Ok media ->
-                                    Just <| String.fromInt (.id media)
-
-                                Err _ ->
-                                    Nothing
-
-                        -- _ =
-                        --     Debug.log "uploaded result: " result
-                        -- _ =
-                        --     Debug.log "id" maybeId
+     
                     in
-                    case maybeId of
-                        Nothing ->
-                            ( model
-                            , RCAPI.getMediaList model.research GotMediaList
-                            )
+                    case decoded of
+                        Ok media ->
+                            let id =
+                                 String.fromInt (.id media)
+                            in
+                            ( { model | mediaUploadStatus = Ready } , RCAPI.getMediaList model.research (OpenNewMediaGotMediaList id) )
 
-                        Just id ->
-                            ( { model | mediaUploadStatus = Ready }
-                            , RCAPI.getMediaList model.research (OpenNewMediaGotMediaList id)
-                            )
+
+                        Err e ->
+                            ( addProblem model (Problems.DecodingJsonError e) , RCAPI.getMediaList model.research GotMediaList )
+                       
 
                 Err e ->
                     ( addProblem model <| Problems.MediaUploadFailed e, Cmd.none )
@@ -844,9 +791,6 @@ update msg model =
             case result of
                 Ok importResult ->
                     let
-                        _ =
-                            Debug.log "import result: " importResult
-
                         newModel =
                             { model
                                 | importUploadStatus = Ready
@@ -866,10 +810,6 @@ update msg model =
                     )
 
                 Err e ->
-                    let
-                        _ =
-                            Debug.log "error uploading: " e
-                    in
                     ( addProblem model (Problems.CannotImportFile e), Cmd.none )
 
         ConfirmMediaDelete object ->
@@ -921,56 +861,55 @@ update msg model =
             let
                 foundObj =
                     Exposition.objectByNameOrId (String.fromInt obj.id) model.exposition
-
-                _ =
-                    Debug.log "trying to insert:" foundObj
+                  
             in
-            ( { model
-                | mediaPickerDialog = Modal.hidden
-                , mediaDialog = RCMediaEdit.empty
-              }
-              -- close mediapicker if insert
-              -- this is simply to make sure the object is in the exposition media
-            , case foundObj of
-                Just o ->
-                    let
-                        closeMediaListIfOpen =
-                            case model.editor of
-                                ( EditorMedia, CodemirrorMarkdown ) ->
-                                    setEditor 0
+                case foundObj of
+                    Just o ->
+                        let
+                            closeMediaListIfOpen =
+                                case model.editor of
+                                    ( EditorMedia, CodemirrorMarkdown ) ->
+                                        setEditor 0
+                                            
+                                    ( EditorMedia, TextareaMarkdown ) ->
+                                        setEditor 1
+                                                    
+                                    _ ->
+                                        Cmd.none
 
-                                ( EditorMedia, TextareaMarkdown ) ->
-                                    setEditor 1
+                            updatedModel =
+                                { model
+                                    | mediaPickerDialog = Modal.hidden
+                                    , mediaDialog = RCMediaEdit.empty
+                                }
+                        in
+                            (updatedModel,Cmd.batch
+                                 [ insertMdString ( "!{" ++ o.name ++ "}", 0 )
+                                 , closeMediaListIfOpen -- close media list
+                                 ])
 
-                                _ ->
-                                    Cmd.none
-                    in
-                    Cmd.batch
-                        [ insertMdString ( "!{" ++ o.name ++ "}", 0 )
-                        , closeMediaListIfOpen -- close media list
-                        ]
-
-                Nothing ->
-                    let
-                        _ =
-                            Debug.log "not inserted, because object not found"
-                    in
-                    Cmd.none
-            )
+                    Nothing ->
+                        (addProblem model <| Problems.NoMediaWithNameOrId obj.name, Cmd.none)
+            
 
         InsertAtCursor insertTuple ->
             ( model, insertMdString insertTuple )
 
         InsertFootnoteAtCursor ->
             let
-                nextNumber : Int
+                nextNumber : Result String Int
                 nextNumber =
                     FootnoteHelper.mdNextFootnoteNum model.exposition.markdownInput
 
-                insertTuple =
-                    FootnoteHelper.footnoteSnippet nextNumber
-            in
-            ( model, insertFootnote insertTuple )
+            in          
+            case nextNumber of
+                Ok num ->
+                    ( model, insertFootnote (FootnoteHelper.footnoteSnippet num ))
+                        
+                Err err ->
+                    (addProblem model ( Problems.FootnoteHelperError err ), Cmd.none) 
+            
+
 
         OpenMediaPicker ->
             ( { model | mediaPickerDialog = Modal.shown }, Cmd.none )

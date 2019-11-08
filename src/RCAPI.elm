@@ -618,7 +618,7 @@ toRCExposition apiExpo id weave =
     }
 
 
-toMediaClassesDict : APIExposition -> Dict.Dict Int String
+toMediaClassesDict : APIExposition -> Result (Dict.Dict Int String) (Dict.Dict Int String)
 toMediaClassesDict apiExpo =
     let
         exp =
@@ -626,7 +626,7 @@ toMediaClassesDict apiExpo =
     in
     case exp.media of
         Right lst ->
-            Dict.fromList
+            Ok <| Dict.fromList
                 (List.filterMap
                     (\m ->
                         case m.userClass of
@@ -640,11 +640,7 @@ toMediaClassesDict apiExpo =
                 )
 
         Left _ ->
-            let
-                _ =
-                    Debug.log "error decoding user classes media list: " exp.media
-            in
-            Dict.empty
+            Err Dict.empty
 
 
 getDimensions : APIMedia -> OptionalDimensions
@@ -709,4 +705,4 @@ toRCMediaObject researchId mediaEntry =
                 }
 
         Err s ->
-            Err (CannotLoadMedia s)
+            Err (UnknownType s)

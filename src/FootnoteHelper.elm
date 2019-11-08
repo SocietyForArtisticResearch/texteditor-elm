@@ -81,23 +81,6 @@ strictNote =
 
 
 
--- footnoteContent : Parser Footnote
--- footnoteContent =
---     let
---         note : String -> Parser Footnote
---         note str =
---             succeed NumberedNote
---                 |= int
---                 |. symbol "]"
---     in
---     oneOf
---         [ getChompedString (chompWhile (\c -> Char.isDigit c && c /= ']'))
---             |> andThen
---                 note
---         , succeed Junk
---             |. chompWhile (\c -> c /= '[')
---         ]
-
 
 ignoreText : Parser ()
 ignoreText =
@@ -112,15 +95,6 @@ parseName =
             |. chompIf Char.isLower
             |. chompWhile (\c -> Char.isAlphaNum c || c == '_')
 
-
-
--- parseNamedNote : Parser Footnote
--- parseNamedNote =
---     succeed NamedNote
---         |. symbol "["
---         |. symbol "^"
---         |= parseName
---         |. symbol "]"
 
 
 content : Parser Footnote
@@ -155,40 +129,21 @@ footnotesHelp footnotes =
         ]
 
 
-mdNextFootnoteNum : String -> Int
+mdNextFootnoteNum : String -> Result String Int
 mdNextFootnoteNum md =
     let
         parsedNotes =
             Parser.run parseAll md
-
-        notes =
-            case parsedNotes of
-                Ok n ->
-                    Sorted <| List.sortBy getRank n
-
-                Err errors ->
-                    let
-                        _ =
-                            Debug.log "parse error" <| Debug.toString errors
-                    in
-                    Sorted []
     in
-    nextNote notes
+    case parsedNotes of
+        Ok n ->
+            let
+                sorted = Sorted <| List.sortBy getRank n
+            in
+                Ok <| nextNote sorted 
 
-
-
--- main =
---     let
---         parsedNotes =
---             Parser.run parseAll testString
---         text =
---             case parsedNotes of
---                 Ok notes ->
---                     (Debug.toString <| sortNotes <| notes) ++ (String.fromInt <| nextNote notes)
---                 Err errors ->
---                     Debug.toString errors
---     in
---     Html.text <| text
+        Err errors ->
+             Err <| "parser error"
 
 
 nextNote : Sortable (List Footnote) -> Int

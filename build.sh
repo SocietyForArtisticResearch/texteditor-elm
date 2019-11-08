@@ -1,1 +1,2 @@
-elm make src/Main.elm --output=main.js
+. minify-script.sh src/Main.elm 
+

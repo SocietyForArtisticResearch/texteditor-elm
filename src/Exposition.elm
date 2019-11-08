@@ -711,9 +711,6 @@ getText nodes =
 getId : List HtmlParser.Attribute -> String
 getId attrs =
     let
-        _ =
-            Debug.log "finding ids" attrs
-
         id =
             List.filter (\( a, _ ) -> a == "id") attrs
     in

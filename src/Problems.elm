@@ -3,21 +3,27 @@ module Problems exposing (Problem(..), asString, splitResultList)
 -- problem idea comes from rtfeldman sp-application talk youtube
 
 import Http
+import Json.Decode as Decode
 
 
 type Problem
     = WrongExpositionUrl
-    | CannotLoadMedia String
+    | CannotLoadMedia Http.Error
     | NoMediaWithNameOrId String
     | CannotSave
-    | CannotUpdateMedia
+    | CannotUpdateMedia Http.Error
     | CannotFindMediaFieldInJson
     | CannotImportFile Http.Error
     | UnkownUploadFileType String
     | MediaUploadFailed Http.Error
     | FootnoteError String
     | ExportFailed
-
+    | DecodingJsonError Decode.Error
+    | CannotLoadExposition Http.Error
+    | UnknownType String
+    | FootnoteHelperError String
+    | MediaUserClassesProblem 
+      
 
 splitResultList : List (Result Problem a) -> ( List Problem, List a )
 splitResultList results =
@@ -43,23 +49,26 @@ asString problem =
         WrongExpositionUrl ->
             "Unknown exposition url"
 
-        CannotLoadMedia name ->
-            "cannot load media " ++ name
+        CannotLoadMedia e ->
+            "cannot load media " ++ httpErrorString e
 
         NoMediaWithNameOrId name ->
             "Media object \"" ++ name ++ "\" cannot be found"
 
+        CannotLoadExposition e ->
+            "Cannot load, http error: " ++ httpErrorString e
+
         CannotSave ->
             "Saving error"
 
-        CannotUpdateMedia ->
-            "Problem updating media"
+        CannotUpdateMedia e ->
+            "Problem updating media :" ++ httpErrorString e
 
         CannotFindMediaFieldInJson ->
             "Unkown media field in the json"
 
-        CannotImportFile _ ->
-            "Import http error"
+        CannotImportFile e ->
+            "Import http error: " ++ httpErrorString e
 
         UnkownUploadFileType s ->
             "Unkown upload file type: " ++ s
@@ -72,6 +81,26 @@ asString problem =
 
         ExportFailed ->
             "Exposition export failed "
+
+        DecodingJsonError e ->
+            "Json decode problem "
+
+        UnknownType s ->
+            s
+                
+        FootnoteHelperError s ->
+            "Cannot number footnotes " ++ s
+
+
+        MediaUserClassesProblem ->
+            "User classes couldn't be retrieved"
+
+
+jsonErrorString : Decode.Error -> String
+jsonErrorString err =
+    Decode.errorToString err
+            
+
 
 
 httpErrorString : Http.Error -> String
