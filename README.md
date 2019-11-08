@@ -37,13 +37,9 @@ General:
 
 Casper:
 
-- Upgrade to elm 19.1
 - Production build (maybe optimize).
 
 Luc:
-
-- we should force an update of DOM when the css "userclass" is changed.
-- when logged out error http codes request form devs -- currently we get 500 instead of 401. (requested) 
 
 
 ## To test
@@ -140,3 +136,6 @@ Luc:
 - Server problem when exporting?, 414 Request-URI Too Large (json, body??)
 - period in media name (remove periods on upload and whitespace) -- actually only validator in mediaedit has to be adjusted
 - icons for right hand side navbar
+- we should force an update of DOM when the css "userclass" is changed.
+- when logged out error http codes request form devs -- currently we get 500 instead of 401. (requested) 
+- Upgrade to elm 19.1
