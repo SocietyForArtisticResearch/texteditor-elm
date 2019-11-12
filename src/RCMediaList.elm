@@ -51,7 +51,7 @@ init messages =
 
 
 config : TableEditMessages msg -> TableTable.Config RCMediaObject MediaListMessage msg
-config =
+config messages =
     Table.config
         { toId = .id
         , toMsg = SetTableState
@@ -59,7 +59,7 @@ config =
             [ thumbnailCel
             , stringColumn "ID" (String.fromInt << .id)
             , stringColumn "Name" .name
-            , buttonColumn 
+            , buttonColumn messages
             ]
         }
 
