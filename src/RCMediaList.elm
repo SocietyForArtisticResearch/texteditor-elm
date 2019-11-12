@@ -1,19 +1,20 @@
-module RCMediaList exposing (PickerMessages, TableMessages, view, viewModalMediaPicker)
+module RCMediaList exposing (PickerMessages, TableEditMessages, view, viewModalMediaPicker)
 
 import Bootstrap.Alert as Alert
 import Bootstrap.Button as Button
 import Bootstrap.Modal as Modal
-import Bootstrap.Table as Table
+import Bootstrap.Table as BTable
 import Bootstrap.Utilities.Spacing as Spacing
 import Exposition exposing (RCMediaObject)
 import Html exposing (Html, audio, div, img, source, span, text, video)
 import Html.Attributes exposing (autoplay, class, controls, id, loop, src, style, title, type_)
 import Html.Events exposing (onClick, onDoubleClick)
 import RCMediaPreview exposing (PreviewSize(..), viewThumbnail)
+import Table 
 import View exposing (defaultButton, mkButton)
 
 
-type alias TableMessages msg =
+type alias TableEditMessages msg =
     { editObject : String -> msg
     , deleteObject : RCMediaObject -> msg
     , insertObject : RCMediaObject -> msg
@@ -27,11 +28,75 @@ type alias PickerMessages msg =
     }
 
 
+type MediaListMsg msg
+    = SortableTableMessage Msg
+    | EditMediaMessage msg
+
+
+type Msg
+    = SetQuery String
+    | SetTableState Table.State
+
+
+type alias Model msg =
+    { query : String
+    , state : Table.State
+    }
+
+init : Model
+init messages =
+    { query = ""
+    , state = Table.initialSort "ID"
+    }
+
+
+config : TableEditMessages msg -> TableTable.Config RCMediaObject MediaListMessage msg
+config =
+    Table.config
+        { toId = .id
+        , toMsg = SetTableState
+        , columns =
+            [ thumbnailCel
+            , stringColumn "ID" (String.fromInt << .id)
+            , stringColumn "Name" .name
+            , buttonColumn 
+            ]
+        }
+
+thumbnailcolumn : Table.Column RCMediaObject Msg
+thumbnailcolumn =
+    Table.veryCustomColumn
+        { name = ""
+        , viewData = (\rcObject -> viewThumbnail rcObject PreviewSmall)
+        , sorter = Table.unsortable
+        }
+
+buttonColumn : TableEditMessages msg -> RCMediaObject -> Table.HtmlDetails msg
 
 -- integer is object ID
 
 
-view : List RCMediaObject -> TableMessages msg -> Html msg
+update : Msg -> Model -> Model
+update message model =
+    case message of
+        SetQuery string ->
+            { model | query = string }
+
+        SetTableState state ->
+            { model | state = state }
+
+ 
+
+view : Model -> List RCMediaObject -> TableMessages msg -> Html (MediaListMsg msg)
+view { query, tableState } objectList messages =
+    div []
+        [ Input [ placeholder "Search by name", onInput SetQuery ]
+        , Table.view config tableState objectList ]
+            
+    
+    
+
+view : Model -> List RCMediaObject -> TableMessages msg -> Html (MediaListMsg msg)
 view objectList messages =
     case objectList of
         [] ->
@@ -42,17 +107,17 @@ view objectList messages =
         _ ->
             let
                 head =
-                    Table.simpleThead
-                        [ Table.th [] [ text "Preview" ]
-                        , Table.th [] [ text "Id" ]
-                        , Table.th [] [ text "Name" ]
-                        , Table.th
-                            [ Table.cellAttr <| class "edit-button-column"
+                    BTable.simpleThead
+                        [ BTable.th [] [ text "Preview" ]
+                        , BTable.th [] [ text "Id" ]
+                        , BTable.th [] [ text "Name" ]
+                        , BTable.th
+                            [ BTable.cellAttr <| class "edit-button-column"
                             ]
                             [ text "Edit" ]
                         ]
 
-                rowFromRCObject : RCMediaObject -> Table.Row msg
+                rowFromRCObject : RCMediaObject -> BTable.Row msg
                 rowFromRCObject object =
                     let
                         editButton =
@@ -78,22 +143,22 @@ view objectList messages =
                                 ]
                                 [ text "Delete" ]
                     in
-                    Table.tr [ Table.rowAttr <| onDoubleClick <| messages.editObject (String.fromInt object.id) ]
-                        [ Table.td [] [ viewThumbnail object PreviewSmall ]
-                        , Table.td [] [ text <| String.fromInt object.id ]
-                        , Table.td [] [ text object.name ]
-                        , Table.td [] [ editButton, removeButton ]
+                    BTable.tr [ BTable.rowAttr <| onDoubleClick <| messages.editObject (String.fromInt object.id) ]
+                        [ BTable.td [] [ viewThumbnail object PreviewSmall ]
+                        , BTable.td [] [ text <| String.fromInt object.id ]
+                        , BTable.td [] [ text object.name ]
+                        , BTable.td [] [ editButton, removeButton ]
                         ]
 
                 rows =
                     List.map rowFromRCObject objectList
             in
             div [ id "media-list", style "display" "none" ]
-                [ Table.table
-                    { options = [ Table.hover, Table.striped, Table.small ]
+                [ BTable.table
+                    { options = [ BTable.hover, BTable.striped, BTable.small ]
                     , thead = head
                     , tbody =
-                        Table.tbody [] rows
+                        BTable.tbody [] rows
                     }
                 ]
 
@@ -109,14 +174,14 @@ viewModalMediaPicker visibility objectList messages =
                 _ ->
                     let
                         head =
-                            Table.simpleThead
-                                [ Table.th [] [ text "Preview" ]
-                                , Table.th [] [ text "Id" ]
-                                , Table.th [] [ text "Name" ]
-                                , Table.th [] [ text "Insert" ]
+                            BTable.simpleThead
+                                [ BTable.th [] [ text "Preview" ]
+                                , BTable.th [] [ text "Id" ]
+                                , BTable.th [] [ text "Name" ]
+                                , BTable.th [] [ text "Insert" ]
                                 ]
 
-                        rowFromRCObject : RCMediaObject -> Table.Row msg
+                        rowFromRCObject : RCMediaObject -> BTable.Row msg
                         rowFromRCObject object =
                             let
                                 insertButton =
@@ -127,11 +192,11 @@ viewModalMediaPicker visibility objectList messages =
                                         ]
                                         [ text "Insert" ]
                             in
-                            Table.tr [ Table.rowAttr <| onDoubleClick <| messages.insertObject object ]
-                                [ Table.td [] [ viewThumbnail object PreviewSmall ]
-                                , Table.td [] [ text <| String.fromInt object.id ]
-                                , Table.td [] [ text object.name ]
-                                , Table.td [] [ insertButton ]
+                            BTable.tr [ BTable.rowAttr <| onDoubleClick <| messages.insertObject object ]
+                                [ BTable.td [] [ viewThumbnail object PreviewSmall ]
+                                , BTable.td [] [ text <| String.fromInt object.id ]
+                                , BTable.td [] [ text object.name ]
+                                , BTable.td [] [ insertButton ]
                                 ]
 
                         rows =
@@ -149,11 +214,11 @@ viewModalMediaPicker visibility objectList messages =
                                 , text = "Upload Media"
                                 , primary = False
                             }
-                        , Table.table
-                            { options = [ Table.hover, Table.striped, Table.small ]
+                        , BTable.table
+                            { options = [ BTable.hover, BTable.striped, BTable.small ]
                             , thead = head
                             , tbody =
-                                Table.tbody [] rows
+                                BTable.tbody [] rows
                             }
                         ]
     in
