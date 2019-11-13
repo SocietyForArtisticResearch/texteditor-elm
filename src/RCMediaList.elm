@@ -10,7 +10,7 @@ import Html exposing (Html, audio, div, img, source, span, text, video)
 import Html.Attributes exposing (autoplay, class, controls, id, loop, src, style, title, type_)
 import Html.Events exposing (onClick, onDoubleClick)
 import RCMediaPreview exposing (PreviewSize(..), viewThumbnail)
-import Table 
+import Table
 import View exposing (defaultButton, mkButton)
 
 
@@ -43,6 +43,7 @@ type alias Model msg =
     , state : Table.State
     }
 
+
 init : Model
 init messages =
     { query = ""
@@ -56,22 +57,51 @@ config messages =
         { toId = .id
         , toMsg = SetTableState
         , columns =
-            [ thumbnailCel
+            [ thumbnailColumn
             , stringColumn "ID" (String.fromInt << .id)
             , stringColumn "Name" .name
             , buttonColumn messages
             ]
         }
 
+
 thumbnailcolumn : Table.Column RCMediaObject Msg
 thumbnailcolumn =
     Table.veryCustomColumn
         { name = ""
-        , viewData = (\rcObject -> viewThumbnail rcObject PreviewSmall)
+        , viewData = \rcObject -> viewThumbnail rcObject PreviewSmall
         , sorter = Table.unsortable
         }
 
+
 buttonColumn : TableEditMessages msg -> RCMediaObject -> Table.HtmlDetails msg
+buttonColumn messages object =
+    div []
+        [ editButton messages object
+        , deleteButton messages object
+        ]
+
+
+editButton : TableEditMessages msg -> RCMediaObject -> Html msg
+editButton messages object =
+    Button.button
+        [ Button.small
+        , Button.outlineSecondary
+        , Button.attrs [ Spacing.ml1, onClick <| messages.editObject (String.fromInt object.id) ]
+        ]
+        [ text "Edit" ]
+
+
+deleteButton : TableEditMessages msg -> RCMediaObject -> Html msg
+deleteButton messages object =
+    Button.button
+        [ Button.small
+        , Button.outlineSecondary
+        , Button.attrs [ Spacing.ml1, onClick <| messages.deleteObject (String.fromInt object.id) ]
+        ]
+        [ text "Delete" ]
+
+
 
 -- integer is object ID
 
@@ -85,17 +115,15 @@ update message model =
         SetTableState state ->
             { model | state = state }
 
- 
 
 view : Model -> List RCMediaObject -> TableMessages msg -> Html (MediaListMsg msg)
 view { query, tableState } objectList messages =
     div []
-        [ Input [ placeholder "Search by name", onInput SetQuery ]
-        , Table.view config tableState objectList ]
-            
-    
-    
-
+        [ Input
+            [ placeholder "Search by name", onInput SetQuery ]
+            []
+        , Table.view (config messages) tableState matching
+        ]
 view : Model -> List RCMediaObject -> TableMessages msg -> Html (MediaListMsg msg)
 view objectList messages =
     case objectList of

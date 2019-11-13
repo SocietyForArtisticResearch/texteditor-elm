@@ -1,4 +1,13 @@
+
+/** reminder to self:
+
+https://paulcpederson.com/articles/css-for-people-who-hate-css/
+
+**/ 
+
 /* let's put everything to 100% */
+
+
 body {
     height: 100%;
 }
