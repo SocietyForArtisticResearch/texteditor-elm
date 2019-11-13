@@ -375,7 +375,7 @@ makeMediaEditFun obj field input =
             MediaEdit ( String.fromInt objId, { obj | license = Licenses.fromString input } )
 
 
-makeTableMessages : RCMediaList.TableMessages Msg
+makeTableMessages : RCMediaList.TableEditMessages Msg
 makeTableMessages =
     { editObject = MediaDialog False
     , deleteObject = ConfirmMediaDelete
