@@ -1,0 +1,28 @@
+{
+  "name": "texteditor-elm",
+  "version": "2.0.1",
+  "description": "This is the text-based exposition editor for researchcatalogue.net",
+  "main": "editor.html",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SocietyForArtisticResearch/texteditor-elm.git"
+  },
+  "keywords": [
+    "editor",
+    "markdown",
+    "research",
+    "documentation"
+  ],
+  "author": "Society for Artistic Research",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/SocietyForArtisticResearch/texteditor-elm/issues"
+  },
+  "homepage": "https://github.com/SocietyForArtisticResearch/texteditor-elm#readme"
+}
