@@ -167,18 +167,32 @@ filterObjectsByName query lst =
 
 view : Model -> List RCMediaObject -> TableEditMessages msg -> Html (Msg msg)
 view { query, state } objectList messages =
-    let
-        searchedObjects =
-            filterObjectsByName query objectList
+    case objectList of
+        [] ->
+            div [ class "media-list", style "display" "none" ]
+                [ Alert.simpleInfo [] [ text "Media list is empty. Hint: add a file by using the \"upload media\" button." ]
+                ]
 
-        inputHandler : String -> Msg msg
-        inputHandler qstring =
-            SortableTableMessage (SetQuery qstring)
-    in
-    div []
-        [ input [ placeholder "Search by name", onInput inputHandler ] []
-        , Table.view (config messages) state objectList
-        ]
+        nonEmptyObjectList ->
+            let
+                searchedObjects =
+                    filterObjectsByName query nonEmptyObjectList
+
+                inputHandler : String -> Msg msg
+                inputHandler qstring =
+                    SortableTableMessage (SetQuery qstring)
+            in
+            case searchedObjects of
+                [] ->
+                    div
+                        [ class "media-list", style "display" "none" ]
+                        [ Alert.simpleInfo [] [ text <| "Cannot find any media named \"" ++ query ++ "\"" ] ]
+
+                results ->
+                    div [ id "media-list", style "display" "none" ]
+                        [ input [ placeholder "Search by name", onInput inputHandler ] []
+                        , Table.view (config messages) state results
+                        ]
 
 
 

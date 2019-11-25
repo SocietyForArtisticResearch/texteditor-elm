@@ -15328,6 +15328,192 @@ var $author$project$RCMediaList$filterObjectsByName = F2(
 				lst);
 		}
 	});
+var $rundis$elm_bootstrap$Bootstrap$Internal$Role$Info = 3;
+var $rundis$elm_bootstrap$Bootstrap$Alert$Config = $elm$core$Basics$identity;
+var $rundis$elm_bootstrap$Bootstrap$Alert$attrs = F2(
+	function (attributes, _v0) {
+		var configRec = _v0;
+		return _Utils_update(
+			configRec,
+			{aO: attributes});
+	});
+var $rundis$elm_bootstrap$Bootstrap$Alert$children = F2(
+	function (children_, _v0) {
+		var configRec = _v0;
+		return _Utils_update(
+			configRec,
+			{aQ: children_});
+	});
+var $rundis$elm_bootstrap$Bootstrap$Internal$Role$Secondary = 1;
+var $rundis$elm_bootstrap$Bootstrap$Alert$config = {aO: _List_Nil, aQ: _List_Nil, Y: $elm$core$Maybe$Nothing, cF: 1, cY: 0, ai: false};
+var $rundis$elm_bootstrap$Bootstrap$Alert$role = F2(
+	function (role_, _v0) {
+		var configRec = _v0;
+		return _Utils_update(
+			configRec,
+			{cF: role_});
+	});
+var $rundis$elm_bootstrap$Bootstrap$Alert$StartClose = 1;
+var $rundis$elm_bootstrap$Bootstrap$Alert$clickHandler = F2(
+	function (visibility, configRec) {
+		var handleClick = F2(
+			function (viz, toMsg) {
+				return $elm$html$Html$Events$onClick(
+					toMsg(viz));
+			});
+		var _v0 = configRec.Y;
+		if (!_v0.$) {
+			var dismissMsg = _v0.a;
+			return _List_fromArray(
+				[
+					configRec.ai ? A2(handleClick, 1, dismissMsg) : A2(handleClick, 3, dismissMsg)
+				]);
+		} else {
+			return _List_Nil;
+		}
+	});
+var $rundis$elm_bootstrap$Bootstrap$Alert$injectButton = F2(
+	function (btn, children_) {
+		if (children_.b) {
+			var head = children_.a;
+			var tail = children_.b;
+			return A2(
+				$elm$core$List$cons,
+				head,
+				A2($elm$core$List$cons, btn, tail));
+		} else {
+			return _List_fromArray(
+				[btn]);
+		}
+	});
+var $rundis$elm_bootstrap$Bootstrap$Alert$isDismissable = function (configRec) {
+	var _v0 = configRec.Y;
+	if (!_v0.$) {
+		return true;
+	} else {
+		return false;
+	}
+};
+var $rundis$elm_bootstrap$Bootstrap$Alert$maybeAddDismissButton = F3(
+	function (visibilty, configRec, children_) {
+		return $rundis$elm_bootstrap$Bootstrap$Alert$isDismissable(configRec) ? A2(
+			$rundis$elm_bootstrap$Bootstrap$Alert$injectButton,
+			A2(
+				$elm$html$Html$button,
+				_Utils_ap(
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$type_('button'),
+							$elm$html$Html$Attributes$class('close'),
+							A2($elm$html$Html$Attributes$attribute, 'aria-label', 'close')
+						]),
+					A2($rundis$elm_bootstrap$Bootstrap$Alert$clickHandler, visibilty, configRec)),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$span,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$attribute, 'aria-hidden', 'true')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('×')
+							]))
+					])),
+			children_) : children_;
+	});
+var $rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass = F2(
+	function (prefix, role) {
+		return $elm$html$Html$Attributes$class(
+			prefix + ('-' + function () {
+				switch (role) {
+					case 0:
+						return 'primary';
+					case 1:
+						return 'secondary';
+					case 2:
+						return 'success';
+					case 3:
+						return 'info';
+					case 4:
+						return 'warning';
+					case 5:
+						return 'danger';
+					case 6:
+						return 'light';
+					default:
+						return 'dark';
+				}
+			}()));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Alert$viewAttributes = F2(
+	function (visibility, configRec) {
+		var visibiltyAttributes = (visibility === 3) ? _List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$style, 'display', 'none')
+			]) : _List_Nil;
+		var animationAttributes = function () {
+			if (configRec.ai) {
+				var _v0 = configRec.Y;
+				if (!_v0.$) {
+					var dismissMsg = _v0.a;
+					return _List_fromArray(
+						[
+							A2(
+							$elm$html$Html$Events$on,
+							'transitionend',
+							$elm$json$Json$Decode$succeed(
+								dismissMsg(3)))
+						]);
+				} else {
+					return _List_Nil;
+				}
+			} else {
+				return _List_Nil;
+			}
+		}();
+		var alertAttributes = _List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$attribute, 'role', 'alert'),
+				$elm$html$Html$Attributes$classList(
+				_List_fromArray(
+					[
+						_Utils_Tuple2('alert', true),
+						_Utils_Tuple2(
+						'alert-dismissible',
+						$rundis$elm_bootstrap$Bootstrap$Alert$isDismissable(configRec)),
+						_Utils_Tuple2('fade', configRec.ai),
+						_Utils_Tuple2('show', !visibility)
+					])),
+				A2($rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass, 'alert', configRec.cF)
+			]);
+		return $elm$core$List$concat(
+			_List_fromArray(
+				[configRec.aO, alertAttributes, visibiltyAttributes, animationAttributes]));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Alert$view = F2(
+	function (visibility, _v0) {
+		var configRec = _v0;
+		return A2(
+			$elm$html$Html$div,
+			A2($rundis$elm_bootstrap$Bootstrap$Alert$viewAttributes, visibility, configRec),
+			A3($rundis$elm_bootstrap$Bootstrap$Alert$maybeAddDismissButton, visibility, configRec, configRec.aQ));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Alert$simple = F3(
+	function (role_, attributes, children_) {
+		return A2(
+			$rundis$elm_bootstrap$Bootstrap$Alert$view,
+			0,
+			A2(
+				$rundis$elm_bootstrap$Bootstrap$Alert$children,
+				children_,
+				A2(
+					$rundis$elm_bootstrap$Bootstrap$Alert$attrs,
+					attributes,
+					A2($rundis$elm_bootstrap$Bootstrap$Alert$role, role_, $rundis$elm_bootstrap$Bootstrap$Alert$config))));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo = $rundis$elm_bootstrap$Bootstrap$Alert$simple(3);
 var $elm$html$Html$caption = _VirtualDom_node('caption');
 var $billstclair$elm_sortable_table$Table$applySorter = F3(
 	function (isReversed, sorter, data) {
@@ -15548,30 +15734,76 @@ var $author$project$RCMediaList$view = F3(
 	function (_v0, objectList, messages) {
 		var query = _v0.cB;
 		var state = _v0.cL;
-		var searchedObjects = A2($author$project$RCMediaList$filterObjectsByName, query, objectList);
-		var inputHandler = function (qstring) {
-			return $author$project$RCMediaList$SortableTableMessage(
-				$author$project$RCMediaList$SetQuery(qstring));
-		};
-		return A2(
-			$elm$html$Html$div,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$input,
+		if (!objectList.b) {
+			return A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('media-list'),
+						A2($elm$html$Html$Attributes$style, 'display', 'none')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Media list is empty. Hint: add a file by using the \"upload media\" button.')
+							]))
+					]));
+		} else {
+			var nonEmptyObjectList = objectList;
+			var searchedObjects = A2($author$project$RCMediaList$filterObjectsByName, query, nonEmptyObjectList);
+			var inputHandler = function (qstring) {
+				return $author$project$RCMediaList$SortableTableMessage(
+					$author$project$RCMediaList$SetQuery(qstring));
+			};
+			if (!searchedObjects.b) {
+				return A2(
+					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$placeholder('Search by name'),
-							$elm$html$Html$Events$onInput(inputHandler)
+							$elm$html$Html$Attributes$class('media-list'),
+							A2($elm$html$Html$Attributes$style, 'display', 'none')
 						]),
-					_List_Nil),
-					A3(
-					$billstclair$elm_sortable_table$Table$view,
-					$author$project$RCMediaList$config(messages),
-					state,
-					objectList)
-				]));
+					_List_fromArray(
+						[
+							A2(
+							$rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Cannot find any media named \"' + (query + '\"'))
+								]))
+						]));
+			} else {
+				var results = searchedObjects;
+				return A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$id('media-list'),
+							A2($elm$html$Html$Attributes$style, 'display', 'none')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$input,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$placeholder('Search by name'),
+									$elm$html$Html$Events$onInput(inputHandler)
+								]),
+							_List_Nil),
+							A3(
+							$billstclair$elm_sortable_table$Table$view,
+							$author$project$RCMediaList$config(messages),
+							state,
+							results)
+						]));
+			}
+		}
 	});
 var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger = 5;
 var $rundis$elm_bootstrap$Bootstrap$Button$danger = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
@@ -15731,16 +15963,6 @@ var $author$project$Problems$asString = function (problem) {
 			return 'Message error: ' + s;
 	}
 };
-var $rundis$elm_bootstrap$Bootstrap$Alert$Config = $elm$core$Basics$identity;
-var $rundis$elm_bootstrap$Bootstrap$Alert$children = F2(
-	function (children_, _v0) {
-		var configRec = _v0;
-		return _Utils_update(
-			configRec,
-			{aQ: children_});
-	});
-var $rundis$elm_bootstrap$Bootstrap$Internal$Role$Secondary = 1;
-var $rundis$elm_bootstrap$Bootstrap$Alert$config = {aO: _List_Nil, aQ: _List_Nil, Y: $elm$core$Maybe$Nothing, cF: 1, cY: 0, ai: false};
 var $rundis$elm_bootstrap$Bootstrap$Alert$dismissable = F2(
 	function (dismissMsg, _v0) {
 		var configRec = _v0;
@@ -15765,164 +15987,9 @@ var $rundis$elm_bootstrap$Bootstrap$Alert$h4 = F2(
 	function (attributes, children_) {
 		return A3($rundis$elm_bootstrap$Bootstrap$Alert$headingPrivate, $elm$html$Html$h4, attributes, children_);
 	});
-var $rundis$elm_bootstrap$Bootstrap$Internal$Role$Info = 3;
-var $rundis$elm_bootstrap$Bootstrap$Alert$role = F2(
-	function (role_, _v0) {
-		var configRec = _v0;
-		return _Utils_update(
-			configRec,
-			{cF: role_});
-	});
 var $rundis$elm_bootstrap$Bootstrap$Alert$info = function (conf) {
 	return A2($rundis$elm_bootstrap$Bootstrap$Alert$role, 3, conf);
 };
-var $rundis$elm_bootstrap$Bootstrap$Alert$StartClose = 1;
-var $rundis$elm_bootstrap$Bootstrap$Alert$clickHandler = F2(
-	function (visibility, configRec) {
-		var handleClick = F2(
-			function (viz, toMsg) {
-				return $elm$html$Html$Events$onClick(
-					toMsg(viz));
-			});
-		var _v0 = configRec.Y;
-		if (!_v0.$) {
-			var dismissMsg = _v0.a;
-			return _List_fromArray(
-				[
-					configRec.ai ? A2(handleClick, 1, dismissMsg) : A2(handleClick, 3, dismissMsg)
-				]);
-		} else {
-			return _List_Nil;
-		}
-	});
-var $rundis$elm_bootstrap$Bootstrap$Alert$injectButton = F2(
-	function (btn, children_) {
-		if (children_.b) {
-			var head = children_.a;
-			var tail = children_.b;
-			return A2(
-				$elm$core$List$cons,
-				head,
-				A2($elm$core$List$cons, btn, tail));
-		} else {
-			return _List_fromArray(
-				[btn]);
-		}
-	});
-var $rundis$elm_bootstrap$Bootstrap$Alert$isDismissable = function (configRec) {
-	var _v0 = configRec.Y;
-	if (!_v0.$) {
-		return true;
-	} else {
-		return false;
-	}
-};
-var $rundis$elm_bootstrap$Bootstrap$Alert$maybeAddDismissButton = F3(
-	function (visibilty, configRec, children_) {
-		return $rundis$elm_bootstrap$Bootstrap$Alert$isDismissable(configRec) ? A2(
-			$rundis$elm_bootstrap$Bootstrap$Alert$injectButton,
-			A2(
-				$elm$html$Html$button,
-				_Utils_ap(
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$type_('button'),
-							$elm$html$Html$Attributes$class('close'),
-							A2($elm$html$Html$Attributes$attribute, 'aria-label', 'close')
-						]),
-					A2($rundis$elm_bootstrap$Bootstrap$Alert$clickHandler, visibilty, configRec)),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$span,
-						_List_fromArray(
-							[
-								A2($elm$html$Html$Attributes$attribute, 'aria-hidden', 'true')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('×')
-							]))
-					])),
-			children_) : children_;
-	});
-var $rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass = F2(
-	function (prefix, role) {
-		return $elm$html$Html$Attributes$class(
-			prefix + ('-' + function () {
-				switch (role) {
-					case 0:
-						return 'primary';
-					case 1:
-						return 'secondary';
-					case 2:
-						return 'success';
-					case 3:
-						return 'info';
-					case 4:
-						return 'warning';
-					case 5:
-						return 'danger';
-					case 6:
-						return 'light';
-					default:
-						return 'dark';
-				}
-			}()));
-	});
-var $rundis$elm_bootstrap$Bootstrap$Alert$viewAttributes = F2(
-	function (visibility, configRec) {
-		var visibiltyAttributes = (visibility === 3) ? _List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$style, 'display', 'none')
-			]) : _List_Nil;
-		var animationAttributes = function () {
-			if (configRec.ai) {
-				var _v0 = configRec.Y;
-				if (!_v0.$) {
-					var dismissMsg = _v0.a;
-					return _List_fromArray(
-						[
-							A2(
-							$elm$html$Html$Events$on,
-							'transitionend',
-							$elm$json$Json$Decode$succeed(
-								dismissMsg(3)))
-						]);
-				} else {
-					return _List_Nil;
-				}
-			} else {
-				return _List_Nil;
-			}
-		}();
-		var alertAttributes = _List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$attribute, 'role', 'alert'),
-				$elm$html$Html$Attributes$classList(
-				_List_fromArray(
-					[
-						_Utils_Tuple2('alert', true),
-						_Utils_Tuple2(
-						'alert-dismissible',
-						$rundis$elm_bootstrap$Bootstrap$Alert$isDismissable(configRec)),
-						_Utils_Tuple2('fade', configRec.ai),
-						_Utils_Tuple2('show', !visibility)
-					])),
-				A2($rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass, 'alert', configRec.cF)
-			]);
-		return $elm$core$List$concat(
-			_List_fromArray(
-				[configRec.aO, alertAttributes, visibiltyAttributes, animationAttributes]));
-	});
-var $rundis$elm_bootstrap$Bootstrap$Alert$view = F2(
-	function (visibility, _v0) {
-		var configRec = _v0;
-		return A2(
-			$elm$html$Html$div,
-			A2($rundis$elm_bootstrap$Bootstrap$Alert$viewAttributes, visibility, configRec),
-			A3($rundis$elm_bootstrap$Bootstrap$Alert$maybeAddDismissButton, visibility, configRec, configRec.aQ));
-	});
 var $author$project$Main$viewAlert = function (model) {
 	var isRealProblem = function (problem) {
 		if (problem.$ === 2) {
@@ -16236,27 +16303,6 @@ var $rundis$elm_bootstrap$Bootstrap$Table$RowAttr = function (a) {
 var $rundis$elm_bootstrap$Bootstrap$Table$rowAttr = function (attr_) {
 	return $rundis$elm_bootstrap$Bootstrap$Table$RowAttr(attr_);
 };
-var $rundis$elm_bootstrap$Bootstrap$Alert$attrs = F2(
-	function (attributes, _v0) {
-		var configRec = _v0;
-		return _Utils_update(
-			configRec,
-			{aO: attributes});
-	});
-var $rundis$elm_bootstrap$Bootstrap$Alert$simple = F3(
-	function (role_, attributes, children_) {
-		return A2(
-			$rundis$elm_bootstrap$Bootstrap$Alert$view,
-			0,
-			A2(
-				$rundis$elm_bootstrap$Bootstrap$Alert$children,
-				children_,
-				A2(
-					$rundis$elm_bootstrap$Bootstrap$Alert$attrs,
-					attributes,
-					A2($rundis$elm_bootstrap$Bootstrap$Alert$role, role_, $rundis$elm_bootstrap$Bootstrap$Alert$config))));
-	});
-var $rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo = $rundis$elm_bootstrap$Bootstrap$Alert$simple(3);
 var $rundis$elm_bootstrap$Bootstrap$Table$THead = $elm$core$Basics$identity;
 var $rundis$elm_bootstrap$Bootstrap$Table$thead = F2(
 	function (options, rows) {
