@@ -22,8 +22,9 @@ type Problem
     | CannotLoadExposition Http.Error
     | UnknownType String
     | FootnoteHelperError String
-    | MediaUserClassesProblem 
-      
+    | MediaUserClassesProblem
+    | UnsupportedMessage String
+
 
 splitResultList : List (Result Problem a) -> ( List Problem, List a )
 splitResultList results =
@@ -87,20 +88,20 @@ asString problem =
 
         UnknownType s ->
             s
-                
+
         FootnoteHelperError s ->
             "Cannot number footnotes " ++ s
 
-
         MediaUserClassesProblem ->
             "User classes couldn't be retrieved"
+
+        UnsupportedMessage s ->
+            "Message error: " ++ s
 
 
 jsonErrorString : Decode.Error -> String
 jsonErrorString err =
     Decode.errorToString err
-            
-
 
 
 httpErrorString : Http.Error -> String

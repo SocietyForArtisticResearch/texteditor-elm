@@ -40,7 +40,8 @@ type alias Model =
     { exposition : RCExposition
     , editGeneration : ( Int, Int )
     , mediaDialog : RCMediaEdit.Model
-    , confirmDialog : ( Modal.Visibility, Maybe ConfirmDialogContent, Maybe (UserConfirm.Messages Msg) )
+    , mediaList : RCMediaList.Model
+    , confirmDialog : UserConfirm.Model Msg
     , mediaPickerDialog : Modal.Visibility
     , alertVisibility : Alert.Visibility
     , weave : Int
@@ -157,8 +158,9 @@ emptyModel : Navbar.State -> Int -> Int -> Model
 emptyModel navbarInitState research weave =
     { editGeneration = ( -1, -1 )
     , exposition = Exposition.empty
+    , mediaList = RCMediaList.empty
     , mediaDialog = RCMediaEdit.empty
-    , confirmDialog = ( Modal.hidden, Nothing, Nothing )
+    , confirmDialog = UserConfirm.empty
     , mediaPickerDialog = Modal.hidden
     , alertVisibility = Alert.closed
     , research = research
@@ -313,6 +315,7 @@ type Msg
     | CMOpenMediaDialog E.Value
     | GotConvertedHtml { html : String, toc : List ( String, String, String ) }
     | MediaEdit ( String, Exposition.RCMediaObject )
+    | MediaList (RCMediaList.Msg Msg)
     | MediaDelete Exposition.RCMediaObject
     | CloseMediaDialog
     | GotExposition (Result Http.Error RCAPI.APIExposition)
@@ -479,35 +482,13 @@ update msg model =
         CMOpenMediaDialog val ->
             case D.decodeValue (D.field "media" D.string) val of
                 Ok mediaNameOrId ->
-                    update (MediaDialog False mediaNameOrId) model
+                    ( updateMediaDialog model False mediaNameOrId, Cmd.none )
 
                 Err _ ->
                     ( addProblem model Problems.CannotFindMediaFieldInJson, Cmd.none )
 
         MediaDialog allowInsert mediaNameOrId ->
-            case Exposition.objectByNameOrId mediaNameOrId model.exposition of
-                Just obj ->
-                    let
-                        viewObjectState =
-                            Exposition.validateMediaObject model.exposition obj obj
-                    in
-                    ( { model
-                        | mediaDialog =
-                            RCMediaEdit.showWithObject obj viewObjectState allowInsert
-                      }
-                    , Cmd.none
-                    )
-
-                Nothing ->
-                    let
-                        modelWithProblem =
-                            addProblem model <| Problems.NoMediaWithNameOrId mediaNameOrId
-                    in
-                    ( { modelWithProblem
-                        | mediaDialog = RCMediaEdit.empty
-                      }
-                    , Cmd.none
-                    )
+            ( updateMediaDialog model allowInsert mediaNameOrId, Cmd.none )
 
         CloseMediaDialog ->
             forceRerender { model | mediaDialog = RCMediaEdit.empty }
@@ -519,7 +500,8 @@ update msg model =
                         newExposition =
                             RCAPI.toRCExposition e model.research model.weave
 
-                        mediaClassesDict = RCAPI.toMediaClassesDict e
+                        mediaClassesDict =
+                            RCAPI.toMediaClassesDict e
 
                         newModel =
                             case mediaClassesDict of
@@ -531,12 +513,13 @@ update msg model =
 
                                 Err emptyDict ->
                                     let
-                                        problemModel = 
+                                        problemModel =
                                             addProblem model Problems.MediaUserClassesProblem
                                     in
                                     { problemModel
                                         | exposition = newExposition
-                                        , mediaClassesDict = emptyDict }
+                                        , mediaClassesDict = emptyDict
+                                    }
                     in
                     ( newModel
                     , Cmd.batch
@@ -559,10 +542,9 @@ update msg model =
         SavedExposition result ->
             case result of
                 Ok r ->
-                    
                     ( { model | saved = True }, reportIsSaved True )
 
-                Err s ->                    
+                Err s ->
                     case s of
                         Http.BadStatus 401 ->
                             ( model, Nav.reload )
@@ -640,7 +622,11 @@ update msg model =
                     case Exposition.isValid objViewState.validation of
                         False ->
                             ( { model
-                                | mediaDialog = { dialog | object = Just objFromDialog, objectViewState = Just objViewState }
+                                | mediaDialog =
+                                    { dialog
+                                        | object = Just objFromDialog
+                                        , objectViewState = Just objViewState
+                                    }
                               }
                             , Cmd.none
                             )
@@ -676,7 +662,9 @@ update msg model =
         MediaDelete obj ->
             let
                 modelWithoutObj =
-                    { model | exposition = Exposition.removeObjectWithID obj.id model.exposition }
+                    { model
+                        | exposition = Exposition.removeObjectWithID obj.id model.exposition
+                    }
 
                 ( modelWithClosedWindow, cmd ) =
                     update CloseConfirmDialog modelWithoutObj
@@ -770,19 +758,17 @@ update msg model =
                         decoded : Result D.Error RCAPI.APIMediaEntry
                         decoded =
                             D.decodeString RCAPI.apiMediaEntry apiMedia
-     
                     in
                     case decoded of
                         Ok media ->
-                            let id =
-                                 String.fromInt (.id media)
+                            let
+                                id =
+                                    String.fromInt (.id media)
                             in
-                            ( { model | mediaUploadStatus = Ready } , RCAPI.getMediaList model.research (OpenNewMediaGotMediaList id) )
-
+                            ( { model | mediaUploadStatus = Ready }, RCAPI.getMediaList model.research (OpenNewMediaGotMediaList id) )
 
                         Err e ->
-                            ( addProblem model (Problems.DecodingJsonError e) , RCAPI.getMediaList model.research GotMediaList )
-                       
+                            ( addProblem model (Problems.DecodingJsonError e), RCAPI.getMediaList model.research GotMediaList )
 
                 Err e ->
                     ( addProblem model <| Problems.MediaUploadFailed e, Cmd.none )
@@ -813,22 +799,10 @@ update msg model =
                     ( addProblem model (Problems.CannotImportFile e), Cmd.none )
 
         ConfirmMediaDelete object ->
-            let
-                content =
-                    { prompt = object.name ++ " is about to be deleted. Are you sure?"
-                    , confirm = "Delete"
-                    , reject = "Keep"
-                    }
-
-                messages =
-                    { confirm = MediaDelete object
-                    , reject = CloseConfirmDialog
-                    }
-            in
-            ( { model | confirmDialog = ( Modal.shown, Just content, Just messages ) }, Cmd.none )
+            ( { model | confirmDialog = confirmObjectDelete object }, Cmd.none )
 
         CloseConfirmDialog ->
-            ( { model | confirmDialog = ( Modal.hidden, Nothing, Nothing ) }, Cmd.none )
+            ( { model | confirmDialog = UserConfirm.empty }, Cmd.none )
 
         SwitchTab tab ->
             let
@@ -861,36 +835,36 @@ update msg model =
             let
                 foundObj =
                     Exposition.objectByNameOrId (String.fromInt obj.id) model.exposition
-                  
             in
-                case foundObj of
-                    Just o ->
-                        let
-                            closeMediaListIfOpen =
-                                case model.editor of
-                                    ( EditorMedia, CodemirrorMarkdown ) ->
-                                        setEditor 0
-                                            
-                                    ( EditorMedia, TextareaMarkdown ) ->
-                                        setEditor 1
-                                                    
-                                    _ ->
-                                        Cmd.none
+            case foundObj of
+                Just o ->
+                    let
+                        closeMediaListIfOpen =
+                            case model.editor of
+                                ( EditorMedia, CodemirrorMarkdown ) ->
+                                    setEditor 0
 
-                            updatedModel =
-                                { model
-                                    | mediaPickerDialog = Modal.hidden
-                                    , mediaDialog = RCMediaEdit.empty
-                                }
-                        in
-                            (updatedModel,Cmd.batch
-                                 [ insertMdString ( "!{" ++ o.name ++ "}", 0 )
-                                 , closeMediaListIfOpen -- close media list
-                                 ])
+                                ( EditorMedia, TextareaMarkdown ) ->
+                                    setEditor 1
 
-                    Nothing ->
-                        (addProblem model <| Problems.NoMediaWithNameOrId obj.name, Cmd.none)
-            
+                                _ ->
+                                    Cmd.none
+
+                        updatedModel =
+                            { model
+                                | mediaPickerDialog = Modal.hidden
+                                , mediaDialog = RCMediaEdit.empty
+                            }
+                    in
+                    ( updatedModel
+                    , Cmd.batch
+                        [ insertMdString ( "!{" ++ o.name ++ "}", 0 )
+                        , closeMediaListIfOpen -- close media list
+                        ]
+                    )
+
+                Nothing ->
+                    ( addProblem model <| Problems.NoMediaWithNameOrId obj.name, Cmd.none )
 
         InsertAtCursor insertTuple ->
             ( model, insertMdString insertTuple )
@@ -900,16 +874,39 @@ update msg model =
                 nextNumber : Result String Int
                 nextNumber =
                     FootnoteHelper.mdNextFootnoteNum model.exposition.markdownInput
-
-            in          
+            in
             case nextNumber of
                 Ok num ->
-                    ( model, insertFootnote (FootnoteHelper.footnoteSnippet num ))
-                        
-                Err err ->
-                    (addProblem model ( Problems.FootnoteHelperError err ), Cmd.none) 
-            
+                    ( model, insertFootnote (FootnoteHelper.footnoteSnippet num) )
 
+                Err err ->
+                    ( addProblem model (Problems.FootnoteHelperError err), Cmd.none )
+
+        MediaList message ->
+            case message of
+                RCMediaList.SortableTableMessage tableMsg ->
+                    -- table sorting action
+                    ( { model
+                        | mediaList = RCMediaList.update tableMsg model.mediaList
+                      }
+                    , Cmd.none
+                    )
+
+                RCMediaList.EditMediaMessage action ->
+                    -- media editing (Main.elm Msg)
+                    case action of
+                        MediaDialog showInsert mediaNameOrId ->
+                            ( updateMediaDialog model showInsert mediaNameOrId
+                            , Cmd.none
+                            )
+
+                        ConfirmMediaDelete object ->
+                            ( { model | confirmDialog = confirmObjectDelete object }
+                            , Cmd.none
+                            )
+
+                        _ ->
+                            ( addProblem model <| Problems.UnsupportedMessage "Media List button is doing something unexpected", Cmd.none )
 
         OpenMediaPicker ->
             ( { model | mediaPickerDialog = Modal.shown }, Cmd.none )
@@ -936,6 +933,59 @@ update msg model =
 
         ToggleFullscreen isFull ->
             ( { model | fullscreenMode = isFull }, setFullscreenMode isFull )
+
+
+
+-- safer because specific
+
+
+type alias MediaDialogModel model =
+    { model
+        | exposition : Exposition.RCExposition
+        , mediaDialog : RCMediaEdit.Model
+    }
+
+
+updateMediaDialog : MediaDialogModel Model -> Bool -> String -> MediaDialogModel Model
+updateMediaDialog model allowInsert mediaNameOrId =
+    case Exposition.objectByNameOrId mediaNameOrId model.exposition of
+        Just obj ->
+            let
+                viewObjectState =
+                    Exposition.validateMediaObject model.exposition obj obj
+            in
+            { model
+                | mediaDialog =
+                    RCMediaEdit.showWithObject obj viewObjectState allowInsert
+            }
+
+        Nothing ->
+            let
+                modelWithProblem =
+                    addProblem model <| Problems.NoMediaWithNameOrId mediaNameOrId
+            in
+            { modelWithProblem
+                | mediaDialog = RCMediaEdit.empty
+            }
+
+
+confirmObjectDelete : RCMediaObject -> UserConfirm.Model Msg
+confirmObjectDelete object =
+    let
+        content =
+            Just
+                { prompt = object.name ++ " is about to be deleted. Are you sure?"
+                , confirm = "Delete"
+                , reject = "Keep"
+                }
+
+        messages =
+            Just
+                { confirm = MediaDelete object
+                , reject = CloseConfirmDialog
+                }
+    in
+    UserConfirm.Model Modal.shown content messages
 
 
 viewUpload : ButtonInfo Msg -> UploadStatus -> Html Msg
@@ -1246,15 +1296,10 @@ view model =
                 model.mediaDialog
 
         confirmDialogHtml =
-            case model.confirmDialog of
-                ( visibility, Just content, Just messages ) ->
-                    UserConfirm.view visibility content messages
-
-                ( _, _, _ ) ->
-                    div [] []
+            UserConfirm.view model.confirmDialog
 
         mediaList =
-            RCMediaList.view model.exposition.media makeTableMessages
+            Html.map MediaList (RCMediaList.view model.mediaList model.exposition.media makeTableMessages)
 
         alert =
             case model.problems of
