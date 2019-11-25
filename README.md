@@ -37,7 +37,7 @@ General:
 
 Casper:
 
-- Production build (maybe optimize).
+- Sortable table may give trouble with audio and video.
 
 Luc:
 
