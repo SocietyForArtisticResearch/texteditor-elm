@@ -14737,6 +14737,7 @@ var $author$project$RCMediaPreview$getStyle = function (size) {
 	}
 };
 var $elm$html$Html$Attributes$loop = $elm$html$Html$Attributes$boolProperty('loop');
+var $elm$html$Html$Attributes$preload = $elm$html$Html$Attributes$stringProperty('preload');
 var $elm$html$Html$source = _VirtualDom_node('source');
 var $elm$html$Html$video = _VirtualDom_node('video');
 var $author$project$RCMediaPreview$viewThumbnail = F2(
@@ -14770,6 +14771,7 @@ var $author$project$RCMediaPreview$viewThumbnail = F2(
 						[
 							$elm$html$Html$Attributes$title('Preview'),
 							$elm$html$Html$Attributes$controls(true),
+							$elm$html$Html$Attributes$preload('none'),
 							$elm$html$Html$Attributes$loop(settings.b7),
 							$elm$html$Html$Attributes$autoplay(settings.bF),
 							$elm$html$Html$Attributes$class('audio-preview')
@@ -14794,6 +14796,7 @@ var $author$project$RCMediaPreview$viewThumbnail = F2(
 						_List_fromArray(
 							[
 								$elm$html$Html$Attributes$title('Preview'),
+								$elm$html$Html$Attributes$preload('none'),
 								$elm$html$Html$Attributes$controls(true),
 								$elm$html$Html$Attributes$loop(settings.b7),
 								$elm$html$Html$Attributes$autoplay(settings.bF),
