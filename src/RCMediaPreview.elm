@@ -58,7 +58,6 @@ viewThumbnail object size =
             audio
                 [ title "Preview"
                 , controls True
-                , preload "none"
                 , loop settings.loop
                 , autoplay settings.autoplay
                 , class "audio-preview"
@@ -72,7 +71,6 @@ viewThumbnail object size =
             in
             video
                 ([ title "Preview"
-                 , preload "none"
                  , controls True
                  , loop settings.loop
                  , autoplay settings.autoplay
