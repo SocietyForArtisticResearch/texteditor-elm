@@ -15131,9 +15131,76 @@ var $billstclair$elm_sortable_table$Table$HtmlDetails = F2(
 	function (attributes, children) {
 		return {attributes: attributes, children: children};
 	});
+var $author$project$RCMediaList$EditMediaMessage = function (a) {
+	return {$: 'EditMediaMessage', a: a};
+};
+var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1 = $elm$html$Html$Attributes$class('ml-1');
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Size = function (a) {
+	return {$: 'Size', a: a};
+};
+var $rundis$elm_bootstrap$Bootstrap$Button$small = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Size($rundis$elm_bootstrap$Bootstrap$General$Internal$SM);
+var $author$project$RCMediaList$deleteButton = F2(
+	function (messages, object) {
+		var makeDeleteMessage = A2($elm$core$Basics$composeL, $author$project$RCMediaList$EditMediaMessage, messages.deleteObject);
+		return A2(
+			$rundis$elm_bootstrap$Bootstrap$Button$button,
+			_List_fromArray(
+				[
+					$rundis$elm_bootstrap$Bootstrap$Button$small,
+					$rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary,
+					$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+					_List_fromArray(
+						[
+							$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1,
+							$elm$html$Html$Events$onClick(
+							makeDeleteMessage(object))
+						]))
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Delete')
+				]));
+	});
+var $author$project$RCMediaList$editButton = F2(
+	function (messages, object) {
+		var makeEditMessage = A2(
+			$elm$core$Basics$composeL,
+			A2(
+				$elm$core$Basics$composeL,
+				A2($elm$core$Basics$composeL, $author$project$RCMediaList$EditMediaMessage, messages.editObject),
+				$elm$core$String$fromInt),
+			function ($) {
+				return $.id;
+			});
+		return A2(
+			$rundis$elm_bootstrap$Bootstrap$Button$button,
+			_List_fromArray(
+				[
+					$rundis$elm_bootstrap$Bootstrap$Button$small,
+					$rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary,
+					$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+					_List_fromArray(
+						[
+							$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1,
+							$elm$html$Html$Events$onClick(
+							makeEditMessage(object))
+						]))
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Edit')
+				]));
+	});
 var $author$project$RCMediaList$viewObjectButtons = F2(
 	function (messages, object) {
-		return A2($billstclair$elm_sortable_table$Table$HtmlDetails, _List_Nil, _List_Nil);
+		return A2(
+			$billstclair$elm_sortable_table$Table$HtmlDetails,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2($author$project$RCMediaList$editButton, messages, object),
+					A2($author$project$RCMediaList$deleteButton, messages, object)
+				]));
 	});
 var $author$project$RCMediaList$buttonColumn = function (messages) {
 	return $billstclair$elm_sortable_table$Table$veryCustomColumn(
@@ -16325,7 +16392,6 @@ var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $rundis$elm_bootstrap$Bootstrap$Modal$h1 = $rundis$elm_bootstrap$Bootstrap$Modal$titledHeader($elm$html$Html$h1);
 var $rundis$elm_bootstrap$Bootstrap$Table$Hover = {$: 'Hover'};
 var $rundis$elm_bootstrap$Bootstrap$Table$hover = $rundis$elm_bootstrap$Bootstrap$Table$Hover;
-var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1 = $elm$html$Html$Attributes$class('ml-1');
 var $elm$html$Html$Events$onDoubleClick = function (msg) {
 	return A2(
 		$elm$html$Html$Events$on,
@@ -16366,10 +16432,6 @@ var $rundis$elm_bootstrap$Bootstrap$Table$simpleThead = function (cells) {
 				A2($rundis$elm_bootstrap$Bootstrap$Table$tr, _List_Nil, cells)
 			]));
 };
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Size = function (a) {
-	return {$: 'Size', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Button$small = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Size($rundis$elm_bootstrap$Bootstrap$General$Internal$SM);
 var $rundis$elm_bootstrap$Bootstrap$Table$Small = {$: 'Small'};
 var $rundis$elm_bootstrap$Bootstrap$Table$small = $rundis$elm_bootstrap$Bootstrap$Table$Small;
 var $rundis$elm_bootstrap$Bootstrap$Table$Striped = {$: 'Striped'};
