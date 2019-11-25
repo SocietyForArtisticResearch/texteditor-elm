@@ -136,8 +136,8 @@ buttonColumn messages =
 viewObjectButtons : TableEditMessages msg -> RCMediaObject -> Table.HtmlDetails (Msg msg)
 viewObjectButtons messages object =
     Table.HtmlDetails []
-        [ editButton messages object
-        , deleteButton messages object
+        [{--editButton messages object
+        , deleteButton messages object --}
         ]
 
 
