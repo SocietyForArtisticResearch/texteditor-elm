@@ -15829,6 +15829,15 @@ var $author$project$RCMediaList$view = F3(
 	function (_v0, objectList, messages) {
 		var query = _v0.query;
 		var state = _v0.state;
+		var searchBox = A2(
+			$elm$html$Html$input,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$placeholder('Search by name'),
+					$elm$html$Html$Events$onInput(
+					A2($elm$core$Basics$composeL, $author$project$RCMediaList$SortableTableMessage, $author$project$RCMediaList$SetQuery))
+				]),
+			_List_Nil);
 		if (!objectList.b) {
 			return A2(
 				$elm$html$Html$div,
@@ -15850,10 +15859,6 @@ var $author$project$RCMediaList$view = F3(
 		} else {
 			var nonEmptyObjectList = objectList;
 			var searchedObjects = A2($author$project$RCMediaList$filterObjectsByName, query, nonEmptyObjectList);
-			var inputHandler = function (qstring) {
-				return $author$project$RCMediaList$SortableTableMessage(
-					$author$project$RCMediaList$SetQuery(qstring));
-			};
 			if (!searchedObjects.b) {
 				return A2(
 					$elm$html$Html$div,
@@ -15864,6 +15869,7 @@ var $author$project$RCMediaList$view = F3(
 						]),
 					_List_fromArray(
 						[
+							searchBox,
 							A2(
 							$rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo,
 							_List_Nil,
@@ -15883,14 +15889,7 @@ var $author$project$RCMediaList$view = F3(
 						]),
 					_List_fromArray(
 						[
-							A2(
-							$elm$html$Html$input,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$placeholder('Search by name'),
-									$elm$html$Html$Events$onInput(inputHandler)
-								]),
-							_List_Nil),
+							searchBox,
 							A3(
 							$billstclair$elm_sortable_table$Table$view,
 							$author$project$RCMediaList$config(messages),
