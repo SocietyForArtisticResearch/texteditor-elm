@@ -15374,7 +15374,7 @@ var $author$project$RCMediaPreview$renderMediaAsHyperlink = F2(
 				]),
 			_List_fromArray(
 				[
-					$elm$html$Html$text(typeString),
+					$elm$html$Html$text(typeString + ' '),
 					A2(
 					$elm$html$Html$a,
 					_List_fromArray(

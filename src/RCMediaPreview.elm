@@ -73,7 +73,7 @@ renderAsMini object size =
 renderMediaAsHyperlink : String -> RCMediaObject -> Html msg
 renderMediaAsHyperlink typeString object =
     span [ class "rc-media-preview" ]
-        [ text typeString
+        [ text <| typeString ++ " "
         , a [ href <| Exposition.mediaUrl object, title "open preview" ] [ text "preview" ]
         ]
 
