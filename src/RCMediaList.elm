@@ -19,7 +19,7 @@ import Exposition exposing (RCMediaObject)
 import Html exposing (Html, audio, div, img, input, source, span, text, video)
 import Html.Attributes exposing (autoplay, class, controls, id, loop, placeholder, src, style, title, type_)
 import Html.Events exposing (onClick, onDoubleClick, onInput)
-import RCMediaPreview exposing (PreviewSize(..), viewThumbnail)
+import RCMediaPreview exposing (PreviewSize(..), viewTableThumbnail, viewThumbnail)
 import Reader exposing (Reader, andThen, ask, reader, run)
 import Table
 import View exposing (defaultButton, mkButton)
@@ -91,7 +91,7 @@ thumbnailColumn : Table.Column RCMediaObject (Msg msg)
 thumbnailColumn =
     Table.veryCustomColumn
         { name = ""
-        , viewData = \rcObject -> Table.HtmlDetails [] [ viewThumbnail rcObject PreviewSmall ]
+        , viewData = \rcObject -> Table.HtmlDetails [] [ viewTableThumbnail rcObject PreviewSmall ]
         , sorter = Table.unsortable
         }
 

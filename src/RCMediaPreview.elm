@@ -1,4 +1,8 @@
-module RCMediaPreview exposing (PreviewSize(..), viewThumbnail)
+module RCMediaPreview exposing
+    ( PreviewSize(..)
+    , viewTableThumbnail
+    , viewThumbnail
+    )
 
 import Exposition exposing (RCMediaObject)
 import Html exposing (..)
@@ -24,6 +28,54 @@ getStyle size =
             , style "hieght" "60px"
             , style "object-fit" "cover"
             ]
+
+
+viewTableThumbnail : RCMediaObject -> PreviewSize -> Html msg
+viewTableThumbnail object size =
+    case object.mediaType of
+        Exposition.RCImage ->
+            renderAsMini object size
+
+        Exposition.RCSvg ->
+            renderAsMini object size
+
+        Exposition.RCAudio settings ->
+            renderMediaAsHyperlink "Audio" object
+
+        Exposition.RCVideo settings ->
+            renderMediaAsHyperlink "Video" object
+
+        Exposition.RCPdf ->
+            renderMediaAsHyperlink "PDF" object
+
+
+renderAsMini : RCMediaObject -> PreviewSize -> Html msg
+renderAsMini object size =
+    let
+        reso =
+            case size of
+                PreviewBig ->
+                    500
+
+                _ ->
+                    120
+
+        thumburl =
+            Exposition.customThumbUrl reso object
+    in
+    img
+        ([ src thumburl ]
+            ++ getStyle size
+        )
+        []
+
+
+renderMediaAsHyperlink : String -> RCMediaObject -> Html msg
+renderMediaAsHyperlink typeString object =
+    span [ class "rc-media-preview" ]
+        [ text typeString
+        , a [ href <| Exposition.mediaUrl object, title "open preview" ] [ text "preview" ]
+        ]
 
 
 viewThumbnail : RCMediaObject -> PreviewSize -> Html msg

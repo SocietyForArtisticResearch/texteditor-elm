@@ -15344,6 +15344,69 @@ var $billstclair$elm_sortable_table$Table$stringColumn = F2(
 			});
 	});
 var $author$project$RCMediaPreview$PreviewSmall = {$: 'PreviewSmall'};
+var $author$project$RCMediaPreview$renderAsMini = F2(
+	function (object, size) {
+		var reso = function () {
+			if (size.$ === 'PreviewBig') {
+				return 500;
+			} else {
+				return 120;
+			}
+		}();
+		var thumburl = A2($author$project$Exposition$customThumbUrl, reso, object);
+		return A2(
+			$elm$html$Html$img,
+			_Utils_ap(
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$src(thumburl)
+					]),
+				$author$project$RCMediaPreview$getStyle(size)),
+			_List_Nil);
+	});
+var $author$project$RCMediaPreview$renderMediaAsHyperlink = F2(
+	function (typeString, object) {
+		return A2(
+			$elm$html$Html$span,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('rc-media-preview')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(typeString),
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$href(
+							$author$project$Exposition$mediaUrl(object)),
+							$elm$html$Html$Attributes$title('open preview')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('preview')
+						]))
+				]));
+	});
+var $author$project$RCMediaPreview$viewTableThumbnail = F2(
+	function (object, size) {
+		var _v0 = object.mediaType;
+		switch (_v0.$) {
+			case 'RCImage':
+				return A2($author$project$RCMediaPreview$renderAsMini, object, size);
+			case 'RCSvg':
+				return A2($author$project$RCMediaPreview$renderAsMini, object, size);
+			case 'RCAudio':
+				var settings = _v0.a;
+				return A2($author$project$RCMediaPreview$renderMediaAsHyperlink, 'Audio', object);
+			case 'RCVideo':
+				var settings = _v0.a;
+				return A2($author$project$RCMediaPreview$renderMediaAsHyperlink, 'Video', object);
+			default:
+				return A2($author$project$RCMediaPreview$renderMediaAsHyperlink, 'PDF', object);
+		}
+	});
 var $author$project$RCMediaList$thumbnailColumn = $billstclair$elm_sortable_table$Table$veryCustomColumn(
 	{
 		name: '',
@@ -15354,7 +15417,7 @@ var $author$project$RCMediaList$thumbnailColumn = $billstclair$elm_sortable_tabl
 				_List_Nil,
 				_List_fromArray(
 					[
-						A2($author$project$RCMediaPreview$viewThumbnail, rcObject, $author$project$RCMediaPreview$PreviewSmall)
+						A2($author$project$RCMediaPreview$viewTableThumbnail, rcObject, $author$project$RCMediaPreview$PreviewSmall)
 					]));
 		}
 	});
