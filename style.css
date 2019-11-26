@@ -235,11 +235,11 @@ body {
 }
 
 .audio-preview {
-    width: 20%;
+    width: 100%;
 }
 
 .video-preview {
-    width: 20%;
+    width: 100%;
 }
 
 .edit-media-dialog .media img {
