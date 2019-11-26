@@ -75,7 +75,12 @@ renderMediaAsHyperlink : String -> RCMediaObject -> Html msg
 renderMediaAsHyperlink typeString object =
     span [ class "rc-media-preview" ]
         [ text <| typeString ++ " "
-        , a [ href <| Exposition.mediaUrl object, title "open preview" ] [ View.renderIcon View.TriangleRight ]
+        , a
+            [ href <| Exposition.mediaUrl object
+            , target "_blank"
+            , title "open preview"
+            ]
+            [ View.renderIcon View.TriangleRight ]
         ]
 
 
