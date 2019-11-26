@@ -29,6 +29,7 @@ type Icon
     | FullScreenIcon
     | NormalScreenIcon
     | MediaIcon
+    | TriangleRight
 
 
 renderIcon : Icon -> Html msg
@@ -102,6 +103,9 @@ renderIcon icon =
 
         MediaIcon ->
             iconImg "file-media.svg"
+
+        TriangleRight ->
+            iconImg "triangle-right.svg"
 
 
 type alias ButtonInfo msg =

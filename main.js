@@ -12458,8 +12458,10 @@ var $author$project$View$renderIcon = function (icon) {
 			return iconImg('screen-full.svg');
 		case 'NormalScreenIcon':
 			return iconImg('screen-normal.svg');
-		default:
+		case 'MediaIcon':
 			return iconImg('file-media.svg');
+		default:
+			return iconImg('triangle-right.svg');
 	}
 };
 var $author$project$View$mkButton = function (props) {
@@ -15364,6 +15366,7 @@ var $author$project$RCMediaPreview$renderAsMini = F2(
 				$author$project$RCMediaPreview$getStyle(size)),
 			_List_Nil);
 	});
+var $author$project$View$TriangleRight = {$: 'TriangleRight'};
 var $author$project$RCMediaPreview$renderMediaAsHyperlink = F2(
 	function (typeString, object) {
 		return A2(
@@ -15385,7 +15388,7 @@ var $author$project$RCMediaPreview$renderMediaAsHyperlink = F2(
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('preview')
+							$author$project$View$renderIcon($author$project$View$TriangleRight)
 						]))
 				]));
 	});

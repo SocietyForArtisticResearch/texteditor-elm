@@ -7,6 +7,7 @@ module RCMediaPreview exposing
 import Exposition exposing (RCMediaObject)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import View
 
 
 type PreviewSize
@@ -74,7 +75,7 @@ renderMediaAsHyperlink : String -> RCMediaObject -> Html msg
 renderMediaAsHyperlink typeString object =
     span [ class "rc-media-preview" ]
         [ text <| typeString ++ " "
-        , a [ href <| Exposition.mediaUrl object, title "open preview" ] [ text "preview" ]
+        , a [ href <| Exposition.mediaUrl object, title "open preview" ] [ View.renderIcon View.TriangleRight ]
         ]
 
 
