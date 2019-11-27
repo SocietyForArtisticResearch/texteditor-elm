@@ -222,6 +222,9 @@ view { query, state } tableConfig objectList =
             let
                 searchedObjects =
                     filterObjectsByName query nonEmptyObjectList
+
+                _ =
+                    Debug.log "searched objects" searchedObjects
             in
             case searchedObjects of
                 [] ->
