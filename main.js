@@ -12466,6 +12466,7 @@ var $author$project$RCMediaList$filterObjectsByName = F2(
 	});
 var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
 var $elm$html$Html$input = _VirtualDom_node('input');
+var $elm$core$Debug$log = _Debug_log;
 var $elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
 };
@@ -12951,6 +12952,7 @@ var $author$project$RCMediaList$view = F3(
 		} else {
 			var nonEmptyObjectList = objectList;
 			var searchedObjects = A2($author$project$RCMediaList$filterObjectsByName, query, nonEmptyObjectList);
+			var _v2 = A2($elm$core$Debug$log, 'searched objects', searchedObjects);
 			if (!searchedObjects.b) {
 				return A2(
 					$elm$html$Html$div,
