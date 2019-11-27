@@ -15444,7 +15444,7 @@ var $author$project$RCMediaList$config = function (messages) {
 						})),
 					A2(
 					$billstclair$elm_sortable_table$Table$stringColumn,
-					'Names',
+					'Name',
 					function ($) {
 						return $.name;
 					}),
