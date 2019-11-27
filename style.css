@@ -281,7 +281,7 @@ body {
     min-width:100px;
 }
 
-.rc-media-table > thead:nth-child(1) > tr:nth-child(1) > th:nth-child(2) {
+.rc-media-table > thead:nth-child(1) > tr:nth-child(1) > th:nth-child(3) {
     width: 56%;
 }
 
