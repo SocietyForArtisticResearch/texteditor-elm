@@ -42,7 +42,7 @@ type alias Model =
     , mediaDialog : RCMediaEdit.Model
     , mediaList : RCMediaList.Model
     , confirmDialog : UserConfirm.Model Msg
-    , mediaPickerDialog : Modal.Visibility
+    , mediaPickerDialog : ( RCMediaList.Model, Modal.Visibility )
     , alertVisibility : Alert.Visibility
     , weave : Int
     , research : Int
@@ -161,7 +161,7 @@ emptyModel navbarInitState research weave =
     , mediaList = RCMediaList.empty
     , mediaDialog = RCMediaEdit.empty
     , confirmDialog = UserConfirm.empty
-    , mediaPickerDialog = Modal.hidden
+    , mediaPickerDialog = ( RCMediaList.empty, Modal.hidden )
     , alertVisibility = Alert.closed
     , research = research
     , weave = weave
@@ -347,6 +347,7 @@ type Msg
     | InsertMediaAtCursor RCMediaObject
     | OpenMediaPicker
     | CloseMediaPicker
+    | MediaPicker (RCMediaList.Msg Msg)
     | ExportDropMsg Dropdown.State
     | BadUploadFileType String
     | UndoCM
@@ -835,39 +836,7 @@ update msg model =
             ( newModel, enumTabState (getTabState newModel.editor) |> setEditor )
 
         InsertMediaAtCursor obj ->
-            let
-                foundObj =
-                    Exposition.objectByNameOrId (String.fromInt obj.id) model.exposition
-            in
-            case foundObj of
-                Just o ->
-                    let
-                        closeMediaListIfOpen =
-                            case model.editor of
-                                ( EditorMedia, CodemirrorMarkdown ) ->
-                                    setEditor 0
-
-                                ( EditorMedia, TextareaMarkdown ) ->
-                                    setEditor 1
-
-                                _ ->
-                                    Cmd.none
-
-                        updatedModel =
-                            { model
-                                | mediaPickerDialog = Modal.hidden
-                                , mediaDialog = RCMediaEdit.empty
-                            }
-                    in
-                    ( updatedModel
-                    , Cmd.batch
-                        [ insertMdString ( "!{" ++ o.name ++ "}", 0 )
-                        , closeMediaListIfOpen -- close media list
-                        ]
-                    )
-
-                Nothing ->
-                    ( addProblem model <| Problems.NoMediaWithNameOrId obj.name, Cmd.none )
+            insertMediaUpdate obj model
 
         InsertAtCursor insertTuple ->
             ( model, insertMdString insertTuple )
@@ -912,10 +881,33 @@ update msg model =
                             ( addProblem model <| Problems.UnsupportedMessage "Media List button is doing something unexpected", Cmd.none )
 
         OpenMediaPicker ->
-            ( { model | mediaPickerDialog = Modal.shown }, Cmd.none )
+            ( { model | mediaPickerDialog = ( RCMediaList.empty, Modal.shown ) }, Cmd.none )
 
         CloseMediaPicker ->
-            ( { model | mediaPickerDialog = Modal.hidden }, Cmd.none )
+            ( { model | mediaPickerDialog = ( RCMediaList.empty, Modal.hidden ) }, Cmd.none )
+
+        MediaPicker pickerMsg ->
+            case pickerMsg of
+                RCMediaList.SortableTableMessage tableMsg ->
+                    let
+                        ( pickerModel, visibility ) =
+                            model.mediaPickerDialog
+                    in
+                    ( { model | mediaPickerDialog = ( RCMediaList.update tableMsg pickerModel, visibility ) }, Cmd.none )
+
+                RCMediaList.EditMediaMessage normalMsg ->
+                    case normalMsg of
+                        InsertMediaAtCursor obj ->
+                            insertMediaUpdate obj model
+
+                        OpenMediaPicker ->
+                            ( { model | mediaPickerDialog = ( RCMediaList.empty, Modal.shown ) }, Cmd.none )
+
+                        CloseMediaPicker ->
+                            ( { model | mediaPickerDialog = ( RCMediaList.empty, Modal.hidden ) }, Cmd.none )
+
+                        _ ->
+                            ( addProblem model <| Problems.UnsupportedMessage "media insert is doing something unexpected", Cmd.none )
 
         ExportDropMsg state ->
             ( { model | exportDropState = state }
@@ -989,6 +981,43 @@ confirmObjectDelete object =
                 }
     in
     UserConfirm.Model Modal.shown content messages
+
+
+insertMediaUpdate : RCMediaObject -> Model -> ( Model, Cmd Msg )
+insertMediaUpdate object model =
+    let
+        foundObj =
+            Exposition.objectByNameOrId (String.fromInt object.id) model.exposition
+    in
+    case foundObj of
+        Just o ->
+            let
+                closeMediaListIfOpen =
+                    case model.editor of
+                        ( EditorMedia, CodemirrorMarkdown ) ->
+                            setEditor 0
+
+                        ( EditorMedia, TextareaMarkdown ) ->
+                            setEditor 1
+
+                        _ ->
+                            Cmd.none
+
+                updatedModel =
+                    { model
+                        | mediaPickerDialog = ( Tuple.first model.mediaPickerDialog, Modal.hidden )
+                        , mediaDialog = RCMediaEdit.empty
+                    }
+            in
+            ( updatedModel
+            , Cmd.batch
+                [ insertMdString ( "!{" ++ o.name ++ "}", 0 )
+                , closeMediaListIfOpen -- close media list
+                ]
+            )
+
+        Nothing ->
+            ( addProblem model <| Problems.NoMediaWithNameOrId object.name, Cmd.none )
 
 
 viewUpload : ButtonInfo Msg -> UploadStatus -> Html Msg
@@ -1302,7 +1331,13 @@ view model =
             UserConfirm.view model.confirmDialog
 
         mediaList =
-            Html.map MediaList (RCMediaList.view model.mediaList model.exposition.media makeTableMessages)
+            Html.map
+                MediaList
+            <|
+                RCMediaList.mediaListView
+                    makeTableMessages
+                    model.mediaList
+                    model.exposition.media
 
         alert =
             case model.problems of
@@ -1384,7 +1419,11 @@ view model =
         --        , viewTabs model
         , mediaDialogHtml
         , confirmDialogHtml
-        , RCMediaList.viewModalMediaPicker model.mediaPickerDialog model.exposition.media makePickerMessages
+        , Html.map MediaList <|
+            RCMediaList.mediaPickerView
+                model.mediaPickerDialog
+                model.exposition.media
+                makePickerMessages
         , div [ class "btn-toolbar", class "import-export-toolbar", attribute "role" "toolbar" ]
             [ optionalBlock showMediaUpload <| viewUpload uploadMediaButtonInfo model.mediaUploadStatus
             , optionalBlock showButtons <| viewUpload importDocButtonInfo model.importUploadStatus

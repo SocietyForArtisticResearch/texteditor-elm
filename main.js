@@ -5852,7 +5852,7 @@ var $author$project$Main$emptyModel = F3(
 			mediaClassesDict: $elm$core$Dict$empty,
 			mediaDialog: $author$project$RCMediaEdit$empty,
 			mediaList: $author$project$RCMediaList$empty,
-			mediaPickerDialog: $rundis$elm_bootstrap$Bootstrap$Modal$hidden,
+			mediaPickerDialog: _Utils_Tuple2($author$project$RCMediaList$empty, $rundis$elm_bootstrap$Bootstrap$Modal$hidden),
 			mediaUploadStatus: $author$project$Main$Ready,
 			navbarState: navbarInitState,
 			problems: _List_Nil,
@@ -9199,6 +9199,55 @@ var $author$project$Main$insertMdString = _Platform_outgoingPort(
 					$elm$json$Json$Encode$int(b)
 				]));
 	});
+var $author$project$Main$setEditor = _Platform_outgoingPort('setEditor', $elm$json$Json$Encode$int);
+var $author$project$Main$insertMediaUpdate = F2(
+	function (object, model) {
+		var foundObj = A2(
+			$author$project$Exposition$objectByNameOrId,
+			$elm$core$String$fromInt(object.id),
+			model.exposition);
+		if (foundObj.$ === 'Just') {
+			var o = foundObj.a;
+			var updatedModel = _Utils_update(
+				model,
+				{
+					mediaDialog: $author$project$RCMediaEdit$empty,
+					mediaPickerDialog: _Utils_Tuple2(model.mediaPickerDialog.a, $rundis$elm_bootstrap$Bootstrap$Modal$hidden)
+				});
+			var closeMediaListIfOpen = function () {
+				var _v1 = model.editor;
+				if (_v1.a.$ === 'EditorMedia') {
+					if (_v1.b.$ === 'CodemirrorMarkdown') {
+						var _v2 = _v1.a;
+						var _v3 = _v1.b;
+						return $author$project$Main$setEditor(0);
+					} else {
+						var _v4 = _v1.a;
+						var _v5 = _v1.b;
+						return $author$project$Main$setEditor(1);
+					}
+				} else {
+					return $elm$core$Platform$Cmd$none;
+				}
+			}();
+			return _Utils_Tuple2(
+				updatedModel,
+				$elm$core$Platform$Cmd$batch(
+					_List_fromArray(
+						[
+							$author$project$Main$insertMdString(
+							_Utils_Tuple2('!{' + (o.name + '}'), 0)),
+							closeMediaListIfOpen
+						])));
+		} else {
+			return _Utils_Tuple2(
+				A2(
+					$author$project$Main$addProblem,
+					model,
+					$author$project$Problems$NoMediaWithNameOrId(object.name)),
+				$elm$core$Platform$Cmd$none);
+		}
+	});
 var $author$project$Exposition$isValid = function (st) {
 	var _v0 = _Utils_Tuple2(
 		_Utils_Tuple2(st.name, st.description),
@@ -10304,7 +10353,6 @@ var $author$project$Main$selectedEditorIsMedia = function (model) {
 };
 var $author$project$Main$setContent = _Platform_outgoingPort('setContent', $elm$core$Basics$identity);
 var $author$project$Main$setDocumentTitle = _Platform_outgoingPort('setDocumentTitle', $elm$json$Json$Encode$string);
-var $author$project$Main$setEditor = _Platform_outgoingPort('setEditor', $elm$json$Json$Encode$int);
 var $author$project$Main$setFullscreenMode = _Platform_outgoingPort('setFullscreenMode', $elm$json$Json$Encode$bool);
 var $author$project$Main$setPreviewContent = _Platform_outgoingPort('setPreviewContent', $elm$json$Json$Encode$string);
 var $author$project$Problems$splitResultListAcc = F3(
@@ -11423,48 +11471,7 @@ var $author$project$Main$update = F2(
 								$author$project$Main$getTabState(newModel.editor))));
 				case 'InsertMediaAtCursor':
 					var obj = msg.a;
-					var foundObj = A2(
-						$author$project$Exposition$objectByNameOrId,
-						$elm$core$String$fromInt(obj.id),
-						model.exposition);
-					if (foundObj.$ === 'Just') {
-						var o = foundObj.a;
-						var updatedModel = _Utils_update(
-							model,
-							{mediaDialog: $author$project$RCMediaEdit$empty, mediaPickerDialog: $rundis$elm_bootstrap$Bootstrap$Modal$hidden});
-						var closeMediaListIfOpen = function () {
-							var _v26 = model.editor;
-							if (_v26.a.$ === 'EditorMedia') {
-								if (_v26.b.$ === 'CodemirrorMarkdown') {
-									var _v27 = _v26.a;
-									var _v28 = _v26.b;
-									return $author$project$Main$setEditor(0);
-								} else {
-									var _v29 = _v26.a;
-									var _v30 = _v26.b;
-									return $author$project$Main$setEditor(1);
-								}
-							} else {
-								return $elm$core$Platform$Cmd$none;
-							}
-						}();
-						return _Utils_Tuple2(
-							updatedModel,
-							$elm$core$Platform$Cmd$batch(
-								_List_fromArray(
-									[
-										$author$project$Main$insertMdString(
-										_Utils_Tuple2('!{' + (o.name + '}'), 0)),
-										closeMediaListIfOpen
-									])));
-					} else {
-						return _Utils_Tuple2(
-							A2(
-								$author$project$Main$addProblem,
-								model,
-								$author$project$Problems$NoMediaWithNameOrId(obj.name)),
-							$elm$core$Platform$Cmd$none);
-					}
+					return A2($author$project$Main$insertMediaUpdate, obj, model);
 				case 'InsertAtCursor':
 					var insertTuple = msg.a;
 					return _Utils_Tuple2(
@@ -11529,14 +11536,65 @@ var $author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{mediaPickerDialog: $rundis$elm_bootstrap$Bootstrap$Modal$shown}),
+							{
+								mediaPickerDialog: _Utils_Tuple2($author$project$RCMediaList$empty, $rundis$elm_bootstrap$Bootstrap$Modal$shown)
+							}),
 						$elm$core$Platform$Cmd$none);
 				case 'CloseMediaPicker':
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{mediaPickerDialog: $rundis$elm_bootstrap$Bootstrap$Modal$hidden}),
+							{
+								mediaPickerDialog: _Utils_Tuple2($author$project$RCMediaList$empty, $rundis$elm_bootstrap$Bootstrap$Modal$hidden)
+							}),
 						$elm$core$Platform$Cmd$none);
+				case 'MediaPicker':
+					var pickerMsg = msg.a;
+					if (pickerMsg.$ === 'SortableTableMessage') {
+						var tableMsg = pickerMsg.a;
+						var _v29 = model.mediaPickerDialog;
+						var pickerModel = _v29.a;
+						var visibility = _v29.b;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									mediaPickerDialog: _Utils_Tuple2(
+										A2($author$project$RCMediaList$update, tableMsg, pickerModel),
+										visibility)
+								}),
+							$elm$core$Platform$Cmd$none);
+					} else {
+						var normalMsg = pickerMsg.a;
+						switch (normalMsg.$) {
+							case 'InsertMediaAtCursor':
+								var obj = normalMsg.a;
+								return A2($author$project$Main$insertMediaUpdate, obj, model);
+							case 'OpenMediaPicker':
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											mediaPickerDialog: _Utils_Tuple2($author$project$RCMediaList$empty, $rundis$elm_bootstrap$Bootstrap$Modal$shown)
+										}),
+									$elm$core$Platform$Cmd$none);
+							case 'CloseMediaPicker':
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											mediaPickerDialog: _Utils_Tuple2($author$project$RCMediaList$empty, $rundis$elm_bootstrap$Bootstrap$Modal$hidden)
+										}),
+									$elm$core$Platform$Cmd$none);
+							default:
+								return _Utils_Tuple2(
+									A2(
+										$author$project$Main$addProblem,
+										model,
+										$author$project$Problems$UnsupportedMessage('media insert is doing something unexpected')),
+									$elm$core$Platform$Cmd$none);
+						}
+					}
 				case 'ExportDropMsg':
 					var state = msg.a;
 					return _Utils_Tuple2(
@@ -11694,288 +11752,426 @@ var $author$project$Main$makeTableMessages = {
 var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
 var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1 = $elm$html$Html$Attributes$class('mb-1');
+var $author$project$RCMediaList$SetTableState = function (a) {
+	return {$: 'SetTableState', a: a};
+};
+var $author$project$RCMediaList$SortableTableMessage = function (a) {
+	return {$: 'SortableTableMessage', a: a};
+};
+var $billstclair$elm_sortable_table$Table$Config = function (a) {
+	return {$: 'Config', a: a};
+};
+var $billstclair$elm_sortable_table$Table$customConfig = function (_v0) {
+	var toId = _v0.toId;
+	var toMsg = _v0.toMsg;
+	var columns = _v0.columns;
+	var customizations = _v0.customizations;
+	return $billstclair$elm_sortable_table$Table$Config(
+		{
+			columns: A2(
+				$elm$core$List$map,
+				function (_v1) {
+					var cData = _v1.a;
+					return cData;
+				},
+				columns),
+			customizations: customizations,
+			toId: toId,
+			toMsg: toMsg
+		});
+};
+var $billstclair$elm_sortable_table$Table$simpleRowAttrs = function (_v0) {
+	return _List_Nil;
+};
+var $billstclair$elm_sortable_table$Table$HtmlDetails = F2(
+	function (attributes, children) {
+		return {attributes: attributes, children: children};
+	});
+var $elm$core$Char$fromCode = _Char_fromCode;
+var $elm$core$String$fromList = _String_fromList;
+var $billstclair$elm_sortable_table$Table$nbsp = $elm$core$String$fromList(
+	_List_fromArray(
+		[
+			$elm$core$Char$fromCode(160)
+		]));
+var $elm$html$Html$span = _VirtualDom_node('span');
+var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $billstclair$elm_sortable_table$Table$darkGrey = function (symbol) {
+	return A2(
+		$elm$html$Html$span,
+		_List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$style, 'color', '#555')
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text(
+				_Utils_ap($billstclair$elm_sortable_table$Table$nbsp, symbol))
+			]));
+};
+var $billstclair$elm_sortable_table$Table$lightGrey = function (symbol) {
+	return A2(
+		$elm$html$Html$span,
+		_List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$style, 'color', '#ccc')
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text(
+				_Utils_ap($billstclair$elm_sortable_table$Table$nbsp, symbol))
+			]));
+};
+var $elm$html$Html$th = _VirtualDom_node('th');
+var $billstclair$elm_sortable_table$Table$simpleTheadHelp = function (_v0) {
+	var name = _v0.a;
+	var status = _v0.b;
+	var click = _v0.c;
+	var content = function () {
+		switch (status.$) {
+			case 'Unsortable':
+				return _List_fromArray(
+					[
+						$elm$html$Html$text(name)
+					]);
+			case 'Sortable':
+				var selected = status.a;
+				return _List_fromArray(
+					[
+						$elm$html$Html$text(name),
+						selected ? $billstclair$elm_sortable_table$Table$darkGrey('↓') : $billstclair$elm_sortable_table$Table$lightGrey('↓')
+					]);
+			default:
+				if (status.a.$ === 'Nothing') {
+					var _v2 = status.a;
+					return _List_fromArray(
+						[
+							$elm$html$Html$text(name),
+							$billstclair$elm_sortable_table$Table$lightGrey('↕')
+						]);
+				} else {
+					var isReversed = status.a.a;
+					return _List_fromArray(
+						[
+							$elm$html$Html$text(name),
+							$billstclair$elm_sortable_table$Table$darkGrey(
+							isReversed ? '↑' : '↓')
+						]);
+				}
+		}
+	}();
+	return A2(
+		$elm$html$Html$th,
+		_List_fromArray(
+			[click]),
+		content);
+};
+var $billstclair$elm_sortable_table$Table$simpleThead = function (headers) {
+	return A2(
+		$billstclair$elm_sortable_table$Table$HtmlDetails,
+		_List_Nil,
+		A2($elm$core$List$map, $billstclair$elm_sortable_table$Table$simpleTheadHelp, headers));
+};
+var $billstclair$elm_sortable_table$Table$defaultCustomizations = {caption: $elm$core$Maybe$Nothing, rowAttrs: $billstclair$elm_sortable_table$Table$simpleRowAttrs, tableAttrs: _List_Nil, tbodyAttrs: _List_Nil, tfoot: $elm$core$Maybe$Nothing, thead: $billstclair$elm_sortable_table$Table$simpleThead};
+var $billstclair$elm_sortable_table$Table$Column = function (a) {
+	return {$: 'Column', a: a};
+};
+var $billstclair$elm_sortable_table$Table$IncOrDec = function (a) {
+	return {$: 'IncOrDec', a: a};
+};
+var $billstclair$elm_sortable_table$Table$increasingOrDecreasingBy = function (toComparable) {
+	return $billstclair$elm_sortable_table$Table$IncOrDec(
+		$elm$core$List$sortBy(toComparable));
+};
+var $billstclair$elm_sortable_table$Table$textDetails = function (str) {
+	return A2(
+		$billstclair$elm_sortable_table$Table$HtmlDetails,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text(str)
+			]));
+};
+var $billstclair$elm_sortable_table$Table$stringColumn = F2(
+	function (name, toStr) {
+		return $billstclair$elm_sortable_table$Table$Column(
+			{
+				name: name,
+				sorter: $billstclair$elm_sortable_table$Table$increasingOrDecreasingBy(toStr),
+				viewData: A2($elm$core$Basics$composeL, $billstclair$elm_sortable_table$Table$textDetails, toStr)
+			});
+	});
+var $author$project$RCMediaPreview$PreviewSmall = {$: 'PreviewSmall'};
+var $billstclair$elm_sortable_table$Table$None = {$: 'None'};
+var $billstclair$elm_sortable_table$Table$unsortable = $billstclair$elm_sortable_table$Table$None;
+var $billstclair$elm_sortable_table$Table$veryCustomColumn = $billstclair$elm_sortable_table$Table$Column;
+var $author$project$View$CameraIcon = {$: 'CameraIcon'};
+var $author$project$View$SpeakerIcon = {$: 'SpeakerIcon'};
+var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty('alt');
+var $elm$html$Html$Attributes$height = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'height',
+		$elm$core$String$fromInt(n));
+};
+var $author$project$Settings$baseUrl = 'elm-editor/';
+var $author$project$Settings$iconUrl = $author$project$Settings$baseUrl + 'lib/icons/';
+var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $elm$html$Html$Attributes$width = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'width',
+		$elm$core$String$fromInt(n));
+};
+var $author$project$View$renderIcon = function (icon) {
+	var iconImg = function (url) {
+		return A2(
+			$elm$html$Html$img,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$src(
+					_Utils_ap($author$project$Settings$iconUrl, url)),
+					$elm$html$Html$Attributes$class('m-1'),
+					$elm$html$Html$Attributes$width(15),
+					$elm$html$Html$Attributes$height(15),
+					A2($elm$html$Html$Attributes$style, 'position', 'relative'),
+					A2($elm$html$Html$Attributes$style, 'top', '-2px'),
+					$elm$html$Html$Attributes$alt(
+					A3($elm$core$String$slice, 0, -4, url))
+				]),
+			_List_Nil);
+	};
+	switch (icon.$) {
+		case 'NoIcon':
+			return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+		case 'PlusIcon':
+			return iconImg('plus.svg');
+		case 'ImportIcon':
+			return iconImg('import-export.svg');
+		case 'SaveIcon':
+			return iconImg('save.svg');
+		case 'ItalicIcon':
+			return iconImg('italic.svg');
+		case 'LinkIcon':
+			return iconImg('link-intact.svg');
+		case 'BoldIcon':
+			return iconImg('bold.svg');
+		case 'ListIcon':
+			return iconImg('list-unordered.svg');
+		case 'NumberedIcon':
+			return iconImg('list-ordered.svg');
+		case 'HeaderIcon':
+			return iconImg('header.svg');
+		case 'QuoteIcon':
+			return iconImg('double-quote-sans-left.svg');
+		case 'ArrowDown':
+			return iconImg('arrow-down.svg');
+		case 'UploadCloud':
+			return iconImg('cloud-upload.svg');
+		case 'EyeIcon':
+			return iconImg('eye.svg');
+		case 'UndoIcon':
+			return iconImg('undo.svg');
+		case 'RedoIcon':
+			return iconImg('redo.svg');
+		case 'FullScreenIcon':
+			return iconImg('screen-full.svg');
+		case 'NormalScreenIcon':
+			return iconImg('screen-normal.svg');
+		case 'MediaIcon':
+			return iconImg('file-media.svg');
+		case 'TriangleRight':
+			return iconImg('triangle-right.svg');
+		case 'SpeakerIcon':
+			return iconImg('unmute.svg');
+		default:
+			return iconImg('device-camera-video.svg');
+	}
+};
+var $elm$html$Html$Attributes$target = $elm$html$Html$Attributes$stringProperty('target');
+var $elm$html$Html$Attributes$title = $elm$html$Html$Attributes$stringProperty('title');
+var $author$project$RCMediaPreview$renderAsIconHyperlink = F2(
+	function (icon, object) {
+		return A2(
+			$elm$html$Html$a,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$href(
+					$author$project$Exposition$mediaUrl(object)),
+					$elm$html$Html$Attributes$target('_blank'),
+					$elm$html$Html$Attributes$title('preview audio ' + object.name)
+				]),
+			_List_fromArray(
+				[
+					$author$project$View$renderIcon(icon)
+				]));
+	});
+var $author$project$Exposition$customThumbUrl = F2(
+	function (size, data) {
+		var sizeStr = $elm$core$String$fromInt(size);
+		return '/text-editor/simple-media-thumb?research=' + ($elm$core$String$fromInt(data.expositionId) + ('&simple-media=' + ($elm$core$String$fromInt(data.id) + ('&width=' + (sizeStr + ('&height=' + sizeStr))))));
+	});
+var $author$project$RCMediaPreview$getStyle = function (size) {
+	if (size.$ === 'PreviewBig') {
+		return _List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$style, 'width', '100%'),
+				A2($elm$html$Html$Attributes$style, 'height', '250px'),
+				A2($elm$html$Html$Attributes$style, 'object-fit', 'cover')
+			]);
+	} else {
+		return _List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$style, 'width', '60px'),
+				A2($elm$html$Html$Attributes$style, 'hieght', '60px'),
+				A2($elm$html$Html$Attributes$style, 'object-fit', 'cover')
+			]);
+	}
+};
+var $author$project$RCMediaPreview$renderAsMini = F2(
+	function (object, size) {
+		var reso = function () {
+			if (size.$ === 'PreviewBig') {
+				return 500;
+			} else {
+				return 120;
+			}
+		}();
+		var thumburl = A2($author$project$Exposition$customThumbUrl, reso, object);
+		return A2(
+			$elm$html$Html$img,
+			_Utils_ap(
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$src(thumburl)
+					]),
+				$author$project$RCMediaPreview$getStyle(size)),
+			_List_Nil);
+	});
+var $author$project$View$TriangleRight = {$: 'TriangleRight'};
+var $author$project$RCMediaPreview$renderMediaAsHyperlink = F2(
+	function (typeString, object) {
+		return A2(
+			$elm$html$Html$span,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('rc-media-preview')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(typeString + ' '),
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$href(
+							$author$project$Exposition$mediaUrl(object)),
+							$elm$html$Html$Attributes$target('_blank'),
+							$elm$html$Html$Attributes$title('open preview')
+						]),
+					_List_fromArray(
+						[
+							$author$project$View$renderIcon($author$project$View$TriangleRight)
+						]))
+				]));
+	});
+var $author$project$RCMediaPreview$viewTableThumbnail = F2(
+	function (object, size) {
+		var _v0 = object.mediaType;
+		switch (_v0.$) {
+			case 'RCImage':
+				return A2($author$project$RCMediaPreview$renderAsMini, object, size);
+			case 'RCSvg':
+				return A2($author$project$RCMediaPreview$renderAsMini, object, size);
+			case 'RCAudio':
+				var settings = _v0.a;
+				return A2($author$project$RCMediaPreview$renderAsIconHyperlink, $author$project$View$SpeakerIcon, object);
+			case 'RCVideo':
+				var settings = _v0.a;
+				return A2($author$project$RCMediaPreview$renderAsIconHyperlink, $author$project$View$CameraIcon, object);
+			default:
+				return A2($author$project$RCMediaPreview$renderMediaAsHyperlink, 'PDF', object);
+		}
+	});
+var $author$project$RCMediaList$thumbnailColumn = $billstclair$elm_sortable_table$Table$veryCustomColumn(
+	{
+		name: '',
+		sorter: $billstclair$elm_sortable_table$Table$unsortable,
+		viewData: function (rcObject) {
+			return A2(
+				$billstclair$elm_sortable_table$Table$HtmlDetails,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2($author$project$RCMediaPreview$viewTableThumbnail, rcObject, $author$project$RCMediaPreview$PreviewSmall)
+					]));
+		}
+	});
+var $author$project$RCMediaList$config = function (buttons) {
+	var makeMsg = A2($elm$core$Basics$composeL, $author$project$RCMediaList$SortableTableMessage, $author$project$RCMediaList$SetTableState);
+	return $billstclair$elm_sortable_table$Table$customConfig(
+		{
+			columns: _List_fromArray(
+				[
+					$author$project$RCMediaList$thumbnailColumn,
+					A2(
+					$billstclair$elm_sortable_table$Table$stringColumn,
+					'ID',
+					A2(
+						$elm$core$Basics$composeL,
+						$elm$core$String$fromInt,
+						function ($) {
+							return $.id;
+						})),
+					A2(
+					$billstclair$elm_sortable_table$Table$stringColumn,
+					'Name',
+					function ($) {
+						return $.name;
+					}),
+					buttons
+				]),
+			customizations: _Utils_update(
+				$billstclair$elm_sortable_table$Table$defaultCustomizations,
+				{
+					rowAttrs: $elm$core$Basics$always(
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('rc-media-table-row')
+							])),
+					tableAttrs: _List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('rc-media-table')
+						])
+				}),
+			toId: A2(
+				$elm$core$Basics$composeL,
+				$elm$core$String$fromInt,
+				function ($) {
+					return $.id;
+				}),
+			toMsg: makeMsg
+		});
+};
+var $author$project$RCMediaList$EditMediaMessage = function (a) {
+	return {$: 'EditMediaMessage', a: a};
+};
 var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
 	return {$: 'Attrs', a: a};
 };
 var $rundis$elm_bootstrap$Bootstrap$Button$attrs = function (attrs_) {
 	return $rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs(attrs_);
 };
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$Attrs = function (a) {
-	return {$: 'Attrs', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$attrs = function (attrs_) {
-	return $rundis$elm_bootstrap$Bootstrap$Dropdown$Attrs(attrs_);
-};
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownItem = function (a) {
-	return {$: 'DropdownItem', a: a};
-};
 var $elm$html$Html$button = _VirtualDom_node('button');
-var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$buttonItem = F2(
-	function (attributes, children) {
-		return $rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownItem(
-			A2(
-				$elm$html$Html$button,
-				_Utils_ap(
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$type_('button'),
-							$elm$html$Html$Attributes$class('dropdown-item')
-						]),
-					attributes),
-				children));
-	});
-var $elm$html$Html$Attributes$classList = function (classes) {
-	return $elm$html$Html$Attributes$class(
-		A2(
-			$elm$core$String$join,
-			' ',
-			A2(
-				$elm$core$List$map,
-				$elm$core$Tuple$first,
-				A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
-};
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$dropDir = function (maybeDir) {
-	var toAttrs = function (dir) {
-		return _List_fromArray(
-			[
-				$elm$html$Html$Attributes$class(
-				'drop' + function () {
-					if (dir.$ === 'Dropleft') {
-						return 'left';
-					} else {
-						return 'right';
-					}
-				}())
-			]);
-	};
-	return A2(
-		$elm$core$Maybe$withDefault,
-		_List_Nil,
-		A2($elm$core$Maybe$map, toAttrs, maybeDir));
-};
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownAttributes = F2(
-	function (status, config) {
-		return _Utils_ap(
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$classList(
-					_List_fromArray(
-						[
-							_Utils_Tuple2('btn-group', true),
-							_Utils_Tuple2(
-							'show',
-							!_Utils_eq(status, $rundis$elm_bootstrap$Bootstrap$Dropdown$Closed)),
-							_Utils_Tuple2('dropup', config.isDropUp)
-						]))
-				]),
-			_Utils_ap(
-				$rundis$elm_bootstrap$Bootstrap$Dropdown$dropDir(config.dropDirection),
-				config.attributes));
-	});
-var $elm$core$String$fromFloat = _String_fromNumber;
-var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$menuStyles = F2(
-	function (_v0, config) {
-		var status = _v0.a.status;
-		var toggleSize = _v0.a.toggleSize;
-		var menuSize = _v0.a.menuSize;
-		var px = function (n) {
-			return $elm$core$String$fromFloat(n) + 'px';
-		};
-		var translate = F3(
-			function (x, y, z) {
-				return 'translate3d(' + (px(x) + (',' + (px(y) + (',' + (px(z) + ')')))));
-			});
-		var _default = _List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$style, 'top', '0'),
-				A2($elm$html$Html$Attributes$style, 'left', '0')
-			]);
-		var _v1 = _Utils_Tuple2(config.isDropUp, config.dropDirection);
-		_v1$0:
-		while (true) {
-			if (_v1.b.$ === 'Just') {
-				if (_v1.b.a.$ === 'Dropright') {
-					if (_v1.a) {
-						break _v1$0;
-					} else {
-						var _v2 = _v1.b.a;
-						return _default;
-					}
-				} else {
-					if (_v1.a) {
-						break _v1$0;
-					} else {
-						var _v3 = _v1.b.a;
-						return _Utils_ap(
-							_default,
-							_List_fromArray(
-								[
-									A2(
-									$elm$html$Html$Attributes$style,
-									'transform',
-									A3(translate, (-toggleSize.width) - menuSize.width, 0, 0))
-								]));
-					}
-				}
-			} else {
-				if (_v1.a) {
-					break _v1$0;
-				} else {
-					return _Utils_ap(
-						_default,
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$Attributes$style,
-								'transform',
-								A3(translate, -toggleSize.width, toggleSize.height, 0))
-							]));
-				}
-			}
-		}
-		return _Utils_ap(
-			_default,
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$Attributes$style,
-					'transform',
-					A3(translate, -toggleSize.width, -menuSize.height, 0))
-				]));
-	});
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownMenu = F3(
-	function (state, config, items) {
-		var status = state.a.status;
-		var menuSize = state.a.menuSize;
-		var wrapperStyles = _Utils_eq(status, $rundis$elm_bootstrap$Bootstrap$Dropdown$Closed) ? _List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$style, 'height', '0'),
-				A2($elm$html$Html$Attributes$style, 'overflow', 'hidden'),
-				A2($elm$html$Html$Attributes$style, 'position', 'relative')
-			]) : _List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$style, 'position', 'relative')
-			]);
-		return A2(
-			$elm$html$Html$div,
-			wrapperStyles,
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$div,
-					_Utils_ap(
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$classList(
-								_List_fromArray(
-									[
-										_Utils_Tuple2('dropdown-menu', true),
-										_Utils_Tuple2('dropdown-menu-right', config.hasMenuRight),
-										_Utils_Tuple2(
-										'show',
-										!_Utils_eq(status, $rundis$elm_bootstrap$Bootstrap$Dropdown$Closed))
-									]))
-							]),
-						_Utils_ap(
-							A2($rundis$elm_bootstrap$Bootstrap$Dropdown$menuStyles, state, config),
-							config.menuAttrs)),
-					A2(
-						$elm$core$List$map,
-						function (_v0) {
-							var x = _v0.a;
-							return x;
-						},
-						items))
-				]));
-	});
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$applyModifier = F2(
-	function (option, options) {
-		switch (option.$) {
-			case 'AlignMenuRight':
-				return _Utils_update(
-					options,
-					{hasMenuRight: true});
-			case 'Dropup':
-				return _Utils_update(
-					options,
-					{isDropUp: true});
-			case 'Attrs':
-				var attrs_ = option.a;
-				return _Utils_update(
-					options,
-					{attributes: attrs_});
-			case 'DropToDir':
-				var dir = option.a;
-				return _Utils_update(
-					options,
-					{
-						dropDirection: $elm$core$Maybe$Just(dir)
-					});
-			default:
-				var attrs_ = option.a;
-				return _Utils_update(
-					options,
-					{menuAttrs: attrs_});
-		}
-	});
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$defaultOptions = {attributes: _List_Nil, dropDirection: $elm$core$Maybe$Nothing, hasMenuRight: false, isDropUp: false, menuAttrs: _List_Nil};
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$toConfig = function (options) {
-	return A3($elm$core$List$foldl, $rundis$elm_bootstrap$Bootstrap$Dropdown$applyModifier, $rundis$elm_bootstrap$Bootstrap$Dropdown$defaultOptions, options);
-};
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$dropdown = F2(
-	function (state, _v0) {
-		var status = state.a.status;
-		var toggleMsg = _v0.toggleMsg;
-		var toggleButton = _v0.toggleButton;
-		var items = _v0.items;
-		var options = _v0.options;
-		var config = $rundis$elm_bootstrap$Bootstrap$Dropdown$toConfig(options);
-		var _v1 = toggleButton;
-		var buttonFn = _v1.a;
-		return A2(
-			$elm$html$Html$div,
-			A2($rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownAttributes, status, config),
-			_List_fromArray(
-				[
-					A2(buttonFn, toggleMsg, state),
-					A3($rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownMenu, state, config, items)
-				]));
-	});
-var $elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var $elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var $elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'click',
-		$elm$json$Json$Decode$succeed(msg));
-};
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
-	return {$: 'Coloring', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark = {$: 'Dark'};
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
-	return {$: 'Outlined', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Button$outlineDark = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark));
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $elm$html$Html$Attributes$title = $elm$html$Html$Attributes$stringProperty('title');
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownToggle = function (a) {
-	return {$: 'DropdownToggle', a: a};
-};
 var $elm$core$Maybe$andThen = F2(
 	function (callback, maybeValue) {
 		if (maybeValue.$ === 'Just') {
@@ -12020,6 +12216,16 @@ var $rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier = F2(
 					});
 		}
 	});
+var $elm$html$Html$Attributes$classList = function (classes) {
+	return $elm$html$Html$Attributes$class(
+		A2(
+			$elm$core$String$join,
+			' ',
+			A2(
+				$elm$core$List$map,
+				$elm$core$Tuple$first,
+				A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
+};
 var $rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions = {attributes: _List_Nil, block: false, coloring: $elm$core$Maybe$Nothing, disabled: false, size: $elm$core$Maybe$Nothing};
 var $elm$html$Html$Attributes$boolProperty = F2(
 	function (key, bool) {
@@ -12117,269 +12323,6 @@ var $rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes = function 
 				}(),
 				options.attributes)));
 };
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$Open = {$: 'Open'};
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$nextStatus = function (status) {
-	switch (status.$) {
-		case 'Open':
-			return $rundis$elm_bootstrap$Bootstrap$Dropdown$Closed;
-		case 'ListenClicks':
-			return $rundis$elm_bootstrap$Bootstrap$Dropdown$Closed;
-		default:
-			return $rundis$elm_bootstrap$Bootstrap$Dropdown$Open;
-	}
-};
-var $elm$json$Json$Decode$float = _Json_decodeFloat;
-var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetHeight = A2($elm$json$Json$Decode$field, 'offsetHeight', $elm$json$Json$Decode$float);
-var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetWidth = A2($elm$json$Json$Decode$field, 'offsetWidth', $elm$json$Json$Decode$float);
-var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetLeft = A2($elm$json$Json$Decode$field, 'offsetLeft', $elm$json$Json$Decode$float);
-var $elm$json$Json$Decode$null = _Json_decodeNull;
-var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetParent = F2(
-	function (x, decoder) {
-		return $elm$json$Json$Decode$oneOf(
-			_List_fromArray(
-				[
-					A2(
-					$elm$json$Json$Decode$field,
-					'offsetParent',
-					$elm$json$Json$Decode$null(x)),
-					A2($elm$json$Json$Decode$field, 'offsetParent', decoder)
-				]));
-	});
-var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetTop = A2($elm$json$Json$Decode$field, 'offsetTop', $elm$json$Json$Decode$float);
-var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$scrollLeft = A2($elm$json$Json$Decode$field, 'scrollLeft', $elm$json$Json$Decode$float);
-var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$scrollTop = A2($elm$json$Json$Decode$field, 'scrollTop', $elm$json$Json$Decode$float);
-var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$position = F2(
-	function (x, y) {
-		return A2(
-			$elm$json$Json$Decode$andThen,
-			function (_v0) {
-				var x_ = _v0.a;
-				var y_ = _v0.b;
-				return A2(
-					$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetParent,
-					_Utils_Tuple2(x_, y_),
-					A2($rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$position, x_, y_));
-			},
-			A5(
-				$elm$json$Json$Decode$map4,
-				F4(
-					function (scrollLeft_, scrollTop_, offsetLeft_, offsetTop_) {
-						return _Utils_Tuple2((x + offsetLeft_) - scrollLeft_, (y + offsetTop_) - scrollTop_);
-					}),
-				$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$scrollLeft,
-				$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$scrollTop,
-				$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetLeft,
-				$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetTop));
-	});
-var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$boundingArea = A4(
-	$elm$json$Json$Decode$map3,
-	F3(
-		function (_v0, width, height) {
-			var x = _v0.a;
-			var y = _v0.b;
-			return {height: height, left: x, top: y, width: width};
-		}),
-	A2($rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$position, 0, 0),
-	$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetWidth,
-	$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetHeight);
-var $elm$json$Json$Decode$at = F2(
-	function (fields, decoder) {
-		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
-	});
-var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$childNode = function (idx) {
-	return $elm$json$Json$Decode$at(
-		_List_fromArray(
-			[
-				'childNodes',
-				$elm$core$String$fromInt(idx)
-			]));
-};
-var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$nextSibling = function (decoder) {
-	return A2($elm$json$Json$Decode$field, 'nextSibling', decoder);
-};
-var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$className = A2(
-	$elm$json$Json$Decode$at,
-	_List_fromArray(
-		['className']),
-	$elm$json$Json$Decode$string);
-var $elm$json$Json$Decode$fail = _Json_fail;
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$isToggle = A2(
-	$elm$json$Json$Decode$andThen,
-	function (_class) {
-		return A2($elm$core$String$contains, 'dropdown-toggle', _class) ? $elm$json$Json$Decode$succeed(true) : $elm$json$Json$Decode$succeed(false);
-	},
-	$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$className);
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$toggler = F2(
-	function (path, decoder) {
-		return $elm$json$Json$Decode$oneOf(
-			_List_fromArray(
-				[
-					A2(
-					$elm$json$Json$Decode$andThen,
-					function (res) {
-						return res ? A2($elm$json$Json$Decode$at, path, decoder) : $elm$json$Json$Decode$fail('');
-					},
-					A2($elm$json$Json$Decode$at, path, $rundis$elm_bootstrap$Bootstrap$Dropdown$isToggle)),
-					A2(
-					$elm$json$Json$Decode$andThen,
-					function (_v0) {
-						return A2(
-							$rundis$elm_bootstrap$Bootstrap$Dropdown$toggler,
-							_Utils_ap(
-								path,
-								_List_fromArray(
-									['parentElement'])),
-							decoder);
-					},
-					A2(
-						$elm$json$Json$Decode$at,
-						_Utils_ap(
-							path,
-							_List_fromArray(
-								['parentElement'])),
-						$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$className)),
-					$elm$json$Json$Decode$fail('No toggler found')
-				]));
-	});
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$sizeDecoder = A3(
-	$elm$json$Json$Decode$map2,
-	$elm$core$Tuple$pair,
-	A2(
-		$rundis$elm_bootstrap$Bootstrap$Dropdown$toggler,
-		_List_fromArray(
-			['target']),
-		$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$boundingArea),
-	A2(
-		$rundis$elm_bootstrap$Bootstrap$Dropdown$toggler,
-		_List_fromArray(
-			['target']),
-		$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$nextSibling(
-			A2($rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$childNode, 0, $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$boundingArea))));
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$clickHandler = F2(
-	function (toMsg, state) {
-		var status = state.a.status;
-		return A2(
-			$elm$json$Json$Decode$andThen,
-			function (_v0) {
-				var b = _v0.a;
-				var m = _v0.b;
-				return $elm$json$Json$Decode$succeed(
-					toMsg(
-						$rundis$elm_bootstrap$Bootstrap$Dropdown$State(
-							{
-								menuSize: m,
-								status: $rundis$elm_bootstrap$Bootstrap$Dropdown$nextStatus(status),
-								toggleSize: b
-							})));
-			},
-			$rundis$elm_bootstrap$Bootstrap$Dropdown$sizeDecoder);
-	});
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$togglePrivate = F4(
-	function (buttonOptions, children, toggleMsg, state) {
-		return A2(
-			$elm$html$Html$button,
-			_Utils_ap(
-				$rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes(buttonOptions),
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('dropdown-toggle'),
-						$elm$html$Html$Attributes$type_('button'),
-						A2(
-						$elm$html$Html$Events$on,
-						'click',
-						A2($rundis$elm_bootstrap$Bootstrap$Dropdown$clickHandler, toggleMsg, state))
-					])),
-			children);
-	});
-var $rundis$elm_bootstrap$Bootstrap$Dropdown$toggle = F2(
-	function (buttonOptions, children) {
-		return $rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownToggle(
-			A2($rundis$elm_bootstrap$Bootstrap$Dropdown$togglePrivate, buttonOptions, children));
-	});
-var $author$project$View$mkDropdown = F5(
-	function (modelState, openMsg, mainTxt, itemMsgLst, titleText) {
-		return A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('d-inline-block')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$rundis$elm_bootstrap$Bootstrap$Dropdown$dropdown,
-					modelState,
-					{
-						items: A2(
-							$elm$core$List$map,
-							function (_v0) {
-								var buttonTxt = _v0.a;
-								var clickMsg = _v0.b;
-								return A2(
-									$rundis$elm_bootstrap$Bootstrap$Dropdown$buttonItem,
-									_List_fromArray(
-										[
-											$elm$html$Html$Events$onClick(clickMsg)
-										]),
-									_List_fromArray(
-										[
-											$elm$html$Html$text(buttonTxt)
-										]));
-							},
-							itemMsgLst),
-						options: _List_fromArray(
-							[
-								$rundis$elm_bootstrap$Bootstrap$Dropdown$attrs(
-								A2(
-									$elm$core$List$map,
-									$elm$html$Html$Attributes$class,
-									_List_fromArray(
-										['m-0', 'mb-1', 'mt-1', 'mr-1'])))
-							]),
-						toggleButton: A2(
-							$rundis$elm_bootstrap$Bootstrap$Dropdown$toggle,
-							_List_fromArray(
-								[
-									$rundis$elm_bootstrap$Bootstrap$Button$outlineDark,
-									$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$title(titleText)
-										]))
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text(mainTxt)
-								])),
-						toggleMsg: openMsg
-					})
-				]));
-	});
-var $author$project$Settings$Bold = {$: 'Bold'};
-var $author$project$View$BoldIcon = {$: 'BoldIcon'};
-var $author$project$Settings$Bullet = {$: 'Bullet'};
-var $author$project$Settings$H1 = {$: 'H1'};
-var $author$project$Settings$H2 = {$: 'H2'};
-var $author$project$Settings$H3 = {$: 'H3'};
-var $author$project$Main$InsertAtCursor = function (a) {
-	return {$: 'InsertAtCursor', a: a};
-};
-var $author$project$Main$InsertFootnoteAtCursor = {$: 'InsertFootnoteAtCursor'};
-var $author$project$Settings$Italic = {$: 'Italic'};
-var $author$project$View$ItalicIcon = {$: 'ItalicIcon'};
-var $author$project$Settings$Link = {$: 'Link'};
-var $author$project$View$LinkIcon = {$: 'LinkIcon'};
-var $author$project$View$ListIcon = {$: 'ListIcon'};
-var $author$project$View$MediaIcon = {$: 'MediaIcon'};
-var $author$project$Settings$Numbered = {$: 'Numbered'};
-var $author$project$View$NumberedIcon = {$: 'NumberedIcon'};
-var $author$project$Main$OpenMediaPicker = {$: 'OpenMediaPicker'};
-var $author$project$Settings$Quote = {$: 'Quote'};
-var $author$project$View$QuoteIcon = {$: 'QuoteIcon'};
-var $author$project$Main$RedoCM = {$: 'RedoCM'};
-var $author$project$View$RedoIcon = {$: 'RedoIcon'};
-var $author$project$Main$UndoCM = {$: 'UndoCM'};
-var $author$project$View$UndoIcon = {$: 'UndoIcon'};
 var $rundis$elm_bootstrap$Bootstrap$Button$button = F2(
 	function (options, children) {
 		return A2(
@@ -12387,395 +12330,669 @@ var $rundis$elm_bootstrap$Bootstrap$Button$button = F2(
 			$rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes(options),
 			children);
 	});
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Light = {$: 'Light'};
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
-	return {$: 'Roled', a: a};
+var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1 = $elm$html$Html$Attributes$class('ml-1');
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
 };
-var $rundis$elm_bootstrap$Bootstrap$Button$light = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled($rundis$elm_bootstrap$Bootstrap$Internal$Button$Light));
-var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0 = $elm$html$Html$Attributes$class('m-0');
-var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty('alt');
-var $elm$html$Html$Attributes$height = function (n) {
-	return A2(
-		_VirtualDom_attribute,
-		'height',
-		$elm$core$String$fromInt(n));
-};
-var $author$project$Settings$baseUrl = 'elm-editor/';
-var $author$project$Settings$iconUrl = $author$project$Settings$baseUrl + 'lib/icons/';
-var $elm$html$Html$img = _VirtualDom_node('img');
-var $elm$html$Html$Attributes$src = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'src',
-		_VirtualDom_noJavaScriptOrHtmlUri(url));
-};
-var $elm$html$Html$Attributes$width = function (n) {
-	return A2(
-		_VirtualDom_attribute,
-		'width',
-		$elm$core$String$fromInt(n));
-};
-var $author$project$View$renderIcon = function (icon) {
-	var iconImg = function (url) {
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
 		return A2(
-			$elm$html$Html$img,
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
+	return {$: 'Coloring', a: a};
+};
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger = {$: 'Danger'};
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
+	return {$: 'Outlined', a: a};
+};
+var $rundis$elm_bootstrap$Bootstrap$Button$outlineDanger = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
+var $rundis$elm_bootstrap$Bootstrap$General$Internal$SM = {$: 'SM'};
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Size = function (a) {
+	return {$: 'Size', a: a};
+};
+var $rundis$elm_bootstrap$Bootstrap$Button$small = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Size($rundis$elm_bootstrap$Bootstrap$General$Internal$SM);
+var $author$project$RCMediaList$deleteButton = F2(
+	function (messages, object) {
+		var makeDeleteMessage = A2($elm$core$Basics$composeL, $author$project$RCMediaList$EditMediaMessage, messages.deleteObject);
+		return A2(
+			$rundis$elm_bootstrap$Bootstrap$Button$button,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$src(
-					_Utils_ap($author$project$Settings$iconUrl, url)),
-					$elm$html$Html$Attributes$class('m-1'),
-					$elm$html$Html$Attributes$width(15),
-					$elm$html$Html$Attributes$height(15),
-					A2($elm$html$Html$Attributes$style, 'position', 'relative'),
-					A2($elm$html$Html$Attributes$style, 'top', '-2px'),
-					$elm$html$Html$Attributes$alt(
-					A3($elm$core$String$slice, 0, -4, url))
-				]),
-			_List_Nil);
-	};
-	switch (icon.$) {
-		case 'NoIcon':
-			return A2($elm$html$Html$div, _List_Nil, _List_Nil);
-		case 'PlusIcon':
-			return iconImg('plus.svg');
-		case 'ImportIcon':
-			return iconImg('import-export.svg');
-		case 'SaveIcon':
-			return iconImg('save.svg');
-		case 'ItalicIcon':
-			return iconImg('italic.svg');
-		case 'LinkIcon':
-			return iconImg('link-intact.svg');
-		case 'BoldIcon':
-			return iconImg('bold.svg');
-		case 'ListIcon':
-			return iconImg('list-unordered.svg');
-		case 'NumberedIcon':
-			return iconImg('list-ordered.svg');
-		case 'HeaderIcon':
-			return iconImg('header.svg');
-		case 'QuoteIcon':
-			return iconImg('double-quote-sans-left.svg');
-		case 'ArrowDown':
-			return iconImg('arrow-down.svg');
-		case 'UploadCloud':
-			return iconImg('cloud-upload.svg');
-		case 'EyeIcon':
-			return iconImg('eye.svg');
-		case 'UndoIcon':
-			return iconImg('undo.svg');
-		case 'RedoIcon':
-			return iconImg('redo.svg');
-		case 'FullScreenIcon':
-			return iconImg('screen-full.svg');
-		case 'NormalScreenIcon':
-			return iconImg('screen-normal.svg');
-		case 'MediaIcon':
-			return iconImg('file-media.svg');
-		case 'TriangleRight':
-			return iconImg('triangle-right.svg');
-		case 'SpeakerIcon':
-			return iconImg('unmute.svg');
-		default:
-			return iconImg('device-camera-video.svg');
-	}
-};
-var $author$project$View$mkButton = function (props) {
-	var spacing = props.offset ? _List_fromArray(
-		[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0]) : _List_Nil;
-	return A2(
-		$rundis$elm_bootstrap$Bootstrap$Button$button,
-		_List_fromArray(
-			[
-				props.primary ? $rundis$elm_bootstrap$Bootstrap$Button$outlineDark : $rundis$elm_bootstrap$Bootstrap$Button$light,
-				$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-				A2(
-					$elm$core$List$append,
+					$rundis$elm_bootstrap$Bootstrap$Button$small,
+					$rundis$elm_bootstrap$Bootstrap$Button$outlineDanger,
+					$rundis$elm_bootstrap$Bootstrap$Button$attrs(
 					_List_fromArray(
 						[
-							$elm$html$Html$Events$onClick(props.onClickMsg),
-							A2(
-							$elm$html$Html$Attributes$style,
-							'display',
-							props.hidden ? 'none' : 'inline-block'),
-							$elm$html$Html$Attributes$title(props.title)
-						]),
-					A2($elm$core$List$append, spacing, props.otherAttrs)))
-			]),
-		_List_fromArray(
-			[
-				$author$project$View$renderIcon(props.icon),
-				$elm$html$Html$text(props.text)
-			]));
-};
-var $elm$html$Html$span = _VirtualDom_node('span');
-var $author$project$Main$separator = A2(
-	$elm$html$Html$span,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('separator')
-		]),
-	_List_fromArray(
-		[
-			$elm$html$Html$text('|')
-		]));
-var $author$project$Settings$snippet = function (s) {
-	switch (s.$) {
-		case 'Bold':
-			return _Utils_Tuple2('****', -2);
-		case 'Italic':
-			return _Utils_Tuple2('__', -1);
-		case 'H1':
-			return _Utils_Tuple2('# Header 1', 0);
-		case 'H2':
-			return _Utils_Tuple2('## Header 2', 0);
-		case 'H3':
-			return _Utils_Tuple2('### Header 3', 0);
-		case 'H4':
-			return _Utils_Tuple2('#### Header 4', 0);
-		case 'Bullet':
-			return _Utils_Tuple2('* ', 0);
-		case 'Numbered':
-			return _Utils_Tuple2('1. ', 0);
-		case 'Quote':
-			return _Utils_Tuple2('> ', 0);
-		default:
-			return _Utils_Tuple2('[Link text](http://)', -1);
-	}
-};
-var $author$project$Main$mkEditorToolbar = function (tabState) {
-	var snippetMsg = function (action) {
-		return $author$project$Main$InsertAtCursor(
-			$author$project$Settings$snippet(action));
-	};
-	var _default = $author$project$View$defaultButton(
-		$author$project$Main$InsertAtCursor(
-			_Utils_Tuple2('', 0)));
-	var cmEditor = function () {
-		switch (tabState.$) {
-			case 'CmMarkdownTab':
-				return true;
-			case 'TxtMarkdownTab':
-				return false;
-			case 'StyleTab':
-				return true;
-			default:
-				return false;
-		}
-	}();
-	return _Utils_ap(
-		_List_fromArray(
-			[
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{
-						onClickMsg: snippetMsg($author$project$Settings$H1),
-						text: 'H1',
-						title: 'Header 1'
-					})),
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{
-						onClickMsg: snippetMsg($author$project$Settings$H2),
-						text: 'H2',
-						title: 'Header 2'
-					})),
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{
-						onClickMsg: snippetMsg($author$project$Settings$H3),
-						text: 'H3',
-						title: 'Header 3'
-					})),
-				$author$project$Main$separator,
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{
-						icon: $author$project$View$BoldIcon,
-						onClickMsg: snippetMsg($author$project$Settings$Bold),
-						title: 'Bold'
-					})),
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{
-						icon: $author$project$View$ItalicIcon,
-						onClickMsg: snippetMsg($author$project$Settings$Italic),
-						title: 'Italic'
-					})),
-				$author$project$Main$separator,
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{
-						icon: $author$project$View$ListIcon,
-						onClickMsg: snippetMsg($author$project$Settings$Bullet),
-						title: 'Unordered list'
-					})),
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{
-						icon: $author$project$View$NumberedIcon,
-						onClickMsg: snippetMsg($author$project$Settings$Numbered),
-						title: 'Numbered list'
-					})),
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{
-						icon: $author$project$View$LinkIcon,
-						onClickMsg: snippetMsg($author$project$Settings$Link),
-						title: 'Hyperlink'
-					})),
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{
-						icon: $author$project$View$QuoteIcon,
-						onClickMsg: snippetMsg($author$project$Settings$Quote),
-						title: 'Quote'
-					})),
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{onClickMsg: $author$project$Main$InsertFootnoteAtCursor, text: '*', title: 'Insert footnote'})),
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{icon: $author$project$View$MediaIcon, onClickMsg: $author$project$Main$OpenMediaPicker, title: 'Insert media object'})),
-				$author$project$Main$separator
-			]),
-		cmEditor ? _List_fromArray(
-			[
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{hidden: !cmEditor, icon: $author$project$View$UndoIcon, onClickMsg: $author$project$Main$UndoCM, title: 'Undo'})),
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{hidden: !cmEditor, icon: $author$project$View$RedoIcon, onClickMsg: $author$project$Main$RedoCM, title: 'Redo'})),
-				$author$project$Main$separator
-			]) : _List_Nil);
-};
-var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1 = $elm$html$Html$Attributes$class('mr-1');
-var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1 = $elm$html$Html$Attributes$class('mt-1');
-var $author$project$View$optionalBlock = F2(
-	function (show, elem) {
-		return A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$Attributes$style,
-					'display',
-					show ? 'inline-block' : 'none')
+							$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1,
+							$elm$html$Html$Events$onClick(
+							makeDeleteMessage(object))
+						]))
 				]),
 			_List_fromArray(
-				[elem]));
+				[
+					$elm$html$Html$text('Delete')
+				]));
 	});
-var $author$project$Main$selectedEditorIsMarkdown = function (model) {
-	var _v0 = model.editor;
-	if (_v0.a.$ === 'EditorMarkdown') {
-		var _v1 = _v0.a;
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Info = {$: 'Info'};
+var $rundis$elm_bootstrap$Bootstrap$Button$outlineInfo = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Info));
+var $author$project$RCMediaList$editButton = F2(
+	function (messages, object) {
+		var makeEditMessage = A2(
+			$elm$core$Basics$composeL,
+			A2(
+				$elm$core$Basics$composeL,
+				A2($elm$core$Basics$composeL, $author$project$RCMediaList$EditMediaMessage, messages.editObject),
+				$elm$core$String$fromInt),
+			function ($) {
+				return $.id;
+			});
+		return A2(
+			$rundis$elm_bootstrap$Bootstrap$Button$button,
+			_List_fromArray(
+				[
+					$rundis$elm_bootstrap$Bootstrap$Button$small,
+					$rundis$elm_bootstrap$Bootstrap$Button$outlineInfo,
+					$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+					_List_fromArray(
+						[
+							$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1,
+							$elm$html$Html$Events$onClick(
+							makeEditMessage(object))
+						]))
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Edit')
+				]));
+	});
+var $author$project$RCMediaList$editObjectButtons = F2(
+	function (messages, object) {
+		return A2(
+			$billstclair$elm_sortable_table$Table$HtmlDetails,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2($author$project$RCMediaList$editButton, messages, object),
+					A2($author$project$RCMediaList$deleteButton, messages, object)
+				]));
+	});
+var $author$project$RCMediaList$mediaListButtons = function (messages) {
+	return $billstclair$elm_sortable_table$Table$veryCustomColumn(
+		{
+			name: '',
+			sorter: $billstclair$elm_sortable_table$Table$unsortable,
+			viewData: $author$project$RCMediaList$editObjectButtons(messages)
+		});
+};
+var $author$project$RCMediaList$SetQuery = function (a) {
+	return {$: 'SetQuery', a: a};
+};
+var $elm$core$String$toLower = _String_toLower;
+var $author$project$RCMediaList$filterObjectsByName = F2(
+	function (query, lst) {
+		if (query === '') {
+			return lst;
+		} else {
+			var q = query;
+			var lowerQuery = $elm$core$String$toLower(q);
+			return A2(
+				$elm$core$List$filter,
+				A2(
+					$elm$core$Basics$composeL,
+					A2(
+						$elm$core$Basics$composeL,
+						$elm$core$String$contains(lowerQuery),
+						$elm$core$String$toLower),
+					function ($) {
+						return $.name;
+					}),
+				lst);
+		}
+	});
+var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
+var $elm$html$Html$input = _VirtualDom_node('input');
+var $elm$html$Html$Events$alwaysStop = function (x) {
+	return _Utils_Tuple2(x, true);
+};
+var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
+	return {$: 'MayStopPropagation', a: a};
+};
+var $elm$html$Html$Events$stopPropagationOn = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
+	});
+var $elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
+	});
+var $elm$html$Html$Events$targetValue = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	$elm$json$Json$Decode$string);
+var $elm$html$Html$Events$onInput = function (tagger) {
+	return A2(
+		$elm$html$Html$Events$stopPropagationOn,
+		'input',
+		A2(
+			$elm$json$Json$Decode$map,
+			$elm$html$Html$Events$alwaysStop,
+			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
+};
+var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
+var $rundis$elm_bootstrap$Bootstrap$Internal$Role$Info = {$: 'Info'};
+var $rundis$elm_bootstrap$Bootstrap$Alert$Config = function (a) {
+	return {$: 'Config', a: a};
+};
+var $rundis$elm_bootstrap$Bootstrap$Alert$attrs = F2(
+	function (attributes, _v0) {
+		var configRec = _v0.a;
+		return $rundis$elm_bootstrap$Bootstrap$Alert$Config(
+			_Utils_update(
+				configRec,
+				{attributes: attributes}));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Alert$children = F2(
+	function (children_, _v0) {
+		var configRec = _v0.a;
+		return $rundis$elm_bootstrap$Bootstrap$Alert$Config(
+			_Utils_update(
+				configRec,
+				{children: children_}));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Internal$Role$Secondary = {$: 'Secondary'};
+var $rundis$elm_bootstrap$Bootstrap$Alert$config = $rundis$elm_bootstrap$Bootstrap$Alert$Config(
+	{attributes: _List_Nil, children: _List_Nil, dismissable: $elm$core$Maybe$Nothing, role: $rundis$elm_bootstrap$Bootstrap$Internal$Role$Secondary, visibility: $rundis$elm_bootstrap$Bootstrap$Alert$Shown, withAnimation: false});
+var $rundis$elm_bootstrap$Bootstrap$Alert$role = F2(
+	function (role_, _v0) {
+		var configRec = _v0.a;
+		return $rundis$elm_bootstrap$Bootstrap$Alert$Config(
+			_Utils_update(
+				configRec,
+				{role: role_}));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Alert$StartClose = {$: 'StartClose'};
+var $rundis$elm_bootstrap$Bootstrap$Alert$clickHandler = F2(
+	function (visibility, configRec) {
+		var handleClick = F2(
+			function (viz, toMsg) {
+				return $elm$html$Html$Events$onClick(
+					toMsg(viz));
+			});
+		var _v0 = configRec.dismissable;
+		if (_v0.$ === 'Just') {
+			var dismissMsg = _v0.a;
+			return _List_fromArray(
+				[
+					configRec.withAnimation ? A2(handleClick, $rundis$elm_bootstrap$Bootstrap$Alert$StartClose, dismissMsg) : A2(handleClick, $rundis$elm_bootstrap$Bootstrap$Alert$Closed, dismissMsg)
+				]);
+		} else {
+			return _List_Nil;
+		}
+	});
+var $rundis$elm_bootstrap$Bootstrap$Alert$injectButton = F2(
+	function (btn, children_) {
+		if (children_.b) {
+			var head = children_.a;
+			var tail = children_.b;
+			return A2(
+				$elm$core$List$cons,
+				head,
+				A2($elm$core$List$cons, btn, tail));
+		} else {
+			return _List_fromArray(
+				[btn]);
+		}
+	});
+var $rundis$elm_bootstrap$Bootstrap$Alert$isDismissable = function (configRec) {
+	var _v0 = configRec.dismissable;
+	if (_v0.$ === 'Just') {
 		return true;
 	} else {
 		return false;
 	}
 };
-var $author$project$Main$selectedEditorIsStyle = function (model) {
-	var _v0 = model.editor;
-	if (_v0.a.$ === 'EditorStyle') {
-		var _v1 = _v0.a;
-		return true;
-	} else {
-		return false;
-	}
-};
-var $author$project$View$SaveIcon = {$: 'SaveIcon'};
+var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
+var $rundis$elm_bootstrap$Bootstrap$Alert$maybeAddDismissButton = F3(
+	function (visibilty, configRec, children_) {
+		return $rundis$elm_bootstrap$Bootstrap$Alert$isDismissable(configRec) ? A2(
+			$rundis$elm_bootstrap$Bootstrap$Alert$injectButton,
+			A2(
+				$elm$html$Html$button,
+				_Utils_ap(
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$type_('button'),
+							$elm$html$Html$Attributes$class('close'),
+							A2($elm$html$Html$Attributes$attribute, 'aria-label', 'close')
+						]),
+					A2($rundis$elm_bootstrap$Bootstrap$Alert$clickHandler, visibilty, configRec)),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$span,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$attribute, 'aria-hidden', 'true')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('×')
+							]))
+					])),
+			children_) : children_;
+	});
 var $elm$core$List$concat = function (lists) {
 	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
 };
-var $elm$core$List$concatMap = F2(
-	function (f, list) {
-		return $elm$core$List$concat(
-			A2($elm$core$List$map, f, list));
+var $rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass = F2(
+	function (prefix, role) {
+		return $elm$html$Html$Attributes$class(
+			prefix + ('-' + function () {
+				switch (role.$) {
+					case 'Primary':
+						return 'primary';
+					case 'Secondary':
+						return 'secondary';
+					case 'Success':
+						return 'success';
+					case 'Info':
+						return 'info';
+					case 'Warning':
+						return 'warning';
+					case 'Danger':
+						return 'danger';
+					case 'Light':
+						return 'light';
+					default:
+						return 'dark';
+				}
+			}()));
 	});
-var $elm$core$String$foldr = _String_foldr;
-var $elm$core$String$toList = function (string) {
-	return A3($elm$core$String$foldr, $elm$core$List$cons, _List_Nil, string);
-};
-var $author$project$Util$wordCount = function (str) {
-	var splitter = F2(
-		function (_char, z) {
-			return A2(
-				$elm$core$List$concatMap,
-				$elm$core$String$split(
-					$elm$core$String$fromChar(_char)),
-				z);
-		});
-	var splitChars = $elm$core$String$toList(' .,!?()');
-	var splitted = A3(
-		$elm$core$List$foldr,
-		splitter,
-		_List_fromArray(
-			[str]),
-		splitChars);
-	var filterEmpty = A2(
-		$elm$core$List$filter,
-		A2($elm$core$Basics$composeL, $elm$core$Basics$not, $elm$core$String$isEmpty),
-		splitted);
-	return $elm$core$List$length(filterEmpty);
-};
-var $author$project$Exposition$wordCount = function (expo) {
-	return $author$project$Util$wordCount(expo.markdownInput);
-};
-var $author$project$Main$statusBar = function (model) {
-	var wc = $author$project$Exposition$wordCount(model.exposition);
-	var status = 'Word count: ' + $elm$core$String$fromInt(wc);
-	var saveButtonText = model.saved ? 'Saved' : 'Not Saved';
-	var saveButton = A2(
-		$rundis$elm_bootstrap$Bootstrap$Button$button,
-		_List_fromArray(
+var $rundis$elm_bootstrap$Bootstrap$Alert$viewAttributes = F2(
+	function (visibility, configRec) {
+		var visibiltyAttributes = _Utils_eq(visibility, $rundis$elm_bootstrap$Bootstrap$Alert$Closed) ? _List_fromArray(
 			[
-				$rundis$elm_bootstrap$Bootstrap$Button$light,
-				$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+				A2($elm$html$Html$Attributes$style, 'display', 'none')
+			]) : _List_Nil;
+		var animationAttributes = function () {
+			if (configRec.withAnimation) {
+				var _v0 = configRec.dismissable;
+				if (_v0.$ === 'Just') {
+					var dismissMsg = _v0.a;
+					return _List_fromArray(
+						[
+							A2(
+							$elm$html$Html$Events$on,
+							'transitionend',
+							$elm$json$Json$Decode$succeed(
+								dismissMsg($rundis$elm_bootstrap$Bootstrap$Alert$Closed)))
+						]);
+				} else {
+					return _List_Nil;
+				}
+			} else {
+				return _List_Nil;
+			}
+		}();
+		var alertAttributes = _List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$attribute, 'role', 'alert'),
+				$elm$html$Html$Attributes$classList(
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('save-button'),
-						$elm$html$Html$Events$onClick($author$project$Main$SaveExposition)
-					]))
-			]),
-		_List_fromArray(
-			[
-				$author$project$View$renderIcon($author$project$View$SaveIcon),
-				$elm$html$Html$text(saveButtonText)
-			]));
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('editor-status-bar')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$span,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(status)
+						_Utils_Tuple2('alert', true),
+						_Utils_Tuple2(
+						'alert-dismissible',
+						$rundis$elm_bootstrap$Bootstrap$Alert$isDismissable(configRec)),
+						_Utils_Tuple2('fade', configRec.withAnimation),
+						_Utils_Tuple2(
+						'show',
+						_Utils_eq(visibility, $rundis$elm_bootstrap$Bootstrap$Alert$Shown))
 					])),
-				saveButton
-			]));
+				A2($rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass, 'alert', configRec.role)
+			]);
+		return $elm$core$List$concat(
+			_List_fromArray(
+				[configRec.attributes, alertAttributes, visibiltyAttributes, animationAttributes]));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Alert$view = F2(
+	function (visibility, _v0) {
+		var configRec = _v0.a;
+		return A2(
+			$elm$html$Html$div,
+			A2($rundis$elm_bootstrap$Bootstrap$Alert$viewAttributes, visibility, configRec),
+			A3($rundis$elm_bootstrap$Bootstrap$Alert$maybeAddDismissButton, visibility, configRec, configRec.children));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Alert$simple = F3(
+	function (role_, attributes, children_) {
+		return A2(
+			$rundis$elm_bootstrap$Bootstrap$Alert$view,
+			$rundis$elm_bootstrap$Bootstrap$Alert$Shown,
+			A2(
+				$rundis$elm_bootstrap$Bootstrap$Alert$children,
+				children_,
+				A2(
+					$rundis$elm_bootstrap$Bootstrap$Alert$attrs,
+					attributes,
+					A2($rundis$elm_bootstrap$Bootstrap$Alert$role, role_, $rundis$elm_bootstrap$Bootstrap$Alert$config))));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo = $rundis$elm_bootstrap$Bootstrap$Alert$simple($rundis$elm_bootstrap$Bootstrap$Internal$Role$Info);
+var $elm$html$Html$caption = _VirtualDom_node('caption');
+var $billstclair$elm_sortable_table$Table$applySorter = F3(
+	function (isReversed, sorter, data) {
+		switch (sorter.$) {
+			case 'None':
+				return data;
+			case 'Increasing':
+				var srt = sorter.a;
+				return srt(data);
+			case 'Decreasing':
+				var srt = sorter.a;
+				return $elm$core$List$reverse(
+					srt(data));
+			case 'IncOrDec':
+				var srt = sorter.a;
+				return isReversed ? $elm$core$List$reverse(
+					srt(data)) : srt(data);
+			default:
+				var srt = sorter.a;
+				return isReversed ? srt(data) : $elm$core$List$reverse(
+					srt(data));
+		}
+	});
+var $billstclair$elm_sortable_table$Table$findSorter = F2(
+	function (selectedColumn, columnData) {
+		findSorter:
+		while (true) {
+			if (!columnData.b) {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var name = columnData.a.name;
+				var sorter = columnData.a.sorter;
+				var remainingColumnData = columnData.b;
+				if (_Utils_eq(name, selectedColumn)) {
+					return $elm$core$Maybe$Just(sorter);
+				} else {
+					var $temp$selectedColumn = selectedColumn,
+						$temp$columnData = remainingColumnData;
+					selectedColumn = $temp$selectedColumn;
+					columnData = $temp$columnData;
+					continue findSorter;
+				}
+			}
+		}
+	});
+var $billstclair$elm_sortable_table$Table$sort = F3(
+	function (_v0, columnData, data) {
+		var selectedColumn = _v0.a;
+		var isReversed = _v0.b;
+		var _v1 = A2($billstclair$elm_sortable_table$Table$findSorter, selectedColumn, columnData);
+		if (_v1.$ === 'Nothing') {
+			return data;
+		} else {
+			var sorter = _v1.a;
+			return A3($billstclair$elm_sortable_table$Table$applySorter, isReversed, sorter, data);
+		}
+	});
+var $billstclair$elm_sortable_table$Table$getSortedData = F3(
+	function (_v0, state, data) {
+		var toId = _v0.a.toId;
+		var toMsg = _v0.a.toMsg;
+		var columns = _v0.a.columns;
+		var customizations = _v0.a.customizations;
+		return A3($billstclair$elm_sortable_table$Table$sort, state, columns, data);
+	});
+var $elm$virtual_dom$VirtualDom$keyedNode = function (tag) {
+	return _VirtualDom_keyedNode(
+		_VirtualDom_noScript(tag));
 };
-var $elm$html$Html$Attributes$target = $elm$html$Html$Attributes$stringProperty('target');
+var $elm$html$Html$Keyed$node = $elm$virtual_dom$VirtualDom$keyedNode;
+var $elm$html$Html$table = _VirtualDom_node('table');
+var $elm$html$Html$tfoot = _VirtualDom_node('tfoot');
+var $elm$html$Html$thead = _VirtualDom_node('thead');
+var $billstclair$elm_sortable_table$Table$Reversible = function (a) {
+	return {$: 'Reversible', a: a};
+};
+var $billstclair$elm_sortable_table$Table$Sortable = function (a) {
+	return {$: 'Sortable', a: a};
+};
+var $billstclair$elm_sortable_table$Table$Unsortable = {$: 'Unsortable'};
+var $billstclair$elm_sortable_table$Table$onClick = F3(
+	function (name, isReversed, toMsg) {
+		return A2(
+			$elm$html$Html$Events$on,
+			'click',
+			A2(
+				$elm$json$Json$Decode$map,
+				toMsg,
+				A3(
+					$elm$json$Json$Decode$map2,
+					$billstclair$elm_sortable_table$Table$State,
+					$elm$json$Json$Decode$succeed(name),
+					$elm$json$Json$Decode$succeed(isReversed))));
+	});
+var $billstclair$elm_sortable_table$Table$toHeaderInfo = F3(
+	function (_v0, toMsg, _v1) {
+		var sortName = _v0.a;
+		var isReversed = _v0.b;
+		var name = _v1.name;
+		var sorter = _v1.sorter;
+		switch (sorter.$) {
+			case 'None':
+				return _Utils_Tuple3(
+					name,
+					$billstclair$elm_sortable_table$Table$Unsortable,
+					A3($billstclair$elm_sortable_table$Table$onClick, sortName, isReversed, toMsg));
+			case 'Increasing':
+				return _Utils_Tuple3(
+					name,
+					$billstclair$elm_sortable_table$Table$Sortable(
+						!_Utils_eq(name, sortName)),
+					A3($billstclair$elm_sortable_table$Table$onClick, name, false, toMsg));
+			case 'Decreasing':
+				return _Utils_Tuple3(
+					name,
+					$billstclair$elm_sortable_table$Table$Sortable(
+						_Utils_eq(name, sortName)),
+					A3($billstclair$elm_sortable_table$Table$onClick, name, false, toMsg));
+			case 'IncOrDec':
+				return _Utils_eq(name, sortName) ? _Utils_Tuple3(
+					name,
+					$billstclair$elm_sortable_table$Table$Reversible(
+						$elm$core$Maybe$Just(!isReversed)),
+					A3($billstclair$elm_sortable_table$Table$onClick, name, !isReversed, toMsg)) : _Utils_Tuple3(
+					name,
+					$billstclair$elm_sortable_table$Table$Reversible($elm$core$Maybe$Nothing),
+					A3($billstclair$elm_sortable_table$Table$onClick, name, false, toMsg));
+			default:
+				return _Utils_eq(name, sortName) ? _Utils_Tuple3(
+					name,
+					$billstclair$elm_sortable_table$Table$Reversible(
+						$elm$core$Maybe$Just(isReversed)),
+					A3($billstclair$elm_sortable_table$Table$onClick, name, !isReversed, toMsg)) : _Utils_Tuple3(
+					name,
+					$billstclair$elm_sortable_table$Table$Reversible($elm$core$Maybe$Nothing),
+					A3($billstclair$elm_sortable_table$Table$onClick, name, false, toMsg));
+		}
+	});
+var $elm$html$Html$tr = _VirtualDom_node('tr');
+var $elm$virtual_dom$VirtualDom$lazy3 = _VirtualDom_lazy3;
+var $elm$html$Html$Lazy$lazy3 = $elm$virtual_dom$VirtualDom$lazy3;
+var $elm$html$Html$td = _VirtualDom_node('td');
+var $billstclair$elm_sortable_table$Table$viewCell = F2(
+	function (data, _v0) {
+		var viewData = _v0.viewData;
+		var details = viewData(data);
+		return A2($elm$html$Html$td, details.attributes, details.children);
+	});
+var $billstclair$elm_sortable_table$Table$viewRowHelp = F3(
+	function (columns, toRowAttrs, data) {
+		return A2(
+			$elm$html$Html$tr,
+			toRowAttrs(data),
+			A2(
+				$elm$core$List$map,
+				$billstclair$elm_sortable_table$Table$viewCell(data),
+				columns));
+	});
+var $billstclair$elm_sortable_table$Table$viewRow = F4(
+	function (toId, columns, toRowAttrs, data) {
+		return _Utils_Tuple2(
+			toId(data),
+			A4($elm$html$Html$Lazy$lazy3, $billstclair$elm_sortable_table$Table$viewRowHelp, columns, toRowAttrs, data));
+	});
+var $billstclair$elm_sortable_table$Table$view = F3(
+	function (conf, state, data) {
+		var toId = conf.a.toId;
+		var toMsg = conf.a.toMsg;
+		var columns = conf.a.columns;
+		var customizations = conf.a.customizations;
+		var theadDetails = customizations.thead(
+			A2(
+				$elm$core$List$map,
+				A2($billstclair$elm_sortable_table$Table$toHeaderInfo, state, toMsg),
+				columns));
+		var thead = A2(
+			$elm$html$Html$thead,
+			theadDetails.attributes,
+			_List_fromArray(
+				[
+					A2($elm$html$Html$tr, _List_Nil, theadDetails.children)
+				]));
+		var sortedData = A3($billstclair$elm_sortable_table$Table$getSortedData, conf, state, data);
+		var tbody = A3(
+			$elm$html$Html$Keyed$node,
+			'tbody',
+			customizations.tbodyAttrs,
+			A2(
+				$elm$core$List$map,
+				A3($billstclair$elm_sortable_table$Table$viewRow, toId, columns, customizations.rowAttrs),
+				sortedData));
+		var withFoot = function () {
+			var _v1 = customizations.tfoot;
+			if (_v1.$ === 'Nothing') {
+				return A2($elm$core$List$cons, tbody, _List_Nil);
+			} else {
+				var attributes = _v1.a.attributes;
+				var children = _v1.a.children;
+				return A2(
+					$elm$core$List$cons,
+					A2($elm$html$Html$tfoot, attributes, children),
+					A2($elm$core$List$cons, tbody, _List_Nil));
+			}
+		}();
+		return A2(
+			$elm$html$Html$table,
+			customizations.tableAttrs,
+			function () {
+				var _v0 = customizations.caption;
+				if (_v0.$ === 'Nothing') {
+					return A2($elm$core$List$cons, thead, withFoot);
+				} else {
+					var attributes = _v0.a.attributes;
+					var children = _v0.a.children;
+					return A2(
+						$elm$core$List$cons,
+						A2($elm$html$Html$caption, attributes, children),
+						A2($elm$core$List$cons, thead, withFoot));
+				}
+			}());
+	});
+var $author$project$RCMediaList$view = F3(
+	function (_v0, tableConfig, objectList) {
+		var query = _v0.query;
+		var state = _v0.state;
+		var searchBox = A2(
+			$elm$html$Html$input,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$placeholder('Search by name'),
+					$elm$html$Html$Events$onInput(
+					A2($elm$core$Basics$composeL, $author$project$RCMediaList$SortableTableMessage, $author$project$RCMediaList$SetQuery))
+				]),
+			_List_Nil);
+		if (!objectList.b) {
+			return A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('media-list'),
+						A2($elm$html$Html$Attributes$style, 'display', 'none')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Media list is empty. Hint: add a file by using the \"upload media\" button.')
+							]))
+					]));
+		} else {
+			var nonEmptyObjectList = objectList;
+			var searchedObjects = A2($author$project$RCMediaList$filterObjectsByName, query, nonEmptyObjectList);
+			if (!searchedObjects.b) {
+				return A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('media-list'),
+							A2($elm$html$Html$Attributes$style, 'display', 'none')
+						]),
+					_List_fromArray(
+						[
+							searchBox,
+							A2(
+							$rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Cannot find any media named \"' + (query + '\"'))
+								]))
+						]));
+			} else {
+				var results = searchedObjects;
+				return A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$id('media-list'),
+							A2($elm$html$Html$Attributes$style, 'display', 'none')
+						]),
+					_List_fromArray(
+						[
+							searchBox,
+							A3($billstclair$elm_sortable_table$Table$view, tableConfig, state, results)
+						]));
+			}
+		}
+	});
+var $author$project$RCMediaList$mediaListView = F3(
+	function (messages, model, objects) {
+		return A3(
+			$author$project$RCMediaList$view,
+			model,
+			$author$project$RCMediaList$config(
+				$author$project$RCMediaList$mediaListButtons(messages)),
+			objects);
+	});
 var $rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {
 	return {$: 'Body', a: a};
 };
@@ -12820,7 +13037,7 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$footer = F3(
 							{attributes: attributes, children: children}))
 				}));
 	});
-var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $rundis$elm_bootstrap$Bootstrap$Modal$Header = function (a) {
 	return {$: 'Header', a: a};
 };
@@ -12852,7 +13069,7 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$titledHeader = F3(
 					children)
 				]));
 	});
-var $rundis$elm_bootstrap$Bootstrap$Modal$h2 = $rundis$elm_bootstrap$Bootstrap$Modal$titledHeader($elm$html$Html$h2);
+var $rundis$elm_bootstrap$Bootstrap$Modal$h1 = $rundis$elm_bootstrap$Bootstrap$Modal$titledHeader($elm$html$Html$h1);
 var $rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick = F2(
 	function (hide, _v0) {
 		var conf = _v0.a;
@@ -12882,12 +13099,46 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$large = function (_v0) {
 			}));
 };
 var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
-var $rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary = {$: 'Secondary'};
-var $rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
-var $elm$html$Html$p = _VirtualDom_node('p');
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
+	return {$: 'Roled', a: a};
+};
+var $rundis$elm_bootstrap$Bootstrap$Button$primary = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled($rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
+var $author$project$RCMediaList$insertButton = F2(
+	function (messages, object) {
+		var makeInsertMessage = A2($elm$core$Basics$composeL, $author$project$RCMediaList$EditMediaMessage, messages.insertObject);
+		return A2(
+			$billstclair$elm_sortable_table$Table$HtmlDetails,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					$rundis$elm_bootstrap$Bootstrap$Button$button,
+					_List_fromArray(
+						[
+							$rundis$elm_bootstrap$Bootstrap$Button$small,
+							$rundis$elm_bootstrap$Bootstrap$Button$primary,
+							$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick(
+									makeInsertMessage(object))
+								]))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Insert')
+						]))
+				]));
+	});
+var $author$project$RCMediaList$pickerButton = function (messages) {
+	return $billstclair$elm_sortable_table$Table$veryCustomColumn(
+		{
+			name: '',
+			sorter: $billstclair$elm_sortable_table$Table$unsortable,
+			viewData: $author$project$RCMediaList$insertButton(messages)
+		});
+};
 var $rundis$elm_bootstrap$Bootstrap$Modal$scrollableBody = F2(
 	function (scrollable, _v0) {
 		var conf = _v0.a;
@@ -12901,6 +13152,9 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$scrollableBody = F2(
 						{scrollableBody: scrollable})
 				}));
 	});
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary = {$: 'Secondary'};
+var $rundis$elm_bootstrap$Bootstrap$Button$secondary = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled($rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
 var $rundis$elm_bootstrap$Bootstrap$Modal$StartClose = {$: 'StartClose'};
 var $rundis$elm_bootstrap$Bootstrap$Modal$getCloseMsg = function (config_) {
 	var _v0 = config_.withAnimation;
@@ -12987,6 +13241,12 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$backdrop = F2(
 				A2($elm$html$Html$div, attributes, _List_Nil)
 			]);
 	});
+var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$className = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['className']),
+	$elm$json$Json$Decode$string);
+var $elm$json$Json$Decode$fail = _Json_fail;
 var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$target = function (decoder) {
 	return A2($elm$json$Json$Decode$field, 'target', decoder);
 };
@@ -13224,6 +13484,850 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$view = F2(
 					]),
 				A2($rundis$elm_bootstrap$Bootstrap$Modal$backdrop, visibility, conf)));
 	});
+var $author$project$RCMediaList$mediaPickerView = F3(
+	function (_v0, objectList, messages) {
+		var model = _v0.a;
+		var visibility = _v0.b;
+		var tableConfig = $author$project$RCMediaList$config(
+			$author$project$RCMediaList$pickerButton(messages));
+		var tableList = A3($author$project$RCMediaList$view, model, tableConfig, objectList);
+		return A2(
+			$rundis$elm_bootstrap$Bootstrap$Modal$view,
+			visibility,
+			A3(
+				$rundis$elm_bootstrap$Bootstrap$Modal$footer,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$rundis$elm_bootstrap$Bootstrap$Button$button,
+						_List_fromArray(
+							[
+								$rundis$elm_bootstrap$Bootstrap$Button$secondary,
+								$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick(
+										$author$project$RCMediaList$EditMediaMessage(messages.closeModal))
+									]))
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Cancel')
+							]))
+					]),
+				A3(
+					$rundis$elm_bootstrap$Bootstrap$Modal$body,
+					_List_Nil,
+					_List_fromArray(
+						[tableList]),
+					A3(
+						$rundis$elm_bootstrap$Bootstrap$Modal$h1,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Select a media object to insert.')
+							]),
+						A2(
+							$rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
+							true,
+							$rundis$elm_bootstrap$Bootstrap$Modal$large(
+								A2(
+									$rundis$elm_bootstrap$Bootstrap$Modal$scrollableBody,
+									true,
+									$rundis$elm_bootstrap$Bootstrap$Modal$config(
+										$author$project$RCMediaList$EditMediaMessage(messages.closeModal)))))))));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$Attrs = function (a) {
+	return {$: 'Attrs', a: a};
+};
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$attrs = function (attrs_) {
+	return $rundis$elm_bootstrap$Bootstrap$Dropdown$Attrs(attrs_);
+};
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownItem = function (a) {
+	return {$: 'DropdownItem', a: a};
+};
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$buttonItem = F2(
+	function (attributes, children) {
+		return $rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownItem(
+			A2(
+				$elm$html$Html$button,
+				_Utils_ap(
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$type_('button'),
+							$elm$html$Html$Attributes$class('dropdown-item')
+						]),
+					attributes),
+				children));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$dropDir = function (maybeDir) {
+	var toAttrs = function (dir) {
+		return _List_fromArray(
+			[
+				$elm$html$Html$Attributes$class(
+				'drop' + function () {
+					if (dir.$ === 'Dropleft') {
+						return 'left';
+					} else {
+						return 'right';
+					}
+				}())
+			]);
+	};
+	return A2(
+		$elm$core$Maybe$withDefault,
+		_List_Nil,
+		A2($elm$core$Maybe$map, toAttrs, maybeDir));
+};
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownAttributes = F2(
+	function (status, config) {
+		return _Utils_ap(
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$classList(
+					_List_fromArray(
+						[
+							_Utils_Tuple2('btn-group', true),
+							_Utils_Tuple2(
+							'show',
+							!_Utils_eq(status, $rundis$elm_bootstrap$Bootstrap$Dropdown$Closed)),
+							_Utils_Tuple2('dropup', config.isDropUp)
+						]))
+				]),
+			_Utils_ap(
+				$rundis$elm_bootstrap$Bootstrap$Dropdown$dropDir(config.dropDirection),
+				config.attributes));
+	});
+var $elm$core$String$fromFloat = _String_fromNumber;
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$menuStyles = F2(
+	function (_v0, config) {
+		var status = _v0.a.status;
+		var toggleSize = _v0.a.toggleSize;
+		var menuSize = _v0.a.menuSize;
+		var px = function (n) {
+			return $elm$core$String$fromFloat(n) + 'px';
+		};
+		var translate = F3(
+			function (x, y, z) {
+				return 'translate3d(' + (px(x) + (',' + (px(y) + (',' + (px(z) + ')')))));
+			});
+		var _default = _List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$style, 'top', '0'),
+				A2($elm$html$Html$Attributes$style, 'left', '0')
+			]);
+		var _v1 = _Utils_Tuple2(config.isDropUp, config.dropDirection);
+		_v1$0:
+		while (true) {
+			if (_v1.b.$ === 'Just') {
+				if (_v1.b.a.$ === 'Dropright') {
+					if (_v1.a) {
+						break _v1$0;
+					} else {
+						var _v2 = _v1.b.a;
+						return _default;
+					}
+				} else {
+					if (_v1.a) {
+						break _v1$0;
+					} else {
+						var _v3 = _v1.b.a;
+						return _Utils_ap(
+							_default,
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$Attributes$style,
+									'transform',
+									A3(translate, (-toggleSize.width) - menuSize.width, 0, 0))
+								]));
+					}
+				}
+			} else {
+				if (_v1.a) {
+					break _v1$0;
+				} else {
+					return _Utils_ap(
+						_default,
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$Attributes$style,
+								'transform',
+								A3(translate, -toggleSize.width, toggleSize.height, 0))
+							]));
+				}
+			}
+		}
+		return _Utils_ap(
+			_default,
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$Attributes$style,
+					'transform',
+					A3(translate, -toggleSize.width, -menuSize.height, 0))
+				]));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownMenu = F3(
+	function (state, config, items) {
+		var status = state.a.status;
+		var menuSize = state.a.menuSize;
+		var wrapperStyles = _Utils_eq(status, $rundis$elm_bootstrap$Bootstrap$Dropdown$Closed) ? _List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$style, 'height', '0'),
+				A2($elm$html$Html$Attributes$style, 'overflow', 'hidden'),
+				A2($elm$html$Html$Attributes$style, 'position', 'relative')
+			]) : _List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$style, 'position', 'relative')
+			]);
+		return A2(
+			$elm$html$Html$div,
+			wrapperStyles,
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_Utils_ap(
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$classList(
+								_List_fromArray(
+									[
+										_Utils_Tuple2('dropdown-menu', true),
+										_Utils_Tuple2('dropdown-menu-right', config.hasMenuRight),
+										_Utils_Tuple2(
+										'show',
+										!_Utils_eq(status, $rundis$elm_bootstrap$Bootstrap$Dropdown$Closed))
+									]))
+							]),
+						_Utils_ap(
+							A2($rundis$elm_bootstrap$Bootstrap$Dropdown$menuStyles, state, config),
+							config.menuAttrs)),
+					A2(
+						$elm$core$List$map,
+						function (_v0) {
+							var x = _v0.a;
+							return x;
+						},
+						items))
+				]));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$applyModifier = F2(
+	function (option, options) {
+		switch (option.$) {
+			case 'AlignMenuRight':
+				return _Utils_update(
+					options,
+					{hasMenuRight: true});
+			case 'Dropup':
+				return _Utils_update(
+					options,
+					{isDropUp: true});
+			case 'Attrs':
+				var attrs_ = option.a;
+				return _Utils_update(
+					options,
+					{attributes: attrs_});
+			case 'DropToDir':
+				var dir = option.a;
+				return _Utils_update(
+					options,
+					{
+						dropDirection: $elm$core$Maybe$Just(dir)
+					});
+			default:
+				var attrs_ = option.a;
+				return _Utils_update(
+					options,
+					{menuAttrs: attrs_});
+		}
+	});
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$defaultOptions = {attributes: _List_Nil, dropDirection: $elm$core$Maybe$Nothing, hasMenuRight: false, isDropUp: false, menuAttrs: _List_Nil};
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$toConfig = function (options) {
+	return A3($elm$core$List$foldl, $rundis$elm_bootstrap$Bootstrap$Dropdown$applyModifier, $rundis$elm_bootstrap$Bootstrap$Dropdown$defaultOptions, options);
+};
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$dropdown = F2(
+	function (state, _v0) {
+		var status = state.a.status;
+		var toggleMsg = _v0.toggleMsg;
+		var toggleButton = _v0.toggleButton;
+		var items = _v0.items;
+		var options = _v0.options;
+		var config = $rundis$elm_bootstrap$Bootstrap$Dropdown$toConfig(options);
+		var _v1 = toggleButton;
+		var buttonFn = _v1.a;
+		return A2(
+			$elm$html$Html$div,
+			A2($rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownAttributes, status, config),
+			_List_fromArray(
+				[
+					A2(buttonFn, toggleMsg, state),
+					A3($rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownMenu, state, config, items)
+				]));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark = {$: 'Dark'};
+var $rundis$elm_bootstrap$Bootstrap$Button$outlineDark = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark));
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownToggle = function (a) {
+	return {$: 'DropdownToggle', a: a};
+};
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$Open = {$: 'Open'};
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$nextStatus = function (status) {
+	switch (status.$) {
+		case 'Open':
+			return $rundis$elm_bootstrap$Bootstrap$Dropdown$Closed;
+		case 'ListenClicks':
+			return $rundis$elm_bootstrap$Bootstrap$Dropdown$Closed;
+		default:
+			return $rundis$elm_bootstrap$Bootstrap$Dropdown$Open;
+	}
+};
+var $elm$json$Json$Decode$float = _Json_decodeFloat;
+var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetHeight = A2($elm$json$Json$Decode$field, 'offsetHeight', $elm$json$Json$Decode$float);
+var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetWidth = A2($elm$json$Json$Decode$field, 'offsetWidth', $elm$json$Json$Decode$float);
+var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetLeft = A2($elm$json$Json$Decode$field, 'offsetLeft', $elm$json$Json$Decode$float);
+var $elm$json$Json$Decode$null = _Json_decodeNull;
+var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetParent = F2(
+	function (x, decoder) {
+		return $elm$json$Json$Decode$oneOf(
+			_List_fromArray(
+				[
+					A2(
+					$elm$json$Json$Decode$field,
+					'offsetParent',
+					$elm$json$Json$Decode$null(x)),
+					A2($elm$json$Json$Decode$field, 'offsetParent', decoder)
+				]));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetTop = A2($elm$json$Json$Decode$field, 'offsetTop', $elm$json$Json$Decode$float);
+var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$scrollLeft = A2($elm$json$Json$Decode$field, 'scrollLeft', $elm$json$Json$Decode$float);
+var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$scrollTop = A2($elm$json$Json$Decode$field, 'scrollTop', $elm$json$Json$Decode$float);
+var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$position = F2(
+	function (x, y) {
+		return A2(
+			$elm$json$Json$Decode$andThen,
+			function (_v0) {
+				var x_ = _v0.a;
+				var y_ = _v0.b;
+				return A2(
+					$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetParent,
+					_Utils_Tuple2(x_, y_),
+					A2($rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$position, x_, y_));
+			},
+			A5(
+				$elm$json$Json$Decode$map4,
+				F4(
+					function (scrollLeft_, scrollTop_, offsetLeft_, offsetTop_) {
+						return _Utils_Tuple2((x + offsetLeft_) - scrollLeft_, (y + offsetTop_) - scrollTop_);
+					}),
+				$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$scrollLeft,
+				$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$scrollTop,
+				$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetLeft,
+				$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetTop));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$boundingArea = A4(
+	$elm$json$Json$Decode$map3,
+	F3(
+		function (_v0, width, height) {
+			var x = _v0.a;
+			var y = _v0.b;
+			return {height: height, left: x, top: y, width: width};
+		}),
+	A2($rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$position, 0, 0),
+	$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetWidth,
+	$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetHeight);
+var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$childNode = function (idx) {
+	return $elm$json$Json$Decode$at(
+		_List_fromArray(
+			[
+				'childNodes',
+				$elm$core$String$fromInt(idx)
+			]));
+};
+var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$nextSibling = function (decoder) {
+	return A2($elm$json$Json$Decode$field, 'nextSibling', decoder);
+};
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$isToggle = A2(
+	$elm$json$Json$Decode$andThen,
+	function (_class) {
+		return A2($elm$core$String$contains, 'dropdown-toggle', _class) ? $elm$json$Json$Decode$succeed(true) : $elm$json$Json$Decode$succeed(false);
+	},
+	$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$className);
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$toggler = F2(
+	function (path, decoder) {
+		return $elm$json$Json$Decode$oneOf(
+			_List_fromArray(
+				[
+					A2(
+					$elm$json$Json$Decode$andThen,
+					function (res) {
+						return res ? A2($elm$json$Json$Decode$at, path, decoder) : $elm$json$Json$Decode$fail('');
+					},
+					A2($elm$json$Json$Decode$at, path, $rundis$elm_bootstrap$Bootstrap$Dropdown$isToggle)),
+					A2(
+					$elm$json$Json$Decode$andThen,
+					function (_v0) {
+						return A2(
+							$rundis$elm_bootstrap$Bootstrap$Dropdown$toggler,
+							_Utils_ap(
+								path,
+								_List_fromArray(
+									['parentElement'])),
+							decoder);
+					},
+					A2(
+						$elm$json$Json$Decode$at,
+						_Utils_ap(
+							path,
+							_List_fromArray(
+								['parentElement'])),
+						$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$className)),
+					$elm$json$Json$Decode$fail('No toggler found')
+				]));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$sizeDecoder = A3(
+	$elm$json$Json$Decode$map2,
+	$elm$core$Tuple$pair,
+	A2(
+		$rundis$elm_bootstrap$Bootstrap$Dropdown$toggler,
+		_List_fromArray(
+			['target']),
+		$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$boundingArea),
+	A2(
+		$rundis$elm_bootstrap$Bootstrap$Dropdown$toggler,
+		_List_fromArray(
+			['target']),
+		$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$nextSibling(
+			A2($rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$childNode, 0, $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$boundingArea))));
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$clickHandler = F2(
+	function (toMsg, state) {
+		var status = state.a.status;
+		return A2(
+			$elm$json$Json$Decode$andThen,
+			function (_v0) {
+				var b = _v0.a;
+				var m = _v0.b;
+				return $elm$json$Json$Decode$succeed(
+					toMsg(
+						$rundis$elm_bootstrap$Bootstrap$Dropdown$State(
+							{
+								menuSize: m,
+								status: $rundis$elm_bootstrap$Bootstrap$Dropdown$nextStatus(status),
+								toggleSize: b
+							})));
+			},
+			$rundis$elm_bootstrap$Bootstrap$Dropdown$sizeDecoder);
+	});
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$togglePrivate = F4(
+	function (buttonOptions, children, toggleMsg, state) {
+		return A2(
+			$elm$html$Html$button,
+			_Utils_ap(
+				$rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes(buttonOptions),
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('dropdown-toggle'),
+						$elm$html$Html$Attributes$type_('button'),
+						A2(
+						$elm$html$Html$Events$on,
+						'click',
+						A2($rundis$elm_bootstrap$Bootstrap$Dropdown$clickHandler, toggleMsg, state))
+					])),
+			children);
+	});
+var $rundis$elm_bootstrap$Bootstrap$Dropdown$toggle = F2(
+	function (buttonOptions, children) {
+		return $rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownToggle(
+			A2($rundis$elm_bootstrap$Bootstrap$Dropdown$togglePrivate, buttonOptions, children));
+	});
+var $author$project$View$mkDropdown = F5(
+	function (modelState, openMsg, mainTxt, itemMsgLst, titleText) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('d-inline-block')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$rundis$elm_bootstrap$Bootstrap$Dropdown$dropdown,
+					modelState,
+					{
+						items: A2(
+							$elm$core$List$map,
+							function (_v0) {
+								var buttonTxt = _v0.a;
+								var clickMsg = _v0.b;
+								return A2(
+									$rundis$elm_bootstrap$Bootstrap$Dropdown$buttonItem,
+									_List_fromArray(
+										[
+											$elm$html$Html$Events$onClick(clickMsg)
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text(buttonTxt)
+										]));
+							},
+							itemMsgLst),
+						options: _List_fromArray(
+							[
+								$rundis$elm_bootstrap$Bootstrap$Dropdown$attrs(
+								A2(
+									$elm$core$List$map,
+									$elm$html$Html$Attributes$class,
+									_List_fromArray(
+										['m-0', 'mb-1', 'mt-1', 'mr-1'])))
+							]),
+						toggleButton: A2(
+							$rundis$elm_bootstrap$Bootstrap$Dropdown$toggle,
+							_List_fromArray(
+								[
+									$rundis$elm_bootstrap$Bootstrap$Button$outlineDark,
+									$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$title(titleText)
+										]))
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text(mainTxt)
+								])),
+						toggleMsg: openMsg
+					})
+				]));
+	});
+var $author$project$Settings$Bold = {$: 'Bold'};
+var $author$project$View$BoldIcon = {$: 'BoldIcon'};
+var $author$project$Settings$Bullet = {$: 'Bullet'};
+var $author$project$Settings$H1 = {$: 'H1'};
+var $author$project$Settings$H2 = {$: 'H2'};
+var $author$project$Settings$H3 = {$: 'H3'};
+var $author$project$Main$InsertAtCursor = function (a) {
+	return {$: 'InsertAtCursor', a: a};
+};
+var $author$project$Main$InsertFootnoteAtCursor = {$: 'InsertFootnoteAtCursor'};
+var $author$project$Settings$Italic = {$: 'Italic'};
+var $author$project$View$ItalicIcon = {$: 'ItalicIcon'};
+var $author$project$Settings$Link = {$: 'Link'};
+var $author$project$View$LinkIcon = {$: 'LinkIcon'};
+var $author$project$View$ListIcon = {$: 'ListIcon'};
+var $author$project$View$MediaIcon = {$: 'MediaIcon'};
+var $author$project$Settings$Numbered = {$: 'Numbered'};
+var $author$project$View$NumberedIcon = {$: 'NumberedIcon'};
+var $author$project$Main$OpenMediaPicker = {$: 'OpenMediaPicker'};
+var $author$project$Settings$Quote = {$: 'Quote'};
+var $author$project$View$QuoteIcon = {$: 'QuoteIcon'};
+var $author$project$Main$RedoCM = {$: 'RedoCM'};
+var $author$project$View$RedoIcon = {$: 'RedoIcon'};
+var $author$project$Main$UndoCM = {$: 'UndoCM'};
+var $author$project$View$UndoIcon = {$: 'UndoIcon'};
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Light = {$: 'Light'};
+var $rundis$elm_bootstrap$Bootstrap$Button$light = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled($rundis$elm_bootstrap$Bootstrap$Internal$Button$Light));
+var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0 = $elm$html$Html$Attributes$class('m-0');
+var $author$project$View$mkButton = function (props) {
+	var spacing = props.offset ? _List_fromArray(
+		[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0]) : _List_Nil;
+	return A2(
+		$rundis$elm_bootstrap$Bootstrap$Button$button,
+		_List_fromArray(
+			[
+				props.primary ? $rundis$elm_bootstrap$Bootstrap$Button$outlineDark : $rundis$elm_bootstrap$Bootstrap$Button$light,
+				$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+				A2(
+					$elm$core$List$append,
+					_List_fromArray(
+						[
+							$elm$html$Html$Events$onClick(props.onClickMsg),
+							A2(
+							$elm$html$Html$Attributes$style,
+							'display',
+							props.hidden ? 'none' : 'inline-block'),
+							$elm$html$Html$Attributes$title(props.title)
+						]),
+					A2($elm$core$List$append, spacing, props.otherAttrs)))
+			]),
+		_List_fromArray(
+			[
+				$author$project$View$renderIcon(props.icon),
+				$elm$html$Html$text(props.text)
+			]));
+};
+var $author$project$Main$separator = A2(
+	$elm$html$Html$span,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('separator')
+		]),
+	_List_fromArray(
+		[
+			$elm$html$Html$text('|')
+		]));
+var $author$project$Settings$snippet = function (s) {
+	switch (s.$) {
+		case 'Bold':
+			return _Utils_Tuple2('****', -2);
+		case 'Italic':
+			return _Utils_Tuple2('__', -1);
+		case 'H1':
+			return _Utils_Tuple2('# Header 1', 0);
+		case 'H2':
+			return _Utils_Tuple2('## Header 2', 0);
+		case 'H3':
+			return _Utils_Tuple2('### Header 3', 0);
+		case 'H4':
+			return _Utils_Tuple2('#### Header 4', 0);
+		case 'Bullet':
+			return _Utils_Tuple2('* ', 0);
+		case 'Numbered':
+			return _Utils_Tuple2('1. ', 0);
+		case 'Quote':
+			return _Utils_Tuple2('> ', 0);
+		default:
+			return _Utils_Tuple2('[Link text](http://)', -1);
+	}
+};
+var $author$project$Main$mkEditorToolbar = function (tabState) {
+	var snippetMsg = function (action) {
+		return $author$project$Main$InsertAtCursor(
+			$author$project$Settings$snippet(action));
+	};
+	var _default = $author$project$View$defaultButton(
+		$author$project$Main$InsertAtCursor(
+			_Utils_Tuple2('', 0)));
+	var cmEditor = function () {
+		switch (tabState.$) {
+			case 'CmMarkdownTab':
+				return true;
+			case 'TxtMarkdownTab':
+				return false;
+			case 'StyleTab':
+				return true;
+			default:
+				return false;
+		}
+	}();
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				$author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{
+						onClickMsg: snippetMsg($author$project$Settings$H1),
+						text: 'H1',
+						title: 'Header 1'
+					})),
+				$author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{
+						onClickMsg: snippetMsg($author$project$Settings$H2),
+						text: 'H2',
+						title: 'Header 2'
+					})),
+				$author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{
+						onClickMsg: snippetMsg($author$project$Settings$H3),
+						text: 'H3',
+						title: 'Header 3'
+					})),
+				$author$project$Main$separator,
+				$author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{
+						icon: $author$project$View$BoldIcon,
+						onClickMsg: snippetMsg($author$project$Settings$Bold),
+						title: 'Bold'
+					})),
+				$author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{
+						icon: $author$project$View$ItalicIcon,
+						onClickMsg: snippetMsg($author$project$Settings$Italic),
+						title: 'Italic'
+					})),
+				$author$project$Main$separator,
+				$author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{
+						icon: $author$project$View$ListIcon,
+						onClickMsg: snippetMsg($author$project$Settings$Bullet),
+						title: 'Unordered list'
+					})),
+				$author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{
+						icon: $author$project$View$NumberedIcon,
+						onClickMsg: snippetMsg($author$project$Settings$Numbered),
+						title: 'Numbered list'
+					})),
+				$author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{
+						icon: $author$project$View$LinkIcon,
+						onClickMsg: snippetMsg($author$project$Settings$Link),
+						title: 'Hyperlink'
+					})),
+				$author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{
+						icon: $author$project$View$QuoteIcon,
+						onClickMsg: snippetMsg($author$project$Settings$Quote),
+						title: 'Quote'
+					})),
+				$author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{onClickMsg: $author$project$Main$InsertFootnoteAtCursor, text: '*', title: 'Insert footnote'})),
+				$author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{icon: $author$project$View$MediaIcon, onClickMsg: $author$project$Main$OpenMediaPicker, title: 'Insert media object'})),
+				$author$project$Main$separator
+			]),
+		cmEditor ? _List_fromArray(
+			[
+				$author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{hidden: !cmEditor, icon: $author$project$View$UndoIcon, onClickMsg: $author$project$Main$UndoCM, title: 'Undo'})),
+				$author$project$View$mkButton(
+				_Utils_update(
+					_default,
+					{hidden: !cmEditor, icon: $author$project$View$RedoIcon, onClickMsg: $author$project$Main$RedoCM, title: 'Redo'})),
+				$author$project$Main$separator
+			]) : _List_Nil);
+};
+var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1 = $elm$html$Html$Attributes$class('mr-1');
+var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1 = $elm$html$Html$Attributes$class('mt-1');
+var $author$project$View$optionalBlock = F2(
+	function (show, elem) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$Attributes$style,
+					'display',
+					show ? 'inline-block' : 'none')
+				]),
+			_List_fromArray(
+				[elem]));
+	});
+var $author$project$Main$selectedEditorIsMarkdown = function (model) {
+	var _v0 = model.editor;
+	if (_v0.a.$ === 'EditorMarkdown') {
+		var _v1 = _v0.a;
+		return true;
+	} else {
+		return false;
+	}
+};
+var $author$project$Main$selectedEditorIsStyle = function (model) {
+	var _v0 = model.editor;
+	if (_v0.a.$ === 'EditorStyle') {
+		var _v1 = _v0.a;
+		return true;
+	} else {
+		return false;
+	}
+};
+var $author$project$View$SaveIcon = {$: 'SaveIcon'};
+var $elm$core$List$concatMap = F2(
+	function (f, list) {
+		return $elm$core$List$concat(
+			A2($elm$core$List$map, f, list));
+	});
+var $elm$core$String$foldr = _String_foldr;
+var $elm$core$String$toList = function (string) {
+	return A3($elm$core$String$foldr, $elm$core$List$cons, _List_Nil, string);
+};
+var $author$project$Util$wordCount = function (str) {
+	var splitter = F2(
+		function (_char, z) {
+			return A2(
+				$elm$core$List$concatMap,
+				$elm$core$String$split(
+					$elm$core$String$fromChar(_char)),
+				z);
+		});
+	var splitChars = $elm$core$String$toList(' .,!?()');
+	var splitted = A3(
+		$elm$core$List$foldr,
+		splitter,
+		_List_fromArray(
+			[str]),
+		splitChars);
+	var filterEmpty = A2(
+		$elm$core$List$filter,
+		A2($elm$core$Basics$composeL, $elm$core$Basics$not, $elm$core$String$isEmpty),
+		splitted);
+	return $elm$core$List$length(filterEmpty);
+};
+var $author$project$Exposition$wordCount = function (expo) {
+	return $author$project$Util$wordCount(expo.markdownInput);
+};
+var $author$project$Main$statusBar = function (model) {
+	var wc = $author$project$Exposition$wordCount(model.exposition);
+	var status = 'Word count: ' + $elm$core$String$fromInt(wc);
+	var saveButtonText = model.saved ? 'Saved' : 'Not Saved';
+	var saveButton = A2(
+		$rundis$elm_bootstrap$Bootstrap$Button$button,
+		_List_fromArray(
+			[
+				$rundis$elm_bootstrap$Bootstrap$Button$light,
+				$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('save-button'),
+						$elm$html$Html$Events$onClick($author$project$Main$SaveExposition)
+					]))
+			]),
+		_List_fromArray(
+			[
+				$author$project$View$renderIcon($author$project$View$SaveIcon),
+				$elm$html$Html$text(saveButtonText)
+			]));
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('editor-status-bar')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$span,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(status)
+					])),
+				saveButton
+			]));
+};
+var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $rundis$elm_bootstrap$Bootstrap$Modal$h2 = $rundis$elm_bootstrap$Bootstrap$Modal$titledHeader($elm$html$Html$h2);
+var $rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
+var $rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
+var $elm$html$Html$p = _VirtualDom_node('p');
 var $author$project$RCMediaEdit$Copyright = {$: 'Copyright'};
 var $author$project$RCMediaEdit$Description = {$: 'Description'};
 var $author$project$RCMediaEdit$LicenseField = {$: 'LicenseField'};
@@ -13916,11 +15020,6 @@ var $rundis$elm_bootstrap$Bootstrap$Grid$Internal$colAttributes = function (modi
 								}(),
 								options.attributes)))))));
 };
-var $elm$virtual_dom$VirtualDom$keyedNode = function (tag) {
-	return _VirtualDom_keyedNode(
-		_VirtualDom_noScript(tag));
-};
-var $elm$html$Html$Keyed$node = $elm$virtual_dom$VirtualDom$keyedNode;
 var $rundis$elm_bootstrap$Bootstrap$Grid$renderCol = function (column) {
 	switch (column.$) {
 		case 'Column':
@@ -14098,7 +15197,6 @@ var $rundis$elm_bootstrap$Bootstrap$Grid$row = F2(
 			A2($elm$core$List$map, $rundis$elm_bootstrap$Bootstrap$Grid$renderCol, cols));
 	});
 var $rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col6 = {$: 'Col6'};
-var $rundis$elm_bootstrap$Bootstrap$General$Internal$SM = {$: 'SM'};
 var $rundis$elm_bootstrap$Bootstrap$Grid$Internal$ColWidth = function (a) {
 	return {$: 'ColWidth', a: a};
 };
@@ -14148,33 +15246,6 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Select$item = F2(
 		return $rundis$elm_bootstrap$Bootstrap$Form$Select$Item(
 			A2($elm$html$Html$option, attributes, children));
 	});
-var $elm$html$Html$Events$alwaysStop = function (x) {
-	return _Utils_Tuple2(x, true);
-};
-var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
-	return {$: 'MayStopPropagation', a: a};
-};
-var $elm$html$Html$Events$stopPropagationOn = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
-	});
-var $elm$html$Html$Events$targetValue = A2(
-	$elm$json$Json$Decode$at,
-	_List_fromArray(
-		['target', 'value']),
-	$elm$json$Json$Decode$string);
-var $elm$html$Html$Events$onInput = function (tagger) {
-	return A2(
-		$elm$html$Html$Events$stopPropagationOn,
-		'input',
-		A2(
-			$elm$json$Json$Decode$map,
-			$elm$html$Html$Events$alwaysStop,
-			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
-};
 var $rundis$elm_bootstrap$Bootstrap$Form$Select$Select = function (a) {
 	return {$: 'Select', a: a};
 };
@@ -14240,7 +15311,6 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Select$customEventOnChange = function (
 		A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue));
 };
 var $rundis$elm_bootstrap$Bootstrap$Form$Select$defaultOptions = {attributes: _List_Nil, custom: false, disabled: false, id: $elm$core$Maybe$Nothing, onChange: $elm$core$Maybe$Nothing, size: $elm$core$Maybe$Nothing, validation: $elm$core$Maybe$Nothing};
-var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
 var $rundis$elm_bootstrap$Bootstrap$Form$Select$sizeAttribute = F2(
 	function (isCustom, size_) {
 		var prefix = isCustom ? 'custom-select-' : 'form-control-';
@@ -14374,7 +15444,6 @@ var $rundis$elm_bootstrap$Bootstrap$Form$invalidFeedback = F2(
 				attributes),
 			children);
 	});
-var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
 var $rundis$elm_bootstrap$Bootstrap$Form$Input$Size = function (a) {
 	return {$: 'Size', a: a};
 };
@@ -14398,7 +15467,6 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Input$create = F2(
 					options)
 			});
 	});
-var $elm$html$Html$input = _VirtualDom_node('input');
 var $rundis$elm_bootstrap$Bootstrap$Form$Input$applyModifier = F2(
 	function (modifier, options) {
 		switch (modifier.$) {
@@ -14814,28 +15882,6 @@ var $author$project$RCMediaEdit$viewTextAreaWithLabel = function (props) {
 var $elm$html$Html$audio = _VirtualDom_node('audio');
 var $elm$html$Html$Attributes$autoplay = $elm$html$Html$Attributes$boolProperty('autoplay');
 var $elm$html$Html$Attributes$controls = $elm$html$Html$Attributes$boolProperty('controls');
-var $author$project$Exposition$customThumbUrl = F2(
-	function (size, data) {
-		var sizeStr = $elm$core$String$fromInt(size);
-		return '/text-editor/simple-media-thumb?research=' + ($elm$core$String$fromInt(data.expositionId) + ('&simple-media=' + ($elm$core$String$fromInt(data.id) + ('&width=' + (sizeStr + ('&height=' + sizeStr))))));
-	});
-var $author$project$RCMediaPreview$getStyle = function (size) {
-	if (size.$ === 'PreviewBig') {
-		return _List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$style, 'width', '100%'),
-				A2($elm$html$Html$Attributes$style, 'height', '250px'),
-				A2($elm$html$Html$Attributes$style, 'object-fit', 'cover')
-			]);
-	} else {
-		return _List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$style, 'width', '60px'),
-				A2($elm$html$Html$Attributes$style, 'hieght', '60px'),
-				A2($elm$html$Html$Attributes$style, 'object-fit', 'cover')
-			]);
-	}
-};
 var $elm$html$Html$Attributes$loop = $elm$html$Html$Attributes$boolProperty('loop');
 var $elm$html$Html$source = _VirtualDom_node('source');
 var $elm$html$Html$video = _VirtualDom_node('video');
@@ -15131,898 +16177,8 @@ var $author$project$RCMediaEdit$view = F5(
 			return emptyDiv;
 		}
 	});
-var $author$project$RCMediaList$SetQuery = function (a) {
-	return {$: 'SetQuery', a: a};
-};
-var $author$project$RCMediaList$SortableTableMessage = function (a) {
-	return {$: 'SortableTableMessage', a: a};
-};
-var $author$project$RCMediaList$SetTableState = function (a) {
-	return {$: 'SetTableState', a: a};
-};
-var $billstclair$elm_sortable_table$Table$None = {$: 'None'};
-var $billstclair$elm_sortable_table$Table$unsortable = $billstclair$elm_sortable_table$Table$None;
-var $billstclair$elm_sortable_table$Table$Column = function (a) {
-	return {$: 'Column', a: a};
-};
-var $billstclair$elm_sortable_table$Table$veryCustomColumn = $billstclair$elm_sortable_table$Table$Column;
-var $billstclair$elm_sortable_table$Table$HtmlDetails = F2(
-	function (attributes, children) {
-		return {attributes: attributes, children: children};
-	});
-var $author$project$RCMediaList$EditMediaMessage = function (a) {
-	return {$: 'EditMediaMessage', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1 = $elm$html$Html$Attributes$class('ml-1');
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger = {$: 'Danger'};
-var $rundis$elm_bootstrap$Bootstrap$Button$outlineDanger = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Size = function (a) {
-	return {$: 'Size', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Button$small = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Size($rundis$elm_bootstrap$Bootstrap$General$Internal$SM);
-var $author$project$RCMediaList$deleteButton = F2(
-	function (messages, object) {
-		var makeDeleteMessage = A2($elm$core$Basics$composeL, $author$project$RCMediaList$EditMediaMessage, messages.deleteObject);
-		return A2(
-			$rundis$elm_bootstrap$Bootstrap$Button$button,
-			_List_fromArray(
-				[
-					$rundis$elm_bootstrap$Bootstrap$Button$small,
-					$rundis$elm_bootstrap$Bootstrap$Button$outlineDanger,
-					$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-					_List_fromArray(
-						[
-							$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1,
-							$elm$html$Html$Events$onClick(
-							makeDeleteMessage(object))
-						]))
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Delete')
-				]));
-	});
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Info = {$: 'Info'};
-var $rundis$elm_bootstrap$Bootstrap$Button$outlineInfo = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Info));
-var $author$project$RCMediaList$editButton = F2(
-	function (messages, object) {
-		var makeEditMessage = A2(
-			$elm$core$Basics$composeL,
-			A2(
-				$elm$core$Basics$composeL,
-				A2($elm$core$Basics$composeL, $author$project$RCMediaList$EditMediaMessage, messages.editObject),
-				$elm$core$String$fromInt),
-			function ($) {
-				return $.id;
-			});
-		return A2(
-			$rundis$elm_bootstrap$Bootstrap$Button$button,
-			_List_fromArray(
-				[
-					$rundis$elm_bootstrap$Bootstrap$Button$small,
-					$rundis$elm_bootstrap$Bootstrap$Button$outlineInfo,
-					$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-					_List_fromArray(
-						[
-							$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1,
-							$elm$html$Html$Events$onClick(
-							makeEditMessage(object))
-						]))
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Edit')
-				]));
-	});
-var $author$project$RCMediaList$viewObjectButtons = F2(
-	function (messages, object) {
-		return A2(
-			$billstclair$elm_sortable_table$Table$HtmlDetails,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A2($author$project$RCMediaList$editButton, messages, object),
-					A2($author$project$RCMediaList$deleteButton, messages, object)
-				]));
-	});
-var $author$project$RCMediaList$buttonColumn = function (messages) {
-	return $billstclair$elm_sortable_table$Table$veryCustomColumn(
-		{
-			name: '',
-			sorter: $billstclair$elm_sortable_table$Table$unsortable,
-			viewData: $author$project$RCMediaList$viewObjectButtons(messages)
-		});
-};
-var $billstclair$elm_sortable_table$Table$Config = function (a) {
-	return {$: 'Config', a: a};
-};
-var $billstclair$elm_sortable_table$Table$customConfig = function (_v0) {
-	var toId = _v0.toId;
-	var toMsg = _v0.toMsg;
-	var columns = _v0.columns;
-	var customizations = _v0.customizations;
-	return $billstclair$elm_sortable_table$Table$Config(
-		{
-			columns: A2(
-				$elm$core$List$map,
-				function (_v1) {
-					var cData = _v1.a;
-					return cData;
-				},
-				columns),
-			customizations: customizations,
-			toId: toId,
-			toMsg: toMsg
-		});
-};
-var $billstclair$elm_sortable_table$Table$simpleRowAttrs = function (_v0) {
-	return _List_Nil;
-};
-var $elm$core$Char$fromCode = _Char_fromCode;
-var $elm$core$String$fromList = _String_fromList;
-var $billstclair$elm_sortable_table$Table$nbsp = $elm$core$String$fromList(
-	_List_fromArray(
-		[
-			$elm$core$Char$fromCode(160)
-		]));
-var $billstclair$elm_sortable_table$Table$darkGrey = function (symbol) {
-	return A2(
-		$elm$html$Html$span,
-		_List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$style, 'color', '#555')
-			]),
-		_List_fromArray(
-			[
-				$elm$html$Html$text(
-				_Utils_ap($billstclair$elm_sortable_table$Table$nbsp, symbol))
-			]));
-};
-var $billstclair$elm_sortable_table$Table$lightGrey = function (symbol) {
-	return A2(
-		$elm$html$Html$span,
-		_List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$style, 'color', '#ccc')
-			]),
-		_List_fromArray(
-			[
-				$elm$html$Html$text(
-				_Utils_ap($billstclair$elm_sortable_table$Table$nbsp, symbol))
-			]));
-};
-var $elm$html$Html$th = _VirtualDom_node('th');
-var $billstclair$elm_sortable_table$Table$simpleTheadHelp = function (_v0) {
-	var name = _v0.a;
-	var status = _v0.b;
-	var click = _v0.c;
-	var content = function () {
-		switch (status.$) {
-			case 'Unsortable':
-				return _List_fromArray(
-					[
-						$elm$html$Html$text(name)
-					]);
-			case 'Sortable':
-				var selected = status.a;
-				return _List_fromArray(
-					[
-						$elm$html$Html$text(name),
-						selected ? $billstclair$elm_sortable_table$Table$darkGrey('↓') : $billstclair$elm_sortable_table$Table$lightGrey('↓')
-					]);
-			default:
-				if (status.a.$ === 'Nothing') {
-					var _v2 = status.a;
-					return _List_fromArray(
-						[
-							$elm$html$Html$text(name),
-							$billstclair$elm_sortable_table$Table$lightGrey('↕')
-						]);
-				} else {
-					var isReversed = status.a.a;
-					return _List_fromArray(
-						[
-							$elm$html$Html$text(name),
-							$billstclair$elm_sortable_table$Table$darkGrey(
-							isReversed ? '↑' : '↓')
-						]);
-				}
-		}
-	}();
-	return A2(
-		$elm$html$Html$th,
-		_List_fromArray(
-			[click]),
-		content);
-};
-var $billstclair$elm_sortable_table$Table$simpleThead = function (headers) {
-	return A2(
-		$billstclair$elm_sortable_table$Table$HtmlDetails,
-		_List_Nil,
-		A2($elm$core$List$map, $billstclair$elm_sortable_table$Table$simpleTheadHelp, headers));
-};
-var $billstclair$elm_sortable_table$Table$defaultCustomizations = {caption: $elm$core$Maybe$Nothing, rowAttrs: $billstclair$elm_sortable_table$Table$simpleRowAttrs, tableAttrs: _List_Nil, tbodyAttrs: _List_Nil, tfoot: $elm$core$Maybe$Nothing, thead: $billstclair$elm_sortable_table$Table$simpleThead};
-var $billstclair$elm_sortable_table$Table$IncOrDec = function (a) {
-	return {$: 'IncOrDec', a: a};
-};
-var $billstclair$elm_sortable_table$Table$increasingOrDecreasingBy = function (toComparable) {
-	return $billstclair$elm_sortable_table$Table$IncOrDec(
-		$elm$core$List$sortBy(toComparable));
-};
-var $billstclair$elm_sortable_table$Table$textDetails = function (str) {
-	return A2(
-		$billstclair$elm_sortable_table$Table$HtmlDetails,
-		_List_Nil,
-		_List_fromArray(
-			[
-				$elm$html$Html$text(str)
-			]));
-};
-var $billstclair$elm_sortable_table$Table$stringColumn = F2(
-	function (name, toStr) {
-		return $billstclair$elm_sortable_table$Table$Column(
-			{
-				name: name,
-				sorter: $billstclair$elm_sortable_table$Table$increasingOrDecreasingBy(toStr),
-				viewData: A2($elm$core$Basics$composeL, $billstclair$elm_sortable_table$Table$textDetails, toStr)
-			});
-	});
-var $author$project$RCMediaPreview$PreviewSmall = {$: 'PreviewSmall'};
-var $author$project$View$CameraIcon = {$: 'CameraIcon'};
-var $author$project$View$SpeakerIcon = {$: 'SpeakerIcon'};
-var $author$project$RCMediaPreview$renderAsIconHyperlink = F2(
-	function (icon, object) {
-		return A2(
-			$elm$html$Html$a,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$href(
-					$author$project$Exposition$mediaUrl(object)),
-					$elm$html$Html$Attributes$target('_blank'),
-					$elm$html$Html$Attributes$title('preview audio ' + object.name)
-				]),
-			_List_fromArray(
-				[
-					$author$project$View$renderIcon(icon)
-				]));
-	});
-var $author$project$RCMediaPreview$renderAsMini = F2(
-	function (object, size) {
-		var reso = function () {
-			if (size.$ === 'PreviewBig') {
-				return 500;
-			} else {
-				return 120;
-			}
-		}();
-		var thumburl = A2($author$project$Exposition$customThumbUrl, reso, object);
-		return A2(
-			$elm$html$Html$img,
-			_Utils_ap(
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$src(thumburl)
-					]),
-				$author$project$RCMediaPreview$getStyle(size)),
-			_List_Nil);
-	});
-var $author$project$View$TriangleRight = {$: 'TriangleRight'};
-var $author$project$RCMediaPreview$renderMediaAsHyperlink = F2(
-	function (typeString, object) {
-		return A2(
-			$elm$html$Html$span,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('rc-media-preview')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text(typeString + ' '),
-					A2(
-					$elm$html$Html$a,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$href(
-							$author$project$Exposition$mediaUrl(object)),
-							$elm$html$Html$Attributes$target('_blank'),
-							$elm$html$Html$Attributes$title('open preview')
-						]),
-					_List_fromArray(
-						[
-							$author$project$View$renderIcon($author$project$View$TriangleRight)
-						]))
-				]));
-	});
-var $author$project$RCMediaPreview$viewTableThumbnail = F2(
-	function (object, size) {
-		var _v0 = object.mediaType;
-		switch (_v0.$) {
-			case 'RCImage':
-				return A2($author$project$RCMediaPreview$renderAsMini, object, size);
-			case 'RCSvg':
-				return A2($author$project$RCMediaPreview$renderAsMini, object, size);
-			case 'RCAudio':
-				var settings = _v0.a;
-				return A2($author$project$RCMediaPreview$renderAsIconHyperlink, $author$project$View$SpeakerIcon, object);
-			case 'RCVideo':
-				var settings = _v0.a;
-				return A2($author$project$RCMediaPreview$renderAsIconHyperlink, $author$project$View$CameraIcon, object);
-			default:
-				return A2($author$project$RCMediaPreview$renderMediaAsHyperlink, 'PDF', object);
-		}
-	});
-var $author$project$RCMediaList$thumbnailColumn = $billstclair$elm_sortable_table$Table$veryCustomColumn(
-	{
-		name: '',
-		sorter: $billstclair$elm_sortable_table$Table$unsortable,
-		viewData: function (rcObject) {
-			return A2(
-				$billstclair$elm_sortable_table$Table$HtmlDetails,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2($author$project$RCMediaPreview$viewTableThumbnail, rcObject, $author$project$RCMediaPreview$PreviewSmall)
-					]));
-		}
-	});
-var $author$project$RCMediaList$config = function (messages) {
-	var makeMsg = A2($elm$core$Basics$composeL, $author$project$RCMediaList$SortableTableMessage, $author$project$RCMediaList$SetTableState);
-	return $billstclair$elm_sortable_table$Table$customConfig(
-		{
-			columns: _List_fromArray(
-				[
-					$author$project$RCMediaList$thumbnailColumn,
-					A2(
-					$billstclair$elm_sortable_table$Table$stringColumn,
-					'ID',
-					A2(
-						$elm$core$Basics$composeL,
-						$elm$core$String$fromInt,
-						function ($) {
-							return $.id;
-						})),
-					A2(
-					$billstclair$elm_sortable_table$Table$stringColumn,
-					'Name',
-					function ($) {
-						return $.name;
-					}),
-					$author$project$RCMediaList$buttonColumn(messages)
-				]),
-			customizations: _Utils_update(
-				$billstclair$elm_sortable_table$Table$defaultCustomizations,
-				{
-					rowAttrs: $elm$core$Basics$always(
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('rc-media-table-row')
-							])),
-					tableAttrs: _List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('rc-media-table')
-						])
-				}),
-			toId: A2(
-				$elm$core$Basics$composeL,
-				$elm$core$String$fromInt,
-				function ($) {
-					return $.id;
-				}),
-			toMsg: makeMsg
-		});
-};
-var $elm$core$String$toLower = _String_toLower;
-var $author$project$RCMediaList$filterObjectsByName = F2(
-	function (query, lst) {
-		if (query === '') {
-			return lst;
-		} else {
-			var q = query;
-			var lowerQuery = $elm$core$String$toLower(q);
-			return A2(
-				$elm$core$List$filter,
-				A2(
-					$elm$core$Basics$composeL,
-					A2(
-						$elm$core$Basics$composeL,
-						$elm$core$String$contains(lowerQuery),
-						$elm$core$String$toLower),
-					function ($) {
-						return $.name;
-					}),
-				lst);
-		}
-	});
-var $rundis$elm_bootstrap$Bootstrap$Internal$Role$Info = {$: 'Info'};
-var $rundis$elm_bootstrap$Bootstrap$Alert$Config = function (a) {
-	return {$: 'Config', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Alert$attrs = F2(
-	function (attributes, _v0) {
-		var configRec = _v0.a;
-		return $rundis$elm_bootstrap$Bootstrap$Alert$Config(
-			_Utils_update(
-				configRec,
-				{attributes: attributes}));
-	});
-var $rundis$elm_bootstrap$Bootstrap$Alert$children = F2(
-	function (children_, _v0) {
-		var configRec = _v0.a;
-		return $rundis$elm_bootstrap$Bootstrap$Alert$Config(
-			_Utils_update(
-				configRec,
-				{children: children_}));
-	});
-var $rundis$elm_bootstrap$Bootstrap$Internal$Role$Secondary = {$: 'Secondary'};
-var $rundis$elm_bootstrap$Bootstrap$Alert$config = $rundis$elm_bootstrap$Bootstrap$Alert$Config(
-	{attributes: _List_Nil, children: _List_Nil, dismissable: $elm$core$Maybe$Nothing, role: $rundis$elm_bootstrap$Bootstrap$Internal$Role$Secondary, visibility: $rundis$elm_bootstrap$Bootstrap$Alert$Shown, withAnimation: false});
-var $rundis$elm_bootstrap$Bootstrap$Alert$role = F2(
-	function (role_, _v0) {
-		var configRec = _v0.a;
-		return $rundis$elm_bootstrap$Bootstrap$Alert$Config(
-			_Utils_update(
-				configRec,
-				{role: role_}));
-	});
-var $rundis$elm_bootstrap$Bootstrap$Alert$StartClose = {$: 'StartClose'};
-var $rundis$elm_bootstrap$Bootstrap$Alert$clickHandler = F2(
-	function (visibility, configRec) {
-		var handleClick = F2(
-			function (viz, toMsg) {
-				return $elm$html$Html$Events$onClick(
-					toMsg(viz));
-			});
-		var _v0 = configRec.dismissable;
-		if (_v0.$ === 'Just') {
-			var dismissMsg = _v0.a;
-			return _List_fromArray(
-				[
-					configRec.withAnimation ? A2(handleClick, $rundis$elm_bootstrap$Bootstrap$Alert$StartClose, dismissMsg) : A2(handleClick, $rundis$elm_bootstrap$Bootstrap$Alert$Closed, dismissMsg)
-				]);
-		} else {
-			return _List_Nil;
-		}
-	});
-var $rundis$elm_bootstrap$Bootstrap$Alert$injectButton = F2(
-	function (btn, children_) {
-		if (children_.b) {
-			var head = children_.a;
-			var tail = children_.b;
-			return A2(
-				$elm$core$List$cons,
-				head,
-				A2($elm$core$List$cons, btn, tail));
-		} else {
-			return _List_fromArray(
-				[btn]);
-		}
-	});
-var $rundis$elm_bootstrap$Bootstrap$Alert$isDismissable = function (configRec) {
-	var _v0 = configRec.dismissable;
-	if (_v0.$ === 'Just') {
-		return true;
-	} else {
-		return false;
-	}
-};
-var $rundis$elm_bootstrap$Bootstrap$Alert$maybeAddDismissButton = F3(
-	function (visibilty, configRec, children_) {
-		return $rundis$elm_bootstrap$Bootstrap$Alert$isDismissable(configRec) ? A2(
-			$rundis$elm_bootstrap$Bootstrap$Alert$injectButton,
-			A2(
-				$elm$html$Html$button,
-				_Utils_ap(
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$type_('button'),
-							$elm$html$Html$Attributes$class('close'),
-							A2($elm$html$Html$Attributes$attribute, 'aria-label', 'close')
-						]),
-					A2($rundis$elm_bootstrap$Bootstrap$Alert$clickHandler, visibilty, configRec)),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$span,
-						_List_fromArray(
-							[
-								A2($elm$html$Html$Attributes$attribute, 'aria-hidden', 'true')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('×')
-							]))
-					])),
-			children_) : children_;
-	});
-var $rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass = F2(
-	function (prefix, role) {
-		return $elm$html$Html$Attributes$class(
-			prefix + ('-' + function () {
-				switch (role.$) {
-					case 'Primary':
-						return 'primary';
-					case 'Secondary':
-						return 'secondary';
-					case 'Success':
-						return 'success';
-					case 'Info':
-						return 'info';
-					case 'Warning':
-						return 'warning';
-					case 'Danger':
-						return 'danger';
-					case 'Light':
-						return 'light';
-					default:
-						return 'dark';
-				}
-			}()));
-	});
-var $rundis$elm_bootstrap$Bootstrap$Alert$viewAttributes = F2(
-	function (visibility, configRec) {
-		var visibiltyAttributes = _Utils_eq(visibility, $rundis$elm_bootstrap$Bootstrap$Alert$Closed) ? _List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$style, 'display', 'none')
-			]) : _List_Nil;
-		var animationAttributes = function () {
-			if (configRec.withAnimation) {
-				var _v0 = configRec.dismissable;
-				if (_v0.$ === 'Just') {
-					var dismissMsg = _v0.a;
-					return _List_fromArray(
-						[
-							A2(
-							$elm$html$Html$Events$on,
-							'transitionend',
-							$elm$json$Json$Decode$succeed(
-								dismissMsg($rundis$elm_bootstrap$Bootstrap$Alert$Closed)))
-						]);
-				} else {
-					return _List_Nil;
-				}
-			} else {
-				return _List_Nil;
-			}
-		}();
-		var alertAttributes = _List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$attribute, 'role', 'alert'),
-				$elm$html$Html$Attributes$classList(
-				_List_fromArray(
-					[
-						_Utils_Tuple2('alert', true),
-						_Utils_Tuple2(
-						'alert-dismissible',
-						$rundis$elm_bootstrap$Bootstrap$Alert$isDismissable(configRec)),
-						_Utils_Tuple2('fade', configRec.withAnimation),
-						_Utils_Tuple2(
-						'show',
-						_Utils_eq(visibility, $rundis$elm_bootstrap$Bootstrap$Alert$Shown))
-					])),
-				A2($rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass, 'alert', configRec.role)
-			]);
-		return $elm$core$List$concat(
-			_List_fromArray(
-				[configRec.attributes, alertAttributes, visibiltyAttributes, animationAttributes]));
-	});
-var $rundis$elm_bootstrap$Bootstrap$Alert$view = F2(
-	function (visibility, _v0) {
-		var configRec = _v0.a;
-		return A2(
-			$elm$html$Html$div,
-			A2($rundis$elm_bootstrap$Bootstrap$Alert$viewAttributes, visibility, configRec),
-			A3($rundis$elm_bootstrap$Bootstrap$Alert$maybeAddDismissButton, visibility, configRec, configRec.children));
-	});
-var $rundis$elm_bootstrap$Bootstrap$Alert$simple = F3(
-	function (role_, attributes, children_) {
-		return A2(
-			$rundis$elm_bootstrap$Bootstrap$Alert$view,
-			$rundis$elm_bootstrap$Bootstrap$Alert$Shown,
-			A2(
-				$rundis$elm_bootstrap$Bootstrap$Alert$children,
-				children_,
-				A2(
-					$rundis$elm_bootstrap$Bootstrap$Alert$attrs,
-					attributes,
-					A2($rundis$elm_bootstrap$Bootstrap$Alert$role, role_, $rundis$elm_bootstrap$Bootstrap$Alert$config))));
-	});
-var $rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo = $rundis$elm_bootstrap$Bootstrap$Alert$simple($rundis$elm_bootstrap$Bootstrap$Internal$Role$Info);
-var $elm$html$Html$caption = _VirtualDom_node('caption');
-var $billstclair$elm_sortable_table$Table$applySorter = F3(
-	function (isReversed, sorter, data) {
-		switch (sorter.$) {
-			case 'None':
-				return data;
-			case 'Increasing':
-				var srt = sorter.a;
-				return srt(data);
-			case 'Decreasing':
-				var srt = sorter.a;
-				return $elm$core$List$reverse(
-					srt(data));
-			case 'IncOrDec':
-				var srt = sorter.a;
-				return isReversed ? $elm$core$List$reverse(
-					srt(data)) : srt(data);
-			default:
-				var srt = sorter.a;
-				return isReversed ? srt(data) : $elm$core$List$reverse(
-					srt(data));
-		}
-	});
-var $billstclair$elm_sortable_table$Table$findSorter = F2(
-	function (selectedColumn, columnData) {
-		findSorter:
-		while (true) {
-			if (!columnData.b) {
-				return $elm$core$Maybe$Nothing;
-			} else {
-				var name = columnData.a.name;
-				var sorter = columnData.a.sorter;
-				var remainingColumnData = columnData.b;
-				if (_Utils_eq(name, selectedColumn)) {
-					return $elm$core$Maybe$Just(sorter);
-				} else {
-					var $temp$selectedColumn = selectedColumn,
-						$temp$columnData = remainingColumnData;
-					selectedColumn = $temp$selectedColumn;
-					columnData = $temp$columnData;
-					continue findSorter;
-				}
-			}
-		}
-	});
-var $billstclair$elm_sortable_table$Table$sort = F3(
-	function (_v0, columnData, data) {
-		var selectedColumn = _v0.a;
-		var isReversed = _v0.b;
-		var _v1 = A2($billstclair$elm_sortable_table$Table$findSorter, selectedColumn, columnData);
-		if (_v1.$ === 'Nothing') {
-			return data;
-		} else {
-			var sorter = _v1.a;
-			return A3($billstclair$elm_sortable_table$Table$applySorter, isReversed, sorter, data);
-		}
-	});
-var $billstclair$elm_sortable_table$Table$getSortedData = F3(
-	function (_v0, state, data) {
-		var toId = _v0.a.toId;
-		var toMsg = _v0.a.toMsg;
-		var columns = _v0.a.columns;
-		var customizations = _v0.a.customizations;
-		return A3($billstclair$elm_sortable_table$Table$sort, state, columns, data);
-	});
-var $elm$html$Html$table = _VirtualDom_node('table');
-var $elm$html$Html$tfoot = _VirtualDom_node('tfoot');
-var $elm$html$Html$thead = _VirtualDom_node('thead');
-var $billstclair$elm_sortable_table$Table$Reversible = function (a) {
-	return {$: 'Reversible', a: a};
-};
-var $billstclair$elm_sortable_table$Table$Sortable = function (a) {
-	return {$: 'Sortable', a: a};
-};
-var $billstclair$elm_sortable_table$Table$Unsortable = {$: 'Unsortable'};
-var $billstclair$elm_sortable_table$Table$onClick = F3(
-	function (name, isReversed, toMsg) {
-		return A2(
-			$elm$html$Html$Events$on,
-			'click',
-			A2(
-				$elm$json$Json$Decode$map,
-				toMsg,
-				A3(
-					$elm$json$Json$Decode$map2,
-					$billstclair$elm_sortable_table$Table$State,
-					$elm$json$Json$Decode$succeed(name),
-					$elm$json$Json$Decode$succeed(isReversed))));
-	});
-var $billstclair$elm_sortable_table$Table$toHeaderInfo = F3(
-	function (_v0, toMsg, _v1) {
-		var sortName = _v0.a;
-		var isReversed = _v0.b;
-		var name = _v1.name;
-		var sorter = _v1.sorter;
-		switch (sorter.$) {
-			case 'None':
-				return _Utils_Tuple3(
-					name,
-					$billstclair$elm_sortable_table$Table$Unsortable,
-					A3($billstclair$elm_sortable_table$Table$onClick, sortName, isReversed, toMsg));
-			case 'Increasing':
-				return _Utils_Tuple3(
-					name,
-					$billstclair$elm_sortable_table$Table$Sortable(
-						!_Utils_eq(name, sortName)),
-					A3($billstclair$elm_sortable_table$Table$onClick, name, false, toMsg));
-			case 'Decreasing':
-				return _Utils_Tuple3(
-					name,
-					$billstclair$elm_sortable_table$Table$Sortable(
-						_Utils_eq(name, sortName)),
-					A3($billstclair$elm_sortable_table$Table$onClick, name, false, toMsg));
-			case 'IncOrDec':
-				return _Utils_eq(name, sortName) ? _Utils_Tuple3(
-					name,
-					$billstclair$elm_sortable_table$Table$Reversible(
-						$elm$core$Maybe$Just(!isReversed)),
-					A3($billstclair$elm_sortable_table$Table$onClick, name, !isReversed, toMsg)) : _Utils_Tuple3(
-					name,
-					$billstclair$elm_sortable_table$Table$Reversible($elm$core$Maybe$Nothing),
-					A3($billstclair$elm_sortable_table$Table$onClick, name, false, toMsg));
-			default:
-				return _Utils_eq(name, sortName) ? _Utils_Tuple3(
-					name,
-					$billstclair$elm_sortable_table$Table$Reversible(
-						$elm$core$Maybe$Just(isReversed)),
-					A3($billstclair$elm_sortable_table$Table$onClick, name, !isReversed, toMsg)) : _Utils_Tuple3(
-					name,
-					$billstclair$elm_sortable_table$Table$Reversible($elm$core$Maybe$Nothing),
-					A3($billstclair$elm_sortable_table$Table$onClick, name, false, toMsg));
-		}
-	});
-var $elm$html$Html$tr = _VirtualDom_node('tr');
-var $elm$virtual_dom$VirtualDom$lazy3 = _VirtualDom_lazy3;
-var $elm$html$Html$Lazy$lazy3 = $elm$virtual_dom$VirtualDom$lazy3;
-var $elm$html$Html$td = _VirtualDom_node('td');
-var $billstclair$elm_sortable_table$Table$viewCell = F2(
-	function (data, _v0) {
-		var viewData = _v0.viewData;
-		var details = viewData(data);
-		return A2($elm$html$Html$td, details.attributes, details.children);
-	});
-var $billstclair$elm_sortable_table$Table$viewRowHelp = F3(
-	function (columns, toRowAttrs, data) {
-		return A2(
-			$elm$html$Html$tr,
-			toRowAttrs(data),
-			A2(
-				$elm$core$List$map,
-				$billstclair$elm_sortable_table$Table$viewCell(data),
-				columns));
-	});
-var $billstclair$elm_sortable_table$Table$viewRow = F4(
-	function (toId, columns, toRowAttrs, data) {
-		return _Utils_Tuple2(
-			toId(data),
-			A4($elm$html$Html$Lazy$lazy3, $billstclair$elm_sortable_table$Table$viewRowHelp, columns, toRowAttrs, data));
-	});
-var $billstclair$elm_sortable_table$Table$view = F3(
-	function (conf, state, data) {
-		var toId = conf.a.toId;
-		var toMsg = conf.a.toMsg;
-		var columns = conf.a.columns;
-		var customizations = conf.a.customizations;
-		var theadDetails = customizations.thead(
-			A2(
-				$elm$core$List$map,
-				A2($billstclair$elm_sortable_table$Table$toHeaderInfo, state, toMsg),
-				columns));
-		var thead = A2(
-			$elm$html$Html$thead,
-			theadDetails.attributes,
-			_List_fromArray(
-				[
-					A2($elm$html$Html$tr, _List_Nil, theadDetails.children)
-				]));
-		var sortedData = A3($billstclair$elm_sortable_table$Table$getSortedData, conf, state, data);
-		var tbody = A3(
-			$elm$html$Html$Keyed$node,
-			'tbody',
-			customizations.tbodyAttrs,
-			A2(
-				$elm$core$List$map,
-				A3($billstclair$elm_sortable_table$Table$viewRow, toId, columns, customizations.rowAttrs),
-				sortedData));
-		var withFoot = function () {
-			var _v1 = customizations.tfoot;
-			if (_v1.$ === 'Nothing') {
-				return A2($elm$core$List$cons, tbody, _List_Nil);
-			} else {
-				var attributes = _v1.a.attributes;
-				var children = _v1.a.children;
-				return A2(
-					$elm$core$List$cons,
-					A2($elm$html$Html$tfoot, attributes, children),
-					A2($elm$core$List$cons, tbody, _List_Nil));
-			}
-		}();
-		return A2(
-			$elm$html$Html$table,
-			customizations.tableAttrs,
-			function () {
-				var _v0 = customizations.caption;
-				if (_v0.$ === 'Nothing') {
-					return A2($elm$core$List$cons, thead, withFoot);
-				} else {
-					var attributes = _v0.a.attributes;
-					var children = _v0.a.children;
-					return A2(
-						$elm$core$List$cons,
-						A2($elm$html$Html$caption, attributes, children),
-						A2($elm$core$List$cons, thead, withFoot));
-				}
-			}());
-	});
-var $author$project$RCMediaList$view = F3(
-	function (_v0, objectList, messages) {
-		var query = _v0.query;
-		var state = _v0.state;
-		var searchBox = A2(
-			$elm$html$Html$input,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$placeholder('Search by name'),
-					$elm$html$Html$Events$onInput(
-					A2($elm$core$Basics$composeL, $author$project$RCMediaList$SortableTableMessage, $author$project$RCMediaList$SetQuery))
-				]),
-			_List_Nil);
-		if (!objectList.b) {
-			return A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('media-list'),
-						A2($elm$html$Html$Attributes$style, 'display', 'none')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Media list is empty. Hint: add a file by using the \"upload media\" button.')
-							]))
-					]));
-		} else {
-			var nonEmptyObjectList = objectList;
-			var searchedObjects = A2($author$project$RCMediaList$filterObjectsByName, query, nonEmptyObjectList);
-			if (!searchedObjects.b) {
-				return A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('media-list'),
-							A2($elm$html$Html$Attributes$style, 'display', 'none')
-						]),
-					_List_fromArray(
-						[
-							searchBox,
-							A2(
-							$rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Cannot find any media named \"' + (query + '\"'))
-								]))
-						]));
-			} else {
-				var results = searchedObjects;
-				return A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$id('media-list'),
-							A2($elm$html$Html$Attributes$style, 'display', 'none')
-						]),
-					_List_fromArray(
-						[
-							searchBox,
-							A3(
-							$billstclair$elm_sortable_table$Table$view,
-							$author$project$RCMediaList$config(messages),
-							state,
-							results)
-						]));
-			}
-		}
-	});
 var $rundis$elm_bootstrap$Bootstrap$Button$danger = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled($rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
-var $rundis$elm_bootstrap$Bootstrap$Button$secondary = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled($rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
 var $rundis$elm_bootstrap$Bootstrap$Modal$small = function (_v0) {
 	var conf = _v0.a;
 	var options = conf.options;
@@ -16506,704 +16662,6 @@ var $author$project$Main$viewFullscreenSwitch = function (currentMode) {
 			btn,
 			{icon: icn, otherAttrs: attrs, title: tit}));
 };
-var $elm$html$Html$h1 = _VirtualDom_node('h1');
-var $rundis$elm_bootstrap$Bootstrap$Modal$h1 = $rundis$elm_bootstrap$Bootstrap$Modal$titledHeader($elm$html$Html$h1);
-var $rundis$elm_bootstrap$Bootstrap$Table$Hover = {$: 'Hover'};
-var $rundis$elm_bootstrap$Bootstrap$Table$hover = $rundis$elm_bootstrap$Bootstrap$Table$Hover;
-var $elm$html$Html$Events$onDoubleClick = function (msg) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'dblclick',
-		$elm$json$Json$Decode$succeed(msg));
-};
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Success = {$: 'Success'};
-var $rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Success));
-var $rundis$elm_bootstrap$Bootstrap$Table$RowAttr = function (a) {
-	return {$: 'RowAttr', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$rowAttr = function (attr_) {
-	return $rundis$elm_bootstrap$Bootstrap$Table$RowAttr(attr_);
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$THead = function (a) {
-	return {$: 'THead', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$thead = F2(
-	function (options, rows) {
-		return $rundis$elm_bootstrap$Bootstrap$Table$THead(
-			{options: options, rows: rows});
-	});
-var $rundis$elm_bootstrap$Bootstrap$Table$Row = function (a) {
-	return {$: 'Row', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$tr = F2(
-	function (options, cells) {
-		return $rundis$elm_bootstrap$Bootstrap$Table$Row(
-			{cells: cells, options: options});
-	});
-var $rundis$elm_bootstrap$Bootstrap$Table$simpleThead = function (cells) {
-	return A2(
-		$rundis$elm_bootstrap$Bootstrap$Table$thead,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2($rundis$elm_bootstrap$Bootstrap$Table$tr, _List_Nil, cells)
-			]));
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$Small = {$: 'Small'};
-var $rundis$elm_bootstrap$Bootstrap$Table$small = $rundis$elm_bootstrap$Bootstrap$Table$Small;
-var $rundis$elm_bootstrap$Bootstrap$Table$Striped = {$: 'Striped'};
-var $rundis$elm_bootstrap$Bootstrap$Table$striped = $rundis$elm_bootstrap$Bootstrap$Table$Striped;
-var $rundis$elm_bootstrap$Bootstrap$Table$Inversed = {$: 'Inversed'};
-var $rundis$elm_bootstrap$Bootstrap$Table$isResponsive = function (option) {
-	if (option.$ === 'Responsive') {
-		return true;
-	} else {
-		return false;
-	}
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$KeyedTBody = function (a) {
-	return {$: 'KeyedTBody', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$TBody = function (a) {
-	return {$: 'TBody', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$InversedRow = function (a) {
-	return {$: 'InversedRow', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$KeyedRow = function (a) {
-	return {$: 'KeyedRow', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$InversedCell = function (a) {
-	return {$: 'InversedCell', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$Td = function (a) {
-	return {$: 'Td', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$Th = function (a) {
-	return {$: 'Th', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$mapInversedCell = function (cell) {
-	var inverseOptions = function (options) {
-		return A2(
-			$elm$core$List$map,
-			function (opt) {
-				if (opt.$ === 'RoledCell') {
-					var role = opt.a;
-					return $rundis$elm_bootstrap$Bootstrap$Table$InversedCell(role);
-				} else {
-					return opt;
-				}
-			},
-			options);
-	};
-	if (cell.$ === 'Th') {
-		var cellCfg = cell.a;
-		return $rundis$elm_bootstrap$Bootstrap$Table$Th(
-			_Utils_update(
-				cellCfg,
-				{
-					options: inverseOptions(cellCfg.options)
-				}));
-	} else {
-		var cellCfg = cell.a;
-		return $rundis$elm_bootstrap$Bootstrap$Table$Td(
-			_Utils_update(
-				cellCfg,
-				{
-					options: inverseOptions(cellCfg.options)
-				}));
-	}
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$mapInversedRow = function (row) {
-	var inversedOptions = function (options) {
-		return A2(
-			$elm$core$List$map,
-			function (opt) {
-				if (opt.$ === 'RoledRow') {
-					var role = opt.a;
-					return $rundis$elm_bootstrap$Bootstrap$Table$InversedRow(role);
-				} else {
-					return opt;
-				}
-			},
-			options);
-	};
-	if (row.$ === 'Row') {
-		var options = row.a.options;
-		var cells = row.a.cells;
-		return $rundis$elm_bootstrap$Bootstrap$Table$Row(
-			{
-				cells: A2($elm$core$List$map, $rundis$elm_bootstrap$Bootstrap$Table$mapInversedCell, cells),
-				options: inversedOptions(options)
-			});
-	} else {
-		var options = row.a.options;
-		var cells = row.a.cells;
-		return $rundis$elm_bootstrap$Bootstrap$Table$KeyedRow(
-			{
-				cells: A2(
-					$elm$core$List$map,
-					function (_v1) {
-						var key = _v1.a;
-						var cell = _v1.b;
-						return _Utils_Tuple2(
-							key,
-							$rundis$elm_bootstrap$Bootstrap$Table$mapInversedCell(cell));
-					},
-					cells),
-				options: inversedOptions(options)
-			});
-	}
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$maybeMapInversedTBody = F2(
-	function (isTableInversed, tbody_) {
-		var _v0 = _Utils_Tuple2(isTableInversed, tbody_);
-		if (!_v0.a) {
-			return tbody_;
-		} else {
-			if (_v0.b.$ === 'TBody') {
-				var body = _v0.b.a;
-				return $rundis$elm_bootstrap$Bootstrap$Table$TBody(
-					_Utils_update(
-						body,
-						{
-							rows: A2($elm$core$List$map, $rundis$elm_bootstrap$Bootstrap$Table$mapInversedRow, body.rows)
-						}));
-			} else {
-				var keyedBody = _v0.b.a;
-				return $rundis$elm_bootstrap$Bootstrap$Table$KeyedTBody(
-					_Utils_update(
-						keyedBody,
-						{
-							rows: A2(
-								$elm$core$List$map,
-								function (_v1) {
-									var key = _v1.a;
-									var row = _v1.b;
-									return _Utils_Tuple2(
-										key,
-										$rundis$elm_bootstrap$Bootstrap$Table$mapInversedRow(row));
-								},
-								keyedBody.rows)
-						}));
-			}
-		}
-	});
-var $rundis$elm_bootstrap$Bootstrap$Table$InversedHead = {$: 'InversedHead'};
-var $rundis$elm_bootstrap$Bootstrap$Table$maybeMapInversedTHead = F2(
-	function (isTableInversed, _v0) {
-		var thead_ = _v0.a;
-		var isHeadInversed = A2(
-			$elm$core$List$any,
-			function (opt) {
-				return _Utils_eq(opt, $rundis$elm_bootstrap$Bootstrap$Table$InversedHead);
-			},
-			thead_.options);
-		return $rundis$elm_bootstrap$Bootstrap$Table$THead(
-			(isTableInversed || isHeadInversed) ? _Utils_update(
-				thead_,
-				{
-					rows: A2($elm$core$List$map, $rundis$elm_bootstrap$Bootstrap$Table$mapInversedRow, thead_.rows)
-				}) : thead_);
-	});
-var $rundis$elm_bootstrap$Bootstrap$Table$maybeWrapResponsive = F2(
-	function (options, table_) {
-		var responsiveClass = $elm$html$Html$Attributes$class(
-			'table-responsive' + A2(
-				$elm$core$Maybe$withDefault,
-				'',
-				A2(
-					$elm$core$Maybe$map,
-					function (v) {
-						return '-' + v;
-					},
-					A2(
-						$elm$core$Maybe$andThen,
-						$rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption,
-						A2(
-							$elm$core$Maybe$andThen,
-							function (opt) {
-								if (opt.$ === 'Responsive') {
-									var val = opt.a;
-									return val;
-								} else {
-									return $elm$core$Maybe$Nothing;
-								}
-							},
-							$elm$core$List$head(
-								A2($elm$core$List$filter, $rundis$elm_bootstrap$Bootstrap$Table$isResponsive, options)))))));
-		return A2($elm$core$List$any, $rundis$elm_bootstrap$Bootstrap$Table$isResponsive, options) ? A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[responsiveClass]),
-			_List_fromArray(
-				[table_])) : table_;
-	});
-var $rundis$elm_bootstrap$Bootstrap$Table$CellAttr = function (a) {
-	return {$: 'CellAttr', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$cellAttr = function (attr_) {
-	return $rundis$elm_bootstrap$Bootstrap$Table$CellAttr(attr_);
-};
-var $elm$html$Html$Attributes$scope = $elm$html$Html$Attributes$stringProperty('scope');
-var $rundis$elm_bootstrap$Bootstrap$Table$addScopeIfTh = function (cell) {
-	if (cell.$ === 'Th') {
-		var cellConfig = cell.a;
-		return $rundis$elm_bootstrap$Bootstrap$Table$Th(
-			_Utils_update(
-				cellConfig,
-				{
-					options: A2(
-						$elm$core$List$cons,
-						$rundis$elm_bootstrap$Bootstrap$Table$cellAttr(
-							$elm$html$Html$Attributes$scope('row')),
-						cellConfig.options)
-				}));
-	} else {
-		return cell;
-	}
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$maybeAddScopeToFirstCell = function (row) {
-	if (row.$ === 'Row') {
-		var options = row.a.options;
-		var cells = row.a.cells;
-		if (!cells.b) {
-			return row;
-		} else {
-			var first = cells.a;
-			var rest = cells.b;
-			return $rundis$elm_bootstrap$Bootstrap$Table$Row(
-				{
-					cells: A2(
-						$elm$core$List$cons,
-						$rundis$elm_bootstrap$Bootstrap$Table$addScopeIfTh(first),
-						rest),
-					options: options
-				});
-		}
-	} else {
-		var options = row.a.options;
-		var cells = row.a.cells;
-		if (!cells.b) {
-			return row;
-		} else {
-			var _v3 = cells.a;
-			var firstKey = _v3.a;
-			var first = _v3.b;
-			var rest = cells.b;
-			return $rundis$elm_bootstrap$Bootstrap$Table$KeyedRow(
-				{
-					cells: A2(
-						$elm$core$List$cons,
-						_Utils_Tuple2(
-							firstKey,
-							$rundis$elm_bootstrap$Bootstrap$Table$addScopeIfTh(first)),
-						rest),
-					options: options
-				});
-		}
-	}
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$cellAttribute = function (option) {
-	switch (option.$) {
-		case 'RoledCell':
-			if (option.a.$ === 'Roled') {
-				var role = option.a.a;
-				return A2($rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass, 'table', role);
-			} else {
-				var _v1 = option.a;
-				return $elm$html$Html$Attributes$class('table-active');
-			}
-		case 'InversedCell':
-			if (option.a.$ === 'Roled') {
-				var role = option.a.a;
-				return A2($rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass, 'bg-', role);
-			} else {
-				var _v2 = option.a;
-				return $elm$html$Html$Attributes$class('bg-active');
-			}
-		default:
-			var attr_ = option.a;
-			return attr_;
-	}
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$cellAttributes = function (options) {
-	return A2($elm$core$List$map, $rundis$elm_bootstrap$Bootstrap$Table$cellAttribute, options);
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$renderCell = function (cell) {
-	if (cell.$ === 'Td') {
-		var options = cell.a.options;
-		var children = cell.a.children;
-		return A2(
-			$elm$html$Html$td,
-			$rundis$elm_bootstrap$Bootstrap$Table$cellAttributes(options),
-			children);
-	} else {
-		var options = cell.a.options;
-		var children = cell.a.children;
-		return A2(
-			$elm$html$Html$th,
-			$rundis$elm_bootstrap$Bootstrap$Table$cellAttributes(options),
-			children);
-	}
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$rowClass = function (option) {
-	switch (option.$) {
-		case 'RoledRow':
-			if (option.a.$ === 'Roled') {
-				var role_ = option.a.a;
-				return A2($rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass, 'table', role_);
-			} else {
-				var _v1 = option.a;
-				return $elm$html$Html$Attributes$class('table-active');
-			}
-		case 'InversedRow':
-			if (option.a.$ === 'Roled') {
-				var role_ = option.a.a;
-				return A2($rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass, 'bg', role_);
-			} else {
-				var _v2 = option.a;
-				return $elm$html$Html$Attributes$class('bg-active');
-			}
-		default:
-			var attr_ = option.a;
-			return attr_;
-	}
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$rowAttributes = function (options) {
-	return A2($elm$core$List$map, $rundis$elm_bootstrap$Bootstrap$Table$rowClass, options);
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$renderRow = function (row) {
-	if (row.$ === 'Row') {
-		var options = row.a.options;
-		var cells = row.a.cells;
-		return A2(
-			$elm$html$Html$tr,
-			$rundis$elm_bootstrap$Bootstrap$Table$rowAttributes(options),
-			A2($elm$core$List$map, $rundis$elm_bootstrap$Bootstrap$Table$renderCell, cells));
-	} else {
-		var options = row.a.options;
-		var cells = row.a.cells;
-		return A3(
-			$elm$html$Html$Keyed$node,
-			'tr',
-			$rundis$elm_bootstrap$Bootstrap$Table$rowAttributes(options),
-			A2(
-				$elm$core$List$map,
-				function (_v1) {
-					var key = _v1.a;
-					var cell = _v1.b;
-					return _Utils_Tuple2(
-						key,
-						$rundis$elm_bootstrap$Bootstrap$Table$renderCell(cell));
-				},
-				cells));
-	}
-};
-var $elm$html$Html$tbody = _VirtualDom_node('tbody');
-var $rundis$elm_bootstrap$Bootstrap$Table$renderTBody = function (body) {
-	if (body.$ === 'TBody') {
-		var attributes = body.a.attributes;
-		var rows = body.a.rows;
-		return A2(
-			$elm$html$Html$tbody,
-			attributes,
-			A2(
-				$elm$core$List$map,
-				function (row) {
-					return $rundis$elm_bootstrap$Bootstrap$Table$renderRow(
-						$rundis$elm_bootstrap$Bootstrap$Table$maybeAddScopeToFirstCell(row));
-				},
-				rows));
-	} else {
-		var attributes = body.a.attributes;
-		var rows = body.a.rows;
-		return A3(
-			$elm$html$Html$Keyed$node,
-			'tbody',
-			attributes,
-			A2(
-				$elm$core$List$map,
-				function (_v1) {
-					var key = _v1.a;
-					var row = _v1.b;
-					return _Utils_Tuple2(
-						key,
-						$rundis$elm_bootstrap$Bootstrap$Table$renderRow(
-							$rundis$elm_bootstrap$Bootstrap$Table$maybeAddScopeToFirstCell(row)));
-				},
-				rows));
-	}
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$theadAttribute = function (option) {
-	switch (option.$) {
-		case 'InversedHead':
-			return $elm$html$Html$Attributes$class('thead-dark');
-		case 'DefaultHead':
-			return $elm$html$Html$Attributes$class('thead-default');
-		default:
-			var attr_ = option.a;
-			return attr_;
-	}
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$theadAttributes = function (options) {
-	return A2($elm$core$List$map, $rundis$elm_bootstrap$Bootstrap$Table$theadAttribute, options);
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$renderTHead = function (_v0) {
-	var options = _v0.a.options;
-	var rows = _v0.a.rows;
-	return A2(
-		$elm$html$Html$thead,
-		$rundis$elm_bootstrap$Bootstrap$Table$theadAttributes(options),
-		A2($elm$core$List$map, $rundis$elm_bootstrap$Bootstrap$Table$renderRow, rows));
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$tableClass = function (option) {
-	switch (option.$) {
-		case 'Inversed':
-			return $elm$core$Maybe$Just(
-				$elm$html$Html$Attributes$class('table-dark'));
-		case 'Striped':
-			return $elm$core$Maybe$Just(
-				$elm$html$Html$Attributes$class('table-striped'));
-		case 'Bordered':
-			return $elm$core$Maybe$Just(
-				$elm$html$Html$Attributes$class('table-bordered'));
-		case 'Hover':
-			return $elm$core$Maybe$Just(
-				$elm$html$Html$Attributes$class('table-hover'));
-		case 'Small':
-			return $elm$core$Maybe$Just(
-				$elm$html$Html$Attributes$class('table-sm'));
-		case 'Responsive':
-			return $elm$core$Maybe$Nothing;
-		case 'Reflow':
-			return $elm$core$Maybe$Just(
-				$elm$html$Html$Attributes$class('table-reflow'));
-		default:
-			var attr_ = option.a;
-			return $elm$core$Maybe$Just(attr_);
-	}
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$tableAttributes = function (options) {
-	return A2(
-		$elm$core$List$cons,
-		$elm$html$Html$Attributes$class('table'),
-		A2(
-			$elm$core$List$filterMap,
-			$elm$core$Basics$identity,
-			A2($elm$core$List$map, $rundis$elm_bootstrap$Bootstrap$Table$tableClass, options)));
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$table = function (rec) {
-	var isInversed = A2(
-		$elm$core$List$any,
-		function (opt) {
-			return _Utils_eq(opt, $rundis$elm_bootstrap$Bootstrap$Table$Inversed);
-		},
-		rec.options);
-	var classOptions = A2(
-		$elm$core$List$filter,
-		function (opt) {
-			return !$rundis$elm_bootstrap$Bootstrap$Table$isResponsive(opt);
-		},
-		rec.options);
-	return A2(
-		$rundis$elm_bootstrap$Bootstrap$Table$maybeWrapResponsive,
-		rec.options,
-		A2(
-			$elm$html$Html$table,
-			$rundis$elm_bootstrap$Bootstrap$Table$tableAttributes(classOptions),
-			_List_fromArray(
-				[
-					$rundis$elm_bootstrap$Bootstrap$Table$renderTHead(
-					A2($rundis$elm_bootstrap$Bootstrap$Table$maybeMapInversedTHead, isInversed, rec.thead)),
-					$rundis$elm_bootstrap$Bootstrap$Table$renderTBody(
-					A2($rundis$elm_bootstrap$Bootstrap$Table$maybeMapInversedTBody, isInversed, rec.tbody))
-				])));
-};
-var $rundis$elm_bootstrap$Bootstrap$Table$tbody = F2(
-	function (attributes, rows) {
-		return $rundis$elm_bootstrap$Bootstrap$Table$TBody(
-			{attributes: attributes, rows: rows});
-	});
-var $rundis$elm_bootstrap$Bootstrap$Table$td = F2(
-	function (options, children) {
-		return $rundis$elm_bootstrap$Bootstrap$Table$Td(
-			{children: children, options: options});
-	});
-var $rundis$elm_bootstrap$Bootstrap$Table$th = F2(
-	function (options, children) {
-		return $rundis$elm_bootstrap$Bootstrap$Table$Th(
-			{children: children, options: options});
-	});
-var $author$project$RCMediaList$viewModalMediaPicker = F3(
-	function (visibility, objectList, messages) {
-		var tableList = function () {
-			if (!objectList.b) {
-				return A2(
-					$rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text('There are no objects yet, add by using the \"upload media\" button.')
-						]));
-			} else {
-				var uploadButton = $author$project$View$defaultButton(messages.uploadMediaFileSelect);
-				var rowFromRCObject = function (object) {
-					var insertButton = A2(
-						$rundis$elm_bootstrap$Bootstrap$Button$button,
-						_List_fromArray(
-							[
-								$rundis$elm_bootstrap$Bootstrap$Button$small,
-								$rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess,
-								$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-								_List_fromArray(
-									[
-										$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1,
-										$elm$html$Html$Events$onClick(
-										messages.insertObject(object))
-									]))
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Insert')
-							]));
-					return A2(
-						$rundis$elm_bootstrap$Bootstrap$Table$tr,
-						_List_fromArray(
-							[
-								$rundis$elm_bootstrap$Bootstrap$Table$rowAttr(
-								$elm$html$Html$Events$onDoubleClick(
-									messages.insertObject(object)))
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$rundis$elm_bootstrap$Bootstrap$Table$td,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2($author$project$RCMediaPreview$viewThumbnail, object, $author$project$RCMediaPreview$PreviewSmall)
-									])),
-								A2(
-								$rundis$elm_bootstrap$Bootstrap$Table$td,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text(
-										$elm$core$String$fromInt(object.id))
-									])),
-								A2(
-								$rundis$elm_bootstrap$Bootstrap$Table$td,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text(object.name)
-									])),
-								A2(
-								$rundis$elm_bootstrap$Bootstrap$Table$td,
-								_List_Nil,
-								_List_fromArray(
-									[insertButton]))
-							]));
-				};
-				var rows = A2($elm$core$List$map, rowFromRCObject, objectList);
-				var head = $rundis$elm_bootstrap$Bootstrap$Table$simpleThead(
-					_List_fromArray(
-						[
-							A2(
-							$rundis$elm_bootstrap$Bootstrap$Table$th,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Preview')
-								])),
-							A2(
-							$rundis$elm_bootstrap$Bootstrap$Table$th,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Id')
-								])),
-							A2(
-							$rundis$elm_bootstrap$Bootstrap$Table$th,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Name')
-								])),
-							A2(
-							$rundis$elm_bootstrap$Bootstrap$Table$th,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Insert')
-								]))
-						]));
-				return A2(
-					$elm$html$Html$div,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$author$project$View$mkButton(
-							_Utils_update(
-								uploadButton,
-								{icon: $author$project$View$UploadCloud, offset: false, primary: false, text: 'Upload Media', title: 'Add video, audio, pdf or images files'})),
-							$rundis$elm_bootstrap$Bootstrap$Table$table(
-							{
-								options: _List_fromArray(
-									[$rundis$elm_bootstrap$Bootstrap$Table$hover, $rundis$elm_bootstrap$Bootstrap$Table$striped, $rundis$elm_bootstrap$Bootstrap$Table$small]),
-								tbody: A2($rundis$elm_bootstrap$Bootstrap$Table$tbody, _List_Nil, rows),
-								thead: head
-							})
-						]));
-			}
-		}();
-		return A2(
-			$rundis$elm_bootstrap$Bootstrap$Modal$view,
-			visibility,
-			A3(
-				$rundis$elm_bootstrap$Bootstrap$Modal$footer,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2(
-						$rundis$elm_bootstrap$Bootstrap$Button$button,
-						_List_fromArray(
-							[
-								$rundis$elm_bootstrap$Bootstrap$Button$secondary,
-								$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(messages.closeModal)
-									]))
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Cancel')
-							]))
-					]),
-				A3(
-					$rundis$elm_bootstrap$Bootstrap$Modal$body,
-					_List_Nil,
-					_List_fromArray(
-						[tableList]),
-					A3(
-						$rundis$elm_bootstrap$Bootstrap$Modal$h1,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Select a media object to insert.')
-							]),
-						A2(
-							$rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
-							true,
-							$rundis$elm_bootstrap$Bootstrap$Modal$large(
-								A2(
-									$rundis$elm_bootstrap$Bootstrap$Modal$scrollableBody,
-									true,
-									$rundis$elm_bootstrap$Bootstrap$Modal$config(messages.closeModal))))))));
-	});
 var $author$project$Main$EditorMedia = {$: 'EditorMedia'};
 var $author$project$Main$EditorStyle = {$: 'EditorStyle'};
 var $author$project$Main$SwitchTab = function (a) {
@@ -18186,7 +17644,7 @@ var $author$project$Main$view = function (model) {
 	var mediaList = A2(
 		$elm$html$Html$map,
 		$author$project$Main$MediaList,
-		A3($author$project$RCMediaList$view, model.mediaList, model.exposition.media, $author$project$Main$makeTableMessages));
+		A3($author$project$RCMediaList$mediaListView, $author$project$Main$makeTableMessages, model.mediaList, model.exposition.media));
 	var mediaDialogHtml = A5($author$project$RCMediaEdit$view, $author$project$Main$makeMediaEditFun, $author$project$Main$CloseMediaDialog, $author$project$Main$InsertMediaAtCursor, model.exposition, model.mediaDialog);
 	var importDocButtonInfo = function () {
 		var bttn = $author$project$View$defaultButton($author$project$Main$UploadImportFileSelect);
@@ -18231,7 +17689,10 @@ var $author$project$Main$view = function (model) {
 				$author$project$Main$viewNavbar(model),
 				mediaDialogHtml,
 				confirmDialogHtml,
-				A3($author$project$RCMediaList$viewModalMediaPicker, model.mediaPickerDialog, model.exposition.media, $author$project$Main$makePickerMessages),
+				A2(
+				$elm$html$Html$map,
+				$author$project$Main$MediaList,
+				A3($author$project$RCMediaList$mediaPickerView, model.mediaPickerDialog, model.exposition.media, $author$project$Main$makePickerMessages)),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(

@@ -5,9 +5,10 @@ module RCMediaList exposing
     , TableEditMessages
     , TableMessage(..)
     , empty
+    , mediaListView
+    , mediaPickerView
     , update
     , view
-    , viewModalMediaPicker
     )
 
 import Bootstrap.Alert as Alert
@@ -68,8 +69,8 @@ empty =
     }
 
 
-config : TableEditMessages msg -> Table.Config RCMediaObject (Msg msg)
-config messages =
+config : Table.Column RCMediaObject (Msg msg) -> Table.Config RCMediaObject (Msg msg)
+config buttons =
     let
         makeMsg : Table.State -> Msg msg
         makeMsg =
@@ -82,7 +83,7 @@ config messages =
             [ thumbnailColumn
             , Table.stringColumn "ID" (String.fromInt << .id)
             , Table.stringColumn "Name" .name
-            , buttonColumn messages
+            , buttons
             ]
         , customizations =
             { defaultCustomizations
@@ -90,6 +91,11 @@ config messages =
                 , rowAttrs = always [ class "rc-media-table-row" ]
             }
         }
+
+
+mediaListView : TableEditMessages msg -> Model -> List RCMediaObject -> Html (Msg msg)
+mediaListView messages model objects =
+    view model (config <| mediaListButtons messages) objects
 
 
 thumbnailColumn : Table.Column RCMediaObject (Msg msg)
@@ -129,17 +135,42 @@ deleteButton messages object =
         [ text "Delete" ]
 
 
-buttonColumn : TableEditMessages msg -> Table.Column RCMediaObject (Msg msg)
-buttonColumn messages =
+pickerButton : PickerMessages msg -> Table.Column RCMediaObject (Msg msg)
+pickerButton messages =
     Table.veryCustomColumn
         { name = ""
-        , viewData = viewObjectButtons messages
+        , viewData = insertButton messages
         , sorter = Table.unsortable
         }
 
 
-viewObjectButtons : TableEditMessages msg -> RCMediaObject -> Table.HtmlDetails (Msg msg)
-viewObjectButtons messages object =
+insertButton : PickerMessages msg -> RCMediaObject -> Table.HtmlDetails (Msg msg)
+insertButton messages object =
+    let
+        makeInsertMessage =
+            EditMediaMessage << messages.insertObject
+    in
+    Table.HtmlDetails []
+        [ Button.button
+            [ Button.small
+            , Button.primary
+            , Button.attrs [ onClick <| makeInsertMessage object ]
+            ]
+            [ text "Insert" ]
+        ]
+
+
+mediaListButtons : TableEditMessages msg -> Table.Column RCMediaObject (Msg msg)
+mediaListButtons messages =
+    Table.veryCustomColumn
+        { name = ""
+        , viewData = editObjectButtons messages
+        , sorter = Table.unsortable
+        }
+
+
+editObjectButtons : TableEditMessages msg -> RCMediaObject -> Table.HtmlDetails (Msg msg)
+editObjectButtons messages object =
     Table.HtmlDetails []
         [ editButton messages object
         , deleteButton messages object
@@ -170,8 +201,8 @@ filterObjectsByName query lst =
             List.filter (String.contains lowerQuery << String.toLower << .name) lst
 
 
-view : Model -> List RCMediaObject -> TableEditMessages msg -> Html (Msg msg)
-view { query, state } objectList messages =
+view : Model -> Table.Config RCMediaObject (Msg msg) -> List RCMediaObject -> Html (Msg msg)
+view { query, state } tableConfig objectList =
     let
         searchBox : Html (Msg msg)
         searchBox =
@@ -203,82 +234,37 @@ view { query, state } objectList messages =
                 results ->
                     div [ id "media-list", style "display" "none" ]
                         [ searchBox
-                        , Table.view (config messages) state results
+                        , Table.view tableConfig state results
                         ]
 
 
+mediaPickerView : ( Model, Modal.Visibility ) -> List RCMediaObject -> PickerMessages msg -> Html (Msg msg)
+mediaPickerView ( model, visibility ) objectList messages =
+    let
+        tableConfig =
+            config <| pickerButton messages
 
-{- OLD CODE
-   view : Model -> List RCMediaObject -> TableMessages msg -> Html (Msg msg)
-   view objectList messages =
-       case objectList of
-           [] ->
-               div [ class "media-list", style "display" "none" ]
-                   [ Alert.simpleInfo [] [ text "There are no objects yet. Hint: add a file by using the \"upload media\" button." ]
-                   ]
-
-           _ ->
-               let
-                   head =
-                       BTable.simpleThead
-                           [ BTable.th [] [ text "Preview" ]
-                           , BTable.th [] [ text "Id" ]
-                           , BTable.th [] [ text "Name" ]
-                           , BTable.th
-                               [ BTable.cellAttr <| class "edit-button-column"
-                               ]
-                               [ text "Edit" ]
-                           ]
-
-                   rowFromRCObject : RCMediaObject -> BTable.Row msg
-                   rowFromRCObject object =
-                       let
-                           editButton =
-                               Button.button
-                                   [ Button.small
-                                   , Button.outlineSecondary
-                                   , Button.attrs [ Spacing.ml1, onClick <| messages.editObject (String.fromInt object.id) ]
-                                   ]
-                                   [ text "Edit" ]
-
-                           -- insertButton =
-                           --     Button.button
-                           --         [ Button.small
-                           --         , Button.outlineSuccess
-                           --         , Button.attrs [ Spacing.ml1, onClick <| messages.insertObject object ]
-                           --         ]
-                           --         [ text "insert" ]
-                           removeButton =
-                               Button.button
-                                   [ Button.small
-                                   , Button.outlineDanger
-                                   , Button.attrs [ Spacing.ml1, onClick <| messages.deleteObject object ]
-                                   ]
-                                   [ text "Delete" ]
-                       in
-                       BTable.tr [ BTable.rowAttr <| onDoubleClick <| messages.editObject (String.fromInt object.id) ]
-                           [ BTable.td [] [ viewThumbnail object PreviewSmall ]
-                           , BTable.td [] [ text <| String.fromInt object.id ]
-                           , BTable.td [] [ text object.name ]
-                           , BTable.td [] [ editButton, removeButton ]
-                           ]
-
-                   rows =
-                       List.map rowFromRCObject objectList
-               in
-               div [ id "media-list", style "display" "none" ]
-                   [ BTable.table
-                       { options = [ BTable.hover, BTable.striped, BTable.small ]
-                       , thead = head
-                       , tbody =
-                           BTable.tbody [] rows
-                       }
-                   ]
--}
+        tableList =
+            view model tableConfig objectList
+    in
+    Modal.config (EditMediaMessage messages.closeModal)
+        |> Modal.scrollableBody True
+        |> Modal.large
+        |> Modal.hideOnBackdropClick True
+        |> Modal.h1 [] [ text "Select a media object to insert." ]
+        |> Modal.body [] [ tableList ]
+        |> Modal.footer []
+            [ Button.button
+                [ Button.secondary, Button.attrs [ onClick <| EditMediaMessage messages.closeModal ] ]
+                [ text "Cancel" ]
+            ]
+        |> Modal.view visibility
 
 
-viewModalMediaPicker : Modal.Visibility -> List RCMediaObject -> PickerMessages msg -> Html msg
-viewModalMediaPicker visibility objectList messages =
+
+{--
+viewModalMediaPickerOld : Modal.Visibility -> List RCMediaObject -> PickerMessages msg -> Html msg
+viewModalMediaPickerOld visibility objectList messages =
     let
         tableList =
             case objectList of
@@ -348,3 +334,4 @@ viewModalMediaPicker visibility objectList messages =
                 [ text "Cancel" ]
             ]
         |> Modal.view visibility
+--}
