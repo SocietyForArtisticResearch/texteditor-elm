@@ -12440,7 +12440,6 @@ var $author$project$RCMediaList$mediaListButtons = function (messages) {
 			viewData: $author$project$RCMediaList$editObjectButtons(messages)
 		});
 };
-var $elm$html$Html$p = _VirtualDom_node('p');
 var $author$project$RCMediaList$SetQuery = function (a) {
 	return {$: 'SetQuery', a: a};
 };
@@ -12994,26 +12993,13 @@ var $author$project$RCMediaList$view = F4(
 	});
 var $author$project$RCMediaList$mediaListView = F3(
 	function (messages, model, objects) {
-		return A2(
-			$elm$html$Html$div,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$p,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text('hallo wereld')
-						])),
-					A4(
-					$author$project$RCMediaList$view,
-					$author$project$RCMediaList$MediaTable,
-					model,
-					$author$project$RCMediaList$config(
-						$author$project$RCMediaList$mediaListButtons(messages)),
-					objects)
-				]));
+		return A4(
+			$author$project$RCMediaList$view,
+			$author$project$RCMediaList$MediaTable,
+			model,
+			$author$project$RCMediaList$config(
+				$author$project$RCMediaList$mediaListButtons(messages)),
+			objects);
 	});
 var $author$project$RCMediaList$PickerTable = {$: 'PickerTable'};
 var $rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {
@@ -14350,6 +14336,7 @@ var $rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = $rundis$elm_bootstra
 	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
 var $rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
+var $elm$html$Html$p = _VirtualDom_node('p');
 var $author$project$RCMediaEdit$Copyright = {$: 'Copyright'};
 var $author$project$RCMediaEdit$Description = {$: 'Description'};
 var $author$project$RCMediaEdit$LicenseField = {$: 'LicenseField'};
