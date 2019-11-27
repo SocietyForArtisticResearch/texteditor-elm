@@ -279,6 +279,7 @@ body {
 .rc-media-table > thead:nth-child(1) > tr:nth-child(1) > th:nth-child(4) {
     /* sorry for this, sortable table does not have an elegant way for adding column attrs :-P */									 
     min-width:100px;
+    width:100px;
 }
 
 .rc-media-table > thead:nth-child(1) > tr:nth-child(1) > th:nth-child(3) {
