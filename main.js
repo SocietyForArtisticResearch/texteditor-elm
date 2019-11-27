@@ -11650,6 +11650,9 @@ var $author$project$RCAPI$Md = {$: 'Md'};
 var $author$project$Main$MediaList = function (a) {
 	return {$: 'MediaList', a: a};
 };
+var $author$project$Main$MediaPicker = function (a) {
+	return {$: 'MediaPicker', a: a};
+};
 var $author$project$RCAPI$Odt = {$: 'Odt'};
 var $author$project$RCAPI$Pdf = {$: 'Pdf'};
 var $author$project$View$UploadCloud = {$: 'UploadCloud'};
@@ -17691,7 +17694,7 @@ var $author$project$Main$view = function (model) {
 				confirmDialogHtml,
 				A2(
 				$elm$html$Html$map,
-				$author$project$Main$MediaList,
+				$author$project$Main$MediaPicker,
 				A3($author$project$RCMediaList$mediaPickerView, model.mediaPickerDialog, model.exposition.media, $author$project$Main$makePickerMessages)),
 				A2(
 				$elm$html$Html$div,

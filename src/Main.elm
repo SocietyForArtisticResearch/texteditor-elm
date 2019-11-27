@@ -1419,7 +1419,7 @@ view model =
         --        , viewTabs model
         , mediaDialogHtml
         , confirmDialogHtml
-        , Html.map MediaList <|
+        , Html.map MediaPicker <|
             RCMediaList.mediaPickerView
                 model.mediaPickerDialog
                 model.exposition.media
