@@ -100,10 +100,7 @@ config buttons =
 
 mediaListView : TableEditMessages msg -> Model -> List RCMediaObject -> Html (Msg msg)
 mediaListView messages model objects =
-    div []
-        [ Html.p [] [ text "hallo wereld" ]
-        , view MediaTable model (config <| mediaListButtons messages) objects
-        ]
+    view MediaTable model (config <| mediaListButtons messages) objects
 
 
 thumbnailColumn : Table.Column RCMediaObject (Msg msg)
