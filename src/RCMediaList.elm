@@ -81,7 +81,7 @@ config messages =
         , columns =
             [ thumbnailColumn
             , Table.stringColumn "ID" (String.fromInt << .id)
-            , Table.stringColumn "Names" .name
+            , Table.stringColumn "Name" .name
             , buttonColumn messages
             ]
         , customizations =
