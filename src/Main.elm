@@ -599,8 +599,11 @@ update msg model =
             let
                 ( modelWithNewMedia, _ ) =
                     update (GotMediaList mediaList) model
+
+                canInsert =
+                    not <| selectedEditorIsMedia model
             in
-            update (MediaDialog True id) modelWithNewMedia
+            update (MediaDialog canInsert id) modelWithNewMedia
 
         MediaEdit ( objInModelName, objFromDialog ) ->
             case Exposition.objectByNameOrId objInModelName model.exposition of

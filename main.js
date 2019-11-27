@@ -10293,6 +10293,15 @@ var $author$project$RCAPI$saveExposition = F2(
 				url: url
 			});
 	});
+var $author$project$Main$selectedEditorIsMedia = function (model) {
+	var _v0 = model.editor;
+	if (_v0.a.$ === 'EditorMedia') {
+		var _v1 = _v0.a;
+		return true;
+	} else {
+		return false;
+	}
+};
 var $author$project$Main$setContent = _Platform_outgoingPort('setContent', $elm$core$Basics$identity);
 var $author$project$Main$setDocumentTitle = _Platform_outgoingPort('setDocumentTitle', $elm$json$Json$Encode$string);
 var $author$project$Main$setEditor = _Platform_outgoingPort('setEditor', $elm$json$Json$Encode$int);
@@ -11082,12 +11091,13 @@ var $author$project$Main$update = F2(
 				case 'OpenNewMediaGotMediaList':
 					var id = msg.a;
 					var mediaList = msg.b;
+					var canInsert = !$author$project$Main$selectedEditorIsMedia(model);
 					var _v10 = A2(
 						$author$project$Main$update,
 						$author$project$Main$GotMediaList(mediaList),
 						model);
 					var modelWithNewMedia = _v10.a;
-					var $temp$msg = A2($author$project$Main$MediaDialog, true, id),
+					var $temp$msg = A2($author$project$Main$MediaDialog, canInsert, id),
 						$temp$model = modelWithNewMedia;
 					msg = $temp$msg;
 					model = $temp$model;
@@ -12384,6 +12394,7 @@ var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
 var $rundis$elm_bootstrap$Bootstrap$Button$light = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled($rundis$elm_bootstrap$Bootstrap$Internal$Button$Light));
 var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0 = $elm$html$Html$Attributes$class('m-0');
+var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty('alt');
 var $elm$html$Html$Attributes$height = function (n) {
 	return A2(
 		_VirtualDom_attribute,
@@ -12418,8 +12429,8 @@ var $author$project$View$renderIcon = function (icon) {
 					$elm$html$Html$Attributes$height(15),
 					A2($elm$html$Html$Attributes$style, 'position', 'relative'),
 					A2($elm$html$Html$Attributes$style, 'top', '-2px'),
-					$elm$html$Html$Attributes$title(
-					A3($elm$core$String$slice, 0, -4, $author$project$Settings$iconUrl))
+					$elm$html$Html$Attributes$alt(
+					A3($elm$core$String$slice, 0, -4, url))
 				]),
 			_List_Nil);
 	};
