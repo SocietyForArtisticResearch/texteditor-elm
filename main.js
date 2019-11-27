@@ -15137,6 +15137,9 @@ var $author$project$RCMediaList$EditMediaMessage = function (a) {
 	return {$: 'EditMediaMessage', a: a};
 };
 var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1 = $elm$html$Html$Attributes$class('ml-1');
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger = {$: 'Danger'};
+var $rundis$elm_bootstrap$Bootstrap$Button$outlineDanger = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
 var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Size = function (a) {
 	return {$: 'Size', a: a};
 };
@@ -15149,7 +15152,7 @@ var $author$project$RCMediaList$deleteButton = F2(
 			_List_fromArray(
 				[
 					$rundis$elm_bootstrap$Bootstrap$Button$small,
-					$rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary,
+					$rundis$elm_bootstrap$Bootstrap$Button$outlineDanger,
 					$rundis$elm_bootstrap$Bootstrap$Button$attrs(
 					_List_fromArray(
 						[
@@ -15163,6 +15166,9 @@ var $author$project$RCMediaList$deleteButton = F2(
 					$elm$html$Html$text('Delete')
 				]));
 	});
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Info = {$: 'Info'};
+var $rundis$elm_bootstrap$Bootstrap$Button$outlineInfo = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Info));
 var $author$project$RCMediaList$editButton = F2(
 	function (messages, object) {
 		var makeEditMessage = A2(
@@ -15179,7 +15185,7 @@ var $author$project$RCMediaList$editButton = F2(
 			_List_fromArray(
 				[
 					$rundis$elm_bootstrap$Bootstrap$Button$small,
-					$rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary,
+					$rundis$elm_bootstrap$Bootstrap$Button$outlineInfo,
 					$rundis$elm_bootstrap$Bootstrap$Button$attrs(
 					_List_fromArray(
 						[
@@ -15978,7 +15984,6 @@ var $author$project$RCMediaList$view = F3(
 			}
 		}
 	});
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger = {$: 'Danger'};
 var $rundis$elm_bootstrap$Bootstrap$Button$danger = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled($rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
 var $rundis$elm_bootstrap$Bootstrap$Button$secondary = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
