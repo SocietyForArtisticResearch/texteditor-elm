@@ -62,6 +62,11 @@ type alias ObjectAndActions msg =
     }
 
 
+type TableType
+    = PickerTable
+    | MediaTable
+
+
 empty : Model
 empty =
     { query = ""
@@ -97,7 +102,7 @@ mediaListView : TableEditMessages msg -> Model -> List RCMediaObject -> Html (Ms
 mediaListView messages model objects =
     div []
         [ Html.p [] [ text "hallo wereld" ]
-        , view model (config <| mediaListButtons messages) objects
+        , view MediaTable model (config <| mediaListButtons messages) objects
         ]
 
 
@@ -204,9 +209,17 @@ filterObjectsByName query lst =
             List.filter (String.contains lowerQuery << String.toLower << .name) lst
 
 
-view : Model -> Table.Config RCMediaObject (Msg msg) -> List RCMediaObject -> Html (Msg msg)
-view { query, state } tableConfig objectList =
+view : TableType -> Model -> Table.Config RCMediaObject (Msg msg) -> List RCMediaObject -> Html (Msg msg)
+view tableType { query, state } tableConfig objectList =
     let
+        cssId =
+            case tableType of
+                PickerTable ->
+                    "media-picker"
+
+                MediaTable ->
+                    "media-list"
+
         searchBox : Html (Msg msg)
         searchBox =
             input
@@ -217,7 +230,7 @@ view { query, state } tableConfig objectList =
     in
     case objectList of
         [] ->
-            div [ class "media-list", style "display" "none" ]
+            div [ id cssId, style "display" "none" ]
                 [ Alert.simpleInfo [] [ text "Media list is empty. Hint: add a file by using the \"upload media\" button." ]
                 ]
 
@@ -229,13 +242,13 @@ view { query, state } tableConfig objectList =
             case searchedObjects of
                 [] ->
                     div
-                        [ class "media-list", style "display" "none" ]
+                        [ id cssId, style "display" "none" ]
                         [ searchBox
                         , Alert.simpleInfo [] [ text <| "Cannot find any media named \"" ++ query ++ "\"" ]
                         ]
 
                 results ->
-                    div [ id "media-list", style "display" "none" ]
+                    div [ id cssId, style "display" "none" ]
                         [ searchBox
                         , Table.view tableConfig state results
                         ]
@@ -248,7 +261,7 @@ mediaPickerView ( model, visibility ) objectList messages =
             config <| pickerButton messages
 
         tableList =
-            view model tableConfig objectList
+            view PickerTable model tableConfig objectList
     in
     Modal.config (EditMediaMessage messages.closeModal)
         |> Modal.scrollableBody True

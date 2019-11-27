@@ -11755,6 +11755,7 @@ var $author$project$Main$makeTableMessages = {
 var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
 var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1 = $elm$html$Html$Attributes$class('mb-1');
+var $author$project$RCMediaList$MediaTable = {$: 'MediaTable'};
 var $author$project$RCMediaList$SetTableState = function (a) {
 	return {$: 'SetTableState', a: a};
 };
@@ -12918,8 +12919,8 @@ var $billstclair$elm_sortable_table$Table$view = F3(
 				}
 			}());
 	});
-var $author$project$RCMediaList$view = F3(
-	function (_v0, tableConfig, objectList) {
+var $author$project$RCMediaList$view = F4(
+	function (tableType, _v0, tableConfig, objectList) {
 		var query = _v0.query;
 		var state = _v0.state;
 		var searchBox = A2(
@@ -12931,12 +12932,19 @@ var $author$project$RCMediaList$view = F3(
 					A2($elm$core$Basics$composeL, $author$project$RCMediaList$SortableTableMessage, $author$project$RCMediaList$SetQuery))
 				]),
 			_List_Nil);
+		var cssId = function () {
+			if (tableType.$ === 'PickerTable') {
+				return 'media-picker';
+			} else {
+				return 'media-list';
+			}
+		}();
 		if (!objectList.b) {
 			return A2(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('media-list'),
+						$elm$html$Html$Attributes$id(cssId),
 						A2($elm$html$Html$Attributes$style, 'display', 'none')
 					]),
 				_List_fromArray(
@@ -12957,7 +12965,7 @@ var $author$project$RCMediaList$view = F3(
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('media-list'),
+							$elm$html$Html$Attributes$id(cssId),
 							A2($elm$html$Html$Attributes$style, 'display', 'none')
 						]),
 					_List_fromArray(
@@ -12977,7 +12985,7 @@ var $author$project$RCMediaList$view = F3(
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$id('media-list'),
+							$elm$html$Html$Attributes$id(cssId),
 							A2($elm$html$Html$Attributes$style, 'display', 'none')
 						]),
 					_List_fromArray(
@@ -13002,14 +13010,16 @@ var $author$project$RCMediaList$mediaListView = F3(
 						[
 							$elm$html$Html$text('hallo wereld')
 						])),
-					A3(
+					A4(
 					$author$project$RCMediaList$view,
+					$author$project$RCMediaList$MediaTable,
 					model,
 					$author$project$RCMediaList$config(
 						$author$project$RCMediaList$mediaListButtons(messages)),
 					objects)
 				]));
 	});
+var $author$project$RCMediaList$PickerTable = {$: 'PickerTable'};
 var $rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {
 	return {$: 'Body', a: a};
 };
@@ -13507,7 +13517,7 @@ var $author$project$RCMediaList$mediaPickerView = F3(
 		var visibility = _v0.b;
 		var tableConfig = $author$project$RCMediaList$config(
 			$author$project$RCMediaList$pickerButton(messages));
-		var tableList = A3($author$project$RCMediaList$view, model, tableConfig, objectList);
+		var tableList = A4($author$project$RCMediaList$view, $author$project$RCMediaList$PickerTable, model, tableConfig, objectList);
 		return A2(
 			$rundis$elm_bootstrap$Bootstrap$Modal$view,
 			visibility,
