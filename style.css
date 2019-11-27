@@ -266,3 +266,13 @@ body {
 .fullscreen .preview-container {
     display: none;
 }
+
+/* media table */
+.rc-media-table {
+    width: 100%;
+}
+
+.rc-media-table-row:nth-of-type(even) {
+    background-color:#f8f8f8;
+} 
+    

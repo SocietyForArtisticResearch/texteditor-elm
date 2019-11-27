@@ -21,7 +21,7 @@ import Html.Attributes exposing (autoplay, class, controls, id, loop, placeholde
 import Html.Events exposing (onClick, onDoubleClick, onInput)
 import RCMediaPreview exposing (PreviewSize(..), viewTableThumbnail, viewThumbnail)
 import Reader exposing (Reader, andThen, ask, reader, run)
-import Table
+import Table exposing (defaultCustomizations)
 import View exposing (defaultButton, mkButton)
 
 
@@ -72,10 +72,10 @@ config : TableEditMessages msg -> Table.Config RCMediaObject (Msg msg)
 config messages =
     let
         makeMsg : Table.State -> Msg msg
-        makeMsg state =
-            (SortableTableMessage << SetTableState) <| state
+        makeMsg =
+            SortableTableMessage << SetTableState
     in
-    Table.config
+    Table.customConfig
         { toId = String.fromInt << .id
         , toMsg = makeMsg
         , columns =
@@ -84,6 +84,11 @@ config messages =
             , Table.stringColumn "Name" .name
             , buttonColumn messages
             ]
+        , customizations =
+            { defaultCustomizations
+                | tableAttrs = [ class "rc-media-table" ]
+                , rowAttrs = always [ class "rc-media-table-row" ]
+            }
         }
 
 
