@@ -212,13 +212,14 @@ filterObjectsByName query lst =
 view : TableType -> Model -> Table.Config RCMediaObject (Msg msg) -> List RCMediaObject -> Html (Msg msg)
 view tableType { query, state } tableConfig objectList =
     let
-        cssId =
+        domIdAndStyle : List (Html.Attribute (Msg msg))
+        domIdAndStyle =
             case tableType of
                 PickerTable ->
-                    "media-picker"
+                    [ id "media-picker", style "display" "initial" ]
 
                 MediaTable ->
-                    "media-list"
+                    [ id "media-list", style "display" "hidden" ]
 
         searchBox : Html (Msg msg)
         searchBox =
@@ -230,7 +231,7 @@ view tableType { query, state } tableConfig objectList =
     in
     case objectList of
         [] ->
-            div [ id cssId, style "display" "none" ]
+            div domIdAndStyle
                 [ Alert.simpleInfo [] [ text "Media list is empty. Hint: add a file by using the \"upload media\" button." ]
                 ]
 
@@ -242,13 +243,13 @@ view tableType { query, state } tableConfig objectList =
             case searchedObjects of
                 [] ->
                     div
-                        [ id cssId, style "display" "none" ]
+                        domIdAndStyle
                         [ searchBox
                         , Alert.simpleInfo [] [ text <| "Cannot find any media named \"" ++ query ++ "\"" ]
                         ]
 
                 results ->
-                    div [ id cssId, style "display" "none" ]
+                    div domIdAndStyle
                         [ searchBox
                         , Table.view tableConfig state results
                         ]

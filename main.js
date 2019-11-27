@@ -12932,21 +12932,25 @@ var $author$project$RCMediaList$view = F4(
 					A2($elm$core$Basics$composeL, $author$project$RCMediaList$SortableTableMessage, $author$project$RCMediaList$SetQuery))
 				]),
 			_List_Nil);
-		var cssId = function () {
+		var domIdAndStyle = function () {
 			if (tableType.$ === 'PickerTable') {
-				return 'media-picker';
+				return _List_fromArray(
+					[
+						$elm$html$Html$Attributes$id('media-picker'),
+						A2($elm$html$Html$Attributes$style, 'display', 'initial')
+					]);
 			} else {
-				return 'media-list';
+				return _List_fromArray(
+					[
+						$elm$html$Html$Attributes$id('media-list'),
+						A2($elm$html$Html$Attributes$style, 'display', 'hidden')
+					]);
 			}
 		}();
 		if (!objectList.b) {
 			return A2(
 				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$id(cssId),
-						A2($elm$html$Html$Attributes$style, 'display', 'none')
-					]),
+				domIdAndStyle,
 				_List_fromArray(
 					[
 						A2(
@@ -12963,11 +12967,7 @@ var $author$project$RCMediaList$view = F4(
 			if (!searchedObjects.b) {
 				return A2(
 					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$id(cssId),
-							A2($elm$html$Html$Attributes$style, 'display', 'none')
-						]),
+					domIdAndStyle,
 					_List_fromArray(
 						[
 							searchBox,
@@ -12983,11 +12983,7 @@ var $author$project$RCMediaList$view = F4(
 				var results = searchedObjects;
 				return A2(
 					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$id(cssId),
-							A2($elm$html$Html$Attributes$style, 'display', 'none')
-						]),
+					domIdAndStyle,
 					_List_fromArray(
 						[
 							searchBox,
