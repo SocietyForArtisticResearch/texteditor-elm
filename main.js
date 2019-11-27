@@ -12417,7 +12417,9 @@ var $author$project$View$renderIcon = function (icon) {
 					$elm$html$Html$Attributes$width(15),
 					$elm$html$Html$Attributes$height(15),
 					A2($elm$html$Html$Attributes$style, 'position', 'relative'),
-					A2($elm$html$Html$Attributes$style, 'top', '-2px')
+					A2($elm$html$Html$Attributes$style, 'top', '-2px'),
+					$elm$html$Html$Attributes$title(
+					A3($elm$core$String$slice, 0, -4, $author$project$Settings$iconUrl))
 				]),
 			_List_Nil);
 	};
@@ -12460,8 +12462,12 @@ var $author$project$View$renderIcon = function (icon) {
 			return iconImg('screen-normal.svg');
 		case 'MediaIcon':
 			return iconImg('file-media.svg');
-		default:
+		case 'TriangleRight':
 			return iconImg('triangle-right.svg');
+		case 'SpeakerIcon':
+			return iconImg('unmute.svg');
+		default:
+			return iconImg('device-camera-video.svg');
 	}
 };
 var $author$project$View$mkButton = function (props) {
@@ -15353,6 +15359,24 @@ var $billstclair$elm_sortable_table$Table$stringColumn = F2(
 			});
 	});
 var $author$project$RCMediaPreview$PreviewSmall = {$: 'PreviewSmall'};
+var $author$project$View$CameraIcon = {$: 'CameraIcon'};
+var $author$project$View$SpeakerIcon = {$: 'SpeakerIcon'};
+var $author$project$RCMediaPreview$renderAsIconHyperlink = F2(
+	function (icon, object) {
+		return A2(
+			$elm$html$Html$a,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$href(
+					$author$project$Exposition$mediaUrl(object)),
+					$elm$html$Html$Attributes$target('_blank'),
+					$elm$html$Html$Attributes$title('preview audio ' + object.name)
+				]),
+			_List_fromArray(
+				[
+					$author$project$View$renderIcon(icon)
+				]));
+	});
 var $author$project$RCMediaPreview$renderAsMini = F2(
 	function (object, size) {
 		var reso = function () {
@@ -15410,10 +15434,10 @@ var $author$project$RCMediaPreview$viewTableThumbnail = F2(
 				return A2($author$project$RCMediaPreview$renderAsMini, object, size);
 			case 'RCAudio':
 				var settings = _v0.a;
-				return A2($author$project$RCMediaPreview$renderMediaAsHyperlink, 'Audio', object);
+				return A2($author$project$RCMediaPreview$renderAsIconHyperlink, $author$project$View$SpeakerIcon, object);
 			case 'RCVideo':
 				var settings = _v0.a;
-				return A2($author$project$RCMediaPreview$renderMediaAsHyperlink, 'Video', object);
+				return A2($author$project$RCMediaPreview$renderAsIconHyperlink, $author$project$View$CameraIcon, object);
 			default:
 				return A2($author$project$RCMediaPreview$renderMediaAsHyperlink, 'PDF', object);
 		}

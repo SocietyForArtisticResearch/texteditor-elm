@@ -41,10 +41,10 @@ viewTableThumbnail object size =
             renderAsMini object size
 
         Exposition.RCAudio settings ->
-            renderMediaAsHyperlink "Audio" object
+            renderAsIconHyperlink View.SpeakerIcon object
 
         Exposition.RCVideo settings ->
-            renderMediaAsHyperlink "Video" object
+            renderAsIconHyperlink View.CameraIcon object
 
         Exposition.RCPdf ->
             renderMediaAsHyperlink "PDF" object
@@ -82,6 +82,16 @@ renderMediaAsHyperlink typeString object =
             ]
             [ View.renderIcon View.TriangleRight ]
         ]
+
+
+renderAsIconHyperlink : View.Icon -> RCMediaObject -> Html msg
+renderAsIconHyperlink icon object =
+    a
+        [ href <| Exposition.mediaUrl object
+        , target "_blank"
+        , title <| "preview audio " ++ object.name
+        ]
+        [ View.renderIcon icon ]
 
 
 viewThumbnail : RCMediaObject -> PreviewSize -> Html msg

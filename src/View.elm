@@ -30,6 +30,8 @@ type Icon
     | NormalScreenIcon
     | MediaIcon
     | TriangleRight
+    | SpeakerIcon
+    | CameraIcon
 
 
 renderIcon : Icon -> Html msg
@@ -43,6 +45,7 @@ renderIcon icon =
                 , Html.Attributes.height 15
                 , Html.Attributes.style "position" "relative"
                 , Html.Attributes.style "top" "-2px"
+                , title <| String.slice 0 -4 iconUrl
                 ]
                 []
     in
@@ -106,6 +109,12 @@ renderIcon icon =
 
         TriangleRight ->
             iconImg "triangle-right.svg"
+
+        SpeakerIcon ->
+            iconImg "unmute.svg"
+
+        CameraIcon ->
+            iconImg "device-camera-video.svg"
 
 
 type alias ButtonInfo msg =
