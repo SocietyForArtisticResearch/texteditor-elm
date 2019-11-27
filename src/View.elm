@@ -45,7 +45,7 @@ renderIcon icon =
                 , Html.Attributes.height 15
                 , Html.Attributes.style "position" "relative"
                 , Html.Attributes.style "top" "-2px"
-                , title <| String.slice 0 -4 iconUrl
+                , alt <| String.slice 0 -4 url
                 ]
                 []
     in
