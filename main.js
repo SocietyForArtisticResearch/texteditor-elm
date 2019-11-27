@@ -11694,6 +11694,7 @@ var $elm$html$Html$Attributes$href = function (url) {
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
+var $elm$core$Debug$log = _Debug_log;
 var $author$project$Main$MediaEdit = function (a) {
 	return {$: 'MediaEdit', a: a};
 };
@@ -12466,7 +12467,6 @@ var $author$project$RCMediaList$filterObjectsByName = F2(
 	});
 var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
 var $elm$html$Html$input = _VirtualDom_node('input');
-var $elm$core$Debug$log = _Debug_log;
 var $elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
 };
@@ -17668,10 +17668,10 @@ var $author$project$Main$view = function (model) {
 	var editorToolbar = $author$project$Main$mkEditorToolbar(
 		$author$project$Main$getTabState(model.editor));
 	var editorCheckbox = function () {
-		var _v1 = model.editor;
-		if (_v1.a.$ === 'EditorMarkdown') {
-			var _v2 = _v1.a;
-			var markdownEditor = _v1.b;
+		var _v2 = model.editor;
+		if (_v2.a.$ === 'EditorMarkdown') {
+			var _v3 = _v2.a;
+			var markdownEditor = _v2.b;
 			return $author$project$Main$viewEditorCheckbox(markdownEditor);
 		} else {
 			return A2($elm$html$Html$span, _List_Nil, _List_Nil);
@@ -17679,13 +17679,14 @@ var $author$project$Main$view = function (model) {
 	}();
 	var confirmDialogHtml = $author$project$UserConfirm$view(model.confirmDialog);
 	var alert = function () {
-		var _v0 = model.problems;
-		if (!_v0.b) {
+		var _v1 = model.problems;
+		if (!_v1.b) {
 			return A2($elm$html$Html$span, _List_Nil, _List_Nil);
 		} else {
 			return $author$project$Main$viewAlert(model);
 		}
 	}();
+	var _v0 = A2($elm$core$Debug$log, 'medialist', mediaList);
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,

@@ -1339,6 +1339,9 @@ view model =
                     model.mediaList
                     model.exposition.media
 
+        _ =
+            Debug.log "medialist" mediaList
+
         alert =
             case model.problems of
                 [] ->
