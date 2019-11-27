@@ -95,7 +95,10 @@ config buttons =
 
 mediaListView : TableEditMessages msg -> Model -> List RCMediaObject -> Html (Msg msg)
 mediaListView messages model objects =
-    view model (config <| mediaListButtons messages) objects
+    div []
+        [ Html.p [] [ text "hallo wereld" ]
+        , view model (config <| mediaListButtons messages) objects
+        ]
 
 
 thumbnailColumn : Table.Column RCMediaObject (Msg msg)
@@ -222,9 +225,6 @@ view { query, state } tableConfig objectList =
             let
                 searchedObjects =
                     filterObjectsByName query nonEmptyObjectList
-
-                _ =
-                    Debug.log "searched objects" searchedObjects
             in
             case searchedObjects of
                 [] ->

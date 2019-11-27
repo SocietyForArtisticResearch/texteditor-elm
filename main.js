@@ -11537,7 +11537,7 @@ var $author$project$Main$update = F2(
 						_Utils_update(
 							model,
 							{
-								mediaPickerDialog: _Utils_Tuple2($author$project$RCMediaList$empty, $rundis$elm_bootstrap$Bootstrap$Modal$shown)
+								mediaPickerDialog: _Utils_Tuple2(model.mediaPickerDialog.a, $rundis$elm_bootstrap$Bootstrap$Modal$shown)
 							}),
 						$elm$core$Platform$Cmd$none);
 				case 'CloseMediaPicker':
@@ -11545,7 +11545,7 @@ var $author$project$Main$update = F2(
 						_Utils_update(
 							model,
 							{
-								mediaPickerDialog: _Utils_Tuple2($author$project$RCMediaList$empty, $rundis$elm_bootstrap$Bootstrap$Modal$hidden)
+								mediaPickerDialog: _Utils_Tuple2(model.mediaPickerDialog.a, $rundis$elm_bootstrap$Bootstrap$Modal$hidden)
 							}),
 						$elm$core$Platform$Cmd$none);
 				case 'MediaPicker':
@@ -11575,7 +11575,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											mediaPickerDialog: _Utils_Tuple2($author$project$RCMediaList$empty, $rundis$elm_bootstrap$Bootstrap$Modal$shown)
+											mediaPickerDialog: _Utils_Tuple2(model.mediaPickerDialog.a, $rundis$elm_bootstrap$Bootstrap$Modal$shown)
 										}),
 									$elm$core$Platform$Cmd$none);
 							case 'CloseMediaPicker':
@@ -11583,7 +11583,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											mediaPickerDialog: _Utils_Tuple2($author$project$RCMediaList$empty, $rundis$elm_bootstrap$Bootstrap$Modal$hidden)
+											mediaPickerDialog: _Utils_Tuple2(model.mediaPickerDialog.a, $rundis$elm_bootstrap$Bootstrap$Modal$hidden)
 										}),
 									$elm$core$Platform$Cmd$none);
 							default:
@@ -11694,7 +11694,6 @@ var $elm$html$Html$Attributes$href = function (url) {
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
-var $elm$core$Debug$log = _Debug_log;
 var $author$project$Main$MediaEdit = function (a) {
 	return {$: 'MediaEdit', a: a};
 };
@@ -12440,6 +12439,7 @@ var $author$project$RCMediaList$mediaListButtons = function (messages) {
 			viewData: $author$project$RCMediaList$editObjectButtons(messages)
 		});
 };
+var $elm$html$Html$p = _VirtualDom_node('p');
 var $author$project$RCMediaList$SetQuery = function (a) {
 	return {$: 'SetQuery', a: a};
 };
@@ -12952,7 +12952,6 @@ var $author$project$RCMediaList$view = F3(
 		} else {
 			var nonEmptyObjectList = objectList;
 			var searchedObjects = A2($author$project$RCMediaList$filterObjectsByName, query, nonEmptyObjectList);
-			var _v2 = A2($elm$core$Debug$log, 'searched objects', searchedObjects);
 			if (!searchedObjects.b) {
 				return A2(
 					$elm$html$Html$div,
@@ -12991,12 +12990,25 @@ var $author$project$RCMediaList$view = F3(
 	});
 var $author$project$RCMediaList$mediaListView = F3(
 	function (messages, model, objects) {
-		return A3(
-			$author$project$RCMediaList$view,
-			model,
-			$author$project$RCMediaList$config(
-				$author$project$RCMediaList$mediaListButtons(messages)),
-			objects);
+		return A2(
+			$elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('hallo wereld')
+						])),
+					A3(
+					$author$project$RCMediaList$view,
+					model,
+					$author$project$RCMediaList$config(
+						$author$project$RCMediaList$mediaListButtons(messages)),
+					objects)
+				]));
 	});
 var $rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {
 	return {$: 'Body', a: a};
@@ -14332,7 +14344,6 @@ var $rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = $rundis$elm_bootstra
 	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
 var $rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
-var $elm$html$Html$p = _VirtualDom_node('p');
 var $author$project$RCMediaEdit$Copyright = {$: 'Copyright'};
 var $author$project$RCMediaEdit$Description = {$: 'Description'};
 var $author$project$RCMediaEdit$LicenseField = {$: 'LicenseField'};
@@ -17668,10 +17679,10 @@ var $author$project$Main$view = function (model) {
 	var editorToolbar = $author$project$Main$mkEditorToolbar(
 		$author$project$Main$getTabState(model.editor));
 	var editorCheckbox = function () {
-		var _v2 = model.editor;
-		if (_v2.a.$ === 'EditorMarkdown') {
-			var _v3 = _v2.a;
-			var markdownEditor = _v2.b;
+		var _v1 = model.editor;
+		if (_v1.a.$ === 'EditorMarkdown') {
+			var _v2 = _v1.a;
+			var markdownEditor = _v1.b;
 			return $author$project$Main$viewEditorCheckbox(markdownEditor);
 		} else {
 			return A2($elm$html$Html$span, _List_Nil, _List_Nil);
@@ -17679,14 +17690,13 @@ var $author$project$Main$view = function (model) {
 	}();
 	var confirmDialogHtml = $author$project$UserConfirm$view(model.confirmDialog);
 	var alert = function () {
-		var _v1 = model.problems;
-		if (!_v1.b) {
+		var _v0 = model.problems;
+		if (!_v0.b) {
 			return A2($elm$html$Html$span, _List_Nil, _List_Nil);
 		} else {
 			return $author$project$Main$viewAlert(model);
 		}
 	}();
-	var _v0 = A2($elm$core$Debug$log, 'medialist', mediaList);
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,

@@ -881,10 +881,10 @@ update msg model =
                             ( addProblem model <| Problems.UnsupportedMessage "Media List button is doing something unexpected", Cmd.none )
 
         OpenMediaPicker ->
-            ( { model | mediaPickerDialog = ( RCMediaList.empty, Modal.shown ) }, Cmd.none )
+            ( { model | mediaPickerDialog = ( Tuple.first model.mediaPickerDialog, Modal.shown ) }, Cmd.none )
 
         CloseMediaPicker ->
-            ( { model | mediaPickerDialog = ( RCMediaList.empty, Modal.hidden ) }, Cmd.none )
+            ( { model | mediaPickerDialog = ( Tuple.first model.mediaPickerDialog, Modal.hidden ) }, Cmd.none )
 
         MediaPicker pickerMsg ->
             case pickerMsg of
@@ -901,10 +901,10 @@ update msg model =
                             insertMediaUpdate obj model
 
                         OpenMediaPicker ->
-                            ( { model | mediaPickerDialog = ( RCMediaList.empty, Modal.shown ) }, Cmd.none )
+                            ( { model | mediaPickerDialog = ( Tuple.first model.mediaPickerDialog, Modal.shown ) }, Cmd.none )
 
                         CloseMediaPicker ->
-                            ( { model | mediaPickerDialog = ( RCMediaList.empty, Modal.hidden ) }, Cmd.none )
+                            ( { model | mediaPickerDialog = ( Tuple.first model.mediaPickerDialog, Modal.hidden ) }, Cmd.none )
 
                         _ ->
                             ( addProblem model <| Problems.UnsupportedMessage "media insert is doing something unexpected", Cmd.none )
@@ -1338,9 +1338,6 @@ view model =
                     makeTableMessages
                     model.mediaList
                     model.exposition.media
-
-        _ =
-            Debug.log "medialist" mediaList
 
         alert =
             case model.problems of
