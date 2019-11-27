@@ -15215,6 +15215,25 @@ var $author$project$RCMediaList$buttonColumn = function (messages) {
 var $billstclair$elm_sortable_table$Table$Config = function (a) {
 	return {$: 'Config', a: a};
 };
+var $billstclair$elm_sortable_table$Table$customConfig = function (_v0) {
+	var toId = _v0.toId;
+	var toMsg = _v0.toMsg;
+	var columns = _v0.columns;
+	var customizations = _v0.customizations;
+	return $billstclair$elm_sortable_table$Table$Config(
+		{
+			columns: A2(
+				$elm$core$List$map,
+				function (_v1) {
+					var cData = _v1.a;
+					return cData;
+				},
+				columns),
+			customizations: customizations,
+			toId: toId,
+			toMsg: toMsg
+		});
+};
 var $billstclair$elm_sortable_table$Table$simpleRowAttrs = function (_v0) {
 	return _List_Nil;
 };
@@ -15302,24 +15321,6 @@ var $billstclair$elm_sortable_table$Table$simpleThead = function (headers) {
 		A2($elm$core$List$map, $billstclair$elm_sortable_table$Table$simpleTheadHelp, headers));
 };
 var $billstclair$elm_sortable_table$Table$defaultCustomizations = {caption: $elm$core$Maybe$Nothing, rowAttrs: $billstclair$elm_sortable_table$Table$simpleRowAttrs, tableAttrs: _List_Nil, tbodyAttrs: _List_Nil, tfoot: $elm$core$Maybe$Nothing, thead: $billstclair$elm_sortable_table$Table$simpleThead};
-var $billstclair$elm_sortable_table$Table$config = function (_v0) {
-	var toId = _v0.toId;
-	var toMsg = _v0.toMsg;
-	var columns = _v0.columns;
-	return $billstclair$elm_sortable_table$Table$Config(
-		{
-			columns: A2(
-				$elm$core$List$map,
-				function (_v1) {
-					var cData = _v1.a;
-					return cData;
-				},
-				columns),
-			customizations: $billstclair$elm_sortable_table$Table$defaultCustomizations,
-			toId: toId,
-			toMsg: toMsg
-		});
-};
 var $billstclair$elm_sortable_table$Table$IncOrDec = function (a) {
 	return {$: 'IncOrDec', a: a};
 };
@@ -15384,6 +15385,7 @@ var $author$project$RCMediaPreview$renderMediaAsHyperlink = F2(
 						[
 							$elm$html$Html$Attributes$href(
 							$author$project$Exposition$mediaUrl(object)),
+							$elm$html$Html$Attributes$target('_blank'),
 							$elm$html$Html$Attributes$title('open preview')
 						]),
 					_List_fromArray(
@@ -15425,10 +15427,8 @@ var $author$project$RCMediaList$thumbnailColumn = $billstclair$elm_sortable_tabl
 		}
 	});
 var $author$project$RCMediaList$config = function (messages) {
-	var makeMsg = function (state) {
-		return A3($elm$core$Basics$composeL, $author$project$RCMediaList$SortableTableMessage, $author$project$RCMediaList$SetTableState, state);
-	};
-	return $billstclair$elm_sortable_table$Table$config(
+	var makeMsg = A2($elm$core$Basics$composeL, $author$project$RCMediaList$SortableTableMessage, $author$project$RCMediaList$SetTableState);
+	return $billstclair$elm_sortable_table$Table$customConfig(
 		{
 			columns: _List_fromArray(
 				[
@@ -15444,12 +15444,25 @@ var $author$project$RCMediaList$config = function (messages) {
 						})),
 					A2(
 					$billstclair$elm_sortable_table$Table$stringColumn,
-					'Name',
+					'Names',
 					function ($) {
 						return $.name;
 					}),
 					$author$project$RCMediaList$buttonColumn(messages)
 				]),
+			customizations: _Utils_update(
+				$billstclair$elm_sortable_table$Table$defaultCustomizations,
+				{
+					rowAttrs: $elm$core$Basics$always(
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('rc-media-table-row')
+							])),
+					tableAttrs: _List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('rc-media-table')
+						])
+				}),
 			toId: A2(
 				$elm$core$Basics$composeL,
 				$elm$core$String$fromInt,
