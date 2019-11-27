@@ -109,7 +109,7 @@ editButton messages object =
     in
     Button.button
         [ Button.small
-        , Button.outlineSecondary
+        , Button.outlineInfo
         , Button.attrs [ Spacing.ml1, onClick <| makeEditMessage object ]
         ]
         [ text "Edit" ]
@@ -123,7 +123,7 @@ deleteButton messages object =
     in
     Button.button
         [ Button.small
-        , Button.outlineSecondary
+        , Button.outlineDanger
         , Button.attrs [ Spacing.ml1, onClick <| makeDeleteMessage object ]
         ]
         [ text "Delete" ]
