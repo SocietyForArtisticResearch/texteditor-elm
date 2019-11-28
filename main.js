@@ -11586,6 +11586,14 @@ var $author$project$Main$update = F2(
 											mediaPickerDialog: _Utils_Tuple2(model.mediaPickerDialog.a, $rundis$elm_bootstrap$Bootstrap$Modal$hidden)
 										}),
 									$elm$core$Platform$Cmd$none);
+							case 'UploadMediaFileSelect':
+								return _Utils_Tuple2(
+									model,
+									A2(
+										$elm$file$File$Select$file,
+										_List_fromArray(
+											['image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/svg+xml', 'audio/mp3', 'audio/wav', 'audio/aiff', 'application/pdf', 'audio/ogg', 'audio/aif', 'video/mp4', 'video/mpeg', 'video/ogv']),
+										$author$project$Main$UploadMediaFileSelected));
 							default:
 								return _Utils_Tuple2(
 									A2(

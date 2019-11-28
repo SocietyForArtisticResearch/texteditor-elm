@@ -906,6 +906,27 @@ update msg model =
                         CloseMediaPicker ->
                             ( { model | mediaPickerDialog = ( Tuple.first model.mediaPickerDialog, Modal.hidden ) }, Cmd.none )
 
+                        UploadMediaFileSelect ->
+                            ( model
+                            , Select.file
+                                [ "image/jpeg"
+                                , "image/png"
+                                , "image/gif"
+                                , "image/tiff"
+                                , "image/svg+xml"
+                                , "audio/mp3"
+                                , "audio/wav"
+                                , "audio/aiff"
+                                , "application/pdf"
+                                , "audio/ogg"
+                                , "audio/aif"
+                                , "video/mp4"
+                                , "video/mpeg"
+                                , "video/ogv"
+                                ]
+                                UploadMediaFileSelected
+                            )
+
                         _ ->
                             ( addProblem model <| Problems.UnsupportedMessage "media insert is doing something unexpected", Cmd.none )
 
