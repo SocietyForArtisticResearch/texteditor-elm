@@ -13107,12 +13107,9 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$large = function (_v0) {
 					})
 			}));
 };
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
-	return {$: 'Roled', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Button$primary = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled($rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Success = {$: 'Success'};
+var $rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Success));
 var $author$project$RCMediaList$insertButton = F2(
 	function (messages, object) {
 		var makeInsertMessage = A2($elm$core$Basics$composeL, $author$project$RCMediaList$EditMediaMessage, messages.insertObject);
@@ -13126,7 +13123,7 @@ var $author$project$RCMediaList$insertButton = F2(
 					_List_fromArray(
 						[
 							$rundis$elm_bootstrap$Bootstrap$Button$small,
-							$rundis$elm_bootstrap$Bootstrap$Button$primary,
+							$rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess,
 							$rundis$elm_bootstrap$Bootstrap$Button$attrs(
 							_List_fromArray(
 								[
@@ -13161,6 +13158,9 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$scrollableBody = F2(
 						{scrollableBody: scrollable})
 				}));
 	});
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
+	return {$: 'Roled', a: a};
+};
 var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary = {$: 'Secondary'};
 var $rundis$elm_bootstrap$Bootstrap$Button$secondary = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled($rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
@@ -14332,6 +14332,7 @@ var $author$project$Main$statusBar = function (model) {
 };
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
 var $rundis$elm_bootstrap$Bootstrap$Modal$h2 = $rundis$elm_bootstrap$Bootstrap$Modal$titledHeader($elm$html$Html$h2);
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
 var $rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
 var $rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(

@@ -158,7 +158,7 @@ insertButton messages object =
     Table.HtmlDetails []
         [ Button.button
             [ Button.small
-            , Button.primary
+            , Button.outlineSuccess
             , Button.attrs [ onClick <| makeInsertMessage object ]
             ]
             [ text "Insert" ]
