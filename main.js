@@ -13107,6 +13107,44 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$large = function (_v0) {
 					})
 			}));
 };
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Light = {$: 'Light'};
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
+	return {$: 'Roled', a: a};
+};
+var $rundis$elm_bootstrap$Bootstrap$Button$light = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled($rundis$elm_bootstrap$Bootstrap$Internal$Button$Light));
+var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0 = $elm$html$Html$Attributes$class('m-0');
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark = {$: 'Dark'};
+var $rundis$elm_bootstrap$Bootstrap$Button$outlineDark = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark));
+var $author$project$View$mkButton = function (props) {
+	var spacing = props.offset ? _List_fromArray(
+		[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0]) : _List_Nil;
+	return A2(
+		$rundis$elm_bootstrap$Bootstrap$Button$button,
+		_List_fromArray(
+			[
+				props.primary ? $rundis$elm_bootstrap$Bootstrap$Button$outlineDark : $rundis$elm_bootstrap$Bootstrap$Button$light,
+				$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+				A2(
+					$elm$core$List$append,
+					_List_fromArray(
+						[
+							$elm$html$Html$Events$onClick(props.onClickMsg),
+							A2(
+							$elm$html$Html$Attributes$style,
+							'display',
+							props.hidden ? 'none' : 'inline-block'),
+							$elm$html$Html$Attributes$title(props.title)
+						]),
+					A2($elm$core$List$append, spacing, props.otherAttrs)))
+			]),
+		_List_fromArray(
+			[
+				$author$project$View$renderIcon(props.icon),
+				$elm$html$Html$text(props.text)
+			]));
+};
 var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Success = {$: 'Success'};
 var $rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Success));
@@ -13158,9 +13196,6 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$scrollableBody = F2(
 						{scrollableBody: scrollable})
 				}));
 	});
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
-	return {$: 'Roled', a: a};
-};
 var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary = {$: 'Secondary'};
 var $rundis$elm_bootstrap$Bootstrap$Button$secondary = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled($rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
@@ -13497,6 +13532,14 @@ var $author$project$RCMediaList$mediaPickerView = F3(
 	function (_v0, objectList, messages) {
 		var model = _v0.a;
 		var visibility = _v0.b;
+		var uploadButton = function () {
+			var aButton = $author$project$View$defaultButton(
+				$author$project$RCMediaList$EditMediaMessage(messages.uploadMediaFileSelect));
+			return $author$project$View$mkButton(
+				_Utils_update(
+					aButton,
+					{icon: $author$project$View$UploadCloud, offset: false, primary: false, text: 'Upload Media', title: 'Add video, audio, pdf or images files'}));
+		}();
 		var tableConfig = $author$project$RCMediaList$config(
 			$author$project$RCMediaList$pickerButton(messages));
 		var tableList = A4($author$project$RCMediaList$view, $author$project$RCMediaList$PickerTable, model, tableConfig, objectList);
@@ -13529,7 +13572,7 @@ var $author$project$RCMediaList$mediaPickerView = F3(
 					$rundis$elm_bootstrap$Bootstrap$Modal$body,
 					_List_Nil,
 					_List_fromArray(
-						[tableList]),
+						[uploadButton, tableList]),
 					A3(
 						$rundis$elm_bootstrap$Bootstrap$Modal$h1,
 						_List_Nil,
@@ -13777,9 +13820,6 @@ var $rundis$elm_bootstrap$Bootstrap$Dropdown$dropdown = F2(
 					A3($rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownMenu, state, config, items)
 				]));
 	});
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark = {$: 'Dark'};
-var $rundis$elm_bootstrap$Bootstrap$Button$outlineDark = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark));
 var $rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownToggle = function (a) {
 	return {$: 'DropdownToggle', a: a};
 };
@@ -14036,38 +14076,6 @@ var $author$project$Main$RedoCM = {$: 'RedoCM'};
 var $author$project$View$RedoIcon = {$: 'RedoIcon'};
 var $author$project$Main$UndoCM = {$: 'UndoCM'};
 var $author$project$View$UndoIcon = {$: 'UndoIcon'};
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Light = {$: 'Light'};
-var $rundis$elm_bootstrap$Bootstrap$Button$light = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled($rundis$elm_bootstrap$Bootstrap$Internal$Button$Light));
-var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0 = $elm$html$Html$Attributes$class('m-0');
-var $author$project$View$mkButton = function (props) {
-	var spacing = props.offset ? _List_fromArray(
-		[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0]) : _List_Nil;
-	return A2(
-		$rundis$elm_bootstrap$Bootstrap$Button$button,
-		_List_fromArray(
-			[
-				props.primary ? $rundis$elm_bootstrap$Bootstrap$Button$outlineDark : $rundis$elm_bootstrap$Bootstrap$Button$light,
-				$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-				A2(
-					$elm$core$List$append,
-					_List_fromArray(
-						[
-							$elm$html$Html$Events$onClick(props.onClickMsg),
-							A2(
-							$elm$html$Html$Attributes$style,
-							'display',
-							props.hidden ? 'none' : 'inline-block'),
-							$elm$html$Html$Attributes$title(props.title)
-						]),
-					A2($elm$core$List$append, spacing, props.otherAttrs)))
-			]),
-		_List_fromArray(
-			[
-				$author$project$View$renderIcon(props.icon),
-				$elm$html$Html$text(props.text)
-			]));
-};
 var $author$project$Main$separator = A2(
 	$elm$html$Html$span,
 	_List_fromArray(

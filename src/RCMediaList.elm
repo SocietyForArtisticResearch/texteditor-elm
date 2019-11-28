@@ -260,13 +260,30 @@ mediaPickerView ( model, visibility ) objectList messages =
 
         tableList =
             view PickerTable model tableConfig objectList
+
+        uploadButton =
+            let
+                aButton =
+                    defaultButton (EditMediaMessage messages.uploadMediaFileSelect)
+            in
+            mkButton
+                { aButton
+                    | icon = View.UploadCloud
+                    , offset = False
+                    , title = "Add video, audio, pdf or images files"
+                    , text = "Upload Media"
+                    , primary = False
+                }
     in
     Modal.config (EditMediaMessage messages.closeModal)
         |> Modal.scrollableBody True
         |> Modal.large
         |> Modal.hideOnBackdropClick True
         |> Modal.h1 [] [ text "Select a media object to insert." ]
-        |> Modal.body [] [ tableList ]
+        |> Modal.body []
+            [ uploadButton
+            , tableList
+            ]
         |> Modal.footer []
             [ Button.button
                 [ Button.secondary, Button.attrs [ onClick <| EditMediaMessage messages.closeModal ] ]
