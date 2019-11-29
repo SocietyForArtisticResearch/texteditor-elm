@@ -11764,6 +11764,9 @@ var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
 var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1 = $elm$html$Html$Attributes$class('mb-1');
 var $author$project$RCMediaList$MediaTable = {$: 'MediaTable'};
+var $author$project$RCMediaList$MainMessage = function (a) {
+	return {$: 'MainMessage', a: a};
+};
 var $author$project$RCMediaList$SetTableState = function (a) {
 	return {$: 'SetTableState', a: a};
 };
@@ -11888,8 +11891,288 @@ var $billstclair$elm_sortable_table$Table$simpleThead = function (headers) {
 		A2($elm$core$List$map, $billstclair$elm_sortable_table$Table$simpleTheadHelp, headers));
 };
 var $billstclair$elm_sortable_table$Table$defaultCustomizations = {caption: $elm$core$Maybe$Nothing, rowAttrs: $billstclair$elm_sortable_table$Table$simpleRowAttrs, tableAttrs: _List_Nil, tbodyAttrs: _List_Nil, tfoot: $elm$core$Maybe$Nothing, thead: $billstclair$elm_sortable_table$Table$simpleThead};
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
+	return {$: 'Attrs', a: a};
+};
+var $rundis$elm_bootstrap$Bootstrap$Button$attrs = function (attrs_) {
+	return $rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs(attrs_);
+};
+var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (maybeValue.$ === 'Just') {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier = F2(
+	function (modifier, options) {
+		switch (modifier.$) {
+			case 'Size':
+				var size = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						size: $elm$core$Maybe$Just(size)
+					});
+			case 'Coloring':
+				var coloring = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						coloring: $elm$core$Maybe$Just(coloring)
+					});
+			case 'Block':
+				return _Utils_update(
+					options,
+					{block: true});
+			case 'Disabled':
+				var val = modifier.a;
+				return _Utils_update(
+					options,
+					{disabled: val});
+			default:
+				var attrs = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						attributes: _Utils_ap(options.attributes, attrs)
+					});
+		}
+	});
+var $elm$html$Html$Attributes$classList = function (classes) {
+	return $elm$html$Html$Attributes$class(
+		A2(
+			$elm$core$String$join,
+			' ',
+			A2(
+				$elm$core$List$map,
+				$elm$core$Tuple$first,
+				A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
+};
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions = {attributes: _List_Nil, block: false, coloring: $elm$core$Maybe$Nothing, disabled: false, size: $elm$core$Maybe$Nothing};
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass = function (role) {
+	switch (role.$) {
+		case 'Primary':
+			return 'primary';
+		case 'Secondary':
+			return 'secondary';
+		case 'Success':
+			return 'success';
+		case 'Info':
+			return 'info';
+		case 'Warning':
+			return 'warning';
+		case 'Danger':
+			return 'danger';
+		case 'Dark':
+			return 'dark';
+		case 'Light':
+			return 'light';
+		default:
+			return 'link';
+	}
+};
+var $rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption = function (size) {
+	switch (size.$) {
+		case 'XS':
+			return $elm$core$Maybe$Nothing;
+		case 'SM':
+			return $elm$core$Maybe$Just('sm');
+		case 'MD':
+			return $elm$core$Maybe$Just('md');
+		case 'LG':
+			return $elm$core$Maybe$Just('lg');
+		default:
+			return $elm$core$Maybe$Just('xl');
+	}
+};
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes = function (modifiers) {
+	var options = A3($elm$core$List$foldl, $rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier, $rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions, modifiers);
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$classList(
+				_List_fromArray(
+					[
+						_Utils_Tuple2('btn', true),
+						_Utils_Tuple2('btn-block', options.block),
+						_Utils_Tuple2('disabled', options.disabled)
+					])),
+				$elm$html$Html$Attributes$disabled(options.disabled)
+			]),
+		_Utils_ap(
+			function () {
+				var _v0 = A2($elm$core$Maybe$andThen, $rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption, options.size);
+				if (_v0.$ === 'Just') {
+					var s = _v0.a;
+					return _List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('btn-' + s)
+						]);
+				} else {
+					return _List_Nil;
+				}
+			}(),
+			_Utils_ap(
+				function () {
+					var _v1 = options.coloring;
+					if (_v1.$ === 'Just') {
+						if (_v1.a.$ === 'Roled') {
+							var role = _v1.a.a;
+							return _List_fromArray(
+								[
+									$elm$html$Html$Attributes$class(
+									'btn-' + $rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
+								]);
+						} else {
+							var role = _v1.a.a;
+							return _List_fromArray(
+								[
+									$elm$html$Html$Attributes$class(
+									'btn-outline-' + $rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
+								]);
+						}
+					} else {
+						return _List_Nil;
+					}
+				}(),
+				options.attributes)));
+};
+var $rundis$elm_bootstrap$Bootstrap$Button$button = F2(
+	function (options, children) {
+		return A2(
+			$elm$html$Html$button,
+			$rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes(options),
+			children);
+	});
+var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1 = $elm$html$Html$Attributes$class('ml-1');
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
+	return {$: 'Coloring', a: a};
+};
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger = {$: 'Danger'};
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
+	return {$: 'Outlined', a: a};
+};
+var $rundis$elm_bootstrap$Bootstrap$Button$outlineDanger = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
+var $rundis$elm_bootstrap$Bootstrap$General$Internal$SM = {$: 'SM'};
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Size = function (a) {
+	return {$: 'Size', a: a};
+};
+var $rundis$elm_bootstrap$Bootstrap$Button$small = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Size($rundis$elm_bootstrap$Bootstrap$General$Internal$SM);
+var $author$project$RCMediaList$deleteButton = F2(
+	function (messages, object) {
+		var makeDeleteMessage = A2($elm$core$Basics$composeL, $author$project$RCMediaList$MainMessage, messages.deleteObject);
+		return A2(
+			$rundis$elm_bootstrap$Bootstrap$Button$button,
+			_List_fromArray(
+				[
+					$rundis$elm_bootstrap$Bootstrap$Button$small,
+					$rundis$elm_bootstrap$Bootstrap$Button$outlineDanger,
+					$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+					_List_fromArray(
+						[
+							$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1,
+							$elm$html$Html$Events$onClick(
+							makeDeleteMessage(object))
+						]))
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Delete')
+				]));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Info = {$: 'Info'};
+var $rundis$elm_bootstrap$Bootstrap$Button$outlineInfo = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Info));
+var $author$project$RCMediaList$editButton = F2(
+	function (messages, object) {
+		var makeEditMessage = A2(
+			$elm$core$Basics$composeL,
+			A2(
+				$elm$core$Basics$composeL,
+				A2($elm$core$Basics$composeL, $author$project$RCMediaList$MainMessage, messages.editObject),
+				$elm$core$String$fromInt),
+			function ($) {
+				return $.id;
+			});
+		return A2(
+			$rundis$elm_bootstrap$Bootstrap$Button$button,
+			_List_fromArray(
+				[
+					$rundis$elm_bootstrap$Bootstrap$Button$small,
+					$rundis$elm_bootstrap$Bootstrap$Button$outlineInfo,
+					$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+					_List_fromArray(
+						[
+							$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1,
+							$elm$html$Html$Events$onClick(
+							makeEditMessage(object))
+						]))
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Edit')
+				]));
+	});
+var $author$project$RCMediaList$editObjectButtons = F2(
+	function (messages, object) {
+		return A2(
+			$billstclair$elm_sortable_table$Table$HtmlDetails,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2($author$project$RCMediaList$editButton, messages, object),
+					A2($author$project$RCMediaList$deleteButton, messages, object)
+				]));
+	});
+var $billstclair$elm_sortable_table$Table$None = {$: 'None'};
+var $billstclair$elm_sortable_table$Table$unsortable = $billstclair$elm_sortable_table$Table$None;
 var $billstclair$elm_sortable_table$Table$Column = function (a) {
 	return {$: 'Column', a: a};
+};
+var $billstclair$elm_sortable_table$Table$veryCustomColumn = $billstclair$elm_sortable_table$Table$Column;
+var $author$project$RCMediaList$mediaListButtons = function (messages) {
+	return $billstclair$elm_sortable_table$Table$veryCustomColumn(
+		{
+			name: '',
+			sorter: $billstclair$elm_sortable_table$Table$unsortable,
+			viewData: $author$project$RCMediaList$editObjectButtons(messages)
+		});
+};
+var $elm$html$Html$Events$onDoubleClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'dblclick',
+		$elm$json$Json$Decode$succeed(msg));
 };
 var $billstclair$elm_sortable_table$Table$IncOrDec = function (a) {
 	return {$: 'IncOrDec', a: a};
@@ -11917,9 +12200,6 @@ var $billstclair$elm_sortable_table$Table$stringColumn = F2(
 			});
 	});
 var $author$project$RCMediaPreview$PreviewSmall = {$: 'PreviewSmall'};
-var $billstclair$elm_sortable_table$Table$None = {$: 'None'};
-var $billstclair$elm_sortable_table$Table$unsortable = $billstclair$elm_sortable_table$Table$None;
-var $billstclair$elm_sortable_table$Table$veryCustomColumn = $billstclair$elm_sortable_table$Table$Column;
 var $author$project$View$CameraIcon = {$: 'CameraIcon'};
 var $author$project$View$SpeakerIcon = {$: 'SpeakerIcon'};
 var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty('alt');
@@ -12128,8 +12408,18 @@ var $author$project$RCMediaList$thumbnailColumn = $billstclair$elm_sortable_tabl
 					]));
 		}
 	});
-var $author$project$RCMediaList$config = function (buttons) {
+var $author$project$RCMediaList$configMediaList = function (messages) {
 	var makeMsg = A2($elm$core$Basics$composeL, $author$project$RCMediaList$SortableTableMessage, $author$project$RCMediaList$SetTableState);
+	var doubleClickAction = A2(
+		$elm$core$Basics$composeL,
+		A2(
+			$elm$core$Basics$composeL,
+			A2($elm$core$Basics$composeL, $author$project$RCMediaList$MainMessage, messages.editObject),
+			$elm$core$String$fromInt),
+		function ($) {
+			return $.id;
+		});
+	var buttons = $author$project$RCMediaList$mediaListButtons(messages);
 	return $billstclair$elm_sortable_table$Table$customConfig(
 		{
 			columns: _List_fromArray(
@@ -12155,11 +12445,14 @@ var $author$project$RCMediaList$config = function (buttons) {
 			customizations: _Utils_update(
 				$billstclair$elm_sortable_table$Table$defaultCustomizations,
 				{
-					rowAttrs: $elm$core$Basics$always(
-						_List_fromArray(
+					rowAttrs: function (object) {
+						return _List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('rc-media-table-row')
-							])),
+								$elm$html$Html$Attributes$class('rc-media-table-row'),
+								$elm$html$Html$Events$onDoubleClick(
+								doubleClickAction(object))
+							]);
+					},
 					tableAttrs: _List_fromArray(
 						[
 							$elm$html$Html$Attributes$class('rc-media-table')
@@ -12172,280 +12465,6 @@ var $author$project$RCMediaList$config = function (buttons) {
 					return $.id;
 				}),
 			toMsg: makeMsg
-		});
-};
-var $author$project$RCMediaList$EditMediaMessage = function (a) {
-	return {$: 'EditMediaMessage', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
-	return {$: 'Attrs', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Button$attrs = function (attrs_) {
-	return $rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs(attrs_);
-};
-var $elm$html$Html$button = _VirtualDom_node('button');
-var $elm$core$Maybe$andThen = F2(
-	function (callback, maybeValue) {
-		if (maybeValue.$ === 'Just') {
-			var value = maybeValue.a;
-			return callback(value);
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
-	});
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier = F2(
-	function (modifier, options) {
-		switch (modifier.$) {
-			case 'Size':
-				var size = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						size: $elm$core$Maybe$Just(size)
-					});
-			case 'Coloring':
-				var coloring = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						coloring: $elm$core$Maybe$Just(coloring)
-					});
-			case 'Block':
-				return _Utils_update(
-					options,
-					{block: true});
-			case 'Disabled':
-				var val = modifier.a;
-				return _Utils_update(
-					options,
-					{disabled: val});
-			default:
-				var attrs = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						attributes: _Utils_ap(options.attributes, attrs)
-					});
-		}
-	});
-var $elm$html$Html$Attributes$classList = function (classes) {
-	return $elm$html$Html$Attributes$class(
-		A2(
-			$elm$core$String$join,
-			' ',
-			A2(
-				$elm$core$List$map,
-				$elm$core$Tuple$first,
-				A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
-};
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions = {attributes: _List_Nil, block: false, coloring: $elm$core$Maybe$Nothing, disabled: false, size: $elm$core$Maybe$Nothing};
-var $elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$bool(bool));
-	});
-var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass = function (role) {
-	switch (role.$) {
-		case 'Primary':
-			return 'primary';
-		case 'Secondary':
-			return 'secondary';
-		case 'Success':
-			return 'success';
-		case 'Info':
-			return 'info';
-		case 'Warning':
-			return 'warning';
-		case 'Danger':
-			return 'danger';
-		case 'Dark':
-			return 'dark';
-		case 'Light':
-			return 'light';
-		default:
-			return 'link';
-	}
-};
-var $rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption = function (size) {
-	switch (size.$) {
-		case 'XS':
-			return $elm$core$Maybe$Nothing;
-		case 'SM':
-			return $elm$core$Maybe$Just('sm');
-		case 'MD':
-			return $elm$core$Maybe$Just('md');
-		case 'LG':
-			return $elm$core$Maybe$Just('lg');
-		default:
-			return $elm$core$Maybe$Just('xl');
-	}
-};
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes = function (modifiers) {
-	var options = A3($elm$core$List$foldl, $rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier, $rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions, modifiers);
-	return _Utils_ap(
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$classList(
-				_List_fromArray(
-					[
-						_Utils_Tuple2('btn', true),
-						_Utils_Tuple2('btn-block', options.block),
-						_Utils_Tuple2('disabled', options.disabled)
-					])),
-				$elm$html$Html$Attributes$disabled(options.disabled)
-			]),
-		_Utils_ap(
-			function () {
-				var _v0 = A2($elm$core$Maybe$andThen, $rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption, options.size);
-				if (_v0.$ === 'Just') {
-					var s = _v0.a;
-					return _List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('btn-' + s)
-						]);
-				} else {
-					return _List_Nil;
-				}
-			}(),
-			_Utils_ap(
-				function () {
-					var _v1 = options.coloring;
-					if (_v1.$ === 'Just') {
-						if (_v1.a.$ === 'Roled') {
-							var role = _v1.a.a;
-							return _List_fromArray(
-								[
-									$elm$html$Html$Attributes$class(
-									'btn-' + $rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
-								]);
-						} else {
-							var role = _v1.a.a;
-							return _List_fromArray(
-								[
-									$elm$html$Html$Attributes$class(
-									'btn-outline-' + $rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
-								]);
-						}
-					} else {
-						return _List_Nil;
-					}
-				}(),
-				options.attributes)));
-};
-var $rundis$elm_bootstrap$Bootstrap$Button$button = F2(
-	function (options, children) {
-		return A2(
-			$elm$html$Html$button,
-			$rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes(options),
-			children);
-	});
-var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1 = $elm$html$Html$Attributes$class('ml-1');
-var $elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var $elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var $elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'click',
-		$elm$json$Json$Decode$succeed(msg));
-};
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
-	return {$: 'Coloring', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger = {$: 'Danger'};
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
-	return {$: 'Outlined', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Button$outlineDanger = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Danger));
-var $rundis$elm_bootstrap$Bootstrap$General$Internal$SM = {$: 'SM'};
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Size = function (a) {
-	return {$: 'Size', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Button$small = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Size($rundis$elm_bootstrap$Bootstrap$General$Internal$SM);
-var $author$project$RCMediaList$deleteButton = F2(
-	function (messages, object) {
-		var makeDeleteMessage = A2($elm$core$Basics$composeL, $author$project$RCMediaList$EditMediaMessage, messages.deleteObject);
-		return A2(
-			$rundis$elm_bootstrap$Bootstrap$Button$button,
-			_List_fromArray(
-				[
-					$rundis$elm_bootstrap$Bootstrap$Button$small,
-					$rundis$elm_bootstrap$Bootstrap$Button$outlineDanger,
-					$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-					_List_fromArray(
-						[
-							$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1,
-							$elm$html$Html$Events$onClick(
-							makeDeleteMessage(object))
-						]))
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Delete')
-				]));
-	});
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Info = {$: 'Info'};
-var $rundis$elm_bootstrap$Bootstrap$Button$outlineInfo = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Info));
-var $author$project$RCMediaList$editButton = F2(
-	function (messages, object) {
-		var makeEditMessage = A2(
-			$elm$core$Basics$composeL,
-			A2(
-				$elm$core$Basics$composeL,
-				A2($elm$core$Basics$composeL, $author$project$RCMediaList$EditMediaMessage, messages.editObject),
-				$elm$core$String$fromInt),
-			function ($) {
-				return $.id;
-			});
-		return A2(
-			$rundis$elm_bootstrap$Bootstrap$Button$button,
-			_List_fromArray(
-				[
-					$rundis$elm_bootstrap$Bootstrap$Button$small,
-					$rundis$elm_bootstrap$Bootstrap$Button$outlineInfo,
-					$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-					_List_fromArray(
-						[
-							$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1,
-							$elm$html$Html$Events$onClick(
-							makeEditMessage(object))
-						]))
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Edit')
-				]));
-	});
-var $author$project$RCMediaList$editObjectButtons = F2(
-	function (messages, object) {
-		return A2(
-			$billstclair$elm_sortable_table$Table$HtmlDetails,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A2($author$project$RCMediaList$editButton, messages, object),
-					A2($author$project$RCMediaList$deleteButton, messages, object)
-				]));
-	});
-var $author$project$RCMediaList$mediaListButtons = function (messages) {
-	return $billstclair$elm_sortable_table$Table$veryCustomColumn(
-		{
-			name: '',
-			sorter: $billstclair$elm_sortable_table$Table$unsortable,
-			viewData: $author$project$RCMediaList$editObjectButtons(messages)
 		});
 };
 var $author$project$RCMediaList$SetQuery = function (a) {
@@ -13005,8 +13024,7 @@ var $author$project$RCMediaList$mediaListView = F3(
 			$author$project$RCMediaList$view,
 			$author$project$RCMediaList$MediaTable,
 			model,
-			$author$project$RCMediaList$config(
-				$author$project$RCMediaList$mediaListButtons(messages)),
+			$author$project$RCMediaList$configMediaList(messages),
 			objects);
 	});
 var $author$project$RCMediaList$PickerTable = {$: 'PickerTable'};
@@ -13037,6 +13055,95 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$config = function (closeMsg) {
 			header: $elm$core$Maybe$Nothing,
 			options: {attrs: _List_Nil, centered: true, hideOnBackdropClick: true, modalSize: $elm$core$Maybe$Nothing, scrollableBody: false},
 			withAnimation: $elm$core$Maybe$Nothing
+		});
+};
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Success = {$: 'Success'};
+var $rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Success));
+var $author$project$RCMediaList$insertButton = F2(
+	function (messages, object) {
+		var makeInsertMessage = A2($elm$core$Basics$composeL, $author$project$RCMediaList$MainMessage, messages.insertObject);
+		return A2(
+			$billstclair$elm_sortable_table$Table$HtmlDetails,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					$rundis$elm_bootstrap$Bootstrap$Button$button,
+					_List_fromArray(
+						[
+							$rundis$elm_bootstrap$Bootstrap$Button$small,
+							$rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess,
+							$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick(
+									makeInsertMessage(object))
+								]))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Insert')
+						]))
+				]));
+	});
+var $author$project$RCMediaList$pickerButton = function (messages) {
+	return $billstclair$elm_sortable_table$Table$veryCustomColumn(
+		{
+			name: '',
+			sorter: $billstclair$elm_sortable_table$Table$unsortable,
+			viewData: $author$project$RCMediaList$insertButton(messages)
+		});
+};
+var $author$project$RCMediaList$configMediaPicker = function (messages) {
+	var makeMsg = A2($elm$core$Basics$composeL, $author$project$RCMediaList$SortableTableMessage, $author$project$RCMediaList$SetTableState);
+	var doubleClickAction = A2($elm$core$Basics$composeL, $author$project$RCMediaList$MainMessage, messages.insertObject);
+	var buttons = $author$project$RCMediaList$pickerButton(messages);
+	return $billstclair$elm_sortable_table$Table$customConfig(
+		{
+			columns: _List_fromArray(
+				[
+					$author$project$RCMediaList$thumbnailColumn,
+					A2(
+					$billstclair$elm_sortable_table$Table$stringColumn,
+					'ID',
+					A2(
+						$elm$core$Basics$composeL,
+						$elm$core$String$fromInt,
+						function ($) {
+							return $.id;
+						})),
+					A2(
+					$billstclair$elm_sortable_table$Table$stringColumn,
+					'Name',
+					function ($) {
+						return $.name;
+					}),
+					buttons
+				]),
+			customizations: _Utils_update(
+				$billstclair$elm_sortable_table$Table$defaultCustomizations,
+				{
+					rowAttrs: function (object) {
+						return _List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('rc-media-table-row'),
+								$elm$html$Html$Events$onDoubleClick(
+								doubleClickAction(object))
+							]);
+					},
+					tableAttrs: _List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('rc-media-table')
+						])
+				}),
+			toId: A2(
+				$elm$core$Basics$composeL,
+				$elm$core$String$fromInt,
+				function ($) {
+					return $.id;
+				}),
+			toMsg: makeMsg
 		});
 };
 var $rundis$elm_bootstrap$Bootstrap$Modal$Footer = function (a) {
@@ -13152,44 +13259,6 @@ var $author$project$View$mkButton = function (props) {
 				$author$project$View$renderIcon(props.icon),
 				$elm$html$Html$text(props.text)
 			]));
-};
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Success = {$: 'Success'};
-var $rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Success));
-var $author$project$RCMediaList$insertButton = F2(
-	function (messages, object) {
-		var makeInsertMessage = A2($elm$core$Basics$composeL, $author$project$RCMediaList$EditMediaMessage, messages.insertObject);
-		return A2(
-			$billstclair$elm_sortable_table$Table$HtmlDetails,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A2(
-					$rundis$elm_bootstrap$Bootstrap$Button$button,
-					_List_fromArray(
-						[
-							$rundis$elm_bootstrap$Bootstrap$Button$small,
-							$rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess,
-							$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-							_List_fromArray(
-								[
-									$elm$html$Html$Events$onClick(
-									makeInsertMessage(object))
-								]))
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('Insert')
-						]))
-				]));
-	});
-var $author$project$RCMediaList$pickerButton = function (messages) {
-	return $billstclair$elm_sortable_table$Table$veryCustomColumn(
-		{
-			name: '',
-			sorter: $billstclair$elm_sortable_table$Table$unsortable,
-			viewData: $author$project$RCMediaList$insertButton(messages)
-		});
 };
 var $rundis$elm_bootstrap$Bootstrap$Modal$scrollableBody = F2(
 	function (scrollable, _v0) {
@@ -13542,14 +13611,13 @@ var $author$project$RCMediaList$mediaPickerView = F3(
 		var visibility = _v0.b;
 		var uploadButton = function () {
 			var aButton = $author$project$View$defaultButton(
-				$author$project$RCMediaList$EditMediaMessage(messages.uploadMediaFileSelect));
+				$author$project$RCMediaList$MainMessage(messages.uploadMediaFileSelect));
 			return $author$project$View$mkButton(
 				_Utils_update(
 					aButton,
 					{icon: $author$project$View$UploadCloud, offset: false, primary: false, text: 'Upload Media', title: 'Add video, audio, pdf or images files'}));
 		}();
-		var tableConfig = $author$project$RCMediaList$config(
-			$author$project$RCMediaList$pickerButton(messages));
+		var tableConfig = $author$project$RCMediaList$configMediaPicker(messages);
 		var tableList = A4($author$project$RCMediaList$view, $author$project$RCMediaList$PickerTable, model, tableConfig, objectList);
 		return A2(
 			$rundis$elm_bootstrap$Bootstrap$Modal$view,
@@ -13568,7 +13636,7 @@ var $author$project$RCMediaList$mediaPickerView = F3(
 								_List_fromArray(
 									[
 										$elm$html$Html$Events$onClick(
-										$author$project$RCMediaList$EditMediaMessage(messages.closeModal))
+										$author$project$RCMediaList$MainMessage(messages.closeModal))
 									]))
 							]),
 						_List_fromArray(
@@ -13596,7 +13664,7 @@ var $author$project$RCMediaList$mediaPickerView = F3(
 									$rundis$elm_bootstrap$Bootstrap$Modal$scrollableBody,
 									true,
 									$rundis$elm_bootstrap$Bootstrap$Modal$config(
-										$author$project$RCMediaList$EditMediaMessage(messages.closeModal)))))))));
+										$author$project$RCMediaList$MainMessage(messages.closeModal)))))))));
 	});
 var $rundis$elm_bootstrap$Bootstrap$Dropdown$Attrs = function (a) {
 	return {$: 'Attrs', a: a};

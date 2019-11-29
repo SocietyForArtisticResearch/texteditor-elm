@@ -42,7 +42,7 @@ type alias PickerMessages msg =
 
 type Msg msg
     = SortableTableMessage TableMessage
-    | EditMediaMessage msg
+    | MainMessage msg
 
 
 type TableMessage
@@ -74,12 +74,18 @@ empty =
     }
 
 
-config : Table.Column RCMediaObject (Msg msg) -> Table.Config RCMediaObject (Msg msg)
-config buttons =
+configMediaList : TableEditMessages msg -> Table.Config RCMediaObject (Msg msg)
+configMediaList messages =
     let
         makeMsg : Table.State -> Msg msg
         makeMsg =
             SortableTableMessage << SetTableState
+
+        buttons =
+            mediaListButtons messages
+
+        doubleClickAction =
+            MainMessage << messages.editObject << String.fromInt << .id
     in
     Table.customConfig
         { toId = String.fromInt << .id
@@ -93,14 +99,44 @@ config buttons =
         , customizations =
             { defaultCustomizations
                 | tableAttrs = [ class "rc-media-table" ]
-                , rowAttrs = always [ class "rc-media-table-row" ]
+                , rowAttrs = \object -> [ class "rc-media-table-row", onDoubleClick (doubleClickAction object) ]
+            }
+        }
+
+
+configMediaPicker : PickerMessages msg -> Table.Config RCMediaObject (Msg msg)
+configMediaPicker messages =
+    let
+        makeMsg : Table.State -> Msg msg
+        makeMsg =
+            SortableTableMessage << SetTableState
+
+        buttons =
+            pickerButton messages
+
+        doubleClickAction =
+            MainMessage << messages.insertObject
+    in
+    Table.customConfig
+        { toId = String.fromInt << .id
+        , toMsg = makeMsg
+        , columns =
+            [ thumbnailColumn
+            , Table.stringColumn "ID" (String.fromInt << .id)
+            , Table.stringColumn "Name" .name
+            , buttons
+            ]
+        , customizations =
+            { defaultCustomizations
+                | tableAttrs = [ class "rc-media-table" ]
+                , rowAttrs = \object -> [ class "rc-media-table-row", onDoubleClick (doubleClickAction object) ]
             }
         }
 
 
 mediaListView : TableEditMessages msg -> Model -> List RCMediaObject -> Html (Msg msg)
 mediaListView messages model objects =
-    view MediaTable model (config <| mediaListButtons messages) objects
+    view MediaTable model (configMediaList messages) objects
 
 
 thumbnailColumn : Table.Column RCMediaObject (Msg msg)
@@ -116,7 +152,7 @@ editButton : TableEditMessages msg -> RCMediaObject -> Html (Msg msg)
 editButton messages object =
     let
         makeEditMessage =
-            EditMediaMessage << messages.editObject << String.fromInt << .id
+            MainMessage << messages.editObject << String.fromInt << .id
     in
     Button.button
         [ Button.small
@@ -130,7 +166,7 @@ deleteButton : TableEditMessages msg -> RCMediaObject -> Html (Msg msg)
 deleteButton messages object =
     let
         makeDeleteMessage =
-            EditMediaMessage << messages.deleteObject
+            MainMessage << messages.deleteObject
     in
     Button.button
         [ Button.small
@@ -153,7 +189,7 @@ insertButton : PickerMessages msg -> RCMediaObject -> Table.HtmlDetails (Msg msg
 insertButton messages object =
     let
         makeInsertMessage =
-            EditMediaMessage << messages.insertObject
+            MainMessage << messages.insertObject
     in
     Table.HtmlDetails []
         [ Button.button
@@ -256,7 +292,7 @@ mediaPickerView : ( Model, Modal.Visibility ) -> List RCMediaObject -> PickerMes
 mediaPickerView ( model, visibility ) objectList messages =
     let
         tableConfig =
-            config <| pickerButton messages
+            configMediaPicker messages
 
         tableList =
             view PickerTable model tableConfig objectList
@@ -264,7 +300,7 @@ mediaPickerView ( model, visibility ) objectList messages =
         uploadButton =
             let
                 aButton =
-                    defaultButton (EditMediaMessage messages.uploadMediaFileSelect)
+                    defaultButton (MainMessage messages.uploadMediaFileSelect)
             in
             mkButton
                 { aButton
@@ -275,7 +311,7 @@ mediaPickerView ( model, visibility ) objectList messages =
                     , primary = False
                 }
     in
-    Modal.config (EditMediaMessage messages.closeModal)
+    Modal.config (MainMessage messages.closeModal)
         |> Modal.scrollableBody True
         |> Modal.large
         |> Modal.hideOnBackdropClick True
@@ -286,7 +322,7 @@ mediaPickerView ( model, visibility ) objectList messages =
             ]
         |> Modal.footer []
             [ Button.button
-                [ Button.secondary, Button.attrs [ onClick <| EditMediaMessage messages.closeModal ] ]
+                [ Button.secondary, Button.attrs [ onClick <| MainMessage messages.closeModal ] ]
                 [ text "Cancel" ]
             ]
         |> Modal.view visibility

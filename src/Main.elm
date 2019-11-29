@@ -864,7 +864,7 @@ update msg model =
                     , Cmd.none
                     )
 
-                RCMediaList.EditMediaMessage action ->
+                RCMediaList.MainMessage action ->
                     -- media editing (Main.elm Msg)
                     case action of
                         MediaDialog showInsert mediaNameOrId ->
@@ -895,7 +895,7 @@ update msg model =
                     in
                     ( { model | mediaPickerDialog = ( RCMediaList.update tableMsg pickerModel, visibility ) }, Cmd.none )
 
-                RCMediaList.EditMediaMessage normalMsg ->
+                RCMediaList.MainMessage normalMsg ->
                     case normalMsg of
                         InsertMediaAtCursor obj ->
                             insertMediaUpdate obj model
