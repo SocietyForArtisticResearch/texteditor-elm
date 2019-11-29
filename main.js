@@ -13663,7 +13663,7 @@ var $author$project$RCMediaList$mediaPickerView = F3(
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Select a media object to insert.')
+								$elm$html$Html$text('Insert media object')
 							]),
 						A2(
 							$rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,

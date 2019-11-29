@@ -313,7 +313,7 @@ mediaPickerView ( model, visibility ) objectList messages =
         |> Modal.scrollableBody True
         |> Modal.large
         |> Modal.hideOnBackdropClick True
-        |> Modal.h1 [] [ text "Select a media object to insert." ]
+        |> Modal.h1 [] [ text "Insert media object" ]
         |> Modal.body []
             [ uploadButton
             , tableList
