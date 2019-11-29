@@ -11767,12 +11767,6 @@ var $author$project$RCMediaList$MediaTable = {$: 'MediaTable'};
 var $author$project$RCMediaList$MainMessage = function (a) {
 	return {$: 'MainMessage', a: a};
 };
-var $author$project$RCMediaList$SetTableState = function (a) {
-	return {$: 'SetTableState', a: a};
-};
-var $author$project$RCMediaList$SortableTableMessage = function (a) {
-	return {$: 'SortableTableMessage', a: a};
-};
 var $billstclair$elm_sortable_table$Table$Config = function (a) {
 	return {$: 'Config', a: a};
 };
@@ -11891,6 +11885,13 @@ var $billstclair$elm_sortable_table$Table$simpleThead = function (headers) {
 		A2($elm$core$List$map, $billstclair$elm_sortable_table$Table$simpleTheadHelp, headers));
 };
 var $billstclair$elm_sortable_table$Table$defaultCustomizations = {caption: $elm$core$Maybe$Nothing, rowAttrs: $billstclair$elm_sortable_table$Table$simpleRowAttrs, tableAttrs: _List_Nil, tbodyAttrs: _List_Nil, tfoot: $elm$core$Maybe$Nothing, thead: $billstclair$elm_sortable_table$Table$simpleThead};
+var $author$project$RCMediaList$SetTableState = function (a) {
+	return {$: 'SetTableState', a: a};
+};
+var $author$project$RCMediaList$SortableTableMessage = function (a) {
+	return {$: 'SortableTableMessage', a: a};
+};
+var $author$project$RCMediaList$makeTableMsg = A2($elm$core$Basics$composeL, $author$project$RCMediaList$SortableTableMessage, $author$project$RCMediaList$SetTableState);
 var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
 	return {$: 'Attrs', a: a};
 };
@@ -12409,7 +12410,6 @@ var $author$project$RCMediaList$thumbnailColumn = $billstclair$elm_sortable_tabl
 		}
 	});
 var $author$project$RCMediaList$configMediaList = function (messages) {
-	var makeMsg = A2($elm$core$Basics$composeL, $author$project$RCMediaList$SortableTableMessage, $author$project$RCMediaList$SetTableState);
 	var doubleClickAction = A2(
 		$elm$core$Basics$composeL,
 		A2(
@@ -12464,7 +12464,7 @@ var $author$project$RCMediaList$configMediaList = function (messages) {
 				function ($) {
 					return $.id;
 				}),
-			toMsg: makeMsg
+			toMsg: $author$project$RCMediaList$makeTableMsg
 		});
 };
 var $author$project$RCMediaList$SetQuery = function (a) {
@@ -13096,7 +13096,6 @@ var $author$project$RCMediaList$pickerButton = function (messages) {
 		});
 };
 var $author$project$RCMediaList$configMediaPicker = function (messages) {
-	var makeMsg = A2($elm$core$Basics$composeL, $author$project$RCMediaList$SortableTableMessage, $author$project$RCMediaList$SetTableState);
 	var doubleClickAction = A2($elm$core$Basics$composeL, $author$project$RCMediaList$MainMessage, messages.insertObject);
 	var buttons = $author$project$RCMediaList$pickerButton(messages);
 	return $billstclair$elm_sortable_table$Table$customConfig(
@@ -13143,7 +13142,7 @@ var $author$project$RCMediaList$configMediaPicker = function (messages) {
 				function ($) {
 					return $.id;
 				}),
-			toMsg: makeMsg
+			toMsg: $author$project$RCMediaList$makeTableMsg
 		});
 };
 var $rundis$elm_bootstrap$Bootstrap$Modal$Footer = function (a) {
@@ -13615,7 +13614,17 @@ var $author$project$RCMediaList$mediaPickerView = F3(
 			return $author$project$View$mkButton(
 				_Utils_update(
 					aButton,
-					{icon: $author$project$View$UploadCloud, offset: false, primary: false, text: 'Upload Media', title: 'Add video, audio, pdf or images files'}));
+					{
+						icon: $author$project$View$UploadCloud,
+						offset: false,
+						otherAttrs: _List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('mr-1')
+							]),
+						primary: false,
+						text: 'Upload Media',
+						title: 'Add video, audio, pdf or images files'
+					}));
 		}();
 		var tableConfig = $author$project$RCMediaList$configMediaPicker(messages);
 		var tableList = A4($author$project$RCMediaList$view, $author$project$RCMediaList$PickerTable, model, tableConfig, objectList);

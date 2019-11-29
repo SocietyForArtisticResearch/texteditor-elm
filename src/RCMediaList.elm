@@ -45,15 +45,20 @@ type Msg msg
     | MainMessage msg
 
 
+type alias Model =
+    { query : String
+    , state : Table.State
+    }
+
+
 type TableMessage
     = SetQuery String
     | SetTableState Table.State
 
 
-type alias Model =
-    { query : String
-    , state : Table.State
-    }
+makeTableMsg : Table.State -> Msg msg
+makeTableMsg =
+    SortableTableMessage << SetTableState
 
 
 type alias ObjectAndActions msg =
@@ -77,10 +82,6 @@ empty =
 configMediaList : TableEditMessages msg -> Table.Config RCMediaObject (Msg msg)
 configMediaList messages =
     let
-        makeMsg : Table.State -> Msg msg
-        makeMsg =
-            SortableTableMessage << SetTableState
-
         buttons =
             mediaListButtons messages
 
@@ -89,7 +90,7 @@ configMediaList messages =
     in
     Table.customConfig
         { toId = String.fromInt << .id
-        , toMsg = makeMsg
+        , toMsg = makeTableMsg
         , columns =
             [ thumbnailColumn
             , Table.stringColumn "ID" (String.fromInt << .id)
@@ -107,10 +108,6 @@ configMediaList messages =
 configMediaPicker : PickerMessages msg -> Table.Config RCMediaObject (Msg msg)
 configMediaPicker messages =
     let
-        makeMsg : Table.State -> Msg msg
-        makeMsg =
-            SortableTableMessage << SetTableState
-
         buttons =
             pickerButton messages
 
@@ -119,7 +116,7 @@ configMediaPicker messages =
     in
     Table.customConfig
         { toId = String.fromInt << .id
-        , toMsg = makeMsg
+        , toMsg = makeTableMsg
         , columns =
             [ thumbnailColumn
             , Table.stringColumn "ID" (String.fromInt << .id)
@@ -309,6 +306,7 @@ mediaPickerView ( model, visibility ) objectList messages =
                     , title = "Add video, audio, pdf or images files"
                     , text = "Upload Media"
                     , primary = False
+                    , otherAttrs = [ class "mr-1" ]
                 }
     in
     Modal.config (MainMessage messages.closeModal)
