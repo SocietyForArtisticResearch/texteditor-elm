@@ -37,7 +37,8 @@ General:
 
 Casper:
 
-- Sortable table may give trouble with audio and video.
+- Drag and drop 
+	<https://elm-lang.org/examples/drag-and-drop>
 
 Luc:
 
@@ -59,8 +60,9 @@ Luc:
 
 ## DONE
 
+- Restructured RCMediaList.elm
+- Added search box for media-table and media-picker
 - I have changed the ID tag of objectDiv to a CLASS tag, thus solving a morphdom glitch. We were using non-unique ids.
-
 - media edit opens after upload finishes
 - removed cannot find media error
 - added thumbnail to mediaedit
