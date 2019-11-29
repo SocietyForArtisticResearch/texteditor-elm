@@ -51,6 +51,7 @@ body {
     height: calc(100% - 25px);
     width: 100%;
     background-color: #fbfbf9;
+    border: 1px solid #eee;
 }
 
 .CodeMirror .cm-header {
