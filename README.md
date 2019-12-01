@@ -12,7 +12,6 @@ The editor is codemirror. A built of version 5.45.0 is included in `lib`.
 sh build.sh
 ```
 
-
 # Use
 
 Open `editor.html`.
@@ -39,20 +38,18 @@ Casper:
 
 - Drag and drop 
 	<https://elm-lang.org/examples/drag-and-drop>
+- Auto-scrolling doesn't work anymore.
 
 Luc:
 
 
 ## To test
-- tables?
 - alignment
-- load existing text-based expositions
-- uploading docs
-- performance?
+
 
 ## Postponed
 
-- Drag and drop of media (postpone)
+
 - Real-time collaborative editing
 - autofocus on right hand side
 - wikipedia-style footnotes
