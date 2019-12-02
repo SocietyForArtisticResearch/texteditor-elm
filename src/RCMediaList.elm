@@ -125,7 +125,7 @@ configMediaPicker messages =
             ]
         , customizations =
             { defaultCustomizations
-                | tableAttrs = [ class "rc-media-table" ]
+                | tableAttrs = [ class "rc-media-picker-table" ]
                 , rowAttrs = \object -> [ class "rc-media-table-row", onDoubleClick (doubleClickAction object) ]
             }
         }

@@ -13072,7 +13072,7 @@ var $author$project$RCMediaList$configMediaPicker = function (messages) {
 					},
 					eL: _List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('rc-media-table')
+							$elm$html$Html$Attributes$class('rc-media-picker-table')
 						])
 				}),
 			eP: A2(
