@@ -10819,6 +10819,8 @@ var $author$project$RCAPI$mediaType = function (f) {
 			return $elm$core$Maybe$Just(1);
 		case 'application/pdf':
 			return $elm$core$Maybe$Just(3);
+		case 'video/quicktime':
+			return $elm$core$Maybe$Just(1);
 		default:
 			return $elm$core$Maybe$Nothing;
 	}

@@ -263,6 +263,9 @@ mediaType f =
         "application/pdf" ->
             Just MPdf
 
+        "video/quicktime" ->
+            Just MVideo
+
         _ ->
             Nothing
 
@@ -626,18 +629,19 @@ toMediaClassesDict apiExpo =
     in
     case exp.media of
         Right lst ->
-            Ok <| Dict.fromList
-                (List.filterMap
-                    (\m ->
-                        case m.userClass of
-                            Just cl ->
-                                Just ( m.id, cl )
+            Ok <|
+                Dict.fromList
+                    (List.filterMap
+                        (\m ->
+                            case m.userClass of
+                                Just cl ->
+                                    Just ( m.id, cl )
 
-                            Nothing ->
-                                Nothing
+                                Nothing ->
+                                    Nothing
+                        )
+                        lst
                     )
-                    lst
-                )
 
         Left _ ->
             Err Dict.empty
