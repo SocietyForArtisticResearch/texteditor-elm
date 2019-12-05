@@ -279,6 +279,7 @@ body {
 }
 
 .rc-media-table thead th {
+    border-top: 1px solid #dee2e6;
     border-bottom: 2px solid #dee2e6;
     padding: 0.3rem;
 }

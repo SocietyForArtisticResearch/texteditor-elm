@@ -12412,7 +12412,8 @@ var $author$project$RCMediaList$configMediaList = function (messages) {
 					},
 					eL: _List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('rc-media-table')
+							$elm$html$Html$Attributes$class('rc-media-table'),
+							$elm$html$Html$Attributes$class('mt-1')
 						])
 				}),
 			eP: A2(

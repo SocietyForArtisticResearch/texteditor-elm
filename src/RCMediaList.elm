@@ -100,7 +100,7 @@ configMediaList messages =
             ]
         , customizations =
             { defaultCustomizations
-                | tableAttrs = [ class "rc-media-table" ]
+                | tableAttrs = [ class "rc-media-table", class "mt-1" ]
                 , rowAttrs = \object -> [ class "rc-media-table-row", onDoubleClick (doubleClickAction object) ]
             }
         }
