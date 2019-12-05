@@ -273,8 +273,13 @@ body {
     width: 100%;
 }
 
-.rc-media-table-row:nth-of-type(even) {
+.rc-media-table thead th {
+    border-bottom: 2px solid #dee2e6;
+}
+
+.rc-media-table-row:nth-of-type(odd) {
     background-color:#f8f8f8;
+    border-top: 1px solid #dee2e6;
 } 
     
 .rc-media-table > thead:nth-child(1) > tr:nth-child(1) > th:nth-child(4) {
@@ -283,11 +288,8 @@ body {
     width:100px;
 }
 
-.rc-media-picker-table {
-    width:100%;
-}
 
-.rc-media-picker-table > thead:nth-child(1) > tr:nth-child(1) > th:nth-child(4) {
+.rc-media-picker > thead:nth-child(1) > tr:nth-child(1) > th:nth-child(4) {
     min-width:60px;
     width:60px;
 }
