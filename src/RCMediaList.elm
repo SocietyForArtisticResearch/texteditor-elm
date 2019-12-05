@@ -263,6 +263,10 @@ view upload tableType { query, state } tableConfig objectList =
                 , onInput (SortableTableMessage << SetQuery)
                 ]
                 []
+
+        tableControls =
+            div [ class "media-table-controls" ]
+                [ upload, searchBox ]
     in
     case objectList of
         [] ->
@@ -279,15 +283,13 @@ view upload tableType { query, state } tableConfig objectList =
                 [] ->
                     div
                         domIdAndStyle
-                        [ upload
-                        , searchBox
+                        [ tableControls
                         , Alert.simpleInfo [] [ text <| "Cannot find any media named \"" ++ query ++ "\"" ]
                         ]
 
                 results ->
                     div domIdAndStyle
-                        [ upload
-                        , searchBox
+                        [ tableControls
                         , Table.view tableConfig state results
                         ]
 

@@ -12963,6 +12963,14 @@ var $author$project$RCMediaList$view = F5(
 					A2($elm$core$Basics$composeL, $author$project$RCMediaList$SortableTableMessage, $author$project$RCMediaList$SetQuery))
 				]),
 			_List_Nil);
+		var tableControls = A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('media-table-controls')
+				]),
+			_List_fromArray(
+				[upload, searchBox]));
 		var domIdAndStyle = function () {
 			if (!tableType) {
 				return _List_fromArray(
@@ -13001,8 +13009,7 @@ var $author$project$RCMediaList$view = F5(
 					domIdAndStyle,
 					_List_fromArray(
 						[
-							upload,
-							searchBox,
+							tableControls,
 							A2(
 							$rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo,
 							_List_Nil,
@@ -13018,8 +13025,7 @@ var $author$project$RCMediaList$view = F5(
 					domIdAndStyle,
 					_List_fromArray(
 						[
-							upload,
-							searchBox,
+							tableControls,
 							A3($billstclair$elm_sortable_table$Table$view, tableConfig, state, results)
 						]));
 			}
