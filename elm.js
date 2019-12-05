@@ -12967,7 +12967,8 @@ var $author$project$RCMediaList$view = F5(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('media-table-controls')
+					$elm$html$Html$Attributes$class('media-table-controls'),
+					$elm$html$Html$Attributes$class('mt-1')
 				]),
 			_List_fromArray(
 				[upload, searchBox]));
