@@ -30,6 +30,7 @@ type alias TableEditMessages msg =
     { editObject : String -> msg
     , deleteObject : RCMediaObject -> msg
     , insertObject : RCMediaObject -> msg
+    , uploadMediaFileSelect : msg
     }
 
 
@@ -133,7 +134,11 @@ configMediaPicker messages =
 
 mediaListView : TableEditMessages msg -> Model -> List RCMediaObject -> Html (Msg msg)
 mediaListView messages model objects =
-    view MediaTable model (configMediaList messages) objects
+    let
+        uploadBtn =
+            uploadButton messages.uploadMediaFileSelect
+    in
+    view uploadBtn MediaTable model (configMediaList messages) objects
 
 
 thumbnailColumn : Table.Column RCMediaObject (Msg msg)
@@ -239,8 +244,8 @@ filterObjectsByName query lst =
             List.filter (String.contains lowerQuery << String.toLower << .name) lst
 
 
-view : TableType -> Model -> Table.Config RCMediaObject (Msg msg) -> List RCMediaObject -> Html (Msg msg)
-view tableType { query, state } tableConfig objectList =
+view : Html (Msg msg) -> TableType -> Model -> Table.Config RCMediaObject (Msg msg) -> List RCMediaObject -> Html (Msg msg)
+view upload tableType { query, state } tableConfig objectList =
     let
         domIdAndStyle : List (Html.Attribute (Msg msg))
         domIdAndStyle =
@@ -274,15 +279,34 @@ view tableType { query, state } tableConfig objectList =
                 [] ->
                     div
                         domIdAndStyle
-                        [ searchBox
+                        [ upload
+                        , searchBox
                         , Alert.simpleInfo [] [ text <| "Cannot find any media named \"" ++ query ++ "\"" ]
                         ]
 
                 results ->
                     div domIdAndStyle
-                        [ searchBox
+                        [ upload
+                        , searchBox
                         , Table.view tableConfig state results
                         ]
+
+
+uploadButton : msg -> Html (Msg msg)
+uploadButton uploadMessage =
+    let
+        aButton =
+            defaultButton (MainMessage uploadMessage)
+    in
+    mkButton
+        { aButton
+            | icon = View.UploadCloud
+            , offset = False
+            , title = "Add video, audio, pdf or images files"
+            , text = "Upload Media"
+            , primary = False
+            , otherAttrs = [ class "mr-1" ]
+        }
 
 
 mediaPickerView : ( Model, Modal.Visibility ) -> List RCMediaObject -> PickerMessages msg -> Html (Msg msg)
@@ -291,23 +315,11 @@ mediaPickerView ( model, visibility ) objectList messages =
         tableConfig =
             configMediaPicker messages
 
-        tableList =
-            view PickerTable model tableConfig objectList
+        uploadBtn =
+            uploadButton messages.uploadMediaFileSelect
 
-        uploadButton =
-            let
-                aButton =
-                    defaultButton (MainMessage messages.uploadMediaFileSelect)
-            in
-            mkButton
-                { aButton
-                    | icon = View.UploadCloud
-                    , offset = False
-                    , title = "Add video, audio, pdf or images files"
-                    , text = "Upload Media"
-                    , primary = False
-                    , otherAttrs = [ class "mr-1" ]
-                }
+        tableList =
+            view uploadBtn PickerTable model tableConfig objectList
     in
     Modal.config (MainMessage messages.closeModal)
         |> Modal.scrollableBody True
@@ -315,8 +327,7 @@ mediaPickerView ( model, visibility ) objectList messages =
         |> Modal.hideOnBackdropClick True
         |> Modal.h1 [] [ text "Insert media object" ]
         |> Modal.body []
-            [ uploadButton
-            , tableList
+            [ tableList
             ]
         |> Modal.footer []
             [ Button.button

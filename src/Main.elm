@@ -384,6 +384,7 @@ makeTableMessages =
     { editObject = MediaDialog False
     , deleteObject = ConfirmMediaDelete
     , insertObject = InsertMediaAtCursor
+    , uploadMediaFileSelect = UploadMediaFileSelect
     }
 
 
@@ -1401,7 +1402,7 @@ view model =
 
         -- media upload not so useful in style
         showMediaUpload =
-            not <| selectedEditorIsStyle model
+            selectedEditorIsMarkdown model
 
         editorToolbar =
             mkEditorToolbar (getTabState model.editor)

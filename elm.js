@@ -1857,9 +1857,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.fe,
-		impl.fz,
-		impl.fw,
+		impl.ff,
+		impl.fA,
+		impl.fx,
 		function() { return function() {} }
 	);
 });
@@ -3883,9 +3883,9 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.fe,
-		impl.fz,
-		impl.fw,
+		impl.ff,
+		impl.fA,
+		impl.fx,
 		function(sendToApp, initialModel) {
 			var view = impl.fB;
 			/**/
@@ -3919,9 +3919,9 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.fe,
-		impl.fz,
-		impl.fw,
+		impl.ff,
+		impl.fA,
+		impl.fx,
 		function(sendToApp, initialModel) {
 			var divertHrefToApp = impl.dr && impl.dr(sendToApp)
 			var view = impl.fB;
@@ -3993,8 +3993,8 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.fm;
-	var onUrlRequest = impl.fn;
+	var onUrlChange = impl.fn;
+	var onUrlRequest = impl.fo;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
@@ -4024,13 +4024,13 @@ function _Browser_application(impl)
 				}
 			});
 		},
-		fe: function(flags)
+		ff: function(flags)
 		{
-			return A3(impl.fe, flags, _Browser_getUrl(), key);
+			return A3(impl.ff, flags, _Browser_getUrl(), key);
 		},
 		fB: impl.fB,
-		fz: impl.fz,
-		fw: impl.fw
+		fA: impl.fA,
+		fx: impl.fx
 	});
 }
 
@@ -4096,17 +4096,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { d0: 'hidden', e2: 'visibilitychange' }
+		? { d0: 'hidden', e3: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { d0: 'mozHidden', e2: 'mozvisibilitychange' }
+		? { d0: 'mozHidden', e3: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { d0: 'msHidden', e2: 'msvisibilitychange' }
+		? { d0: 'msHidden', e3: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { d0: 'webkitHidden', e2: 'webkitvisibilitychange' }
-		: { d0: 'hidden', e2: 'visibilitychange' };
+		? { d0: 'webkitHidden', e3: 'webkitvisibilitychange' }
+		: { d0: 'hidden', e3: 'visibilitychange' };
 }
 
 
@@ -4188,10 +4188,10 @@ function _Browser_getViewport()
 {
 	return {
 		eC: _Browser_getScene(),
-		eX: {
+		eY: {
 			cY: _Browser_window.pageXOffset,
 			cZ: _Browser_window.pageYOffset,
-			eY: _Browser_doc.documentElement.clientWidth,
+			eZ: _Browser_doc.documentElement.clientWidth,
 			d$: _Browser_doc.documentElement.clientHeight
 		}
 	};
@@ -4202,7 +4202,7 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		eY: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		eZ: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
 		d$: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
@@ -4227,13 +4227,13 @@ function _Browser_getViewportOf(id)
 	{
 		return {
 			eC: {
-				eY: node.scrollWidth,
+				eZ: node.scrollWidth,
 				d$: node.scrollHeight
 			},
-			eX: {
+			eY: {
 				cY: node.scrollLeft,
 				cZ: node.scrollTop,
-				eY: node.clientWidth,
+				eZ: node.clientWidth,
 				d$: node.clientHeight
 			}
 		};
@@ -4265,16 +4265,16 @@ function _Browser_getElement(id)
 		var y = _Browser_window.pageYOffset;
 		return {
 			eC: _Browser_getScene(),
-			eX: {
+			eY: {
 				cY: x,
 				cZ: y,
-				eY: _Browser_doc.documentElement.clientWidth,
+				eZ: _Browser_doc.documentElement.clientWidth,
 				d$: _Browser_doc.documentElement.clientHeight
 			},
-			e8: {
+			e9: {
 				cY: x + rect.left,
 				cZ: y + rect.top,
-				eY: rect.width,
+				eZ: rect.width,
 				d$: rect.height
 			}
 		};
@@ -4355,7 +4355,7 @@ function _Http_configureRequest(xhr, request)
 	}
 	xhr.timeout = request.aI.a || 0;
 	xhr.responseType = request.M.d;
-	xhr.withCredentials = request.e$;
+	xhr.withCredentials = request.e0;
 }
 
 
@@ -4377,8 +4377,8 @@ function _Http_toMetadata(xhr)
 {
 	return {
 		V: xhr.responseURL,
-		fu: xhr.status,
-		fv: xhr.statusText,
+		fv: xhr.status,
+		fw: xhr.statusText,
 		as: _Http_parseHeaders(xhr.getAllResponseHeaders())
 	};
 }
@@ -4474,14 +4474,14 @@ function _Http_track(router, xhr, tracker)
 	xhr.upload.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Sending({
-			ft: event.loaded,
+			fu: event.loaded,
 			eF: event.total
 		}))));
 	});
 	xhr.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Receiving({
-			fr: event.loaded,
+			fs: event.loaded,
 			eF: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
 		}))));
 	});
@@ -4540,8 +4540,8 @@ var _Regex_never = /.^/;
 var _Regex_fromStringWith = F2(function(options, string)
 {
 	var flags = 'g';
-	if (options.fk) { flags += 'm'; }
-	if (options.e1) { flags += 'i'; }
+	if (options.fl) { flags += 'm'; }
+	if (options.e2) { flags += 'i'; }
 
 	try
 	{
@@ -5814,10 +5814,10 @@ var $author$project$RCMediaList$empty = {
 	cA: '',
 	cK: $billstclair$elm_sortable_table$Table$initialSort('ID')
 };
-var $author$project$UserConfirm$empty = {e_: $elm$core$Maybe$Nothing, c0: $elm$core$Maybe$Nothing, cX: $rundis$elm_bootstrap$Bootstrap$Modal$hidden};
+var $author$project$UserConfirm$empty = {e$: $elm$core$Maybe$Nothing, c0: $elm$core$Maybe$Nothing, cX: $rundis$elm_bootstrap$Bootstrap$Modal$hidden};
 var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$Area = F4(
 	function (top, left, width, height) {
-		return {d$: height, ac: left, ah: top, eY: width};
+		return {d$: height, ac: left, ah: top, eZ: width};
 	});
 var $rundis$elm_bootstrap$Bootstrap$Dropdown$Closed = 2;
 var $rundis$elm_bootstrap$Bootstrap$Dropdown$State = $elm$core$Basics$identity;
@@ -5897,7 +5897,7 @@ var $elm$json$Json$Decode$list = _Json_decodeList;
 var $elm$json$Json$Decode$map6 = _Json_map6;
 var $author$project$RCAPI$APIExposition = F6(
 	function (html, markdown, media, metadata, style, title) {
-		return {c8: html, fi: markdown, n: media, b8: metadata, eJ: style, dB: title};
+		return {c8: html, fj: markdown, n: media, b8: metadata, eJ: style, dB: title};
 	});
 var $elm$core$Maybe$withDefault = F2(
 	function (_default, maybe) {
@@ -6545,7 +6545,7 @@ var $elm$http$Http$resolve = F2(
 			case 3:
 				var metadata = response.a;
 				return $elm$core$Result$Err(
-					$elm$http$Http$BadStatus(metadata.fu));
+					$elm$http$Http$BadStatus(metadata.fv));
 			default:
 				var body = response.b;
 				return A2(
@@ -6708,7 +6708,7 @@ var $elm$http$Http$cmdMap = F2(
 			var r = cmd.a;
 			return $elm$http$Http$Request(
 				{
-					e$: r.e$,
+					e0: r.e0,
 					J: r.J,
 					M: A2(_Http_mapExpect, func, r.M),
 					as: r.as,
@@ -6738,7 +6738,7 @@ var $elm$http$Http$subscription = _Platform_leaf('Http');
 var $elm$http$Http$request = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{e$: false, J: r.J, M: r.M, as: r.as, az: r.az, aI: r.aI, aJ: r.aJ, V: r.V}));
+			{e0: false, J: r.J, M: r.M, as: r.as, az: r.az, aI: r.aI, aJ: r.aJ, V: r.V}));
 };
 var $author$project$RCAPI$getExposition = F3(
 	function (researchId, weave, msg) {
@@ -6776,7 +6776,7 @@ var $rundis$elm_bootstrap$Bootstrap$Navbar$initWindowSize = F2(
 							return _Utils_update(
 								s,
 								{
-									br: $elm$core$Maybe$Just(vp.eX.eY)
+									br: $elm$core$Maybe$Just(vp.eY.eZ)
 								});
 						},
 						state));
@@ -7800,7 +7800,7 @@ var $author$project$Main$addProblems = F2(
 	});
 var $author$project$RCAPI$APIMedia = F4(
 	function (mediaType, status, width, height) {
-		return {d$: height, df: mediaType, eI: status, eY: width};
+		return {d$: height, df: mediaType, eI: status, eZ: width};
 	});
 var $elm$json$Json$Decode$map4 = _Json_map4;
 var $author$project$RCAPI$apiMedia = A5(
@@ -7924,7 +7924,7 @@ var $author$project$Main$MediaDelete = function (a) {
 };
 var $author$project$UserConfirm$Model = F3(
 	function (visibility, content, actions) {
-		return {e_: actions, c0: content, cX: visibility};
+		return {e$: actions, c0: content, cX: visibility};
 	});
 var $rundis$elm_bootstrap$Bootstrap$Modal$Show = 0;
 var $rundis$elm_bootstrap$Bootstrap$Modal$shown = 0;
@@ -7935,7 +7935,7 @@ var $author$project$Main$confirmObjectDelete = function (object) {
 			et: $author$project$Main$CloseConfirmDialog
 		});
 	var content = $elm$core$Maybe$Just(
-		{dP: 'Delete', fq: object.l + ' is about to be deleted. Are you sure?', et: 'Keep'});
+		{dP: 'Delete', fr: object.l + ' is about to be deleted. Are you sure?', et: 'Keep'});
 	return A3($author$project$UserConfirm$Model, $rundis$elm_bootstrap$Bootstrap$Modal$shown, content, messages);
 };
 var $author$project$Settings$baseDomain = 'https://dev.researchcatalogue.net';
@@ -7959,13 +7959,13 @@ var $elm$http$Http$post = function (r) {
 };
 var $elm$regex$Regex$Match = F4(
 	function (match, index, number, submatches) {
-		return {fd: index, fj: match, fl: number, cL: submatches};
+		return {fe: index, fk: match, fm: number, cL: submatches};
 	});
 var $elm$regex$Regex$fromStringWith = _Regex_fromStringWith;
 var $elm$regex$Regex$fromString = function (string) {
 	return A2(
 		$elm$regex$Regex$fromStringWith,
-		{e1: false, fk: false},
+		{e2: false, fl: false},
 		string);
 };
 var $author$project$Exposition$mediaUrl = function (data) {
@@ -8071,7 +8071,7 @@ var $author$project$RCAPI$resolve = F2(
 			case 3:
 				var metadata = response.a;
 				return $elm$core$Result$Err(
-					$elm$http$Http$BadStatus(metadata.fu));
+					$elm$http$Http$BadStatus(metadata.fv));
 			default:
 				var body = response.b;
 				return A2(
@@ -9039,7 +9039,7 @@ var $author$project$Exposition$insertToolHtml = F2(
 										A2(
 											$author$project$Exposition$asHtml,
 											o,
-											'media-' + $elm$core$String$fromInt(m.fl)));
+											'media-' + $elm$core$String$fromInt(m.fm)));
 								},
 								A2($author$project$Exposition$objectByNameOrId, sub, exp)));
 					} else {
@@ -9088,7 +9088,7 @@ var $elm$core$Basics$clamp = F3(
 		return (_Utils_cmp(number, low) < 0) ? low : ((_Utils_cmp(number, high) > 0) ? high : number);
 	});
 var $elm$http$Http$fractionSent = function (p) {
-	return (!p.eF) ? 1 : A3($elm$core$Basics$clamp, 0, 1, p.ft / p.eF);
+	return (!p.eF) ? 1 : A3($elm$core$Basics$clamp, 0, 1, p.fu / p.eF);
 };
 var $author$project$Main$getContent = _Platform_outgoingPort(
 	'getContent',
@@ -9366,7 +9366,7 @@ var $elm$parser$Parser$Advanced$AddRight = F2(
 	});
 var $elm$parser$Parser$Advanced$DeadEnd = F4(
 	function (row, col, problem, contextStack) {
-		return {dM: col, e5: contextStack, ep: problem, ez: row};
+		return {dM: col, e6: contextStack, ep: problem, ez: row};
 	});
 var $elm$parser$Parser$Advanced$Empty = {$: 0};
 var $elm$parser$Parser$Advanced$fromState = F2(
@@ -9944,25 +9944,25 @@ var $elm$parser$Parser$Advanced$number = function (c) {
 			var baseOffset = zeroOffset + 1;
 			return A3($elm$parser$Parser$Advanced$isAsciiCode, 120, zeroOffset, s.a) ? A5(
 				$elm$parser$Parser$Advanced$finalizeInt,
-				c.ff,
-				c.fa,
+				c.fg,
+				c.fb,
 				baseOffset,
 				A2($elm$parser$Parser$Advanced$consumeBase16, baseOffset, s.a),
 				s) : (A3($elm$parser$Parser$Advanced$isAsciiCode, 111, zeroOffset, s.a) ? A5(
 				$elm$parser$Parser$Advanced$finalizeInt,
-				c.ff,
+				c.fg,
 				c.eh,
 				baseOffset,
 				A3($elm$parser$Parser$Advanced$consumeBase, 8, baseOffset, s.a),
 				s) : (A3($elm$parser$Parser$Advanced$isAsciiCode, 98, zeroOffset, s.a) ? A5(
 				$elm$parser$Parser$Advanced$finalizeInt,
-				c.ff,
+				c.fg,
 				c.dK,
 				baseOffset,
 				A3($elm$parser$Parser$Advanced$consumeBase, 2, baseOffset, s.a),
 				s) : A6(
 				$elm$parser$Parser$Advanced$finalizeFloat,
-				c.ff,
+				c.fg,
 				c.dY,
 				c.d7,
 				c.dZ,
@@ -9971,7 +9971,7 @@ var $elm$parser$Parser$Advanced$number = function (c) {
 		} else {
 			return A6(
 				$elm$parser$Parser$Advanced$finalizeFloat,
-				c.ff,
+				c.fg,
 				c.dY,
 				c.d7,
 				c.dZ,
@@ -9987,9 +9987,9 @@ var $elm$parser$Parser$Advanced$int = F2(
 				dK: $elm$core$Result$Err(invalid),
 				dY: expecting,
 				dZ: $elm$core$Result$Err(invalid),
-				fa: $elm$core$Result$Err(invalid),
+				fb: $elm$core$Result$Err(invalid),
 				d7: $elm$core$Result$Ok($elm$core$Basics$identity),
-				ff: invalid,
+				fg: invalid,
 				eh: $elm$core$Result$Err(invalid)
 			});
 	});
@@ -10233,7 +10233,7 @@ var $author$project$RCAPI$saveExposition = F2(
 							[
 								_Utils_Tuple2(
 								'level',
-								$elm$json$Json$Encode$int(te.fh)),
+								$elm$json$Json$Encode$int(te.fi)),
 								_Utils_Tuple2(
 								'title',
 								$elm$json$Json$Encode$string(te.dB)),
@@ -10433,7 +10433,7 @@ var $author$project$RCAPI$toRCExposition = F3(
 	function (apiExpo, id, weave) {
 		var exp = $author$project$RCAPI$decodeMetadata(
 			$author$project$RCAPI$decodeMedia(apiExpo));
-		var md = ($author$project$RCAPI$getMetadata(exp).dU < '2.0.0') ? _Utils_ap('# ' + (apiExpo.dB + '\n\n'), apiExpo.fi) : apiExpo.fi;
+		var md = ($author$project$RCAPI$getMetadata(exp).dU < '2.0.0') ? _Utils_ap('# ' + (apiExpo.dB + '\n\n'), apiExpo.fj) : apiExpo.fj;
 		return {
 			dJ: _List_Nil,
 			bO: $author$project$RCAPI$getMetadata(exp).bO,
@@ -10456,7 +10456,7 @@ var $author$project$Problems$UnknownType = function (a) {
 	return {$: 13, a: a};
 };
 var $author$project$RCAPI$getDimensions = function (media) {
-	var _v0 = _Utils_Tuple2(media.eY, media.d$);
+	var _v0 = _Utils_Tuple2(media.eZ, media.d$);
 	if ((!_v0.a.$) && (!_v0.b.$)) {
 		var w = _v0.a.a;
 		var h = _v0.b.a;
@@ -10513,14 +10513,14 @@ var $author$project$RCAPI$toRCMediaObject = F2(
 					aU: mediaEntry.aU,
 					ap: $author$project$RCAPI$getDimensions(mediaEntry.n),
 					bT: researchId,
-					fb: '',
+					fc: '',
 					i: mediaEntry.i,
 					b4: mediaEntry.b4,
 					df: mtype,
 					l: mediaEntry.l,
 					eI: stringToTranscoding(mediaEntry.n.eI),
 					W: '',
-					eW: 0
+					eX: 0
 				});
 		} else {
 			var s = mediaT.a;
@@ -10665,7 +10665,7 @@ var $author$project$Exposition$validateMediaObject = F3(
 		return {
 			i: objInModel.i,
 			eO: $author$project$Exposition$thumbUrl(objInModel),
-			eV: validation
+			eW: validation
 		};
 	});
 var $author$project$Main$updateMediaDialog = F3(
@@ -10691,7 +10691,7 @@ var $author$project$Main$updateMediaDialog = F3(
 	});
 var $author$project$Exposition$TOCEntry = F3(
 	function (level, title, id) {
-		return {i: id, fh: level, dB: title};
+		return {i: id, fi: level, dB: title};
 	});
 var $author$project$Exposition$makeTocEntries = function (lst) {
 	makeTocEntries:
@@ -10746,7 +10746,7 @@ var $author$project$Exposition$updateToc = F2(
 	});
 var $author$project$RCAPI$APIPandocImport = F2(
 	function (media, markdown) {
-		return {fi: markdown, n: media};
+		return {fj: markdown, n: media};
 	});
 var $author$project$RCAPI$apiPandocImport = A3(
 	$elm$json$Json$Decode$map2,
@@ -11127,7 +11127,7 @@ var $author$project$Main$update = F2(
 						var objInModel = _v12.a;
 						var objViewState = A3($author$project$Exposition$validateMediaObject, model.b, objInModel, objFromDialog);
 						var dialog = model.D;
-						var _v13 = $author$project$Exposition$isValid(objViewState.eV);
+						var _v13 = $author$project$Exposition$isValid(objViewState.eW);
 						if (!_v13) {
 							return _Utils_Tuple2(
 								_Utils_update(
@@ -11348,7 +11348,7 @@ var $author$project$Main$update = F2(
 									model.b,
 									A2(
 										$author$project$Exposition$replaceImagesWithTools,
-										_Utils_ap(model.b.a5, importResult.fi),
+										_Utils_ap(model.b.a5, importResult.fj),
 										importResult.n)),
 								a$: $author$project$Main$Ready
 							});
@@ -11713,14 +11713,15 @@ var $author$project$Main$makeMediaEditFun = F3(
 		}
 	});
 var $author$project$Main$CloseMediaPicker = {$: 37};
-var $author$project$Main$makePickerMessages = {e3: $author$project$Main$CloseMediaPicker, d6: $author$project$Main$InsertMediaAtCursor, fA: $author$project$Main$UploadMediaFileSelect};
+var $author$project$Main$makePickerMessages = {e4: $author$project$Main$CloseMediaPicker, d6: $author$project$Main$InsertMediaAtCursor, eV: $author$project$Main$UploadMediaFileSelect};
 var $author$project$Main$ConfirmMediaDelete = function (a) {
 	return {$: 24, a: a};
 };
 var $author$project$Main$makeTableMessages = {
-	e6: $author$project$Main$ConfirmMediaDelete,
-	e7: $author$project$Main$MediaDialog(false),
-	d6: $author$project$Main$InsertMediaAtCursor
+	e7: $author$project$Main$ConfirmMediaDelete,
+	e8: $author$project$Main$MediaDialog(false),
+	d6: $author$project$Main$InsertMediaAtCursor,
+	eV: $author$project$Main$UploadMediaFileSelect
 };
 var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
@@ -12050,7 +12051,7 @@ var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Size = function (a) {
 var $rundis$elm_bootstrap$Bootstrap$Button$small = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Size(1);
 var $author$project$RCMediaList$deleteButton = F2(
 	function (messages, object) {
-		var makeDeleteMessage = A2($elm$core$Basics$composeL, $author$project$RCMediaList$MainMessage, messages.e6);
+		var makeDeleteMessage = A2($elm$core$Basics$composeL, $author$project$RCMediaList$MainMessage, messages.e7);
 		return A2(
 			$rundis$elm_bootstrap$Bootstrap$Button$button,
 			_List_fromArray(
@@ -12079,7 +12080,7 @@ var $author$project$RCMediaList$editButton = F2(
 			$elm$core$Basics$composeL,
 			A2(
 				$elm$core$Basics$composeL,
-				A2($elm$core$Basics$composeL, $author$project$RCMediaList$MainMessage, messages.e7),
+				A2($elm$core$Basics$composeL, $author$project$RCMediaList$MainMessage, messages.e8),
 				$elm$core$String$fromInt),
 			function ($) {
 				return $.i;
@@ -12370,7 +12371,7 @@ var $author$project$RCMediaList$configMediaList = function (messages) {
 		$elm$core$Basics$composeL,
 		A2(
 			$elm$core$Basics$composeL,
-			A2($elm$core$Basics$composeL, $author$project$RCMediaList$MainMessage, messages.e7),
+			A2($elm$core$Basics$composeL, $author$project$RCMediaList$MainMessage, messages.e8),
 			$elm$core$String$fromInt),
 		function ($) {
 			return $.i;
@@ -12422,6 +12423,62 @@ var $author$project$RCMediaList$configMediaList = function (messages) {
 				}),
 			eQ: $author$project$RCMediaList$makeTableMsg
 		});
+};
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Light = 7;
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
+	return {$: 0, a: a};
+};
+var $rundis$elm_bootstrap$Bootstrap$Button$light = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(7));
+var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0 = $elm$html$Html$Attributes$class('m-0');
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark = 6;
+var $rundis$elm_bootstrap$Bootstrap$Button$outlineDark = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(6));
+var $author$project$View$mkButton = function (props) {
+	var spacing = props.ei ? _List_fromArray(
+		[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0]) : _List_Nil;
+	return A2(
+		$rundis$elm_bootstrap$Bootstrap$Button$button,
+		_List_fromArray(
+			[
+				props.eo ? $rundis$elm_bootstrap$Bootstrap$Button$outlineDark : $rundis$elm_bootstrap$Bootstrap$Button$light,
+				$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+				A2(
+					$elm$core$List$append,
+					_List_fromArray(
+						[
+							$elm$html$Html$Events$onClick(props.w),
+							A2(
+							$elm$html$Html$Attributes$style,
+							'display',
+							props.d0 ? 'none' : 'inline-block'),
+							$elm$html$Html$Attributes$title(props.dB)
+						]),
+					A2($elm$core$List$append, spacing, props.di)))
+			]),
+		_List_fromArray(
+			[
+				$author$project$View$renderIcon(props.k),
+				$elm$html$Html$text(props.aG)
+			]));
+};
+var $author$project$RCMediaList$uploadButton = function (uploadMessage) {
+	var aButton = $author$project$View$defaultButton(
+		$author$project$RCMediaList$MainMessage(uploadMessage));
+	return $author$project$View$mkButton(
+		_Utils_update(
+			aButton,
+			{
+				k: 11,
+				ei: false,
+				di: _List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('mr-1')
+					]),
+				eo: false,
+				aG: 'Upload Media',
+				dB: 'Add video, audio, pdf or images files'
+			}));
 };
 var $author$project$RCMediaList$SetQuery = function (a) {
 	return {$: 0, a: a};
@@ -12893,8 +12950,8 @@ var $billstclair$elm_sortable_table$Table$view = F3(
 				}
 			}());
 	});
-var $author$project$RCMediaList$view = F4(
-	function (tableType, _v0, tableConfig, objectList) {
+var $author$project$RCMediaList$view = F5(
+	function (upload, tableType, _v0, tableConfig, objectList) {
 		var query = _v0.cA;
 		var state = _v0.cK;
 		var searchBox = A2(
@@ -12944,6 +13001,7 @@ var $author$project$RCMediaList$view = F4(
 					domIdAndStyle,
 					_List_fromArray(
 						[
+							upload,
 							searchBox,
 							A2(
 							$rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo,
@@ -12960,6 +13018,7 @@ var $author$project$RCMediaList$view = F4(
 					domIdAndStyle,
 					_List_fromArray(
 						[
+							upload,
 							searchBox,
 							A3($billstclair$elm_sortable_table$Table$view, tableConfig, state, results)
 						]));
@@ -12968,8 +13027,10 @@ var $author$project$RCMediaList$view = F4(
 	});
 var $author$project$RCMediaList$mediaListView = F3(
 	function (messages, model, objects) {
-		return A4(
+		var uploadBtn = $author$project$RCMediaList$uploadButton(messages.eV);
+		return A5(
 			$author$project$RCMediaList$view,
+			uploadBtn,
 			1,
 			model,
 			$author$project$RCMediaList$configMediaList(messages),
@@ -12994,7 +13055,7 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$config = function (closeMsg) {
 		aR: closeMsg,
 		c6: $elm$core$Maybe$Nothing,
 		b0: $elm$core$Maybe$Nothing,
-		fp: {bD: _List_Nil, bI: true, aZ: true, a9: $elm$core$Maybe$Nothing, cH: false},
+		fq: {bD: _List_Nil, bI: true, aZ: true, a9: $elm$core$Maybe$Nothing, cH: false},
 		aj: $elm$core$Maybe$Nothing
 	};
 };
@@ -13130,11 +13191,11 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$h1 = $rundis$elm_bootstrap$Bootstrap$M
 var $rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick = F2(
 	function (hide, _v0) {
 		var conf = _v0;
-		var options = conf.fp;
+		var options = conf.fq;
 		return _Utils_update(
 			conf,
 			{
-				fp: _Utils_update(
+				fq: _Utils_update(
 					options,
 					{aZ: hide})
 			});
@@ -13142,63 +13203,25 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick = F2(
 var $rundis$elm_bootstrap$Bootstrap$General$Internal$LG = 3;
 var $rundis$elm_bootstrap$Bootstrap$Modal$large = function (_v0) {
 	var conf = _v0;
-	var options = conf.fp;
+	var options = conf.fq;
 	return _Utils_update(
 		conf,
 		{
-			fp: _Utils_update(
+			fq: _Utils_update(
 				options,
 				{
 					a9: $elm$core$Maybe$Just(3)
 				})
 		});
 };
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Light = 7;
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
-	return {$: 0, a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Button$light = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(7));
-var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0 = $elm$html$Html$Attributes$class('m-0');
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark = 6;
-var $rundis$elm_bootstrap$Bootstrap$Button$outlineDark = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(6));
-var $author$project$View$mkButton = function (props) {
-	var spacing = props.ei ? _List_fromArray(
-		[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0]) : _List_Nil;
-	return A2(
-		$rundis$elm_bootstrap$Bootstrap$Button$button,
-		_List_fromArray(
-			[
-				props.eo ? $rundis$elm_bootstrap$Bootstrap$Button$outlineDark : $rundis$elm_bootstrap$Bootstrap$Button$light,
-				$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-				A2(
-					$elm$core$List$append,
-					_List_fromArray(
-						[
-							$elm$html$Html$Events$onClick(props.w),
-							A2(
-							$elm$html$Html$Attributes$style,
-							'display',
-							props.d0 ? 'none' : 'inline-block'),
-							$elm$html$Html$Attributes$title(props.dB)
-						]),
-					A2($elm$core$List$append, spacing, props.di)))
-			]),
-		_List_fromArray(
-			[
-				$author$project$View$renderIcon(props.k),
-				$elm$html$Html$text(props.aG)
-			]));
-};
 var $rundis$elm_bootstrap$Bootstrap$Modal$scrollableBody = F2(
 	function (scrollable, _v0) {
 		var conf = _v0;
-		var options = conf.fp;
+		var options = conf.fq;
 		return _Utils_update(
 			conf,
 			{
-				fp: _Utils_update(
+				fq: _Utils_update(
 					options,
 					{cH: scrollable})
 			});
@@ -13245,7 +13268,7 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$backdrop = F2(
 										_Utils_Tuple2('show', true)
 									]))
 							]),
-						conf.fp.aZ ? _List_fromArray(
+						conf.fq.aZ ? _List_fromArray(
 							[
 								$elm$html$Html$Events$onClick(
 								$rundis$elm_bootstrap$Bootstrap$Modal$getCloseMsg(conf))
@@ -13505,8 +13528,8 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$view = F2(
 											$elm$html$Html$Attributes$class('elm-bootstrap-modal')
 										]),
 									_Utils_ap(
-										$rundis$elm_bootstrap$Bootstrap$Modal$modalAttributes(conf.fp),
-										conf.fp.aZ ? _List_fromArray(
+										$rundis$elm_bootstrap$Bootstrap$Modal$modalAttributes(conf.fq),
+										conf.fq.aZ ? _List_fromArray(
 											[
 												A2(
 												$elm$html$Html$Events$on,
@@ -13539,26 +13562,9 @@ var $author$project$RCMediaList$mediaPickerView = F3(
 	function (_v0, objectList, messages) {
 		var model = _v0.a;
 		var visibility = _v0.b;
-		var uploadButton = function () {
-			var aButton = $author$project$View$defaultButton(
-				$author$project$RCMediaList$MainMessage(messages.fA));
-			return $author$project$View$mkButton(
-				_Utils_update(
-					aButton,
-					{
-						k: 11,
-						ei: false,
-						di: _List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('mr-1')
-							]),
-						eo: false,
-						aG: 'Upload Media',
-						dB: 'Add video, audio, pdf or images files'
-					}));
-		}();
+		var uploadBtn = $author$project$RCMediaList$uploadButton(messages.eV);
 		var tableConfig = $author$project$RCMediaList$configMediaPicker(messages);
-		var tableList = A4($author$project$RCMediaList$view, 0, model, tableConfig, objectList);
+		var tableList = A5($author$project$RCMediaList$view, uploadBtn, 0, model, tableConfig, objectList);
 		return A2(
 			$rundis$elm_bootstrap$Bootstrap$Modal$view,
 			visibility,
@@ -13576,7 +13582,7 @@ var $author$project$RCMediaList$mediaPickerView = F3(
 								_List_fromArray(
 									[
 										$elm$html$Html$Events$onClick(
-										$author$project$RCMediaList$MainMessage(messages.e3))
+										$author$project$RCMediaList$MainMessage(messages.e4))
 									]))
 							]),
 						_List_fromArray(
@@ -13588,7 +13594,7 @@ var $author$project$RCMediaList$mediaPickerView = F3(
 					$rundis$elm_bootstrap$Bootstrap$Modal$body,
 					_List_Nil,
 					_List_fromArray(
-						[uploadButton, tableList]),
+						[tableList]),
 					A3(
 						$rundis$elm_bootstrap$Bootstrap$Modal$h1,
 						_List_Nil,
@@ -13604,7 +13610,7 @@ var $author$project$RCMediaList$mediaPickerView = F3(
 									$rundis$elm_bootstrap$Bootstrap$Modal$scrollableBody,
 									true,
 									$rundis$elm_bootstrap$Bootstrap$Modal$config(
-										$author$project$RCMediaList$MainMessage(messages.e3)))))))));
+										$author$project$RCMediaList$MainMessage(messages.e4)))))))));
 	});
 var $rundis$elm_bootstrap$Bootstrap$Dropdown$Attrs = function (a) {
 	return {$: 4, a: a};
@@ -13703,7 +13709,7 @@ var $rundis$elm_bootstrap$Bootstrap$Dropdown$menuStyles = F2(
 									A2(
 									$elm$html$Html$Attributes$style,
 									'transform',
-									A3(translate, (-toggleSize.eY) - menuSize.eY, 0, 0))
+									A3(translate, (-toggleSize.eZ) - menuSize.eZ, 0, 0))
 								]));
 					}
 				}
@@ -13718,7 +13724,7 @@ var $rundis$elm_bootstrap$Bootstrap$Dropdown$menuStyles = F2(
 								A2(
 								$elm$html$Html$Attributes$style,
 								'transform',
-								A3(translate, -toggleSize.eY, toggleSize.d$, 0))
+								A3(translate, -toggleSize.eZ, toggleSize.d$, 0))
 							]));
 				}
 			}
@@ -13730,7 +13736,7 @@ var $rundis$elm_bootstrap$Bootstrap$Dropdown$menuStyles = F2(
 					A2(
 					$elm$html$Html$Attributes$style,
 					'transform',
-					A3(translate, -toggleSize.eY, -menuSize.d$, 0))
+					A3(translate, -toggleSize.eZ, -menuSize.d$, 0))
 				]));
 	});
 var $rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownMenu = F3(
@@ -13813,10 +13819,10 @@ var $rundis$elm_bootstrap$Bootstrap$Dropdown$toConfig = function (options) {
 var $rundis$elm_bootstrap$Bootstrap$Dropdown$dropdown = F2(
 	function (state, _v0) {
 		var status = state.eI;
-		var toggleMsg = _v0.fy;
-		var toggleButton = _v0.fx;
-		var items = _v0.fg;
-		var options = _v0.fp;
+		var toggleMsg = _v0.fz;
+		var toggleButton = _v0.fy;
+		var items = _v0.fh;
+		var options = _v0.fq;
 		var config = $rundis$elm_bootstrap$Bootstrap$Dropdown$toConfig(options);
 		var _v1 = toggleButton;
 		var buttonFn = _v1;
@@ -13890,7 +13896,7 @@ var $rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$boundingArea = A4(
 		function (_v0, width, height) {
 			var x = _v0.a;
 			var y = _v0.b;
-			return {d$: height, ac: x, ah: y, eY: width};
+			return {d$: height, ac: x, ah: y, eZ: width};
 		}),
 	A2($rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$position, 0, 0),
 	$rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$offsetWidth,
@@ -14011,7 +14017,7 @@ var $author$project$View$mkDropdown = F5(
 					$rundis$elm_bootstrap$Bootstrap$Dropdown$dropdown,
 					modelState,
 					{
-						fg: A2(
+						fh: A2(
 							$elm$core$List$map,
 							function (_v0) {
 								var buttonTxt = _v0.a;
@@ -14028,7 +14034,7 @@ var $author$project$View$mkDropdown = F5(
 										]));
 							},
 							itemMsgLst),
-						fp: _List_fromArray(
+						fq: _List_fromArray(
 							[
 								$rundis$elm_bootstrap$Bootstrap$Dropdown$attrs(
 								A2(
@@ -14037,7 +14043,7 @@ var $author$project$View$mkDropdown = F5(
 									_List_fromArray(
 										['m-0', 'mb-1', 'mt-1', 'mr-1'])))
 							]),
-						fx: A2(
+						fy: A2(
 							$rundis$elm_bootstrap$Bootstrap$Dropdown$toggle,
 							_List_fromArray(
 								[
@@ -14052,7 +14058,7 @@ var $author$project$View$mkDropdown = F5(
 								[
 									$elm$html$Html$text(mainTxt)
 								])),
-						fy: openMsg
+						fz: openMsg
 					})
 				]));
 	});
@@ -14260,15 +14266,6 @@ var $author$project$Main$selectedEditorIsMarkdown = function (model) {
 		return false;
 	}
 };
-var $author$project$Main$selectedEditorIsStyle = function (model) {
-	var _v0 = model.p;
-	if (_v0.a === 1) {
-		var _v1 = _v0.a;
-		return true;
-	} else {
-		return false;
-	}
-};
 var $author$project$View$SaveIcon = 2;
 var $elm$core$List$concatMap = F2(
 	function (f, list) {
@@ -14431,7 +14428,7 @@ var $rundis$elm_bootstrap$Bootstrap$Grid$Column = function (a) {
 var $rundis$elm_bootstrap$Bootstrap$Grid$col = F2(
 	function (options, children) {
 		return $rundis$elm_bootstrap$Bootstrap$Grid$Column(
-			{aQ: children, fp: options});
+			{aQ: children, fq: options});
 	});
 var $rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col = 0;
 var $rundis$elm_bootstrap$Bootstrap$Grid$Internal$Width = F2(
@@ -15046,7 +15043,7 @@ var $rundis$elm_bootstrap$Bootstrap$Grid$Internal$colAttributes = function (modi
 var $rundis$elm_bootstrap$Bootstrap$Grid$renderCol = function (column) {
 	switch (column.$) {
 		case 0:
-			var options = column.a.fp;
+			var options = column.a.fq;
 			var children = column.a.aQ;
 			return A2(
 				$elm$html$Html$div,
@@ -15056,7 +15053,7 @@ var $rundis$elm_bootstrap$Bootstrap$Grid$renderCol = function (column) {
 			var e = column.a;
 			return e;
 		default:
-			var options = column.a.fp;
+			var options = column.a.fq;
 			var children = column.a.aQ;
 			return A3(
 				$elm$html$Html$Keyed$node,
@@ -15269,7 +15266,7 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Select$item = F2(
 var $rundis$elm_bootstrap$Bootstrap$Form$Select$Select = $elm$core$Basics$identity;
 var $rundis$elm_bootstrap$Bootstrap$Form$Select$create = F2(
 	function (options, items) {
-		return {fg: items, fp: options};
+		return {fh: items, fq: options};
 	});
 var $elm$html$Html$select = _VirtualDom_node('select');
 var $rundis$elm_bootstrap$Bootstrap$Form$Select$applyModifier = F2(
@@ -15310,7 +15307,7 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Select$applyModifier = F2(
 				return _Utils_update(
 					options,
 					{
-						eV: $elm$core$Maybe$Just(validation_)
+						eW: $elm$core$Maybe$Just(validation_)
 					});
 			default:
 				var attrs_ = modifier.a;
@@ -15327,7 +15324,7 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Select$customEventOnChange = function (
 		'change',
 		A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue));
 };
-var $rundis$elm_bootstrap$Bootstrap$Form$Select$defaultOptions = {aO: _List_Nil, A: false, bS: false, i: $elm$core$Maybe$Nothing, cg: $elm$core$Maybe$Nothing, eF: $elm$core$Maybe$Nothing, eV: $elm$core$Maybe$Nothing};
+var $rundis$elm_bootstrap$Bootstrap$Form$Select$defaultOptions = {aO: _List_Nil, A: false, bS: false, i: $elm$core$Maybe$Nothing, cg: $elm$core$Maybe$Nothing, eF: $elm$core$Maybe$Nothing, eW: $elm$core$Maybe$Nothing};
 var $rundis$elm_bootstrap$Bootstrap$Form$Select$sizeAttribute = F2(
 	function (isCustom, size_) {
 		var prefix = isCustom ? 'custom-select-' : 'form-control-';
@@ -15375,13 +15372,13 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Select$toAttributes = function (modifie
 						$rundis$elm_bootstrap$Bootstrap$Form$Select$sizeAttribute(options.A),
 						options.eF),
 						A2($elm$core$Maybe$map, $rundis$elm_bootstrap$Bootstrap$Form$Select$customEventOnChange, options.cg),
-						A2($elm$core$Maybe$map, $rundis$elm_bootstrap$Bootstrap$Form$Select$validationAttribute, options.eV)
+						A2($elm$core$Maybe$map, $rundis$elm_bootstrap$Bootstrap$Form$Select$validationAttribute, options.eW)
 					])),
 			options.aO));
 };
 var $rundis$elm_bootstrap$Bootstrap$Form$Select$view = function (_v0) {
-	var options = _v0.fp;
-	var items = _v0.fg;
+	var options = _v0.fq;
+	var items = _v0.fh;
 	return A2(
 		$elm$html$Html$select,
 		$rundis$elm_bootstrap$Bootstrap$Form$Select$toAttributes(options),
@@ -15475,7 +15472,7 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Input$Type = function (a) {
 var $rundis$elm_bootstrap$Bootstrap$Form$Input$create = F2(
 	function (tipe, options) {
 		return {
-			fp: A2(
+			fq: A2(
 				$elm$core$List$cons,
 				$rundis$elm_bootstrap$Bootstrap$Form$Input$Type(tipe),
 				options)
@@ -15534,7 +15531,7 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Input$applyModifier = F2(
 				return _Utils_update(
 					options,
 					{
-						eV: $elm$core$Maybe$Just(validation_)
+						eW: $elm$core$Maybe$Just(validation_)
 					});
 			case 8:
 				var val = modifier.a;
@@ -15555,7 +15552,7 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Input$applyModifier = F2(
 					});
 		}
 	});
-var $rundis$elm_bootstrap$Bootstrap$Form$Input$defaultOptions = {aO: _List_Nil, bS: false, i: $elm$core$Maybe$Nothing, aB: $elm$core$Maybe$Nothing, bd: $elm$core$Maybe$Nothing, be: false, cB: false, eF: $elm$core$Maybe$Nothing, bh: 0, eV: $elm$core$Maybe$Nothing, aK: $elm$core$Maybe$Nothing};
+var $rundis$elm_bootstrap$Bootstrap$Form$Input$defaultOptions = {aO: _List_Nil, bS: false, i: $elm$core$Maybe$Nothing, aB: $elm$core$Maybe$Nothing, bd: $elm$core$Maybe$Nothing, be: false, cB: false, eF: $elm$core$Maybe$Nothing, bh: 0, eW: $elm$core$Maybe$Nothing, aK: $elm$core$Maybe$Nothing};
 var $elm$html$Html$Attributes$readonly = $elm$html$Html$Attributes$boolProperty('readOnly');
 var $rundis$elm_bootstrap$Bootstrap$Form$Input$sizeAttribute = function (size) {
 	return A2(
@@ -15624,12 +15621,12 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Input$toAttributes = function (modifier
 						A2($elm$core$Maybe$map, $elm$html$Html$Attributes$value, options.aK),
 						A2($elm$core$Maybe$map, $elm$html$Html$Attributes$placeholder, options.bd),
 						A2($elm$core$Maybe$map, $elm$html$Html$Events$onInput, options.aB),
-						A2($elm$core$Maybe$map, $rundis$elm_bootstrap$Bootstrap$Form$Input$validationAttribute, options.eV)
+						A2($elm$core$Maybe$map, $rundis$elm_bootstrap$Bootstrap$Form$Input$validationAttribute, options.eW)
 					])),
 			options.aO));
 };
 var $rundis$elm_bootstrap$Bootstrap$Form$Input$view = function (_v0) {
-	var options = _v0.fp;
+	var options = _v0.fq;
 	return A2(
 		$elm$html$Html$input,
 		$rundis$elm_bootstrap$Bootstrap$Form$Input$toAttributes(options),
@@ -15643,7 +15640,7 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Input$input = F2(
 var $rundis$elm_bootstrap$Bootstrap$Form$Input$text = $rundis$elm_bootstrap$Bootstrap$Form$Input$input(0);
 var $author$project$RCMediaEdit$viewInputWithLabel = function (props) {
 	var _v0 = function () {
-		var _v1 = props.eV;
+		var _v1 = props.eW;
 		if (!_v1.$) {
 			return _Utils_Tuple2($rundis$elm_bootstrap$Bootstrap$Form$Input$success, _List_Nil);
 		} else {
@@ -15765,7 +15762,7 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Textarea$rows = function (rows_) {
 };
 var $rundis$elm_bootstrap$Bootstrap$Form$Textarea$Textarea = $elm$core$Basics$identity;
 var $rundis$elm_bootstrap$Bootstrap$Form$Textarea$create = function (options) {
-	return {fp: options};
+	return {fq: options};
 };
 var $elm$html$Html$textarea = _VirtualDom_node('textarea');
 var $rundis$elm_bootstrap$Bootstrap$Form$Textarea$applyModifier = F2(
@@ -15808,7 +15805,7 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Textarea$applyModifier = F2(
 				return _Utils_update(
 					options,
 					{
-						eV: $elm$core$Maybe$Just(validation)
+						eW: $elm$core$Maybe$Just(validation)
 					});
 			default:
 				var attrs_ = modifier.a;
@@ -15819,7 +15816,7 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Textarea$applyModifier = F2(
 					});
 		}
 	});
-var $rundis$elm_bootstrap$Bootstrap$Form$Textarea$defaultOptions = {aO: _List_Nil, bS: false, i: $elm$core$Maybe$Nothing, aB: $elm$core$Maybe$Nothing, cF: $elm$core$Maybe$Nothing, eV: $elm$core$Maybe$Nothing, aK: $elm$core$Maybe$Nothing};
+var $rundis$elm_bootstrap$Bootstrap$Form$Textarea$defaultOptions = {aO: _List_Nil, bS: false, i: $elm$core$Maybe$Nothing, aB: $elm$core$Maybe$Nothing, cF: $elm$core$Maybe$Nothing, eW: $elm$core$Maybe$Nothing, aK: $elm$core$Maybe$Nothing};
 var $elm$html$Html$Attributes$rows = function (n) {
 	return A2(
 		_VirtualDom_attribute,
@@ -15848,12 +15845,12 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Textarea$toAttributes = function (modif
 						A2($elm$core$Maybe$map, $elm$html$Html$Attributes$rows, options.cF),
 						A2($elm$core$Maybe$map, $elm$html$Html$Attributes$value, options.aK),
 						A2($elm$core$Maybe$map, $elm$html$Html$Events$onInput, options.aB),
-						A2($elm$core$Maybe$map, $rundis$elm_bootstrap$Bootstrap$Form$Textarea$validationAttribute, options.eV)
+						A2($elm$core$Maybe$map, $rundis$elm_bootstrap$Bootstrap$Form$Textarea$validationAttribute, options.eW)
 					])),
 			options.aO));
 };
 var $rundis$elm_bootstrap$Bootstrap$Form$Textarea$view = function (_v0) {
-	var options = _v0.fp;
+	var options = _v0.fq;
 	return A2(
 		$elm$html$Html$textarea,
 		$rundis$elm_bootstrap$Bootstrap$Form$Textarea$toAttributes(options),
@@ -15987,7 +15984,7 @@ var $author$project$RCMediaEdit$viewBody = F3(
 			af: 'name',
 			aB: editTool(0),
 			bd: '',
-			eV: objectState.eV.l,
+			eW: objectState.eW.l,
 			aK: objectInEdit.l
 		};
 		var descriptionProps = {
@@ -15996,11 +15993,11 @@ var $author$project$RCMediaEdit$viewBody = F3(
 			af: 'description',
 			aB: editTool(1),
 			bd: 'optional',
-			eV: objectState.eV.aU,
+			eW: objectState.eW.aU,
 			aK: objectInEdit.aU
 		};
 		var currentLicense = function () {
-			var _v1 = objectState.eV.b4;
+			var _v1 = objectState.eW.b4;
 			if (!_v1.$) {
 				var val = _v1.a;
 				return $author$project$Licenses$fromString(val);
@@ -16010,7 +16007,7 @@ var $author$project$RCMediaEdit$viewBody = F3(
 			}
 		}();
 		var currentClass = function () {
-			var _v0 = objectState.eV.W;
+			var _v0 = objectState.eW.W;
 			if (!_v0.$) {
 				var val = _v0.a;
 				return val;
@@ -16024,7 +16021,7 @@ var $author$project$RCMediaEdit$viewBody = F3(
 			af: 'copyright',
 			aB: editTool(3),
 			bd: '',
-			eV: objectState.eV.aS,
+			eW: objectState.eW.aS,
 			aK: objectInEdit.aS
 		};
 		return A2(
@@ -16192,11 +16189,11 @@ var $rundis$elm_bootstrap$Bootstrap$Button$danger = $rundis$elm_bootstrap$Bootst
 	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(5));
 var $rundis$elm_bootstrap$Bootstrap$Modal$small = function (_v0) {
 	var conf = _v0;
-	var options = conf.fp;
+	var options = conf.fq;
 	return _Utils_update(
 		conf,
 		{
-			fp: _Utils_update(
+			fq: _Utils_update(
 				options,
 				{
 					a9: $elm$core$Maybe$Just(1)
@@ -16206,7 +16203,7 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$small = function (_v0) {
 var $author$project$UserConfirm$view = function (_v0) {
 	var visibility = _v0.cX;
 	var content = _v0.c0;
-	var actions = _v0.e_;
+	var actions = _v0.e$;
 	var _v1 = _Utils_Tuple3(visibility, content, actions);
 	if ((!_v1.b.$) && (!_v1.c.$)) {
 		var vis = _v1.a;
@@ -16261,7 +16258,7 @@ var $author$project$UserConfirm$view = function (_v0) {
 							_List_Nil,
 							_List_fromArray(
 								[
-									$elm$html$Html$text(content_.fq)
+									$elm$html$Html$text(content_.fr)
 								]))
 						]),
 					A2(
@@ -16422,7 +16419,7 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Checkbox$attrs = function (attrs_) {
 var $rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Checkbox = $elm$core$Basics$identity;
 var $rundis$elm_bootstrap$Bootstrap$Form$Checkbox$create = F2(
 	function (options, label_) {
-		return {eb: label_, fp: options};
+		return {eb: label_, fq: options};
 	});
 var $rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Label = $elm$core$Basics$identity;
 var $rundis$elm_bootstrap$Bootstrap$Form$Checkbox$label = F2(
@@ -16469,7 +16466,7 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Checkbox$applyModifier = F2(
 				return _Utils_update(
 					options,
 					{
-						eV: $elm$core$Maybe$Just(validation)
+						eW: $elm$core$Maybe$Just(validation)
 					});
 			default:
 				var attrs_ = modifier.a;
@@ -16481,7 +16478,7 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Checkbox$applyModifier = F2(
 		}
 	});
 var $rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Off = 1;
-var $rundis$elm_bootstrap$Bootstrap$Form$Checkbox$defaultOptions = {aO: _List_Nil, A: false, bS: false, i: $elm$core$Maybe$Nothing, a0: false, ch: $elm$core$Maybe$Nothing, cK: 1, eV: $elm$core$Maybe$Nothing};
+var $rundis$elm_bootstrap$Bootstrap$Form$Checkbox$defaultOptions = {aO: _List_Nil, A: false, bS: false, i: $elm$core$Maybe$Nothing, a0: false, ch: $elm$core$Maybe$Nothing, cK: 1, eW: $elm$core$Maybe$Nothing};
 var $elm$json$Json$Decode$bool = _Json_decodeBool;
 var $elm$html$Html$Events$targetChecked = A2(
 	$elm$json$Json$Decode$at,
@@ -16530,7 +16527,7 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Checkbox$toAttributes = function (optio
 					])),
 			_Utils_ap(
 				function () {
-					var _v0 = options.eV;
+					var _v0 = options.eW;
 					if (!_v0.$) {
 						var v = _v0.a;
 						return _List_fromArray(
@@ -16546,7 +16543,7 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Checkbox$toAttributes = function (optio
 };
 var $rundis$elm_bootstrap$Bootstrap$Form$Checkbox$view = function (_v0) {
 	var chk = _v0;
-	var opts = A3($elm$core$List$foldl, $rundis$elm_bootstrap$Bootstrap$Form$Checkbox$applyModifier, $rundis$elm_bootstrap$Bootstrap$Form$Checkbox$defaultOptions, chk.fp);
+	var opts = A3($elm$core$List$foldl, $rundis$elm_bootstrap$Bootstrap$Form$Checkbox$applyModifier, $rundis$elm_bootstrap$Bootstrap$Form$Checkbox$defaultOptions, chk.fq);
 	var _v1 = chk.eb;
 	var label_ = _v1;
 	return A2(
@@ -16676,7 +16673,7 @@ var $rundis$elm_bootstrap$Bootstrap$Navbar$updateOptions = F2(
 		return _Utils_update(
 			conf,
 			{
-				fp: mapper(conf.fp)
+				fq: mapper(conf.fq)
 			});
 	});
 var $rundis$elm_bootstrap$Bootstrap$Navbar$attrs = F2(
@@ -16714,8 +16711,8 @@ var $rundis$elm_bootstrap$Bootstrap$Navbar$config = function (toMsg) {
 	return {
 		aP: $elm$core$Maybe$Nothing,
 		bP: _List_Nil,
-		fg: _List_Nil,
-		fp: {
+		fh: _List_Nil,
+		fq: {
 			aO: _List_Nil,
 			ar: $elm$core$Maybe$Nothing,
 			b1: false,
@@ -16761,7 +16758,7 @@ var $rundis$elm_bootstrap$Bootstrap$Navbar$items = F2(
 			function (conf) {
 				return _Utils_update(
 					conf,
-					{fg: items_});
+					{fh: items_});
 			},
 			config_);
 	});
@@ -16797,7 +16794,7 @@ var $rundis$elm_bootstrap$Bootstrap$Navbar$toScreenSize = function (windowWidth)
 var $rundis$elm_bootstrap$Bootstrap$Navbar$shouldHideMenu = F2(
 	function (_v0, _v1) {
 		var windowWidth = _v0.br;
-		var options = _v1.fp;
+		var options = _v1.fq;
 		var winMedia = function () {
 			if (!windowWidth.$) {
 				var s = windowWidth.a;
@@ -17233,7 +17230,7 @@ var $rundis$elm_bootstrap$Bootstrap$Navbar$renderDropdown = F3(
 						return false;
 					}
 				},
-				configRec.fp.ar));
+				configRec.fq.ar));
 		var isShown = A2($rundis$elm_bootstrap$Bootstrap$Navbar$getOrInitDropdownStatus, ddRec.i, state) !== 2;
 		return A2(
 			$elm$html$Html$li,
@@ -17268,7 +17265,7 @@ var $rundis$elm_bootstrap$Bootstrap$Navbar$renderDropdown = F3(
 							var item = _v1;
 							return item;
 						},
-						ddRec.fg))
+						ddRec.fh))
 				]));
 	});
 var $rundis$elm_bootstrap$Bootstrap$Navbar$renderItemLink = function (_v0) {
@@ -17405,7 +17402,7 @@ var $rundis$elm_bootstrap$Bootstrap$Navbar$view = F2(
 		var configRec = conf;
 		return A2(
 			$elm$html$Html$nav,
-			$rundis$elm_bootstrap$Bootstrap$Navbar$navbarAttributes(configRec.fp),
+			$rundis$elm_bootstrap$Bootstrap$Navbar$navbarAttributes(configRec.fq),
 			_Utils_ap(
 				$rundis$elm_bootstrap$Bootstrap$Navbar$maybeBrand(configRec.aP),
 				_Utils_ap(
@@ -17452,7 +17449,7 @@ var $rundis$elm_bootstrap$Bootstrap$Navbar$view = F2(
 									_Utils_ap(
 										_List_fromArray(
 											[
-												A3($rundis$elm_bootstrap$Bootstrap$Navbar$renderNav, state, configRec, configRec.fg)
+												A3($rundis$elm_bootstrap$Bootstrap$Navbar$renderNav, state, configRec, configRec.fh)
 											]),
 										$rundis$elm_bootstrap$Bootstrap$Navbar$renderCustom(configRec.bP)))
 								]))
@@ -17607,7 +17604,7 @@ var $author$project$Main$view = function (model) {
 				dB: 'Add media files: images, video, audio or pdf'
 			});
 	}();
-	var showMediaUpload = !$author$project$Main$selectedEditorIsStyle(model);
+	var showMediaUpload = $author$project$Main$selectedEditorIsMarkdown(model);
 	var showButtons = $author$project$Main$selectedEditorIsMarkdown(model);
 	var previewButton = function () {
 		var weave = model.b.dQ;
@@ -17762,5 +17759,5 @@ var $author$project$Main$view = function (model) {
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
-	{fe: $author$project$Main$init, fw: $author$project$Main$subscriptions, fz: $author$project$Main$update, fB: $author$project$Main$view});
+	{ff: $author$project$Main$init, fx: $author$project$Main$subscriptions, fA: $author$project$Main$update, fB: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$value)(0)}});}(this));
