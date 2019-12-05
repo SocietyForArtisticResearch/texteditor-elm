@@ -273,6 +273,11 @@ body {
     width: 100%;
 }
 
+.rc-media-table-searchbox {
+    position: absolute;
+    right: 5px;
+}
+
 .rc-media-table thead th {
     border-bottom: 2px solid #dee2e6;
     padding: 0.3rem;

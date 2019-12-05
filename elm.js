@@ -12958,6 +12958,7 @@ var $author$project$RCMediaList$view = F5(
 			$elm$html$Html$input,
 			_List_fromArray(
 				[
+					$elm$html$Html$Attributes$class('rc-media-table-searchbox'),
 					$elm$html$Html$Attributes$placeholder('Search by name'),
 					$elm$html$Html$Events$onInput(
 					A2($elm$core$Basics$composeL, $author$project$RCMediaList$SortableTableMessage, $author$project$RCMediaList$SetQuery))
@@ -12967,7 +12968,6 @@ var $author$project$RCMediaList$view = F5(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('media-table-controls'),
 					$elm$html$Html$Attributes$class('mt-1')
 				]),
 			_List_fromArray(

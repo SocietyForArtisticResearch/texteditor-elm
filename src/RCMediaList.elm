@@ -259,13 +259,14 @@ view upload tableType { query, state } tableConfig objectList =
         searchBox : Html (Msg msg)
         searchBox =
             input
-                [ placeholder "Search by name"
+                [ class "rc-media-table-searchbox"
+                , placeholder "Search by name"
                 , onInput (SortableTableMessage << SetQuery)
                 ]
                 []
 
         tableControls =
-            div [ class "media-table-controls", class "mt-1" ]
+            div [ class "mt-1" ]
                 [ upload, searchBox ]
     in
     case objectList of
