@@ -265,7 +265,7 @@ view upload tableType { query, state } tableConfig objectList =
                 []
 
         tableControls =
-            div [ class "media-table-controls mt-1" ]
+            div [ class "media-table-controls", class "mt-1" ]
                 [ upload, searchBox ]
     in
     case objectList of
