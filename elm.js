@@ -12121,7 +12121,7 @@ var $billstclair$elm_sortable_table$Table$veryCustomColumn = $elm$core$Basics$id
 var $author$project$RCMediaList$mediaListButtons = function (messages) {
 	return $billstclair$elm_sortable_table$Table$veryCustomColumn(
 		{
-			l: '',
+			l: 'Action',
 			ds: $billstclair$elm_sortable_table$Table$unsortable,
 			dD: $author$project$RCMediaList$editObjectButtons(messages)
 		});
@@ -12353,7 +12353,7 @@ var $author$project$RCMediaPreview$viewTableThumbnail = F2(
 	});
 var $author$project$RCMediaList$thumbnailColumn = $billstclair$elm_sortable_table$Table$veryCustomColumn(
 	{
-		l: '',
+		l: 'Preview',
 		ds: $billstclair$elm_sortable_table$Table$unsortable,
 		dD: function (rcObject) {
 			return A2(

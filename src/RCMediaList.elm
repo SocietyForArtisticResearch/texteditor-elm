@@ -139,7 +139,7 @@ mediaListView messages model objects =
 thumbnailColumn : Table.Column RCMediaObject (Msg msg)
 thumbnailColumn =
     Table.veryCustomColumn
-        { name = ""
+        { name = "Preview"
         , viewData = \rcObject -> Table.HtmlDetails [] [ viewTableThumbnail rcObject PreviewSmall ]
         , sorter = Table.unsortable
         }
@@ -201,7 +201,7 @@ insertButton messages object =
 mediaListButtons : TableEditMessages msg -> Table.Column RCMediaObject (Msg msg)
 mediaListButtons messages =
     Table.veryCustomColumn
-        { name = ""
+        { name = "Action"
         , viewData = editObjectButtons messages
         , sorter = Table.unsortable
         }

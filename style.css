@@ -275,11 +275,13 @@ body {
 
 .rc-media-table thead th {
     border-bottom: 2px solid #dee2e6;
+    padding: 0.3rem;
 }
 
 .rc-media-table-row:nth-of-type(odd) {
     background-color:#f8f8f8;
     border-top: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
 } 
     
 .rc-media-table > thead:nth-child(1) > tr:nth-child(1) > th:nth-child(4) {
