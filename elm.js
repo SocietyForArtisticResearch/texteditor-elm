@@ -17778,7 +17778,10 @@ var $author$project$Main$view = function (model) {
 							])))),
 				alert,
 				mediaList,
-				$author$project$Main$statusBar(model)
+				A2(
+				$author$project$View$optionalBlock,
+				showButtons,
+				$author$project$Main$statusBar(model))
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(

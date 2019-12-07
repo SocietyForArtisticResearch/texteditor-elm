@@ -1482,5 +1482,5 @@ view model =
                     [ editorCheckbox, viewFullscreenSwitch model.fullscreenMode ]
         , alert
         , mediaList
-        , statusBar model
+        , optionalBlock showButtons <| statusBar model
         ]
