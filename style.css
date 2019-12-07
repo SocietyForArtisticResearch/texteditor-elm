@@ -83,13 +83,13 @@ body {
     overflow-y: scroll;
 }
 
-.rc-media-picker .modal-header {
-    padding: 0.3rem;
-}
+/* .rc-media-picker .modal-header { */
+/*     padding: 0.3rem; */
+/* } */
 
-.rc-media-picker .modal-body {
-    padding: 0.3rem;
-}
+/* .rc-media-picker .modal-body { */
+/*     padding: 0.3rem; */
+/* } */
 
 /* .btn {
 	padding: 0.5em 0.1em;
@@ -283,7 +283,7 @@ body {
 
 .rc-media-table-searchbox {
     position: absolute;
-    right: 5px;
+    right: 1.0rem;
 }
 
 .rc-media-table thead th {
