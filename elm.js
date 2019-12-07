@@ -10879,6 +10879,11 @@ var $author$project$RCAPI$uploadMedia = F5(
 				});
 		}
 	});
+var $author$project$Main$uploadMediaFilePrompt = A2(
+	$elm$file$File$Select$file,
+	_List_fromArray(
+		['image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/svg+xml', 'audio/mp3', 'audio/wav', 'audio/aiff', 'application/pdf', 'audio/ogg', 'audio/aif', 'video/mp4', 'video/mpeg', 'video/ogv', 'video/quicktime']),
+	$author$project$Main$UploadMediaFileSelected);
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		update:
@@ -11224,7 +11229,7 @@ var $author$project$Main$update = F2(
 						A2(
 							$elm$file$File$Select$file,
 							_List_fromArray(
-								['image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/svg+xml', 'audio/mp3', 'audio/wav', 'audio/aiff', 'application/pdf', 'audio/ogg', 'audio/aif', 'video/mp4', 'video/mpeg', 'video/ogv']),
+								['image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/svg+xml', 'audio/mp3', 'audio/wav', 'audio/aiff', 'application/pdf', 'audio/ogg', 'audio/aif', 'video/mp4', 'video/mpeg', 'video/ogv', 'video/quicktime']),
 							$author$project$Main$UploadMediaFileSelected));
 				case 13:
 					var file = msg.a;
@@ -11485,6 +11490,8 @@ var $author$project$Main$update = F2(
 											ao: $author$project$Main$confirmObjectDelete(object)
 										}),
 									$elm$core$Platform$Cmd$none);
+							case 12:
+								return _Utils_Tuple2(model, $author$project$Main$uploadMediaFilePrompt);
 							default:
 								return _Utils_Tuple2(
 									A2(
@@ -11549,13 +11556,7 @@ var $author$project$Main$update = F2(
 										}),
 									$elm$core$Platform$Cmd$none);
 							case 12:
-								return _Utils_Tuple2(
-									model,
-									A2(
-										$elm$file$File$Select$file,
-										_List_fromArray(
-											['image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/svg+xml', 'audio/mp3', 'audio/wav', 'audio/aiff', 'application/pdf', 'audio/ogg', 'audio/aif', 'video/mp4', 'video/mpeg', 'video/ogv']),
-										$author$project$Main$UploadMediaFileSelected));
+								return _Utils_Tuple2(model, $author$project$Main$uploadMediaFilePrompt);
 							default:
 								return _Utils_Tuple2(
 									A2(
@@ -13100,7 +13101,7 @@ var $author$project$RCMediaList$insertButton = F2(
 var $author$project$RCMediaList$pickerButton = function (messages) {
 	return $billstclair$elm_sortable_table$Table$veryCustomColumn(
 		{
-			l: '',
+			l: 'Edit',
 			ds: $billstclair$elm_sortable_table$Table$unsortable,
 			dD: $author$project$RCMediaList$insertButton(messages)
 		});
@@ -13144,7 +13145,8 @@ var $author$project$RCMediaList$configMediaPicker = function (messages) {
 					eL: _List_fromArray(
 						[
 							$elm$html$Html$Attributes$class('rc-media-table'),
-							$elm$html$Html$Attributes$class('rc-media-picker')
+							$elm$html$Html$Attributes$class('rc-media-picker'),
+							$elm$html$Html$Attributes$class('mt-1')
 						])
 				}),
 			eP: A2(

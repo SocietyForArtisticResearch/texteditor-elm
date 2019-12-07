@@ -698,6 +698,7 @@ update msg model =
                 , "video/mp4"
                 , "video/mpeg"
                 , "video/ogv"
+                , "video/quicktime"
                 ]
                 UploadMediaFileSelected
             )
@@ -878,6 +879,9 @@ update msg model =
                             , Cmd.none
                             )
 
+                        UploadMediaFileSelect ->
+                            ( model, uploadMediaFilePrompt )
+
                         _ ->
                             ( addProblem model <| Problems.UnsupportedMessage "Media List button is doing something unexpected", Cmd.none )
 
@@ -908,25 +912,7 @@ update msg model =
                             ( { model | mediaPickerDialog = ( Tuple.first model.mediaPickerDialog, Modal.hidden ) }, Cmd.none )
 
                         UploadMediaFileSelect ->
-                            ( model
-                            , Select.file
-                                [ "image/jpeg"
-                                , "image/png"
-                                , "image/gif"
-                                , "image/tiff"
-                                , "image/svg+xml"
-                                , "audio/mp3"
-                                , "audio/wav"
-                                , "audio/aiff"
-                                , "application/pdf"
-                                , "audio/ogg"
-                                , "audio/aif"
-                                , "video/mp4"
-                                , "video/mpeg"
-                                , "video/ogv"
-                                ]
-                                UploadMediaFileSelected
-                            )
+                            ( model, uploadMediaFilePrompt )
 
                         _ ->
                             ( addProblem model <| Problems.UnsupportedMessage "media insert is doing something unexpected", Cmd.none )
@@ -1040,6 +1026,28 @@ insertMediaUpdate object model =
 
         Nothing ->
             ( addProblem model <| Problems.NoMediaWithNameOrId object.name, Cmd.none )
+
+
+uploadMediaFilePrompt : Cmd Msg
+uploadMediaFilePrompt =
+    Select.file
+        [ "image/jpeg"
+        , "image/png"
+        , "image/gif"
+        , "image/tiff"
+        , "image/svg+xml"
+        , "audio/mp3"
+        , "audio/wav"
+        , "audio/aiff"
+        , "application/pdf"
+        , "audio/ogg"
+        , "audio/aif"
+        , "video/mp4"
+        , "video/mpeg"
+        , "video/ogv"
+        , "video/quicktime"
+        ]
+        UploadMediaFileSelected
 
 
 viewUpload : ButtonInfo Msg -> UploadStatus -> Html Msg

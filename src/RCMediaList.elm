@@ -126,7 +126,7 @@ configMediaPicker messages =
             ]
         , customizations =
             { defaultCustomizations
-                | tableAttrs = [ class "rc-media-table", class "rc-media-picker" ]
+                | tableAttrs = [ class "rc-media-table", class "rc-media-picker", class "mt-1" ]
                 , rowAttrs = \object -> [ class "rc-media-table-row", onDoubleClick (doubleClickAction object) ]
             }
         }
@@ -181,7 +181,7 @@ deleteButton messages object =
 pickerButton : PickerMessages msg -> Table.Column RCMediaObject (Msg msg)
 pickerButton messages =
     Table.veryCustomColumn
-        { name = ""
+        { name = "Edit"
         , viewData = insertButton messages
         , sorter = Table.unsortable
         }
