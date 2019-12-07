@@ -379,18 +379,18 @@ makeMediaEditFun obj field input =
             MediaEdit ( String.fromInt objId, { obj | license = Licenses.fromString input } )
 
 
-makeTableMessages : RCMediaList.TableEditMessages Msg
-makeTableMessages =
+makeTableMessages : Html Msg -> RCMediaList.TableEditConfig Msg
+makeTableMessages uploadButtonHtml =
     { editObject = MediaDialog False
     , deleteObject = ConfirmMediaDelete
     , insertObject = InsertMediaAtCursor
-    , uploadMediaFileSelect = UploadMediaFileSelect
+    , uploadButtonHtml = uploadButtonHtml
     }
 
 
-makePickerMessages : RCMediaList.PickerMessages Msg
-makePickerMessages =
-    { uploadMediaFileSelect = UploadMediaFileSelect
+makePickerConfig : Html Msg -> RCMediaList.PickerConfig Msg
+makePickerConfig uploadButtonHtml =
+    { uploadButtonHtml = uploadButtonHtml
     , insertObject = InsertMediaAtCursor
     , closeModal = CloseMediaPicker
     }
@@ -1360,14 +1360,14 @@ view model =
         confirmDialogHtml =
             UserConfirm.view model.confirmDialog
 
+        uploadButtonHtml =
+            viewUpload uploadMediaButtonInfo model.mediaUploadStatus
+
         mediaList =
             Html.map
                 MediaList
             <|
-                RCMediaList.mediaListView
-                    makeTableMessages
-                    model.mediaList
-                    model.exposition.media
+                RCMediaList.mediaListView model.mediaList model.exposition.media (makeTableMessages uploadButtonHtml)
 
         alert =
             case model.problems of
@@ -1453,7 +1453,7 @@ view model =
             RCMediaList.mediaPickerView
                 model.mediaPickerDialog
                 model.exposition.media
-                makePickerMessages
+                (makePickerConfig uploadButtonHtml)
         , div [ class "btn-toolbar", class "import-export-toolbar", attribute "role" "toolbar" ]
             [ optionalBlock showMediaUpload <| viewUpload uploadMediaButtonInfo model.mediaUploadStatus
             , optionalBlock showButtons <| viewUpload importDocButtonInfo model.importUploadStatus

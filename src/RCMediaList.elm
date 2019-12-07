@@ -1,8 +1,8 @@
 module RCMediaList exposing
     ( Model
     , Msg(..)
-    , PickerMessages
-    , TableEditMessages
+    , PickerConfig
+    , TableEditConfig
     , TableMessage(..)
     , empty
     , mediaListView
@@ -26,18 +26,18 @@ import Table exposing (defaultCustomizations)
 import View exposing (defaultButton, mkButton)
 
 
-type alias TableEditMessages msg =
+type alias TableEditConfig msg =
     { editObject : String -> msg
     , deleteObject : RCMediaObject -> msg
     , insertObject : RCMediaObject -> msg
-    , uploadMediaFileSelect : msg
+    , uploadButtonHtml : Html msg
     }
 
 
-type alias PickerMessages msg =
+type alias PickerConfig msg =
     { insertObject : RCMediaObject -> msg
     , closeModal : msg
-    , uploadMediaFileSelect : msg
+    , uploadButtonHtml : Html msg
     }
 
 
@@ -63,7 +63,7 @@ makeTableMsg =
 
 
 type alias ObjectAndActions msg =
-    { actions : TableEditMessages msg
+    { actions : TableEditConfig msg
     , object : RCMediaObject
     }
 
@@ -80,7 +80,7 @@ empty =
     }
 
 
-configMediaList : TableEditMessages msg -> Table.Config RCMediaObject (Msg msg)
+configMediaList : TableEditConfig msg -> Table.Config RCMediaObject (Msg msg)
 configMediaList messages =
     let
         buttons =
@@ -106,7 +106,7 @@ configMediaList messages =
         }
 
 
-configMediaPicker : PickerMessages msg -> Table.Config RCMediaObject (Msg msg)
+configMediaPicker : PickerConfig msg -> Table.Config RCMediaObject (Msg msg)
 configMediaPicker messages =
     let
         buttons =
@@ -132,11 +132,11 @@ configMediaPicker messages =
         }
 
 
-mediaListView : TableEditMessages msg -> Model -> List RCMediaObject -> Html (Msg msg)
-mediaListView messages model objects =
+mediaListView : Model -> List RCMediaObject -> TableEditConfig msg -> Html (Msg msg)
+mediaListView model objects messages =
     let
         uploadBtn =
-            uploadButton messages.uploadMediaFileSelect
+            Html.map MainMessage messages.uploadButtonHtml
     in
     view uploadBtn MediaTable model (configMediaList messages) objects
 
@@ -150,7 +150,7 @@ thumbnailColumn =
         }
 
 
-editButton : TableEditMessages msg -> RCMediaObject -> Html (Msg msg)
+editButton : TableEditConfig msg -> RCMediaObject -> Html (Msg msg)
 editButton messages object =
     let
         makeEditMessage =
@@ -164,7 +164,7 @@ editButton messages object =
         [ text "Edit" ]
 
 
-deleteButton : TableEditMessages msg -> RCMediaObject -> Html (Msg msg)
+deleteButton : TableEditConfig msg -> RCMediaObject -> Html (Msg msg)
 deleteButton messages object =
     let
         makeDeleteMessage =
@@ -178,7 +178,7 @@ deleteButton messages object =
         [ text "Delete" ]
 
 
-pickerButton : PickerMessages msg -> Table.Column RCMediaObject (Msg msg)
+pickerButton : PickerConfig msg -> Table.Column RCMediaObject (Msg msg)
 pickerButton messages =
     Table.veryCustomColumn
         { name = "Edit"
@@ -187,7 +187,7 @@ pickerButton messages =
         }
 
 
-insertButton : PickerMessages msg -> RCMediaObject -> Table.HtmlDetails (Msg msg)
+insertButton : PickerConfig msg -> RCMediaObject -> Table.HtmlDetails (Msg msg)
 insertButton messages object =
     let
         makeInsertMessage =
@@ -203,7 +203,7 @@ insertButton messages object =
         ]
 
 
-mediaListButtons : TableEditMessages msg -> Table.Column RCMediaObject (Msg msg)
+mediaListButtons : TableEditConfig msg -> Table.Column RCMediaObject (Msg msg)
 mediaListButtons messages =
     Table.veryCustomColumn
         { name = "Action"
@@ -212,7 +212,7 @@ mediaListButtons messages =
         }
 
 
-editObjectButtons : TableEditMessages msg -> RCMediaObject -> Table.HtmlDetails (Msg msg)
+editObjectButtons : TableEditConfig msg -> RCMediaObject -> Table.HtmlDetails (Msg msg)
 editObjectButtons messages object =
     Table.HtmlDetails []
         [ editButton messages object
@@ -312,14 +312,16 @@ uploadButton uploadMessage =
         }
 
 
-mediaPickerView : ( Model, Modal.Visibility ) -> List RCMediaObject -> PickerMessages msg -> Html (Msg msg)
+
+
+mediaPickerView :  ( Model, Modal.Visibility ) -> List RCMediaObject -> PickerConfig msg -> Html (Msg msg)
 mediaPickerView ( model, visibility ) objectList messages =
     let
         tableConfig =
             configMediaPicker messages
 
         uploadBtn =
-            uploadButton messages.uploadMediaFileSelect
+            Html.map MainMessage messages.uploadButtonHtml
 
         tableList =
             view uploadBtn PickerTable model tableConfig objectList
@@ -342,7 +344,7 @@ mediaPickerView ( model, visibility ) objectList messages =
 
 
 {--
-viewModalMediaPickerOld : Modal.Visibility -> List RCMediaObject -> PickerMessages msg -> Html msg
+viewModalMediaPickerOld : Modal.Visibility -> List RCMediaObject -> PickerConfig msg -> Html msg
 viewModalMediaPickerOld visibility objectList messages =
     let
         tableList =
