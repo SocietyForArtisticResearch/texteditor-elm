@@ -39,6 +39,7 @@ Casper:
 - Drag and drop 
 	<https://elm-lang.org/examples/drag-and-drop>
 - Auto-scrolling doesn't work anymore.
+- Upload progress for upload button in Media list is broken (becuase handled by main)
 
 Luc:
 
