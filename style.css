@@ -83,11 +83,11 @@ body {
     overflow-y: scroll;
 }
 
-.modal-header {
+.rc-media-picker .modal-header {
     padding: 0.3rem;
 }
 
-.modal-body {
+.rc-media-picker .modal-body {
     padding: 0.3rem;
 }
 
