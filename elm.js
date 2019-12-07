@@ -12994,8 +12994,20 @@ var $author$project$RCMediaList$mediaListView = F3(
 			objects);
 	});
 var $author$project$RCMediaList$PickerTable = 0;
-var $rundis$elm_bootstrap$Bootstrap$Modal$Body = $elm$core$Basics$identity;
 var $rundis$elm_bootstrap$Bootstrap$Modal$Config = $elm$core$Basics$identity;
+var $rundis$elm_bootstrap$Bootstrap$Modal$attrs = F2(
+	function (values, _v0) {
+		var conf = _v0;
+		var options = conf.fq;
+		return _Utils_update(
+			conf,
+			{
+				fq: _Utils_update(
+					options,
+					{bD: values})
+			});
+	});
+var $rundis$elm_bootstrap$Bootstrap$Modal$Body = $elm$core$Basics$identity;
 var $rundis$elm_bootstrap$Bootstrap$Modal$body = F3(
 	function (attributes, children, _v0) {
 		var conf = _v0;
@@ -13529,49 +13541,55 @@ var $author$project$RCMediaList$mediaPickerView = F3(
 		return A2(
 			$rundis$elm_bootstrap$Bootstrap$Modal$view,
 			visibility,
-			A3(
-				$rundis$elm_bootstrap$Bootstrap$Modal$footer,
-				_List_Nil,
+			A2(
+				$rundis$elm_bootstrap$Bootstrap$Modal$attrs,
 				_List_fromArray(
 					[
-						A2(
-						$rundis$elm_bootstrap$Bootstrap$Button$button,
-						_List_fromArray(
-							[
-								$rundis$elm_bootstrap$Bootstrap$Button$secondary,
-								$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$RCMediaList$MainMessage(messages.e4))
-									]))
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Cancel')
-							]))
+						$elm$html$Html$Attributes$class('rc-media-picker')
 					]),
 				A3(
-					$rundis$elm_bootstrap$Bootstrap$Modal$body,
+					$rundis$elm_bootstrap$Bootstrap$Modal$footer,
 					_List_Nil,
 					_List_fromArray(
-						[tableList]),
+						[
+							A2(
+							$rundis$elm_bootstrap$Bootstrap$Button$button,
+							_List_fromArray(
+								[
+									$rundis$elm_bootstrap$Bootstrap$Button$secondary,
+									$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+									_List_fromArray(
+										[
+											$elm$html$Html$Events$onClick(
+											$author$project$RCMediaList$MainMessage(messages.e4))
+										]))
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Cancel')
+								]))
+						]),
 					A3(
-						$rundis$elm_bootstrap$Bootstrap$Modal$h1,
+						$rundis$elm_bootstrap$Bootstrap$Modal$body,
 						_List_Nil,
 						_List_fromArray(
-							[
-								$elm$html$Html$text('Insert media object')
-							]),
-						A2(
-							$rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
-							true,
-							$rundis$elm_bootstrap$Bootstrap$Modal$large(
-								A2(
-									$rundis$elm_bootstrap$Bootstrap$Modal$scrollableBody,
-									true,
-									$rundis$elm_bootstrap$Bootstrap$Modal$config(
-										$author$project$RCMediaList$MainMessage(messages.e4)))))))));
+							[tableList]),
+						A3(
+							$rundis$elm_bootstrap$Bootstrap$Modal$h1,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Insert media object')
+								]),
+							A2(
+								$rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
+								true,
+								$rundis$elm_bootstrap$Bootstrap$Modal$large(
+									A2(
+										$rundis$elm_bootstrap$Bootstrap$Modal$scrollableBody,
+										true,
+										$rundis$elm_bootstrap$Bootstrap$Modal$config(
+											$author$project$RCMediaList$MainMessage(messages.e4))))))))));
 	});
 var $rundis$elm_bootstrap$Bootstrap$Dropdown$Attrs = function (a) {
 	return {$: 4, a: a};

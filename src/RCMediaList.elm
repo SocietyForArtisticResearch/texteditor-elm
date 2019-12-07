@@ -339,6 +339,7 @@ mediaPickerView ( model, visibility ) objectList messages =
                 [ Button.secondary, Button.attrs [ onClick <| MainMessage messages.closeModal ] ]
                 [ text "Cancel" ]
             ]
+        |> Modal.attrs [ class "rc-media-picker" ]
         |> Modal.view visibility
 
 
