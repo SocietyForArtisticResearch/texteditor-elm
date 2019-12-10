@@ -14118,13 +14118,13 @@ var $author$project$Settings$snippet = function (s) {
 		case 1:
 			return _Utils_Tuple2('__', -1);
 		case 2:
-			return _Utils_Tuple2('# Header 1', 0);
+			return _Utils_Tuple2('# ', 0);
 		case 3:
-			return _Utils_Tuple2('## Header 2', 0);
+			return _Utils_Tuple2('## ', 0);
 		case 4:
-			return _Utils_Tuple2('### Header 3', 0);
+			return _Utils_Tuple2('### ', 0);
 		case 5:
-			return _Utils_Tuple2('#### Header 4', 0);
+			return _Utils_Tuple2('#### ', 0);
 		case 6:
 			return _Utils_Tuple2('* ', 0);
 		case 7:
