@@ -361,14 +361,17 @@
     app.ports.insertFootnote.subscribe(function(insertFnTuple) {
         let [fnNumber, fnContent] = insertFnTuple;
         /* fnNumber for example : [^n] 
-           fnContent is [^n]: content */
+         fnContent is [^n]: content */
+
         if (selectedEditor == editorCmMd) {
-            cmMarkdown.replaceSelection(fnNumber);
+	    let currentSelection = cmMarkdown.getSelection();
+            cmMarkdown.replaceSelection(currentSelection + " " + fnNumber);
             cmMarkdown.focus();
             appendToCodemirrorContent(fnContent);
             textareaMarkdown.value = cmMarkdown.getValue();
         } else if (selectedEditor == editorTxtMd) {
-            insertAtCursor(textareaMarkdown, fnNumber);
+	    let txtSelection = getTextareaSelection( textareaMarkdown );
+            insertAtCursor(textareaMarkdown, txtSelection + " " + fnNumber);
             textareaMarkdown.val(textareaMarkdown.val() + fnContent);
             cmMarkdown.setValue(textareaMarkdown.value);
             textareaMarkdown.focus();
