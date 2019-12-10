@@ -318,7 +318,7 @@
             cmMarkdown.replaceSelection(currentSelection);
 
             textareaMarkdown.value = cmMarkdown.getValue();
-            
+
         } else if (selectedEditor == editorTxtMd) {
             let selection = getTextareaSelection( textareaMarkdown );
 
@@ -338,9 +338,9 @@
     });
 
     function getTextareaSelection ( textarea ) {
-        let start = txtarea.selectionStart;
-        let finish = txtarea.selectionEnd;
-        return txtarea.value.substring(start, finish);
+        let start = textarea.selectionStart;
+        let finish = textarea.selectionEnd;
+        return textarea.value.substring(start, finish);
     }
 
     app.ports.insertFootnote.subscribe(function(insertFnTuple) {

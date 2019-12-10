@@ -65,4 +65,4 @@ snippet s =
             ( "> ", 0 )
 
         Link ->
-            ( "[Link text](http://)", -1 )
+            ( "[](http://)", -10 )
