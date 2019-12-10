@@ -14132,7 +14132,7 @@ var $author$project$Settings$snippet = function (s) {
 		case 8:
 			return _Utils_Tuple2('> ', 0);
 		default:
-			return _Utils_Tuple2('[Link text](http://)', -1);
+			return _Utils_Tuple2('[](http://)', -10);
 	}
 };
 var $author$project$Main$mkEditorToolbar = function (tabState) {
