@@ -306,24 +306,42 @@
 
     app.ports.insertMdString.subscribe(function(insertTuple) {
         var [str, offset] = insertTuple;
+        let currentSelection = cmMarkdown.getSelection();
         if (selectedEditor == editorCmMd) {
             cmMarkdown.replaceSelection(str);
-            textareaMarkdown.value = cmMarkdown.getValue();
             cmMarkdown.focus();
             let cursor = cmMarkdown.getCursor();
             cmMarkdown.setCursor({
                 line: cursor.line,
                 ch: Math.max(0, cursor.ch + offset)
             });
+            cmMarkdown.replaceSelection(currentSelection);
+
+            textareaMarkdown.value = cmMarkdown.getValue();
+            
         } else if (selectedEditor == editorTxtMd) {
+            let selection = getTextareaSelection( textareaMarkdown );
+
             insertAtCursor(textareaMarkdown, str);
-            cmMarkdown.setValue(textareaMarkdown.value);
+            
             textareaMarkdown.focus();
             let sel = textareaMarkdown.selectionStart;
             textareaMarkdown.selectionStart = sel + offset;
             textareaMarkdown.selectionEnd = sel + offset;
+
+            insertAtCursor(textareaMarkdown, selection);
+
+            cmMarkdown.setValue(textareaMarkdown.value);
+
+
         }
     });
+
+    function getTextareaSelection ( textarea ) {
+        let start = txtarea.selectionStart;
+        let finish = txtarea.selectionEnd;
+        return txtarea.value.substring(start, finish);
+    }
 
     app.ports.insertFootnote.subscribe(function(insertFnTuple) {
         let [fnNumber, fnContent] = insertFnTuple;
