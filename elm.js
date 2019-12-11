@@ -12477,8 +12477,8 @@ var $author$project$RCMediaPreview$viewTableThumbnail = F3(
 						_List_Nil,
 						_List_fromArray(
 							[
-								thumb,
-								A3($author$project$RCMediaPreview$renderAsIconHyperlink, 20, object, clickAction)
+								A3($author$project$RCMediaPreview$renderAsIconHyperlink, 20, object, clickAction),
+								thumb
 							]));
 				} else {
 					return A2(
@@ -12498,8 +12498,8 @@ var $author$project$RCMediaPreview$viewTableThumbnail = F3(
 						_List_Nil,
 						_List_fromArray(
 							[
-								thumb,
-								A3($author$project$RCMediaPreview$renderAsIconHyperlink, 21, object, clickAction)
+								A3($author$project$RCMediaPreview$renderAsIconHyperlink, 21, object, clickAction),
+								thumb
 							]));
 				} else {
 					return A2(

@@ -52,7 +52,10 @@ viewTableThumbnail object size clickAction =
             in
             case size of
                 PreviewPlayer ->
-                    div [] [ thumb, renderAsIconHyperlink View.SpeakerIcon object clickAction ]
+                    div []
+                        [ renderAsIconHyperlink View.SpeakerIcon object clickAction
+                        , thumb
+                        ]
 
                 _ ->
                     div [] [ renderAsIconHyperlink View.SpeakerIcon object clickAction ]
@@ -64,10 +67,14 @@ viewTableThumbnail object size clickAction =
             in
             case size of
                 PreviewPlayer ->
-                    div [] [ thumb, renderAsIconHyperlink View.CameraIcon object clickAction ]
+                    div []
+                        [ renderAsIconHyperlink View.CameraIcon object clickAction
+                        , thumb
+                        ]
 
                 _ ->
-                    div [] [ renderAsIconHyperlink View.CameraIcon object clickAction ]
+                    div []
+                        [ renderAsIconHyperlink View.CameraIcon object clickAction ]
 
         Exposition.RCPdf ->
             renderMediaAsHyperlink "PDF" object
