@@ -12498,6 +12498,17 @@ var $author$project$RCMediaList$thumbnailColumn = function (previewedMediaId) {
 						return 1;
 					}
 				}();
+				var close = A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Events$onClick(
+							$author$project$RCMediaList$SortableTableMessage($author$project$RCMediaList$ClosePreview))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('x')
+						]));
 				var action = $author$project$RCMediaList$SortableTableMessage(
 					$author$project$RCMediaList$SetPreviewMediaId(rcObject.i));
 				return A2(
@@ -12506,17 +12517,7 @@ var $author$project$RCMediaList$thumbnailColumn = function (previewedMediaId) {
 					_List_fromArray(
 						[
 							A3($author$project$RCMediaPreview$viewTableThumbnail, rcObject, size, action),
-							A2(
-							$elm$html$Html$span,
-							_List_fromArray(
-								[
-									$elm$html$Html$Events$onClick(
-									$author$project$RCMediaList$SortableTableMessage($author$project$RCMediaList$ClosePreview))
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('x')
-								]))
+							(size === 2) ? close : A2($elm$html$Html$span, _List_Nil, _List_Nil)
 						]));
 			}
 		});
