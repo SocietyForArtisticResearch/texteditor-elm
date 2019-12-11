@@ -266,6 +266,9 @@ mediaType f =
         "video/quicktime" ->
             Just MVideo
 
+        "audio/x-m4a" ->
+            Just MAudio
+
         _ ->
             Nothing
 

@@ -46,15 +46,21 @@ type Msg msg
     | MainMessage msg
 
 
+type alias PreviewedMediaId =
+    Maybe Int
+
+
 type alias Model =
     { query : String
     , state : Table.State
+    , previewedMediaId : PreviewedMediaId
     }
 
 
 type TableMessage
     = SetQuery String
     | SetTableState Table.State
+    | SetPreviewMediaId Int
 
 
 makeTableMsg : Table.State -> Msg msg
@@ -77,11 +83,12 @@ empty : Model
 empty =
     { query = ""
     , state = Table.initialSort "ID"
+    , previewedMediaId = Nothing
     }
 
 
-configMediaList : TableEditConfig msg -> Table.Config RCMediaObject (Msg msg)
-configMediaList messages =
+configMediaList : PreviewedMediaId -> TableEditConfig msg -> Table.Config RCMediaObject (Msg msg)
+configMediaList previewedMediaId messages =
     let
         buttons =
             mediaListButtons messages
@@ -93,7 +100,7 @@ configMediaList messages =
         { toId = String.fromInt << .id
         , toMsg = makeTableMsg
         , columns =
-            [ thumbnailColumn
+            [ thumbnailColumn previewedMediaId
             , Table.stringColumn "ID" (String.fromInt << .id)
             , Table.stringColumn "Name" .name
             , buttons
@@ -106,8 +113,8 @@ configMediaList messages =
         }
 
 
-configMediaPicker : PickerConfig msg -> Table.Config RCMediaObject (Msg msg)
-configMediaPicker messages =
+configMediaPicker : PreviewedMediaId -> PickerConfig msg -> Table.Config RCMediaObject (Msg msg)
+configMediaPicker previewedMediaId messages =
     let
         buttons =
             pickerButton messages
@@ -119,7 +126,7 @@ configMediaPicker messages =
         { toId = String.fromInt << .id
         , toMsg = makeTableMsg
         , columns =
-            [ thumbnailColumn
+            [ thumbnailColumn previewedMediaId
             , Table.stringColumn "ID" (String.fromInt << .id)
             , Table.stringColumn "Name" .name
             , buttons
@@ -138,14 +145,29 @@ mediaListView model objects messages =
         uploadBtn =
             Html.map MainMessage messages.uploadButtonHtml
     in
-    view uploadBtn MediaTable model (configMediaList messages) objects
+    view uploadBtn MediaTable model (configMediaList model.previewedMediaId messages) objects
 
 
-thumbnailColumn : Table.Column RCMediaObject (Msg msg)
-thumbnailColumn =
+thumbnailColumn : PreviewedMediaId -> Table.Column RCMediaObject (Msg msg)
+thumbnailColumn previewedMediaId =
     Table.veryCustomColumn
         { name = "Preview"
-        , viewData = \rcObject -> Table.HtmlDetails [] [ viewTableThumbnail rcObject PreviewSmall ]
+        , viewData =
+            \rcObject ->
+                let
+                    size =
+                        case previewedMediaId of
+                            Just id ->
+                                if id == rcObject.id then
+                                    PreviewButton (SortableTableMessage <| SetPreviewMediaId rcObject.id)
+
+                                else
+                                    PreviewSmall
+
+                            Nothing ->
+                                PreviewSmall
+                in
+                Table.HtmlDetails [] [ viewTableThumbnail rcObject size ]
         , sorter = Table.unsortable
         }
 
@@ -228,6 +250,9 @@ update message model =
 
         SetTableState state ->
             { model | state = state }
+
+        SetPreviewMediaId id ->
+            { model | previewedMediaId = Just id }
 
 
 filterObjectsByName : String -> List RCMediaObject -> List RCMediaObject
@@ -312,13 +337,11 @@ uploadButton uploadMessage =
         }
 
 
-
-
-mediaPickerView :  ( Model, Modal.Visibility ) -> List RCMediaObject -> PickerConfig msg -> Html (Msg msg)
+mediaPickerView : ( Model, Modal.Visibility ) -> List RCMediaObject -> PickerConfig msg -> Html (Msg msg)
 mediaPickerView ( model, visibility ) objectList messages =
     let
         tableConfig =
-            configMediaPicker messages
+            configMediaPicker model.previewedMediaId messages
 
         uploadBtn =
             Html.map MainMessage messages.uploadButtonHtml

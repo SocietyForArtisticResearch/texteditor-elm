@@ -7,15 +7,19 @@ module RCMediaPreview exposing
 import Exposition exposing (RCMediaObject)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (onClick)
 import View
 
 
-type PreviewSize
+type PreviewSize msg
     = PreviewBig
     | PreviewSmall
+    | PreviewPlayer
+    | PreviewLink
+    | PreviewButton msg
 
 
-getStyle : PreviewSize -> List (Html.Attribute msg)
+getStyle : PreviewSize msg -> List (Html.Attribute msg)
 getStyle size =
     case size of
         PreviewBig ->
@@ -30,8 +34,11 @@ getStyle size =
             , style "object-fit" "cover"
             ]
 
+        _ ->
+            []
 
-viewTableThumbnail : RCMediaObject -> PreviewSize -> Html msg
+
+viewTableThumbnail : RCMediaObject -> PreviewSize msg -> Html msg
 viewTableThumbnail object size =
     case object.mediaType of
         Exposition.RCImage ->
@@ -41,16 +48,38 @@ viewTableThumbnail object size =
             renderAsMini object size
 
         Exposition.RCAudio settings ->
-            renderAsIconHyperlink View.SpeakerIcon object
+            case size of
+                PreviewLink ->
+                    renderAsIconHyperlink View.SpeakerIcon object
+
+                PreviewPlayer ->
+                    viewThumbnail object size
+
+                PreviewButton msg ->
+                    button [ onClick msg ] [ text "preview" ]
+
+                _ ->
+                    span [] []
 
         Exposition.RCVideo settings ->
-            renderAsIconHyperlink View.CameraIcon object
+            case size of
+                PreviewLink ->
+                    renderAsIconHyperlink View.CameraIcon object
+
+                PreviewPlayer ->
+                    viewThumbnail object size
+
+                PreviewButton msg ->
+                    button [ onClick msg ] [ text "preview" ]
+
+                _ ->
+                    span [] []
 
         Exposition.RCPdf ->
             renderMediaAsHyperlink "PDF" object
 
 
-renderAsMini : RCMediaObject -> PreviewSize -> Html msg
+renderAsMini : RCMediaObject -> PreviewSize msg -> Html msg
 renderAsMini object size =
     let
         reso =
@@ -94,7 +123,7 @@ renderAsIconHyperlink icon object =
         [ View.renderIcon icon ]
 
 
-viewThumbnail : RCMediaObject -> PreviewSize -> Html msg
+viewThumbnail : RCMediaObject -> PreviewSize msg -> Html msg
 viewThumbnail object size =
     case object.mediaType of
         Exposition.RCImage ->
@@ -129,6 +158,9 @@ viewThumbnail object size =
                 , loop settings.loop
                 , autoplay settings.autoplay
                 , class "audio-preview"
+                , preload "none"
+                , style "width" "200px"
+                , style "position" "absolute"
                 ]
                 [ source [ src audioUrl, type_ "audio/mpeg" ] [] ]
 
@@ -143,6 +175,9 @@ viewThumbnail object size =
                  , loop settings.loop
                  , autoplay settings.autoplay
                  , class "video-preview"
+                 , preload "none"
+                 , style "width" "200px"
+                 , style "position" "absolute"
                  ]
                     ++ getStyle size
                 )

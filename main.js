@@ -5817,6 +5817,7 @@ var $billstclair$elm_sortable_table$Table$initialSort = function (header) {
 	return A2($billstclair$elm_sortable_table$Table$State, header, false);
 };
 var $author$project$RCMediaList$empty = {
+	previewedMediaId: $elm$core$Maybe$Nothing,
 	query: '',
 	state: $billstclair$elm_sortable_table$Table$initialSort('ID')
 };
@@ -10570,16 +10571,24 @@ var $author$project$RCAPI$toRCMediaObject = F2(
 	});
 var $author$project$RCMediaList$update = F2(
 	function (message, model) {
-		if (message.$ === 'SetQuery') {
-			var string = message.a;
-			return _Utils_update(
-				model,
-				{query: string});
-		} else {
-			var state = message.a;
-			return _Utils_update(
-				model,
-				{state: state});
+		switch (message.$) {
+			case 'SetQuery':
+				var string = message.a;
+				return _Utils_update(
+					model,
+					{query: string});
+			case 'SetTableState':
+				var state = message.a;
+				return _Utils_update(
+					model,
+					{state: state});
+			default:
+				var id = message.a;
+				return _Utils_update(
+					model,
+					{
+						previewedMediaId: $elm$core$Maybe$Just(id)
+					});
 		}
 	});
 var $author$project$Main$updateEditorContent = function (model) {
@@ -10859,6 +10868,10 @@ var $author$project$RCAPI$mediaType = function (f) {
 			return $elm$core$Maybe$Just($author$project$RCAPI$MVideo);
 		case 'application/pdf':
 			return $elm$core$Maybe$Just($author$project$RCAPI$MPdf);
+		case 'video/quicktime':
+			return $elm$core$Maybe$Just($author$project$RCAPI$MVideo);
+		case 'audio/x-m4a':
+			return $elm$core$Maybe$Just($author$project$RCAPI$MAudio);
 		default:
 			return $elm$core$Maybe$Nothing;
 	}
@@ -10917,6 +10930,11 @@ var $author$project$RCAPI$uploadMedia = F5(
 				});
 		}
 	});
+var $author$project$Main$uploadMediaFilePrompt = A2(
+	$elm$file$File$Select$file,
+	_List_fromArray(
+		['image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/svg+xml', 'audio/mp3', 'audio/wav', 'audio/aiff', 'application/pdf', 'audio/ogg', 'audio/aif', 'video/mp4', 'video/mpeg', 'video/ogv', 'video/quicktime']),
+	$author$project$Main$UploadMediaFileSelected);
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		update:
@@ -11262,7 +11280,7 @@ var $author$project$Main$update = F2(
 						A2(
 							$elm$file$File$Select$file,
 							_List_fromArray(
-								['image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/svg+xml', 'audio/mp3', 'audio/wav', 'audio/aiff', 'application/pdf', 'audio/ogg', 'audio/aif', 'video/mp4', 'video/mpeg', 'video/ogv']),
+								['image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/svg+xml', 'audio/mp3', 'audio/wav', 'audio/aiff', 'application/pdf', 'audio/ogg', 'audio/aif', 'video/mp4', 'video/mpeg', 'video/ogv', 'video/quicktime', 'quicktime/x-m4a']),
 							$author$project$Main$UploadMediaFileSelected));
 				case 'UploadMediaFileSelected':
 					var file = msg.a;
@@ -11523,6 +11541,8 @@ var $author$project$Main$update = F2(
 											confirmDialog: $author$project$Main$confirmObjectDelete(object)
 										}),
 									$elm$core$Platform$Cmd$none);
+							case 'UploadMediaFileSelect':
+								return _Utils_Tuple2(model, $author$project$Main$uploadMediaFilePrompt);
 							default:
 								return _Utils_Tuple2(
 									A2(
@@ -11587,13 +11607,7 @@ var $author$project$Main$update = F2(
 										}),
 									$elm$core$Platform$Cmd$none);
 							case 'UploadMediaFileSelect':
-								return _Utils_Tuple2(
-									model,
-									A2(
-										$elm$file$File$Select$file,
-										_List_fromArray(
-											['image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/svg+xml', 'audio/mp3', 'audio/wav', 'audio/aiff', 'application/pdf', 'audio/ogg', 'audio/aif', 'video/mp4', 'video/mpeg', 'video/ogv']),
-										$author$project$Main$UploadMediaFileSelected));
+								return _Utils_Tuple2(model, $author$project$Main$uploadMediaFilePrompt);
 							default:
 								return _Utils_Tuple2(
 									A2(
@@ -11751,22 +11765,27 @@ var $author$project$Main$makeMediaEditFun = F3(
 		}
 	});
 var $author$project$Main$CloseMediaPicker = {$: 'CloseMediaPicker'};
-var $author$project$Main$makePickerMessages = {closeModal: $author$project$Main$CloseMediaPicker, insertObject: $author$project$Main$InsertMediaAtCursor, uploadMediaFileSelect: $author$project$Main$UploadMediaFileSelect};
+var $author$project$Main$makePickerConfig = function (uploadButtonHtml) {
+	return {closeModal: $author$project$Main$CloseMediaPicker, insertObject: $author$project$Main$InsertMediaAtCursor, uploadButtonHtml: uploadButtonHtml};
+};
 var $author$project$Main$ConfirmMediaDelete = function (a) {
 	return {$: 'ConfirmMediaDelete', a: a};
 };
-var $author$project$Main$makeTableMessages = {
-	deleteObject: $author$project$Main$ConfirmMediaDelete,
-	editObject: $author$project$Main$MediaDialog(false),
-	insertObject: $author$project$Main$InsertMediaAtCursor
+var $author$project$Main$makeTableMessages = function (uploadButtonHtml) {
+	return {
+		deleteObject: $author$project$Main$ConfirmMediaDelete,
+		editObject: $author$project$Main$MediaDialog(false),
+		insertObject: $author$project$Main$InsertMediaAtCursor,
+		uploadButtonHtml: uploadButtonHtml
+	};
 };
 var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
 var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1 = $elm$html$Html$Attributes$class('mb-1');
-var $author$project$RCMediaList$MediaTable = {$: 'MediaTable'};
 var $author$project$RCMediaList$MainMessage = function (a) {
 	return {$: 'MainMessage', a: a};
 };
+var $author$project$RCMediaList$MediaTable = {$: 'MediaTable'};
 var $billstclair$elm_sortable_table$Table$Config = function (a) {
 	return {$: 'Config', a: a};
 };
@@ -12164,7 +12183,7 @@ var $billstclair$elm_sortable_table$Table$veryCustomColumn = $billstclair$elm_so
 var $author$project$RCMediaList$mediaListButtons = function (messages) {
 	return $billstclair$elm_sortable_table$Table$veryCustomColumn(
 		{
-			name: '',
+			name: 'Action',
 			sorter: $billstclair$elm_sortable_table$Table$unsortable,
 			viewData: $author$project$RCMediaList$editObjectButtons(messages)
 		});
@@ -12200,7 +12219,13 @@ var $billstclair$elm_sortable_table$Table$stringColumn = F2(
 				viewData: A2($elm$core$Basics$composeL, $billstclair$elm_sortable_table$Table$textDetails, toStr)
 			});
 	});
+var $author$project$RCMediaPreview$PreviewButton = function (a) {
+	return {$: 'PreviewButton', a: a};
+};
 var $author$project$RCMediaPreview$PreviewSmall = {$: 'PreviewSmall'};
+var $author$project$RCMediaList$SetPreviewMediaId = function (a) {
+	return {$: 'SetPreviewMediaId', a: a};
+};
 var $author$project$View$CameraIcon = {$: 'CameraIcon'};
 var $author$project$View$SpeakerIcon = {$: 'SpeakerIcon'};
 var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty('alt');
@@ -12314,20 +12339,23 @@ var $author$project$Exposition$customThumbUrl = F2(
 		return '/text-editor/simple-media-thumb?research=' + ($elm$core$String$fromInt(data.expositionId) + ('&simple-media=' + ($elm$core$String$fromInt(data.id) + ('&width=' + (sizeStr + ('&height=' + sizeStr))))));
 	});
 var $author$project$RCMediaPreview$getStyle = function (size) {
-	if (size.$ === 'PreviewBig') {
-		return _List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$style, 'width', '100%'),
-				A2($elm$html$Html$Attributes$style, 'height', '250px'),
-				A2($elm$html$Html$Attributes$style, 'object-fit', 'cover')
-			]);
-	} else {
-		return _List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$style, 'width', '60px'),
-				A2($elm$html$Html$Attributes$style, 'hieght', '60px'),
-				A2($elm$html$Html$Attributes$style, 'object-fit', 'cover')
-			]);
+	switch (size.$) {
+		case 'PreviewBig':
+			return _List_fromArray(
+				[
+					A2($elm$html$Html$Attributes$style, 'width', '100%'),
+					A2($elm$html$Html$Attributes$style, 'height', '250px'),
+					A2($elm$html$Html$Attributes$style, 'object-fit', 'cover')
+				]);
+		case 'PreviewSmall':
+			return _List_fromArray(
+				[
+					A2($elm$html$Html$Attributes$style, 'width', '60px'),
+					A2($elm$html$Html$Attributes$style, 'hieght', '60px'),
+					A2($elm$html$Html$Attributes$style, 'object-fit', 'cover')
+				]);
+		default:
+			return _List_Nil;
 	}
 };
 var $author$project$RCMediaPreview$renderAsMini = F2(
@@ -12377,6 +12405,102 @@ var $author$project$RCMediaPreview$renderMediaAsHyperlink = F2(
 						]))
 				]));
 	});
+var $elm$html$Html$audio = _VirtualDom_node('audio');
+var $elm$html$Html$Attributes$autoplay = $elm$html$Html$Attributes$boolProperty('autoplay');
+var $elm$html$Html$Attributes$controls = $elm$html$Html$Attributes$boolProperty('controls');
+var $elm$html$Html$Attributes$loop = $elm$html$Html$Attributes$boolProperty('loop');
+var $elm$html$Html$Attributes$preload = $elm$html$Html$Attributes$stringProperty('preload');
+var $elm$html$Html$source = _VirtualDom_node('source');
+var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
+var $elm$html$Html$video = _VirtualDom_node('video');
+var $author$project$RCMediaPreview$viewThumbnail = F2(
+	function (object, size) {
+		var _v0 = object.mediaType;
+		switch (_v0.$) {
+			case 'RCImage':
+				var reso = function () {
+					if (size.$ === 'PreviewBig') {
+						return 500;
+					} else {
+						return 120;
+					}
+				}();
+				var thumburl = A2($author$project$Exposition$customThumbUrl, reso, object);
+				return A2(
+					$elm$html$Html$img,
+					_Utils_ap(
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$src(thumburl)
+							]),
+						$author$project$RCMediaPreview$getStyle(size)),
+					_List_Nil);
+			case 'RCAudio':
+				var settings = _v0.a;
+				var audioUrl = $author$project$Exposition$mediaUrl(object);
+				return A2(
+					$elm$html$Html$audio,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$title('Preview'),
+							$elm$html$Html$Attributes$controls(true),
+							$elm$html$Html$Attributes$loop(settings.loop),
+							$elm$html$Html$Attributes$autoplay(settings.autoplay),
+							$elm$html$Html$Attributes$class('audio-preview'),
+							$elm$html$Html$Attributes$preload('none'),
+							A2($elm$html$Html$Attributes$style, 'width', '200px'),
+							A2($elm$html$Html$Attributes$style, 'position', 'absolute')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$source,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$src(audioUrl),
+									$elm$html$Html$Attributes$type_('audio/mpeg')
+								]),
+							_List_Nil)
+						]));
+			case 'RCVideo':
+				var settings = _v0.a;
+				var videoUrl = $author$project$Exposition$mediaUrl(object);
+				return A2(
+					$elm$html$Html$video,
+					_Utils_ap(
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$title('Preview'),
+								$elm$html$Html$Attributes$controls(true),
+								$elm$html$Html$Attributes$loop(settings.loop),
+								$elm$html$Html$Attributes$autoplay(settings.autoplay),
+								$elm$html$Html$Attributes$class('video-preview'),
+								$elm$html$Html$Attributes$preload('none'),
+								A2($elm$html$Html$Attributes$style, 'width', '200px'),
+								A2($elm$html$Html$Attributes$style, 'position', 'absolute')
+							]),
+						$author$project$RCMediaPreview$getStyle(size)),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$source,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$src(videoUrl),
+									$elm$html$Html$Attributes$type_('video/mp4')
+								]),
+							_List_Nil)
+						]));
+			default:
+				return A2(
+					$elm$html$Html$span,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('No preview')
+						]));
+		}
+	});
 var $author$project$RCMediaPreview$viewTableThumbnail = F2(
 	function (object, size) {
 		var _v0 = object.mediaType;
@@ -12387,86 +12511,138 @@ var $author$project$RCMediaPreview$viewTableThumbnail = F2(
 				return A2($author$project$RCMediaPreview$renderAsMini, object, size);
 			case 'RCAudio':
 				var settings = _v0.a;
-				return A2($author$project$RCMediaPreview$renderAsIconHyperlink, $author$project$View$SpeakerIcon, object);
+				switch (size.$) {
+					case 'PreviewLink':
+						return A2($author$project$RCMediaPreview$renderAsIconHyperlink, $author$project$View$SpeakerIcon, object);
+					case 'PreviewPlayer':
+						return A2($author$project$RCMediaPreview$viewThumbnail, object, size);
+					case 'PreviewButton':
+						var msg = size.a;
+						return A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick(msg)
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('preview')
+								]));
+					default:
+						return A2($elm$html$Html$span, _List_Nil, _List_Nil);
+				}
 			case 'RCVideo':
 				var settings = _v0.a;
-				return A2($author$project$RCMediaPreview$renderAsIconHyperlink, $author$project$View$CameraIcon, object);
+				switch (size.$) {
+					case 'PreviewLink':
+						return A2($author$project$RCMediaPreview$renderAsIconHyperlink, $author$project$View$CameraIcon, object);
+					case 'PreviewPlayer':
+						return A2($author$project$RCMediaPreview$viewThumbnail, object, size);
+					case 'PreviewButton':
+						var msg = size.a;
+						return A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick(msg)
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('preview')
+								]));
+					default:
+						return A2($elm$html$Html$span, _List_Nil, _List_Nil);
+				}
 			default:
 				return A2($author$project$RCMediaPreview$renderMediaAsHyperlink, 'PDF', object);
 		}
 	});
-var $author$project$RCMediaList$thumbnailColumn = $billstclair$elm_sortable_table$Table$veryCustomColumn(
-	{
-		name: '',
-		sorter: $billstclair$elm_sortable_table$Table$unsortable,
-		viewData: function (rcObject) {
-			return A2(
-				$billstclair$elm_sortable_table$Table$HtmlDetails,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2($author$project$RCMediaPreview$viewTableThumbnail, rcObject, $author$project$RCMediaPreview$PreviewSmall)
-					]));
-		}
-	});
-var $author$project$RCMediaList$configMediaList = function (messages) {
-	var doubleClickAction = A2(
-		$elm$core$Basics$composeL,
-		A2(
-			$elm$core$Basics$composeL,
-			A2($elm$core$Basics$composeL, $author$project$RCMediaList$MainMessage, messages.editObject),
-			$elm$core$String$fromInt),
-		function ($) {
-			return $.id;
-		});
-	var buttons = $author$project$RCMediaList$mediaListButtons(messages);
-	return $billstclair$elm_sortable_table$Table$customConfig(
+var $author$project$RCMediaList$thumbnailColumn = function (previewedMediaId) {
+	return $billstclair$elm_sortable_table$Table$veryCustomColumn(
 		{
-			columns: _List_fromArray(
-				[
-					$author$project$RCMediaList$thumbnailColumn,
-					A2(
-					$billstclair$elm_sortable_table$Table$stringColumn,
-					'ID',
-					A2(
-						$elm$core$Basics$composeL,
-						$elm$core$String$fromInt,
-						function ($) {
-							return $.id;
-						})),
-					A2(
-					$billstclair$elm_sortable_table$Table$stringColumn,
-					'Name',
-					function ($) {
-						return $.name;
-					}),
-					buttons
-				]),
-			customizations: _Utils_update(
-				$billstclair$elm_sortable_table$Table$defaultCustomizations,
-				{
-					rowAttrs: function (object) {
-						return _List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('rc-media-table-row'),
-								$elm$html$Html$Events$onDoubleClick(
-								doubleClickAction(object))
-							]);
-					},
-					tableAttrs: _List_fromArray(
+			name: 'Preview',
+			sorter: $billstclair$elm_sortable_table$Table$unsortable,
+			viewData: function (rcObject) {
+				var size = function () {
+					if (previewedMediaId.$ === 'Just') {
+						var id = previewedMediaId.a;
+						return _Utils_eq(id, rcObject.id) ? $author$project$RCMediaPreview$PreviewButton(
+							$author$project$RCMediaList$SortableTableMessage(
+								$author$project$RCMediaList$SetPreviewMediaId(rcObject.id))) : $author$project$RCMediaPreview$PreviewSmall;
+					} else {
+						return $author$project$RCMediaPreview$PreviewSmall;
+					}
+				}();
+				return A2(
+					$billstclair$elm_sortable_table$Table$HtmlDetails,
+					_List_Nil,
+					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('rc-media-table')
-						])
-				}),
-			toId: A2(
-				$elm$core$Basics$composeL,
-				$elm$core$String$fromInt,
-				function ($) {
-					return $.id;
-				}),
-			toMsg: $author$project$RCMediaList$makeTableMsg
+							A2($author$project$RCMediaPreview$viewTableThumbnail, rcObject, size)
+						]));
+			}
 		});
 };
+var $author$project$RCMediaList$configMediaList = F2(
+	function (previewedMediaId, messages) {
+		var doubleClickAction = A2(
+			$elm$core$Basics$composeL,
+			A2(
+				$elm$core$Basics$composeL,
+				A2($elm$core$Basics$composeL, $author$project$RCMediaList$MainMessage, messages.editObject),
+				$elm$core$String$fromInt),
+			function ($) {
+				return $.id;
+			});
+		var buttons = $author$project$RCMediaList$mediaListButtons(messages);
+		return $billstclair$elm_sortable_table$Table$customConfig(
+			{
+				columns: _List_fromArray(
+					[
+						$author$project$RCMediaList$thumbnailColumn(previewedMediaId),
+						A2(
+						$billstclair$elm_sortable_table$Table$stringColumn,
+						'ID',
+						A2(
+							$elm$core$Basics$composeL,
+							$elm$core$String$fromInt,
+							function ($) {
+								return $.id;
+							})),
+						A2(
+						$billstclair$elm_sortable_table$Table$stringColumn,
+						'Name',
+						function ($) {
+							return $.name;
+						}),
+						buttons
+					]),
+				customizations: _Utils_update(
+					$billstclair$elm_sortable_table$Table$defaultCustomizations,
+					{
+						rowAttrs: function (object) {
+							return _List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('rc-media-table-row'),
+									$elm$html$Html$Events$onDoubleClick(
+									doubleClickAction(object))
+								]);
+						},
+						tableAttrs: _List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('rc-media-table'),
+								$elm$html$Html$Attributes$class('mt-1')
+							])
+					}),
+				toId: A2(
+					$elm$core$Basics$composeL,
+					$elm$core$String$fromInt,
+					function ($) {
+						return $.id;
+					}),
+				toMsg: $author$project$RCMediaList$makeTableMsg
+			});
+	});
 var $author$project$RCMediaList$SetQuery = function (a) {
 	return {$: 'SetQuery', a: a};
 };
@@ -12598,7 +12774,6 @@ var $rundis$elm_bootstrap$Bootstrap$Alert$isDismissable = function (configRec) {
 		return false;
 	}
 };
-var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
 var $rundis$elm_bootstrap$Bootstrap$Alert$maybeAddDismissButton = F3(
 	function (visibilty, configRec, children_) {
 		return $rundis$elm_bootstrap$Bootstrap$Alert$isDismissable(configRec) ? A2(
@@ -12945,19 +13120,28 @@ var $billstclair$elm_sortable_table$Table$view = F3(
 				}
 			}());
 	});
-var $author$project$RCMediaList$view = F4(
-	function (tableType, _v0, tableConfig, objectList) {
+var $author$project$RCMediaList$view = F5(
+	function (upload, tableType, _v0, tableConfig, objectList) {
 		var query = _v0.query;
 		var state = _v0.state;
 		var searchBox = A2(
 			$elm$html$Html$input,
 			_List_fromArray(
 				[
+					$elm$html$Html$Attributes$class('rc-media-table-searchbox'),
 					$elm$html$Html$Attributes$placeholder('Search by name'),
 					$elm$html$Html$Events$onInput(
 					A2($elm$core$Basics$composeL, $author$project$RCMediaList$SortableTableMessage, $author$project$RCMediaList$SetQuery))
 				]),
 			_List_Nil);
+		var tableControls = A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('mt-1')
+				]),
+			_List_fromArray(
+				[upload, searchBox]));
 		var domIdAndStyle = function () {
 			if (tableType.$ === 'PickerTable') {
 				return _List_fromArray(
@@ -12996,7 +13180,7 @@ var $author$project$RCMediaList$view = F4(
 					domIdAndStyle,
 					_List_fromArray(
 						[
-							searchBox,
+							tableControls,
 							A2(
 							$rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo,
 							_List_Nil,
@@ -13012,27 +13196,42 @@ var $author$project$RCMediaList$view = F4(
 					domIdAndStyle,
 					_List_fromArray(
 						[
-							searchBox,
+							tableControls,
 							A3($billstclair$elm_sortable_table$Table$view, tableConfig, state, results)
 						]));
 			}
 		}
 	});
 var $author$project$RCMediaList$mediaListView = F3(
-	function (messages, model, objects) {
-		return A4(
+	function (model, objects, messages) {
+		var uploadBtn = A2($elm$html$Html$map, $author$project$RCMediaList$MainMessage, messages.uploadButtonHtml);
+		return A5(
 			$author$project$RCMediaList$view,
+			uploadBtn,
 			$author$project$RCMediaList$MediaTable,
 			model,
-			$author$project$RCMediaList$configMediaList(messages),
+			A2($author$project$RCMediaList$configMediaList, model.previewedMediaId, messages),
 			objects);
 	});
 var $author$project$RCMediaList$PickerTable = {$: 'PickerTable'};
-var $rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {
-	return {$: 'Body', a: a};
-};
 var $rundis$elm_bootstrap$Bootstrap$Modal$Config = function (a) {
 	return {$: 'Config', a: a};
+};
+var $rundis$elm_bootstrap$Bootstrap$Modal$attrs = F2(
+	function (values, _v0) {
+		var conf = _v0.a;
+		var options = conf.options;
+		return $rundis$elm_bootstrap$Bootstrap$Modal$Config(
+			_Utils_update(
+				conf,
+				{
+					options: _Utils_update(
+						options,
+						{attrs: values})
+				}));
+	});
+var $rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {
+	return {$: 'Body', a: a};
 };
 var $rundis$elm_bootstrap$Bootstrap$Modal$body = F3(
 	function (attributes, children, _v0) {
@@ -13090,61 +13289,64 @@ var $author$project$RCMediaList$insertButton = F2(
 var $author$project$RCMediaList$pickerButton = function (messages) {
 	return $billstclair$elm_sortable_table$Table$veryCustomColumn(
 		{
-			name: '',
+			name: 'Edit',
 			sorter: $billstclair$elm_sortable_table$Table$unsortable,
 			viewData: $author$project$RCMediaList$insertButton(messages)
 		});
 };
-var $author$project$RCMediaList$configMediaPicker = function (messages) {
-	var doubleClickAction = A2($elm$core$Basics$composeL, $author$project$RCMediaList$MainMessage, messages.insertObject);
-	var buttons = $author$project$RCMediaList$pickerButton(messages);
-	return $billstclair$elm_sortable_table$Table$customConfig(
-		{
-			columns: _List_fromArray(
-				[
-					$author$project$RCMediaList$thumbnailColumn,
-					A2(
-					$billstclair$elm_sortable_table$Table$stringColumn,
-					'ID',
-					A2(
-						$elm$core$Basics$composeL,
-						$elm$core$String$fromInt,
+var $author$project$RCMediaList$configMediaPicker = F2(
+	function (previewedMediaId, messages) {
+		var doubleClickAction = A2($elm$core$Basics$composeL, $author$project$RCMediaList$MainMessage, messages.insertObject);
+		var buttons = $author$project$RCMediaList$pickerButton(messages);
+		return $billstclair$elm_sortable_table$Table$customConfig(
+			{
+				columns: _List_fromArray(
+					[
+						$author$project$RCMediaList$thumbnailColumn(previewedMediaId),
+						A2(
+						$billstclair$elm_sortable_table$Table$stringColumn,
+						'ID',
+						A2(
+							$elm$core$Basics$composeL,
+							$elm$core$String$fromInt,
+							function ($) {
+								return $.id;
+							})),
+						A2(
+						$billstclair$elm_sortable_table$Table$stringColumn,
+						'Name',
 						function ($) {
-							return $.id;
-						})),
-					A2(
-					$billstclair$elm_sortable_table$Table$stringColumn,
-					'Name',
-					function ($) {
-						return $.name;
-					}),
-					buttons
-				]),
-			customizations: _Utils_update(
-				$billstclair$elm_sortable_table$Table$defaultCustomizations,
-				{
-					rowAttrs: function (object) {
-						return _List_fromArray(
+							return $.name;
+						}),
+						buttons
+					]),
+				customizations: _Utils_update(
+					$billstclair$elm_sortable_table$Table$defaultCustomizations,
+					{
+						rowAttrs: function (object) {
+							return _List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('rc-media-table-row'),
+									$elm$html$Html$Events$onDoubleClick(
+									doubleClickAction(object))
+								]);
+						},
+						tableAttrs: _List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('rc-media-table-row'),
-								$elm$html$Html$Events$onDoubleClick(
-								doubleClickAction(object))
-							]);
-					},
-					tableAttrs: _List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('rc-media-table')
-						])
-				}),
-			toId: A2(
-				$elm$core$Basics$composeL,
-				$elm$core$String$fromInt,
-				function ($) {
-					return $.id;
-				}),
-			toMsg: $author$project$RCMediaList$makeTableMsg
-		});
-};
+								$elm$html$Html$Attributes$class('rc-media-table'),
+								$elm$html$Html$Attributes$class('rc-media-picker'),
+								$elm$html$Html$Attributes$class('mt-1')
+							])
+					}),
+				toId: A2(
+					$elm$core$Basics$composeL,
+					$elm$core$String$fromInt,
+					function ($) {
+						return $.id;
+					}),
+				toMsg: $author$project$RCMediaList$makeTableMsg
+			});
+	});
 var $rundis$elm_bootstrap$Bootstrap$Modal$Footer = function (a) {
 	return {$: 'Footer', a: a};
 };
@@ -13221,44 +13423,6 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$large = function (_v0) {
 					})
 			}));
 };
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Light = {$: 'Light'};
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
-	return {$: 'Roled', a: a};
-};
-var $rundis$elm_bootstrap$Bootstrap$Button$light = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled($rundis$elm_bootstrap$Bootstrap$Internal$Button$Light));
-var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0 = $elm$html$Html$Attributes$class('m-0');
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark = {$: 'Dark'};
-var $rundis$elm_bootstrap$Bootstrap$Button$outlineDark = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark));
-var $author$project$View$mkButton = function (props) {
-	var spacing = props.offset ? _List_fromArray(
-		[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0]) : _List_Nil;
-	return A2(
-		$rundis$elm_bootstrap$Bootstrap$Button$button,
-		_List_fromArray(
-			[
-				props.primary ? $rundis$elm_bootstrap$Bootstrap$Button$outlineDark : $rundis$elm_bootstrap$Bootstrap$Button$light,
-				$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-				A2(
-					$elm$core$List$append,
-					_List_fromArray(
-						[
-							$elm$html$Html$Events$onClick(props.onClickMsg),
-							A2(
-							$elm$html$Html$Attributes$style,
-							'display',
-							props.hidden ? 'none' : 'inline-block'),
-							$elm$html$Html$Attributes$title(props.title)
-						]),
-					A2($elm$core$List$append, spacing, props.otherAttrs)))
-			]),
-		_List_fromArray(
-			[
-				$author$project$View$renderIcon(props.icon),
-				$elm$html$Html$text(props.text)
-			]));
-};
 var $rundis$elm_bootstrap$Bootstrap$Modal$scrollableBody = F2(
 	function (scrollable, _v0) {
 		var conf = _v0.a;
@@ -13272,6 +13436,9 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$scrollableBody = F2(
 						{scrollableBody: scrollable})
 				}));
 	});
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
+	return {$: 'Roled', a: a};
+};
 var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary = {$: 'Secondary'};
 var $rundis$elm_bootstrap$Bootstrap$Button$secondary = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled($rundis$elm_bootstrap$Bootstrap$Internal$Button$Secondary));
@@ -13608,72 +13775,61 @@ var $author$project$RCMediaList$mediaPickerView = F3(
 	function (_v0, objectList, messages) {
 		var model = _v0.a;
 		var visibility = _v0.b;
-		var uploadButton = function () {
-			var aButton = $author$project$View$defaultButton(
-				$author$project$RCMediaList$MainMessage(messages.uploadMediaFileSelect));
-			return $author$project$View$mkButton(
-				_Utils_update(
-					aButton,
-					{
-						icon: $author$project$View$UploadCloud,
-						offset: false,
-						otherAttrs: _List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('mr-1')
-							]),
-						primary: false,
-						text: 'Upload Media',
-						title: 'Add video, audio, pdf or images files'
-					}));
-		}();
-		var tableConfig = $author$project$RCMediaList$configMediaPicker(messages);
-		var tableList = A4($author$project$RCMediaList$view, $author$project$RCMediaList$PickerTable, model, tableConfig, objectList);
+		var uploadBtn = A2($elm$html$Html$map, $author$project$RCMediaList$MainMessage, messages.uploadButtonHtml);
+		var tableConfig = A2($author$project$RCMediaList$configMediaPicker, model.previewedMediaId, messages);
+		var tableList = A5($author$project$RCMediaList$view, uploadBtn, $author$project$RCMediaList$PickerTable, model, tableConfig, objectList);
 		return A2(
 			$rundis$elm_bootstrap$Bootstrap$Modal$view,
 			visibility,
-			A3(
-				$rundis$elm_bootstrap$Bootstrap$Modal$footer,
-				_List_Nil,
+			A2(
+				$rundis$elm_bootstrap$Bootstrap$Modal$attrs,
 				_List_fromArray(
 					[
-						A2(
-						$rundis$elm_bootstrap$Bootstrap$Button$button,
-						_List_fromArray(
-							[
-								$rundis$elm_bootstrap$Bootstrap$Button$secondary,
-								$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$RCMediaList$MainMessage(messages.closeModal))
-									]))
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Cancel')
-							]))
+						$elm$html$Html$Attributes$class('rc-media-picker')
 					]),
 				A3(
-					$rundis$elm_bootstrap$Bootstrap$Modal$body,
+					$rundis$elm_bootstrap$Bootstrap$Modal$footer,
 					_List_Nil,
 					_List_fromArray(
-						[uploadButton, tableList]),
+						[
+							A2(
+							$rundis$elm_bootstrap$Bootstrap$Button$button,
+							_List_fromArray(
+								[
+									$rundis$elm_bootstrap$Bootstrap$Button$secondary,
+									$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+									_List_fromArray(
+										[
+											$elm$html$Html$Events$onClick(
+											$author$project$RCMediaList$MainMessage(messages.closeModal))
+										]))
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Cancel')
+								]))
+						]),
 					A3(
-						$rundis$elm_bootstrap$Bootstrap$Modal$h1,
+						$rundis$elm_bootstrap$Bootstrap$Modal$body,
 						_List_Nil,
 						_List_fromArray(
-							[
-								$elm$html$Html$text('Insert media object')
-							]),
-						A2(
-							$rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
-							true,
-							$rundis$elm_bootstrap$Bootstrap$Modal$large(
-								A2(
-									$rundis$elm_bootstrap$Bootstrap$Modal$scrollableBody,
-									true,
-									$rundis$elm_bootstrap$Bootstrap$Modal$config(
-										$author$project$RCMediaList$MainMessage(messages.closeModal)))))))));
+							[tableList]),
+						A3(
+							$rundis$elm_bootstrap$Bootstrap$Modal$h1,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Insert media object')
+								]),
+							A2(
+								$rundis$elm_bootstrap$Bootstrap$Modal$hideOnBackdropClick,
+								true,
+								$rundis$elm_bootstrap$Bootstrap$Modal$large(
+									A2(
+										$rundis$elm_bootstrap$Bootstrap$Modal$scrollableBody,
+										true,
+										$rundis$elm_bootstrap$Bootstrap$Modal$config(
+											$author$project$RCMediaList$MainMessage(messages.closeModal))))))))));
 	});
 var $rundis$elm_bootstrap$Bootstrap$Dropdown$Attrs = function (a) {
 	return {$: 'Attrs', a: a};
@@ -13905,6 +14061,9 @@ var $rundis$elm_bootstrap$Bootstrap$Dropdown$dropdown = F2(
 					A3($rundis$elm_bootstrap$Bootstrap$Dropdown$dropdownMenu, state, config, items)
 				]));
 	});
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark = {$: 'Dark'};
+var $rundis$elm_bootstrap$Bootstrap$Button$outlineDark = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined($rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark));
 var $rundis$elm_bootstrap$Bootstrap$Dropdown$DropdownToggle = function (a) {
 	return {$: 'DropdownToggle', a: a};
 };
@@ -14161,6 +14320,38 @@ var $author$project$Main$RedoCM = {$: 'RedoCM'};
 var $author$project$View$RedoIcon = {$: 'RedoIcon'};
 var $author$project$Main$UndoCM = {$: 'UndoCM'};
 var $author$project$View$UndoIcon = {$: 'UndoIcon'};
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Light = {$: 'Light'};
+var $rundis$elm_bootstrap$Bootstrap$Button$light = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled($rundis$elm_bootstrap$Bootstrap$Internal$Button$Light));
+var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0 = $elm$html$Html$Attributes$class('m-0');
+var $author$project$View$mkButton = function (props) {
+	var spacing = props.offset ? _List_fromArray(
+		[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0]) : _List_Nil;
+	return A2(
+		$rundis$elm_bootstrap$Bootstrap$Button$button,
+		_List_fromArray(
+			[
+				props.primary ? $rundis$elm_bootstrap$Bootstrap$Button$outlineDark : $rundis$elm_bootstrap$Bootstrap$Button$light,
+				$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+				A2(
+					$elm$core$List$append,
+					_List_fromArray(
+						[
+							$elm$html$Html$Events$onClick(props.onClickMsg),
+							A2(
+							$elm$html$Html$Attributes$style,
+							'display',
+							props.hidden ? 'none' : 'inline-block'),
+							$elm$html$Html$Attributes$title(props.title)
+						]),
+					A2($elm$core$List$append, spacing, props.otherAttrs)))
+			]),
+		_List_fromArray(
+			[
+				$author$project$View$renderIcon(props.icon),
+				$elm$html$Html$text(props.text)
+			]));
+};
 var $author$project$Main$separator = A2(
 	$elm$html$Html$span,
 	_List_fromArray(
@@ -14178,13 +14369,13 @@ var $author$project$Settings$snippet = function (s) {
 		case 'Italic':
 			return _Utils_Tuple2('__', -1);
 		case 'H1':
-			return _Utils_Tuple2('# Header 1', 0);
+			return _Utils_Tuple2('# ', 0);
 		case 'H2':
-			return _Utils_Tuple2('## Header 2', 0);
+			return _Utils_Tuple2('## ', 0);
 		case 'H3':
-			return _Utils_Tuple2('### Header 3', 0);
+			return _Utils_Tuple2('### ', 0);
 		case 'H4':
-			return _Utils_Tuple2('#### Header 4', 0);
+			return _Utils_Tuple2('#### ', 0);
 		case 'Bullet':
 			return _Utils_Tuple2('* ', 0);
 		case 'Numbered':
@@ -14192,7 +14383,7 @@ var $author$project$Settings$snippet = function (s) {
 		case 'Quote':
 			return _Utils_Tuple2('> ', 0);
 		default:
-			return _Utils_Tuple2('[Link text](http://)', -1);
+			return _Utils_Tuple2('[](http://)', -10);
 	}
 };
 var $author$project$Main$mkEditorToolbar = function (tabState) {
@@ -14334,15 +14525,6 @@ var $author$project$View$optionalBlock = F2(
 var $author$project$Main$selectedEditorIsMarkdown = function (model) {
 	var _v0 = model.editor;
 	if (_v0.a.$ === 'EditorMarkdown') {
-		var _v1 = _v0.a;
-		return true;
-	} else {
-		return false;
-	}
-};
-var $author$project$Main$selectedEditorIsStyle = function (model) {
-	var _v0 = model.editor;
-	if (_v0.a.$ === 'EditorStyle') {
 		var _v1 = _v0.a;
 		return true;
 	} else {
@@ -15982,94 +16164,6 @@ var $author$project$RCMediaEdit$viewTextAreaWithLabel = function (props) {
 					]))
 			]));
 };
-var $elm$html$Html$audio = _VirtualDom_node('audio');
-var $elm$html$Html$Attributes$autoplay = $elm$html$Html$Attributes$boolProperty('autoplay');
-var $elm$html$Html$Attributes$controls = $elm$html$Html$Attributes$boolProperty('controls');
-var $elm$html$Html$Attributes$loop = $elm$html$Html$Attributes$boolProperty('loop');
-var $elm$html$Html$source = _VirtualDom_node('source');
-var $elm$html$Html$video = _VirtualDom_node('video');
-var $author$project$RCMediaPreview$viewThumbnail = F2(
-	function (object, size) {
-		var _v0 = object.mediaType;
-		switch (_v0.$) {
-			case 'RCImage':
-				var reso = function () {
-					if (size.$ === 'PreviewBig') {
-						return 500;
-					} else {
-						return 120;
-					}
-				}();
-				var thumburl = A2($author$project$Exposition$customThumbUrl, reso, object);
-				return A2(
-					$elm$html$Html$img,
-					_Utils_ap(
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$src(thumburl)
-							]),
-						$author$project$RCMediaPreview$getStyle(size)),
-					_List_Nil);
-			case 'RCAudio':
-				var settings = _v0.a;
-				var audioUrl = $author$project$Exposition$mediaUrl(object);
-				return A2(
-					$elm$html$Html$audio,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$title('Preview'),
-							$elm$html$Html$Attributes$controls(true),
-							$elm$html$Html$Attributes$loop(settings.loop),
-							$elm$html$Html$Attributes$autoplay(settings.autoplay),
-							$elm$html$Html$Attributes$class('audio-preview')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$source,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$src(audioUrl),
-									$elm$html$Html$Attributes$type_('audio/mpeg')
-								]),
-							_List_Nil)
-						]));
-			case 'RCVideo':
-				var settings = _v0.a;
-				var videoUrl = $author$project$Exposition$mediaUrl(object);
-				return A2(
-					$elm$html$Html$video,
-					_Utils_ap(
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$title('Preview'),
-								$elm$html$Html$Attributes$controls(true),
-								$elm$html$Html$Attributes$loop(settings.loop),
-								$elm$html$Html$Attributes$autoplay(settings.autoplay),
-								$elm$html$Html$Attributes$class('video-preview')
-							]),
-						$author$project$RCMediaPreview$getStyle(size)),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$source,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$src(videoUrl),
-									$elm$html$Html$Attributes$type_('video/mp4')
-								]),
-							_List_Nil)
-						]));
-			default:
-				return A2(
-					$elm$html$Html$span,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text('No preview')
-						]));
-		}
-	});
 var $author$project$RCMediaEdit$viewBody = F3(
 	function (objectState, editTool, objectInEdit) {
 		var thumbnailUrl = $author$project$Exposition$thumbUrl(objectInEdit);
@@ -17717,7 +17811,8 @@ var $author$project$Main$view = function (model) {
 				title: 'Add media files: images, video, audio or pdf'
 			});
 	}();
-	var showMediaUpload = !$author$project$Main$selectedEditorIsStyle(model);
+	var uploadButtonHtml = A2($author$project$Main$viewUpload, uploadMediaButtonInfo, model.mediaUploadStatus);
+	var showMediaUpload = $author$project$Main$selectedEditorIsMarkdown(model);
 	var showButtons = $author$project$Main$selectedEditorIsMarkdown(model);
 	var previewButton = function () {
 		var weave = model.exposition.currentWeave;
@@ -17747,7 +17842,11 @@ var $author$project$Main$view = function (model) {
 	var mediaList = A2(
 		$elm$html$Html$map,
 		$author$project$Main$MediaList,
-		A3($author$project$RCMediaList$mediaListView, $author$project$Main$makeTableMessages, model.mediaList, model.exposition.media));
+		A3(
+			$author$project$RCMediaList$mediaListView,
+			model.mediaList,
+			model.exposition.media,
+			$author$project$Main$makeTableMessages(uploadButtonHtml)));
 	var mediaDialogHtml = A5($author$project$RCMediaEdit$view, $author$project$Main$makeMediaEditFun, $author$project$Main$CloseMediaDialog, $author$project$Main$InsertMediaAtCursor, model.exposition, model.mediaDialog);
 	var importDocButtonInfo = function () {
 		var bttn = $author$project$View$defaultButton($author$project$Main$UploadImportFileSelect);
@@ -17795,7 +17894,11 @@ var $author$project$Main$view = function (model) {
 				A2(
 				$elm$html$Html$map,
 				$author$project$Main$MediaPicker,
-				A3($author$project$RCMediaList$mediaPickerView, model.mediaPickerDialog, model.exposition.media, $author$project$Main$makePickerMessages)),
+				A3(
+					$author$project$RCMediaList$mediaPickerView,
+					model.mediaPickerDialog,
+					model.exposition.media,
+					$author$project$Main$makePickerConfig(uploadButtonHtml))),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -17868,7 +17971,10 @@ var $author$project$Main$view = function (model) {
 							])))),
 				alert,
 				mediaList,
-				$author$project$Main$statusBar(model)
+				A2(
+				$author$project$View$optionalBlock,
+				showButtons,
+				$author$project$Main$statusBar(model))
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
