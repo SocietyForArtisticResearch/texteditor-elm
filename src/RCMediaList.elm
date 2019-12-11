@@ -155,11 +155,14 @@ thumbnailColumn previewedMediaId =
         , viewData =
             \rcObject ->
                 let
+                    action =
+                        SortableTableMessage <| SetPreviewMediaId rcObject.id
+
                     size =
                         case previewedMediaId of
                             Just id ->
                                 if id == rcObject.id then
-                                    PreviewButton (SortableTableMessage <| SetPreviewMediaId rcObject.id)
+                                    PreviewPlayer
 
                                 else
                                     PreviewSmall
@@ -167,7 +170,7 @@ thumbnailColumn previewedMediaId =
                             Nothing ->
                                 PreviewSmall
                 in
-                Table.HtmlDetails [] [ viewTableThumbnail rcObject size ]
+                Table.HtmlDetails [] [ viewTableThumbnail rcObject size action ]
         , sorter = Table.unsortable
         }
 

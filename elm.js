@@ -12173,10 +12173,8 @@ var $billstclair$elm_sortable_table$Table$stringColumn = F2(
 			dE: A2($elm$core$Basics$composeL, $billstclair$elm_sortable_table$Table$textDetails, toStr)
 		};
 	});
-var $author$project$RCMediaPreview$PreviewButton = function (a) {
-	return {$: 4, a: a};
-};
-var $author$project$RCMediaPreview$PreviewSmall = {$: 1};
+var $author$project$RCMediaPreview$PreviewPlayer = 2;
+var $author$project$RCMediaPreview$PreviewSmall = 1;
 var $author$project$RCMediaList$SetPreviewMediaId = function (a) {
 	return {$: 2, a: a};
 };
@@ -12269,18 +12267,15 @@ var $author$project$View$renderIcon = function (icon) {
 			return iconImg('device-camera-video.svg');
 	}
 };
-var $elm$html$Html$Attributes$target = $elm$html$Html$Attributes$stringProperty('target');
 var $elm$html$Html$Attributes$title = $elm$html$Html$Attributes$stringProperty('title');
-var $author$project$RCMediaPreview$renderAsIconHyperlink = F2(
-	function (icon, object) {
+var $author$project$RCMediaPreview$renderAsIconHyperlink = F3(
+	function (icon, object, clickAction) {
 		return A2(
 			$elm$html$Html$a,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$href(
-					$author$project$Exposition$mediaUrl(object)),
-					$elm$html$Html$Attributes$target('_blank'),
-					$elm$html$Html$Attributes$title('preview audio ' + object.l)
+					$elm$html$Html$Attributes$title('preview audio ' + object.l),
+					$elm$html$Html$Events$onClick(clickAction)
 				]),
 			_List_fromArray(
 				[
@@ -12293,7 +12288,7 @@ var $author$project$Exposition$customThumbUrl = F2(
 		return '/text-editor/simple-media-thumb?research=' + ($elm$core$String$fromInt(data.bU) + ('&simple-media=' + ($elm$core$String$fromInt(data.i) + ('&width=' + (sizeStr + ('&height=' + sizeStr))))));
 	});
 var $author$project$RCMediaPreview$getStyle = function (size) {
-	switch (size.$) {
+	switch (size) {
 		case 0:
 			return _List_fromArray(
 				[
@@ -12315,7 +12310,7 @@ var $author$project$RCMediaPreview$getStyle = function (size) {
 var $author$project$RCMediaPreview$renderAsMini = F2(
 	function (object, size) {
 		var reso = function () {
-			if (!size.$) {
+			if (!size) {
 				return 500;
 			} else {
 				return 120;
@@ -12333,6 +12328,7 @@ var $author$project$RCMediaPreview$renderAsMini = F2(
 			_List_Nil);
 	});
 var $author$project$View$TriangleRight = 19;
+var $elm$html$Html$Attributes$target = $elm$html$Html$Attributes$stringProperty('target');
 var $author$project$RCMediaPreview$renderMediaAsHyperlink = F2(
 	function (typeString, object) {
 		return A2(
@@ -12373,7 +12369,7 @@ var $author$project$RCMediaPreview$viewThumbnail = F2(
 		switch (_v0.$) {
 			case 4:
 				var reso = function () {
-					if (!size.$) {
+					if (!size) {
 						return 500;
 					} else {
 						return 120;
@@ -12455,8 +12451,8 @@ var $author$project$RCMediaPreview$viewThumbnail = F2(
 						]));
 		}
 	});
-var $author$project$RCMediaPreview$viewTableThumbnail = F2(
-	function (object, size) {
+var $author$project$RCMediaPreview$viewTableThumbnail = F3(
+	function (object, size, clickAction) {
 		var _v0 = object.dg;
 		switch (_v0.$) {
 			case 4:
@@ -12465,47 +12461,17 @@ var $author$project$RCMediaPreview$viewTableThumbnail = F2(
 				return A2($author$project$RCMediaPreview$renderAsMini, object, size);
 			case 1:
 				var settings = _v0.a;
-				switch (size.$) {
-					case 3:
-						return A2($author$project$RCMediaPreview$renderAsIconHyperlink, 20, object);
-					case 2:
-						return A2($author$project$RCMediaPreview$viewThumbnail, object, size);
-					case 4:
-						var msg = size.a;
-						return A2(
-							$elm$html$Html$button,
-							_List_fromArray(
-								[
-									$elm$html$Html$Events$onClick(msg)
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('preview')
-								]));
-					default:
-						return A2($elm$html$Html$span, _List_Nil, _List_Nil);
+				if (size === 2) {
+					return A2($author$project$RCMediaPreview$viewThumbnail, object, size);
+				} else {
+					return A3($author$project$RCMediaPreview$renderAsIconHyperlink, 20, object, clickAction);
 				}
 			case 0:
 				var settings = _v0.a;
-				switch (size.$) {
-					case 3:
-						return A2($author$project$RCMediaPreview$renderAsIconHyperlink, 21, object);
-					case 2:
-						return A2($author$project$RCMediaPreview$viewThumbnail, object, size);
-					case 4:
-						var msg = size.a;
-						return A2(
-							$elm$html$Html$button,
-							_List_fromArray(
-								[
-									$elm$html$Html$Events$onClick(msg)
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('preview')
-								]));
-					default:
-						return A2($elm$html$Html$span, _List_Nil, _List_Nil);
+				if (size === 2) {
+					return A2($author$project$RCMediaPreview$viewThumbnail, object, size);
+				} else {
+					return A3($author$project$RCMediaPreview$renderAsIconHyperlink, 21, object, clickAction);
 				}
 			default:
 				return A2($author$project$RCMediaPreview$renderMediaAsHyperlink, 'PDF', object);
@@ -12520,19 +12486,19 @@ var $author$project$RCMediaList$thumbnailColumn = function (previewedMediaId) {
 				var size = function () {
 					if (!previewedMediaId.$) {
 						var id = previewedMediaId.a;
-						return _Utils_eq(id, rcObject.i) ? $author$project$RCMediaPreview$PreviewButton(
-							$author$project$RCMediaList$SortableTableMessage(
-								$author$project$RCMediaList$SetPreviewMediaId(rcObject.i))) : $author$project$RCMediaPreview$PreviewSmall;
+						return _Utils_eq(id, rcObject.i) ? 2 : 1;
 					} else {
-						return $author$project$RCMediaPreview$PreviewSmall;
+						return 1;
 					}
 				}();
+				var action = $author$project$RCMediaList$SortableTableMessage(
+					$author$project$RCMediaList$SetPreviewMediaId(rcObject.i));
 				return A2(
 					$billstclair$elm_sortable_table$Table$HtmlDetails,
 					_List_Nil,
 					_List_fromArray(
 						[
-							A2($author$project$RCMediaPreview$viewTableThumbnail, rcObject, size)
+							A3($author$project$RCMediaPreview$viewTableThumbnail, rcObject, size, action)
 						]));
 			}
 		});
@@ -14533,7 +14499,7 @@ var $author$project$RCMediaEdit$Copyright = 3;
 var $author$project$RCMediaEdit$Description = 1;
 var $author$project$RCMediaEdit$LicenseField = 4;
 var $author$project$RCMediaEdit$Name = 0;
-var $author$project$RCMediaPreview$PreviewBig = {$: 0};
+var $author$project$RCMediaPreview$PreviewBig = 0;
 var $author$project$RCMediaEdit$UserClass = 2;
 var $author$project$Licenses$allLicenses = A2(
 	$elm$core$List$map,
@@ -16183,7 +16149,7 @@ var $author$project$RCMediaEdit$viewBody = F3(
 											currentLicense,
 											editTool(4))
 										])),
-									A2($author$project$RCMediaPreview$viewThumbnail, objectInEdit, $author$project$RCMediaPreview$PreviewBig)
+									A2($author$project$RCMediaPreview$viewThumbnail, objectInEdit, 0)
 								]))))
 				]));
 	});
