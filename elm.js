@@ -12399,7 +12399,8 @@ var $author$project$RCMediaPreview$viewThumbnail = F2(
 							$elm$html$Html$Attributes$class('audio-preview'),
 							$elm$html$Html$Attributes$preload('none'),
 							A2($elm$html$Html$Attributes$style, 'width', '200px'),
-							A2($elm$html$Html$Attributes$style, 'position', 'absolute')
+							A2($elm$html$Html$Attributes$style, 'position', 'relative'),
+							A2($elm$html$Html$Attributes$style, 'top', '0')
 						]),
 					_List_fromArray(
 						[
@@ -12427,7 +12428,8 @@ var $author$project$RCMediaPreview$viewThumbnail = F2(
 								$elm$html$Html$Attributes$class('video-preview'),
 								$elm$html$Html$Attributes$preload('none'),
 								A2($elm$html$Html$Attributes$style, 'width', '200px'),
-								A2($elm$html$Html$Attributes$style, 'position', 'absolute')
+								A2($elm$html$Html$Attributes$style, 'position', 'relative'),
+								A2($elm$html$Html$Attributes$style, 'top', '0')
 							]),
 						$author$project$RCMediaPreview$getStyle(size)),
 					_List_fromArray(

@@ -146,7 +146,8 @@ viewThumbnail object size =
                 , class "audio-preview"
                 , preload "none"
                 , style "width" "200px"
-                , style "position" "absolute"
+                , style "position" "relative"
+                , style "top" "0"
                 ]
                 [ source [ src audioUrl, type_ "audio/mpeg" ] [] ]
 
@@ -163,7 +164,8 @@ viewThumbnail object size =
                  , class "video-preview"
                  , preload "none"
                  , style "width" "200px"
-                 , style "position" "absolute"
+                 , style "position" "relative"
+                 , style "top" "0"
                  ]
                     ++ getStyle size
                 )
