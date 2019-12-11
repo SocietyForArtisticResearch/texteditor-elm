@@ -307,55 +307,55 @@
     app.ports.insertMdString.subscribe(function(insertTuple) {
         var [str, offset] = insertTuple;
 
-	let syntaxHelper = function (syntaxString, selectionString) {
-	    /*
-	     If header, and the selection is empty string, then insert something to make it more clear
-            */
-	    if ( syntaxString.charAt(0) === "#")
-		if (selectionString === "" ) { 
-		    selectionString = "Header"
-		} else {
-		    selectionString.replace("\n","");
-	        }
-	    }
-	    
-	    return selectionString;
-	}
+    	let syntaxHelper = function (syntaxString, selectionString) {
+    	    /*
+    	     If header, and the selection is empty string, then insert something to make it more clear
+                */
+    	    if ( syntaxString.charAt(0) === "#") {
+        		if (selectionString === "" ) { 
+        		    selectionString = "Header"
+        		} else {
+        		    selectionString.replace("\n","");
+        	        }
+    	    }
+    	    
+    	    return selectionString;
+    	};
 	    
 	
         if (selectedEditor == editorCmMd) {
-	    let cmSelection = cmMarkdown.getSelection();
+    	    let cmSelection = cmMarkdown.getSelection();
 
-	    cmSelection = syntaxHelper(str, cmSelection);
-	    
-            cmMarkdown.replaceSelection(str);
-            cmMarkdown.focus();
-            let cursor = cmMarkdown.getCursor();
-            cmMarkdown.setCursor({
-                line: cursor.line,
-                ch: Math.max(0, cursor.ch + offset)
-            });
-            cmMarkdown.replaceSelection(cmSelection);
+    	    cmSelection = syntaxHelper(str, cmSelection);
+    	    
+                cmMarkdown.replaceSelection(str);
+                cmMarkdown.focus();
+                let cursor = cmMarkdown.getCursor();
+                cmMarkdown.setCursor({
+                    line: cursor.line,
+                    ch: Math.max(0, cursor.ch + offset)
+                });
+                cmMarkdown.replaceSelection(cmSelection);
 
-            textareaMarkdown.value = cmMarkdown.getValue();
+                textareaMarkdown.value = cmMarkdown.getValue();
 
-        } else if (selectedEditor == editorTxtMd) {
-            let txtSelection = getTextareaSelection( textareaMarkdown );
-	    
-	    txtSelection = syntaxHelper(str, txtSelection);
+            } else if (selectedEditor == editorTxtMd) {
+                let txtSelection = getTextareaSelection( textareaMarkdown );
+    	    
+        	    txtSelection = syntaxHelper(str, txtSelection);
 
-	    insertAtCursor(textareaMarkdown, str);
-            
-            textareaMarkdown.focus();
-            let sel = textareaMarkdown.selectionStart;
-            textareaMarkdown.selectionStart = sel + offset;
-            textareaMarkdown.selectionEnd = sel + offset;
+        	    insertAtCursor(textareaMarkdown, str);
+                    
+                    textareaMarkdown.focus();
+                    let sel = textareaMarkdown.selectionStart;
+                    textareaMarkdown.selectionStart = sel + offset;
+                    textareaMarkdown.selectionEnd = sel + offset;
 
-            insertAtCursor(textareaMarkdown, txtSelection);
+                    insertAtCursor(textareaMarkdown, txtSelection);
 
-            cmMarkdown.setValue(textareaMarkdown.value);
-        }
-    });
+                    cmMarkdown.setValue(textareaMarkdown.value);
+            }   
+        });
 
     function getTextareaSelection ( textarea ) {
         let start = textarea.selectionStart;
