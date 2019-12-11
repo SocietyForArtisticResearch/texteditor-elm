@@ -285,6 +285,7 @@ body {
 .rc-media-table-searchbox {
     position: absolute;
     right: 1.0rem;
+    max-width: 33%; /* to avoid overlap with the upload button */
 }
 
 .rc-media-table thead th {
