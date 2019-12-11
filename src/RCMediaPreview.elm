@@ -46,20 +46,28 @@ viewTableThumbnail object size clickAction =
             renderAsMini object size
 
         Exposition.RCAudio settings ->
+            let
+                thumb =
+                    viewThumbnail object size
+            in
             case size of
                 PreviewPlayer ->
-                    viewThumbnail object size
+                    div [] [ thumb, renderAsIconHyperlink View.SpeakerIcon object clickAction ]
 
                 _ ->
-                    renderAsIconHyperlink View.SpeakerIcon object clickAction
+                    div [] [ renderAsIconHyperlink View.SpeakerIcon object clickAction ]
 
         Exposition.RCVideo settings ->
+            let
+                thumb =
+                    viewThumbnail object size
+            in
             case size of
                 PreviewPlayer ->
-                    viewThumbnail object size
+                    div [] [ thumb, renderAsIconHyperlink View.CameraIcon object clickAction ]
 
                 _ ->
-                    renderAsIconHyperlink View.CameraIcon object clickAction
+                    div [] [ renderAsIconHyperlink View.CameraIcon object clickAction ]
 
         Exposition.RCPdf ->
             renderMediaAsHyperlink "PDF" object

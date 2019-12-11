@@ -10542,17 +10542,20 @@ var $author$project$RCMediaList$update = F2(
 				return _Utils_update(
 					model,
 					{cL: state});
-			case 2:
-				var id = message.a;
-				return _Utils_update(
-					model,
-					{
-						aE: $elm$core$Maybe$Just(id)
-					});
 			default:
+				var id = message.a;
+				var newId = function () {
+					var _v1 = model.aE;
+					if (!_v1.$) {
+						var currentId = _v1.a;
+						return _Utils_eq(id, currentId) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(id);
+					} else {
+						return $elm$core$Maybe$Just(id);
+					}
+				}();
 				return _Utils_update(
 					model,
-					{aE: $elm$core$Maybe$Nothing});
+					{aE: newId});
 		}
 	});
 var $author$project$Main$updateEditorContent = function (model) {
@@ -12177,7 +12180,6 @@ var $billstclair$elm_sortable_table$Table$stringColumn = F2(
 			dE: A2($elm$core$Basics$composeL, $billstclair$elm_sortable_table$Table$textDetails, toStr)
 		};
 	});
-var $author$project$RCMediaList$ClosePreview = {$: 3};
 var $author$project$RCMediaPreview$PreviewPlayer = 2;
 var $author$project$RCMediaPreview$PreviewSmall = 1;
 var $author$project$RCMediaList$SetPreviewMediaId = function (a) {
@@ -12468,17 +12470,45 @@ var $author$project$RCMediaPreview$viewTableThumbnail = F3(
 				return A2($author$project$RCMediaPreview$renderAsMini, object, size);
 			case 1:
 				var settings = _v0.a;
+				var thumb = A2($author$project$RCMediaPreview$viewThumbnail, object, size);
 				if (size === 2) {
-					return A2($author$project$RCMediaPreview$viewThumbnail, object, size);
+					return A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								thumb,
+								A3($author$project$RCMediaPreview$renderAsIconHyperlink, 20, object, clickAction)
+							]));
 				} else {
-					return A3($author$project$RCMediaPreview$renderAsIconHyperlink, 20, object, clickAction);
+					return A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A3($author$project$RCMediaPreview$renderAsIconHyperlink, 20, object, clickAction)
+							]));
 				}
 			case 0:
 				var settings = _v0.a;
+				var thumb = A2($author$project$RCMediaPreview$viewThumbnail, object, size);
 				if (size === 2) {
-					return A2($author$project$RCMediaPreview$viewThumbnail, object, size);
+					return A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								thumb,
+								A3($author$project$RCMediaPreview$renderAsIconHyperlink, 21, object, clickAction)
+							]));
 				} else {
-					return A3($author$project$RCMediaPreview$renderAsIconHyperlink, 21, object, clickAction);
+					return A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A3($author$project$RCMediaPreview$renderAsIconHyperlink, 21, object, clickAction)
+							]));
 				}
 			default:
 				return A2($author$project$RCMediaPreview$renderMediaAsHyperlink, 'PDF', object);
@@ -12498,17 +12528,6 @@ var $author$project$RCMediaList$thumbnailColumn = function (previewedMediaId) {
 						return 1;
 					}
 				}();
-				var close = A2(
-					$elm$html$Html$span,
-					_List_fromArray(
-						[
-							$elm$html$Html$Events$onClick(
-							$author$project$RCMediaList$SortableTableMessage($author$project$RCMediaList$ClosePreview))
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('x')
-						]));
 				var action = $author$project$RCMediaList$SortableTableMessage(
 					$author$project$RCMediaList$SetPreviewMediaId(rcObject.i));
 				return A2(
@@ -12516,8 +12535,7 @@ var $author$project$RCMediaList$thumbnailColumn = function (previewedMediaId) {
 					_List_Nil,
 					_List_fromArray(
 						[
-							A3($author$project$RCMediaPreview$viewTableThumbnail, rcObject, size, action),
-							(size === 2) ? close : A2($elm$html$Html$span, _List_Nil, _List_Nil)
+							A3($author$project$RCMediaPreview$viewTableThumbnail, rcObject, size, action)
 						]));
 			}
 		});

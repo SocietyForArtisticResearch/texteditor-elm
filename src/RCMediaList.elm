@@ -61,7 +61,6 @@ type TableMessage
     = SetQuery String
     | SetTableState Table.State
     | SetPreviewMediaId Int
-    | ClosePreview
 
 
 makeTableMsg : Table.State -> Msg msg
@@ -170,17 +169,9 @@ thumbnailColumn previewedMediaId =
 
                             Nothing ->
                                 PreviewSmall
-
-                    close =
-                        span [ onClick <| SortableTableMessage ClosePreview ] [ text "x" ]
                 in
                 Table.HtmlDetails []
                     [ viewTableThumbnail rcObject size action
-                    , if size == PreviewPlayer then
-                        close
-
-                      else
-                        span [] []
                     ]
         , sorter = Table.unsortable
         }
@@ -266,10 +257,20 @@ update message model =
             { model | state = state }
 
         SetPreviewMediaId id ->
-            { model | previewedMediaId = Just id }
+            let
+                newId =
+                    case model.previewedMediaId of
+                        Just currentId ->
+                            if id == currentId then
+                                Nothing
 
-        ClosePreview ->
-            { model | previewedMediaId = Nothing }
+                            else
+                                Just id
+
+                        Nothing ->
+                            Just id
+            in
+            { model | previewedMediaId = newId }
 
 
 filterObjectsByName : String -> List RCMediaObject -> List RCMediaObject
