@@ -1150,6 +1150,9 @@ viewNavbar model =
 
         previewUrl =
             String.join "/" [ "view", String.fromInt model.exposition.id, String.fromInt model.exposition.currentWeave ]
+
+        metaDataUrl =
+            String.join "/" [ "profile/show-exposition?exposition=", String.fromInt model.exposition.id ]
     in
     Navbar.attrs [ Html.Attributes.style "padding-left" "0" ] (Navbar.config NavbarMsg)
         |> Navbar.withAnimation
@@ -1161,6 +1164,7 @@ viewNavbar model =
             ]
         |> Navbar.customItems
             [ viewNavbarItem { link = "https://guide.researchcatalogue.net/#text-based-editor", icon = "question.svg", title = "Help", spacing = Spacing.ml0 }
+            , viewNavbarItem { link = metaDataUrl, icon = "pencil.svg", title = "Show/edit metadata", spacing = Spacing.ml3 }
             , viewNavbarItem { link = previewUrl, icon = "eye_metro.svg", title = "Preview", spacing = Spacing.ml3 }
             , viewNavbarItem { link = "profile", icon = "profile_metro.svg", title = "Profile", spacing = Spacing.ml3 }
             , viewNavbarItem { link = "session/logout", icon = "logout_metro.svg", title = "Logout", spacing = Spacing.ml3 }
