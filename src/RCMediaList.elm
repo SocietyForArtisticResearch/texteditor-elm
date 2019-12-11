@@ -170,10 +170,17 @@ thumbnailColumn previewedMediaId =
 
                             Nothing ->
                                 PreviewSmall
+
+                    close =
+                        span [ onClick <| SortableTableMessage ClosePreview ] [ text "x" ]
                 in
                 Table.HtmlDetails []
                     [ viewTableThumbnail rcObject size action
-                    , span [ onClick <| SortableTableMessage ClosePreview ] [ text "x" ]
+                    , if size == PreviewPlayer then
+                        close
+
+                      else
+                        span [] []
                     ]
         , sorter = Table.unsortable
         }
