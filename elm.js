@@ -17610,14 +17610,7 @@ var $author$project$Main$viewNavbar = function (model) {
 				$elm$core$String$fromInt(model.b.j),
 				$elm$core$String$fromInt(model.b.dR)
 			]));
-	var metaDataUrl = A2(
-		$elm$core$String$join,
-		'/',
-		_List_fromArray(
-			[
-				'profile/show-exposition?exposition=',
-				$elm$core$String$fromInt(model.b.j)
-			]));
+	var metaDataUrl = 'profile/show-exposition?exposition=' + $elm$core$String$fromInt(model.b.j);
 	return A2(
 		$rundis$elm_bootstrap$Bootstrap$Navbar$view,
 		model.bb,

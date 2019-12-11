@@ -1152,7 +1152,7 @@ viewNavbar model =
             String.join "/" [ "view", String.fromInt model.exposition.id, String.fromInt model.exposition.currentWeave ]
 
         metaDataUrl =
-            String.join "/" [ "profile/show-exposition?exposition=", String.fromInt model.exposition.id ]
+            "profile/show-exposition?exposition=" ++ String.fromInt model.exposition.id
     in
     Navbar.attrs [ Html.Attributes.style "padding-left" "0" ] (Navbar.config NavbarMsg)
         |> Navbar.withAnimation
