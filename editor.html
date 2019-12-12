@@ -355,10 +355,13 @@
             cmMarkdown.focus();
 
 	    let cursor = cmMarkdown.getCursor();
-            cmMarkdown.setCursor({
-                line: cursor.line,
-                ch: Math.max(0, cursor.ch + offset)
-            });
+
+	    if(!isPhone) { // on a phone, dont' move the cursor
+		cmMarkdown.setCursor({
+                    line: cursor.line,
+                    ch: Math.max(0, cursor.ch + offset)
+		});
+	    }
 
 	    cmMarkdown.replaceSelection( cmSelection );
 
