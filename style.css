@@ -173,7 +173,7 @@ body {
 }
 
 .upload-percentage {
-    width: 100px;
+    min-width: 100px;
     /* needs to fit "processing.." as well */
 }
 
