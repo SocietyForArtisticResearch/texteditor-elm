@@ -344,7 +344,7 @@
         if (selectedEditor == editorCmMd) {
     	    let cmSelection = cmMarkdown.getSelection();
 
-    	    if (detectmod()) {
+    	    if (detectmob()) {
 		cmSelection = str // codemirror does not reliably produce selection on mobile.
 	    } else {
 		cmSelection = syntaxHelper(str, cmSelection);
