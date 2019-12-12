@@ -33,6 +33,7 @@ import Settings exposing (..)
 import String.Extra as Str
 import Time
 import UserConfirm exposing (ConfirmDialogContent)
+import Util
 import View exposing (..)
 
 
@@ -1066,7 +1067,11 @@ viewUpload buttonInfo status =
                     else
                         "processing.."
             in
-            div [ class "upload-percentage" ] [ text uploadStatusMessage ]
+            let
+                uploadCssClasses =
+                    Util.classListFromString "upload-percentage btn btn-outline-dark m-0 mb-1 mt-1 mr-1"
+            in
+            div uploadCssClasses [ text uploadStatusMessage ]
 
 
 enumTabState : TabState -> Int

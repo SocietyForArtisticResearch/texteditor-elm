@@ -17668,6 +17668,13 @@ var $author$project$Main$viewNavbar = function (model) {
 								]),
 							$rundis$elm_bootstrap$Bootstrap$Navbar$config($author$project$Main$NavbarMsg)))))));
 };
+var $author$project$Util$classListFromString = A2(
+	$elm$core$Basics$composeL,
+	$elm$core$List$map(
+		function (str) {
+			return $elm$html$Html$Attributes$class(str);
+		}),
+	$elm$core$String$split(' '));
 var $author$project$Main$viewUpload = F2(
 	function (buttonInfo, status) {
 		if (!status.$) {
@@ -17676,12 +17683,10 @@ var $author$project$Main$viewUpload = F2(
 			var fraction = status.a;
 			var uploadStatusMessage = (fraction < 0.99) ? ($elm$core$String$fromInt(
 				$elm$core$Basics$round(100 * fraction)) + '%') : 'processing..';
+			var uploadCssClasses = $author$project$Util$classListFromString('upload-percentage btn btn-outline-dark m-0 mb-1 mt-1 mr-1');
 			return A2(
 				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('upload-percentage')
-					]),
+				uploadCssClasses,
 				_List_fromArray(
 					[
 						$elm$html$Html$text(uploadStatusMessage)
