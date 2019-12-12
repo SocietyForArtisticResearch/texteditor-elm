@@ -435,7 +435,7 @@
     var observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
             if (mutation.type == "characterData")
-
+		console.log('characterdata yes');
                 // :)
                 if (typeof mutation.target.scrollIntoView === 'function') {
                     mutation.target.scrollIntoView();
