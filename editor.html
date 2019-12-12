@@ -345,8 +345,10 @@
     	    let cmSelection = cmMarkdown.getSelection();
 
     	    if (detectmob()) {
+		console.log("mobile phone detected");
 		cmSelection = str // codemirror does not reliably produce selection on mobile.
 	    } else {
+		console.log("this is not a phone");
 		cmSelection = syntaxHelper(str, cmSelection);
 	    }
 		    
