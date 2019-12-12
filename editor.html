@@ -434,13 +434,12 @@
 
     var observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
-	    //console.log('mutation',mutation);
             if (mutation.type == "characterData")
 
                 // :)
-                if (typeof mutation.target.parent.scrollIntoView === 'function') {
-                    mutation.target.scrollIntoView();
-		    
+                if (typeof mutation.target.parentNode.scrollIntoView === 'function') {
+                    mutation.target.parentNode.scrollIntoView();
+		    //console.log('mutation',mutation.target);
                 }
         });
     });
