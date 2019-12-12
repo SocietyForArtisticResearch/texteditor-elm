@@ -16242,7 +16242,7 @@ var $author$project$RCMediaEdit$view = F5(
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('Close')
+							$elm$html$Html$text('Done')
 						]));
 				var buttons = allowInsert ? _List_fromArray(
 					[insertButton, closeButton]) : _List_fromArray(

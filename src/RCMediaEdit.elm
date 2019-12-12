@@ -350,7 +350,7 @@ view makeMediaEditFun closeMediaDialogMsg insertMediaMsg exposition model =
                                 [ Button.outlineSecondary
                                 , Button.attrs [ Events.onClick closeMediaDialogMsg ]
                                 ]
-                                [ text "Close" ]
+                                [ text "Done" ]
 
                         buttons =
                             if allowInsert then
