@@ -341,6 +341,7 @@
     	};
 
 	let phoneReplace = function(syntax, selected) {
+	    // sigh, codemirror messes up cursor, so we do something local here:
 	    if (selected === "") {
 		return syntax;
 	    }
@@ -373,29 +374,25 @@
 	    
     	    if (isPhone) {
 		cmSelection = phoneReplace(str, cmSelection);
-	    } else {
-		
-		cmSelection = syntaxHelper(str, cmSelection);
-		cmMarkdown.replaceSelection(str);
-	    }
-		    
-            
-            cmMarkdown.focus();
 
-	  
-	    if(!isPhone) { // on a phone, dont' move the cursor
+		cmMarkdown.replaceSelection(cmSelection);
+
+	    } else {		
+		cmSelection = syntaxHelper(str, cmSelection);
+
+		cmMarkdown.replaceSelection(str);
+
+		cmMarkdown.focus();
+
 		let cursor = cmMarkdown.getCursor();
 		cmMarkdown.setCursor({
                     line: cursor.line,
                     ch: Math.max(0, cursor.ch + offset)
 		});
-	    } 
 
-
-	    cmMarkdown.replaceSelection( cmSelection );
-	    
-
-
+		cmMarkdown.replaceSelection( cmSelection );	
+	    }
+		    
             textareaMarkdown.value = cmMarkdown.getValue();
 
         } else if (selectedEditor == editorTxtMd) {
