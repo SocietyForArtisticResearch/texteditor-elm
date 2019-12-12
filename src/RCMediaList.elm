@@ -30,7 +30,7 @@ type alias TableEditConfig msg =
     { editObject : String -> msg
     , deleteObject : RCMediaObject -> msg
     , insertObject : RCMediaObject -> msg
-    , uploadButtonHtml : Html msg
+    , uploadButtonHtml : Html msg -- includes upload percentage, so it is controlled from Main.elm
     }
 
 
@@ -60,7 +60,7 @@ type alias Model =
 type TableMessage
     = SetQuery String
     | SetTableState Table.State
-    | SetPreviewMediaId Int
+    | SetPreviewMediaId Int -- this selects which audio or video tool should show a tiny preview player. It is only loaded when the user clicks for better performance.
 
 
 makeTableMsg : Table.State -> Msg msg
@@ -173,7 +173,7 @@ thumbnailColumn previewedMediaId =
                 Table.HtmlDetails []
                     [ viewTableThumbnail rcObject size action
                     ]
-        , sorter = Table.unsortable
+        , sorter = Table.decreasingBy <| Exposition.getMediaTypeString
         }
 
 
@@ -382,79 +382,3 @@ mediaPickerView ( model, visibility ) objectList messages =
             ]
         |> Modal.attrs [ class "rc-media-picker" ]
         |> Modal.view visibility
-
-
-
-{--
-viewModalMediaPickerOld : Modal.Visibility -> List RCMediaObject -> PickerConfig msg -> Html msg
-viewModalMediaPickerOld visibility objectList messages =
-    let
-        tableList =
-            case objectList of
-                [] ->
-                    Alert.simpleInfo [] [ text "There are no objects yet, add by using the \"upload media\" button." ]
-
-                _ ->
-                    let
-                        head =
-                            BTable.simpleThead
-                                [ BTable.th [] [ text "Preview" ]
-                                , BTable.th [] [ text "Id" ]
-                                , BTable.th [] [ text "Name" ]
-                                , BTable.th [] [ text "Insert" ]
-                                ]
-
-                        rowFromRCObject : RCMediaObject -> BTable.Row msg
-                        rowFromRCObject object =
-                            let
-                                insertButton =
-                                    Button.button
-                                        [ Button.small
-                                        , Button.outlineSuccess
-                                        , Button.attrs [ Spacing.ml1, onClick <| messages.insertObject object ]
-                                        ]
-                                        [ text "Insert" ]
-                            in
-                            BTable.tr [ BTable.rowAttr <| onDoubleClick <| messages.insertObject object ]
-                                [ BTable.td [] [ viewThumbnail object PreviewSmall ]
-                                , BTable.td [] [ text <| String.fromInt object.id ]
-                                , BTable.td [] [ text object.name ]
-                                , BTable.td [] [ insertButton ]
-                                ]
-
-                        rows =
-                            List.map rowFromRCObject objectList
-
-                        uploadButton =
-                            defaultButton messages.uploadMediaFileSelect
-                    in
-                    div []
-                        [ mkButton
-                            { uploadButton
-                                | icon = View.UploadCloud
-                                , offset = False
-                                , title = "Add video, audio, pdf or images files"
-                                , text = "Upload Media"
-                                , primary = False
-                            }
-                        , BTable.table
-                            { options = [ BTable.hover, BTable.striped, BTable.small ]
-                            , thead = head
-                            , tbody =
-                                BTable.tbody [] rows
-                            }
-                        ]
-    in
-    Modal.config messages.closeModal
-        |> Modal.scrollableBody True
-        |> Modal.large
-        |> Modal.hideOnBackdropClick True
-        |> Modal.h1 [] [ text "Select a media object to insert." ]
-        |> Modal.body [] [ tableList ]
-        |> Modal.footer []
-            [ Button.button
-                [ Button.secondary, Button.attrs [ onClick messages.closeModal ] ]
-                [ text "Cancel" ]
-            ]
-        |> Modal.view visibility
---}
