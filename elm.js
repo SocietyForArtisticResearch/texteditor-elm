@@ -5798,7 +5798,7 @@ var $rundis$elm_bootstrap$Bootstrap$Alert$Closed = 3;
 var $rundis$elm_bootstrap$Bootstrap$Alert$closed = 3;
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: -2};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
-var $author$project$Settings$editorVersion = '2.0.0';
+var $author$project$Settings$editorVersion = '2.0.3';
 var $author$project$Exposition$empty = {dK: _List_Nil, bP: 0, c4: '', dR: 0, dV: $author$project$Settings$editorVersion, j: 0, a7: '', n: _List_Nil, cF: '', dC: '', dD: _List_Nil};
 var $rundis$elm_bootstrap$Bootstrap$Modal$Hide = 3;
 var $rundis$elm_bootstrap$Bootstrap$Modal$hidden = 3;
@@ -7939,7 +7939,7 @@ var $author$project$Main$confirmObjectDelete = function (object) {
 		{dQ: 'Delete', fs: object.l + ' is about to be deleted. Are you sure?', eu: 'Keep'});
 	return A3($author$project$UserConfirm$Model, $rundis$elm_bootstrap$Bootstrap$Modal$shown, content, messages);
 };
-var $author$project$Settings$baseDomain = 'https://dev.researchcatalogue.net';
+var $author$project$Settings$baseDomain = 'https://www.researchcatalogue.net';
 var $elm$http$Http$expectBytesResponse = F2(
 	function (toMsg, toResult) {
 		return A3(
@@ -16479,7 +16479,13 @@ var $author$project$Main$viewAlert = function (model) {
 	};
 	var realProblems = A2($elm$core$List$filter, isRealProblem, model.Q);
 	if (!realProblems.b) {
-		return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					A2($elm$html$Html$Attributes$style, 'display', 'none')
+				]),
+			_List_Nil);
 	} else {
 		var problems = realProblems;
 		return A2(

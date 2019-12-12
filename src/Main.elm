@@ -1193,7 +1193,7 @@ viewAlert model =
     in
     case realProblems of
         [] ->
-            div [] []
+            div [ style "display" "none" ] []
 
         problems ->
             Alert.config

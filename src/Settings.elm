@@ -3,7 +3,7 @@ module Settings exposing (Snippet(..), baseDomain, baseUrl, editorVersion, iconU
 
 editorVersion : String
 editorVersion =
-    "2.0.0"
+    "2.0.3"
 
 
 baseUrl : String
@@ -13,7 +13,7 @@ baseUrl =
 
 baseDomain : String
 baseDomain =
-    "https://dev.researchcatalogue.net"
+    "https://www.researchcatalogue.net"
 
 
 iconUrl : String
