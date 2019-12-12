@@ -17714,7 +17714,12 @@ var $author$project$Main$view = function (model) {
 				i: 11,
 				ej: true,
 				dj: _List_fromArray(
-					[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1, $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1, $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1]),
+					[
+						$elm$html$Html$Attributes$class('soft-blue-background'),
+						$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1,
+						$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1,
+						$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1
+					]),
 				ep: true,
 				aI: 'Upload Media',
 				dC: 'Add media files: images, video, audio or pdf'
