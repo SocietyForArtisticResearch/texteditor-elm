@@ -343,12 +343,11 @@
 	
         if (selectedEditor == editorCmMd) {
     	    let cmSelection = cmMarkdown.getSelection();
-
-    	    if (detectmob()) {
-		console.log("mobile phone detected");
-		cmSelection = str // codemirror does not reliably produce selection on mobile.
+	    let isPhone = detectmob();
+	    
+    	    if (isPhone) {
+		cmSelection = "" // codemirror does not reliably produce selection on mobile.
 	    } else {
-		console.log("this is not a phone");
 		cmSelection = syntaxHelper(str, cmSelection);
 	    }
 		    
@@ -360,6 +359,8 @@
                 line: cursor.line,
                 ch: Math.max(0, cursor.ch + offset)
             });
+
+	    cmMarkdown.replaceSelection( cmSelection );
 
             textareaMarkdown.value = cmMarkdown.getValue();
 
