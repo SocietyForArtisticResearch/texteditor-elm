@@ -457,10 +457,14 @@
         newTo.classList.add("exposition");
         newTo.classList.add("exposition-content");
 
-	console.log('newto',newTo);
+	//console.log('newto',newTo);
 	
         newTo.innerHTML = content;
-        morphdom(preview, newTo);
+        try {
+	    morphdom(preview, newTo); }
+	catch(err) {
+	    console.log('morphdom error',err);
+	}
 
 
     });
