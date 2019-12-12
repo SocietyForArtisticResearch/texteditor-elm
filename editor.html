@@ -434,11 +434,11 @@
 
     var observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
-	    console.log('mutation',mutation);
+	    //console.log('mutation',mutation);
             if (mutation.type == "characterData")
 
                 // :)
-                if (typeof mutation.target.scrollIntoView === 'function') {
+                if (typeof mutation.target.parent.scrollIntoView === 'function') {
                     mutation.target.scrollIntoView();
 		    
                 }
