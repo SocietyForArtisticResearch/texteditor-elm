@@ -1,4 +1,12 @@
-module Util exposing (find, fst, snd, wordCount)
+module Util exposing (classListFromString, find, fst, snd, wordCount)
+
+import Html
+import Html.Attributes
+
+
+classListFromString : String -> List (Html.Attribute msg)
+classListFromString =
+    List.map (\str -> Html.Attributes.class str) << String.split " "
 
 
 find : (a -> Bool) -> List a -> Maybe a
