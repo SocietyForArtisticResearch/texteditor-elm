@@ -361,9 +361,10 @@
                     line: cursor.line,
                     ch: Math.max(0, cursor.ch + offset)
 		});
+
+		cmMarkdown.replaceSelection( cmSelection );
 	    }
 
-	    cmMarkdown.replaceSelection( cmSelection );
 
             textareaMarkdown.value = cmMarkdown.getValue();
 
