@@ -700,7 +700,7 @@ update msg model =
                 , "video/mpeg"
                 , "video/ogv"
                 , "video/quicktime"
-                , "quicktime/x-m4a"
+                , "audio/x-m4a"
                 ]
                 UploadMediaFileSelected
             )

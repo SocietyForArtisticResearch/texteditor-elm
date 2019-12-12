@@ -11247,7 +11247,7 @@ var $author$project$Main$update = F2(
 						A2(
 							$elm$file$File$Select$file,
 							_List_fromArray(
-								['image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/svg+xml', 'audio/mp3', 'audio/wav', 'audio/aiff', 'application/pdf', 'audio/ogg', 'audio/aif', 'video/mp4', 'video/mpeg', 'video/ogv', 'video/quicktime', 'quicktime/x-m4a']),
+								['image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/svg+xml', 'audio/mp3', 'audio/wav', 'audio/aiff', 'application/pdf', 'audio/ogg', 'audio/aif', 'video/mp4', 'video/mpeg', 'video/ogv', 'video/quicktime', 'audio/x-m4a']),
 							$author$project$Main$UploadMediaFileSelected));
 				case 13:
 					var file = msg.a;
