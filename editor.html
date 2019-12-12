@@ -1,4 +1,4 @@
-X<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -374,15 +374,17 @@ X<!DOCTYPE html>
     	    if (isPhone) {
 		cmSelection = phoneReplace(str, cmSelection);
 	    } else {
+		
 		cmSelection = syntaxHelper(str, cmSelection);
+		cmMarkdown.replaceSelection(str);
 	    }
 		    
-            cmMarkdown.replaceSelection(str);
+            
             cmMarkdown.focus();
 
-	    let cursor = cmMarkdown.getCursor();
-
+	  
 	    if(!isPhone) { // on a phone, dont' move the cursor
+		let cursor = cmMarkdown.getCursor();
 		cmMarkdown.setCursor({
                     line: cursor.line,
                     ch: Math.max(0, cursor.ch + offset)
