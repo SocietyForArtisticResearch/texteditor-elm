@@ -439,7 +439,12 @@
                 // :)
                 if (typeof mutation.target.parentNode.scrollIntoView === 'function') {
                     mutation.target.parentNode.scrollIntoView();
-		    //console.log('mutation',mutation.target);
+		    /* this used to work,
+		     * but I noticed that changes are mostly to the inner-text content of nodes, 
+		     * and text content cannot be scrolled to. So I use the parent.
+		     * Fortunately (?) asking the type of non-existent things return string "undefined" in js.
+		     */
+		    
                 }
         });
     });
