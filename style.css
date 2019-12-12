@@ -136,6 +136,10 @@ body {
     display: block;
 }
 
+.soft-blue-background {
+    background-color: #fbfbff;
+}
+
 .markdown-toolbar {
     opacity: 0.6;
 }
