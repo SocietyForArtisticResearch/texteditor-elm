@@ -306,9 +306,27 @@
         input.selectionStart = input.selectionEnd = start + textToInsert.length;
     }
 
+  function detectmob() { 
+      if( navigator.userAgent.match(/Android/i)
+	  || navigator.userAgent.match(/webOS/i)
+	  || navigator.userAgent.match(/iPhone/i)
+	  || navigator.userAgent.match(/iPad/i)
+	  || navigator.userAgent.match(/iPod/i)
+	  || navigator.userAgent.match(/BlackBerry/i)
+	  || navigator.userAgent.match(/Windows Phone/i)
+	){
+	  return true;
+      }
+      else {
+	  return false;
+      }
+  }
+
     app.ports.insertMdString.subscribe(function(insertTuple) {
         var [str, offset] = insertTuple;
 
+	let isMobile = detectmob();
+	    
     	let syntaxHelper = function (syntaxString, selectionString) {
     	    /*
     	     If header, and the selection is empty string, then insert something to make it more clear
@@ -317,7 +335,7 @@
         		if (selectionString === "" ) { 
         		    selectionString = "Header"
         		} else {
-        		    selectionString.replace("\n","");
+        		    selectionString.replace("\n",""); // headers should not contain newlines
         	        }
     	    }
     	    
@@ -328,36 +346,40 @@
         if (selectedEditor == editorCmMd) {
     	    let cmSelection = cmMarkdown.getSelection();
 
-    	    cmSelection = syntaxHelper(str, cmSelection);
+    	    if (isMobile()) {
+		cmSelection = str // codemirror does not reliably produce selection on mobile.
+	    } else {
+		cmSelection = syntaxHelper(str, cmSelection);
+	    }
+		    
+            cmMarkdown.replaceSelection(str);
+            cmMarkdown.focus();
+
+	    let cursor = cmMarkdown.getCursor();
+            cmMarkdown.setCursor({
+                line: cursor.line,
+                ch: Math.max(0, cursor.ch + offset)
+            });
+
+            textareaMarkdown.value = cmMarkdown.getValue();
+
+        } else if (selectedEditor == editorTxtMd) {
+            let txtSelection = getTextareaSelection( textareaMarkdown );
     	    
-                cmMarkdown.replaceSelection(str);
-                cmMarkdown.focus();
-                let cursor = cmMarkdown.getCursor();
-                cmMarkdown.setCursor({
-                    line: cursor.line,
-                    ch: Math.max(0, cursor.ch + offset)
-                });
-                cmMarkdown.replaceSelection(cmSelection);
+            txtSelection = syntaxHelper(str, txtSelection);
 
-                textareaMarkdown.value = cmMarkdown.getValue();
+            insertAtCursor(textareaMarkdown, str);
+            
+            textareaMarkdown.focus();
+            let sel = textareaMarkdown.selectionStart;
+            textareaMarkdown.selectionStart = sel + offset;
+            textareaMarkdown.selectionEnd = sel + offset;
 
-            } else if (selectedEditor == editorTxtMd) {
-                let txtSelection = getTextareaSelection( textareaMarkdown );
-    	    
-        	    txtSelection = syntaxHelper(str, txtSelection);
+            insertAtCursor(textareaMarkdown, txtSelection);
 
-        	    insertAtCursor(textareaMarkdown, str);
-                    
-                    textareaMarkdown.focus();
-                    let sel = textareaMarkdown.selectionStart;
-                    textareaMarkdown.selectionStart = sel + offset;
-                    textareaMarkdown.selectionEnd = sel + offset;
-
-                    insertAtCursor(textareaMarkdown, txtSelection);
-
-                    cmMarkdown.setValue(textareaMarkdown.value);
-            }   
-        });
+            cmMarkdown.setValue(textareaMarkdown.value);
+        }   
+    });
 
     function getTextareaSelection ( textarea ) {
         let start = textarea.selectionStart;
