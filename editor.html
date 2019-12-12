@@ -339,6 +339,32 @@ X<!DOCTYPE html>
     	    
     	    return selectionString;
     	};
+
+	let phoneReplace = function(syntax, selected) {
+	    if (selected === "") {
+		return syntax;
+	    }
+
+	    if (syntax.startsWith("**")) {
+		return "**" + selected + "**";
+	    }
+
+	    if (syntax.charAt(0) === "_") {
+		return "_" + selected + "_";
+	    }
+
+	    if (syntax.startsWith("[]")) {
+		return "["+ selected + "](https://)";
+	    }
+
+	    if (syntax.charAt(0) === "#") {
+		return "# " + selected;
+	    }
+
+	    return syntax + selected;
+	}
+
+		
 	    
 	
         if (selectedEditor == editorCmMd) {
@@ -346,7 +372,7 @@ X<!DOCTYPE html>
 	    let isPhone = detectmob();
 	    
     	    if (isPhone) {
-		// nothing
+		cmSelection = phoneReplace(str, cmSelection);
 	    } else {
 		cmSelection = syntaxHelper(str, cmSelection);
 	    }
@@ -361,8 +387,10 @@ X<!DOCTYPE html>
                     line: cursor.line,
                     ch: Math.max(0, cursor.ch + offset)
 		});
-	    }
-		cmMarkdown.replaceSelection( cmSelection );
+	    } 
+
+
+	    cmMarkdown.replaceSelection( cmSelection );
 	    
 
 
