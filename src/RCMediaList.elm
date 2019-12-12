@@ -173,7 +173,7 @@ thumbnailColumn previewedMediaId =
                 Table.HtmlDetails []
                     [ viewTableThumbnail rcObject size action
                     ]
-        , sorter = Table.decreasingBy <| Exposition.getMediaTypeString
+        , sorter = Table.increasingOrDecreasingBy <| Exposition.getMediaTypeString
         }
 
 

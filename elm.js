@@ -12185,13 +12185,6 @@ var $author$project$RCMediaPreview$PreviewSmall = 1;
 var $author$project$RCMediaList$SetPreviewMediaId = function (a) {
 	return {$: 2, a: a};
 };
-var $billstclair$elm_sortable_table$Table$Decreasing = function (a) {
-	return {$: 2, a: a};
-};
-var $billstclair$elm_sortable_table$Table$decreasingBy = function (toComparable) {
-	return $billstclair$elm_sortable_table$Table$Decreasing(
-		$elm$core$List$sortBy(toComparable));
-};
 var $author$project$Exposition$getMediaTypeString = A2(
 	$elm$core$Basics$composeL,
 	$author$project$Exposition$rcClass,
@@ -12531,7 +12524,7 @@ var $author$project$RCMediaList$thumbnailColumn = function (previewedMediaId) {
 	return $billstclair$elm_sortable_table$Table$veryCustomColumn(
 		{
 			l: 'Preview',
-			dt: $billstclair$elm_sortable_table$Table$decreasingBy($author$project$Exposition$getMediaTypeString),
+			dt: $billstclair$elm_sortable_table$Table$increasingOrDecreasingBy($author$project$Exposition$getMediaTypeString),
 			dE: function (rcObject) {
 				var size = function () {
 					if (!previewedMediaId.$) {
