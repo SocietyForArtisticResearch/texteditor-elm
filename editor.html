@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+X<!DOCTYPE html>
 <html>
 
 <head>
@@ -346,7 +346,7 @@
 	    let isPhone = detectmob();
 	    
     	    if (isPhone) {
-		cmSelection = "" // codemirror does not reliably produce selection on mobile.
+		// nothing
 	    } else {
 		cmSelection = syntaxHelper(str, cmSelection);
 	    }
@@ -361,9 +361,9 @@
                     line: cursor.line,
                     ch: Math.max(0, cursor.ch + offset)
 		});
-
-		cmMarkdown.replaceSelection( cmSelection );
 	    }
+		cmMarkdown.replaceSelection( cmSelection );
+	    
 
 
             textareaMarkdown.value = cmMarkdown.getValue();
