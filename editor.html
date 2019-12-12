@@ -207,8 +207,7 @@
         styleElem.innerHTML = cmStyle.getValue();
     });
 
-
-    cmMarkdown.on("mousedown", function() {
+  const touchOrClickMediaTag = function () {
         let pos = cmMarkdown.getCursor();
         let tok = cmMarkdown.getTokenTypeAt(pos);
         if (tok !== null && tok !== undefined) {
@@ -223,7 +222,10 @@
                 }
             }
         }
-    });
+  };
+
+  cmMarkdown.on("mousedown", touchOrClickMediaTag);
+  cmMarkdown.on("touchstart", touchOrClickMediaTag);
 
 
     function sendContent() {
