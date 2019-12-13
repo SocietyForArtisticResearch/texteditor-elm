@@ -38,8 +38,9 @@ Casper:
 
 - Drag and drop 
 	<https://elm-lang.org/examples/drag-and-drop>
-- Auto-scrolling doesn't work anymore.
+
 - Upload progress for upload button in Media list is broken (becuase handled by main)
+- cursor position on mobile
 
 Luc:
 
@@ -58,6 +59,11 @@ Luc:
 
 ## DONE
 
+- Added meta-data link
+- Fixed preview on Firefox, optimized preview on all other platforms
+- Added sortable&searchable table / restructured RCMediaList & Picker
+- Markdown buttons keep selection (on mobile as well)
+- Auto-scrolling works again
 - Restructured RCMediaList.elm
 - Added search box for media-table and media-picker
 - I have changed the ID tag of objectDiv to a CLASS tag, thus solving a morphdom glitch. We were using non-unique ids.

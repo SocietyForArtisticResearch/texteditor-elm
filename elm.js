@@ -2659,7 +2659,7 @@ var _VirtualDom_mapEventTuple = F2(function(func, tuple)
 var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
-		O: func(record.O),
+		P: func(record.P),
 		dw: record.dw,
 		dn: record.dn
 	}
@@ -2929,7 +2929,7 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 		// 3 = Custom
 
 		var value = result.a;
-		var message = !tag ? value : tag < 3 ? value.a : value.O;
+		var message = !tag ? value : tag < 3 ? value.a : value.P;
 		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.dw;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
@@ -3932,7 +3932,7 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.J);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.K);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
@@ -4320,13 +4320,13 @@ var _Http_toTask = F3(function(router, toTask, request)
 	return _Scheduler_binding(function(callback)
 	{
 		function done(response) {
-			callback(toTask(request.M.a(response)));
+			callback(toTask(request.N.a(response)));
 		}
 
 		var xhr = new XMLHttpRequest();
 		xhr.addEventListener('error', function() { done($elm$http$Http$NetworkError_); });
 		xhr.addEventListener('timeout', function() { done($elm$http$Http$Timeout_); });
-		xhr.addEventListener('load', function() { done(_Http_toResponse(request.M.b, xhr)); });
+		xhr.addEventListener('load', function() { done(_Http_toResponse(request.N.b, xhr)); });
 		$elm$core$Maybe$isJust(request.aL) && _Http_track(router, xhr, request.aL.a);
 
 		try {
@@ -4337,8 +4337,8 @@ var _Http_toTask = F3(function(router, toTask, request)
 
 		_Http_configureRequest(xhr, request);
 
-		request.J.a && xhr.setRequestHeader('Content-Type', request.J.a);
-		xhr.send(request.J.b);
+		request.K.a && xhr.setRequestHeader('Content-Type', request.K.a);
+		xhr.send(request.K.b);
 
 		return function() { xhr.c = true; xhr.abort(); };
 	});
@@ -4354,7 +4354,7 @@ function _Http_configureRequest(xhr, request)
 		xhr.setRequestHeader(headers.a.a, headers.a.b);
 	}
 	xhr.timeout = request.aK.a || 0;
-	xhr.responseType = request.M.d;
+	xhr.responseType = request.N.d;
 	xhr.withCredentials = request.e1;
 }
 
@@ -5775,7 +5775,7 @@ var $author$project$Main$addProblem = F2(
 			model,
 			{
 				am: $rundis$elm_bootstrap$Bootstrap$Alert$shown,
-				Q: A2($elm$core$List$cons, problem, model.Q)
+				H: A2($elm$core$List$cons, problem, model.H)
 			});
 	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
@@ -5847,7 +5847,7 @@ var $author$project$Main$emptyModel = F3(
 			r: _Utils_Tuple2($author$project$RCMediaList$empty, $rundis$elm_bootstrap$Bootstrap$Modal$hidden),
 			aA: $author$project$Main$Ready,
 			bb: navbarInitState,
-			Q: _List_Nil,
+			H: _List_Nil,
 			s: research,
 			R: true,
 			aO: weave
@@ -6710,8 +6710,8 @@ var $elm$http$Http$cmdMap = F2(
 			return $elm$http$Http$Request(
 				{
 					e1: r.e1,
-					J: r.J,
-					M: A2(_Http_mapExpect, func, r.M),
+					K: r.K,
+					N: A2(_Http_mapExpect, func, r.N),
 					au: r.au,
 					aB: r.aB,
 					aK: r.aK,
@@ -6739,14 +6739,14 @@ var $elm$http$Http$subscription = _Platform_leaf('Http');
 var $elm$http$Http$request = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{e1: false, J: r.J, M: r.M, au: r.au, aB: r.aB, aK: r.aK, aL: r.aL, V: r.V}));
+			{e1: false, K: r.K, N: r.N, au: r.au, aB: r.aB, aK: r.aK, aL: r.aL, V: r.V}));
 };
 var $author$project$RCAPI$getExposition = F3(
 	function (researchId, weave, msg) {
 		return $elm$http$Http$request(
 			{
-				J: $elm$http$Http$emptyBody,
-				M: A2($elm$http$Http$expectJson, msg, $author$project$RCAPI$apiExposition),
+				K: $elm$http$Http$emptyBody,
+				N: A2($elm$http$Http$expectJson, msg, $author$project$RCAPI$apiExposition),
 				au: _List_fromArray(
 					[
 						A2($elm$http$Http$header, 'X-Requested-With', 'XMLHttpRequest')
@@ -6822,7 +6822,7 @@ var $author$project$Main$EditGeneration = function (a) {
 	return {$: 0, a: a};
 };
 var $author$project$Main$ExportDropMsg = function (a) {
-	return {$: 39, a: a};
+	return {$: 40, a: a};
 };
 var $author$project$Main$GotConvertedHtml = function (a) {
 	return {$: 4, a: a};
@@ -7664,7 +7664,7 @@ var $author$project$Main$subscriptions = function (model) {
 			]));
 };
 var $author$project$Main$BadUploadFileType = function (a) {
-	return {$: 40, a: a};
+	return {$: 41, a: a};
 };
 var $author$project$Problems$CannotFindMediaFieldInJson = {$: 5};
 var $author$project$Problems$CannotImportFile = function (a) {
@@ -7686,7 +7686,7 @@ var $author$project$Problems$DecodingJsonError = function (a) {
 };
 var $author$project$Main$DownloadExport = F2(
 	function (a, b) {
-		return {$: 31, a: a, b: b};
+		return {$: 32, a: a, b: b};
 	});
 var $author$project$Problems$ExportFailed = {$: 10};
 var $author$project$Problems$FootnoteHelperError = function (a) {
@@ -7796,7 +7796,7 @@ var $author$project$Main$addProblems = F2(
 			model,
 			{
 				am: $rundis$elm_bootstrap$Bootstrap$Alert$shown,
-				Q: _Utils_ap(problems, model.Q)
+				H: _Utils_ap(problems, model.H)
 			});
 	});
 var $author$project$RCAPI$APIMedia = F4(
@@ -7956,7 +7956,7 @@ var $elm$http$Http$multipartBody = function (parts) {
 };
 var $elm$http$Http$post = function (r) {
 	return $elm$http$Http$request(
-		{J: r.J, M: r.M, au: _List_Nil, aB: 'POST', aK: $elm$core$Maybe$Nothing, aL: $elm$core$Maybe$Nothing, V: r.V});
+		{K: r.K, N: r.N, au: _List_Nil, aB: 'POST', aK: $elm$core$Maybe$Nothing, aL: $elm$core$Maybe$Nothing, V: r.V});
 };
 var $elm$regex$Regex$Match = F4(
 	function (match, index, number, submatches) {
@@ -8108,12 +8108,12 @@ var $author$project$RCAPI$convertExposition = F3(
 			$elm$core$Maybe$Just($author$project$Settings$baseDomain));
 		return $elm$http$Http$post(
 			{
-				J: $elm$http$Http$multipartBody(
+				K: $elm$http$Http$multipartBody(
 					_List_fromArray(
 						[
 							A2($elm$http$Http$stringPart, 'markdown', exportExpoMd)
 						])),
-				M: A2(
+				N: A2(
 					$elm$http$Http$expectBytesResponse,
 					expectMsg(ctype),
 					$author$project$RCAPI$resolve($elm$core$Result$Ok)),
@@ -8144,8 +8144,8 @@ var $author$project$RCAPI$deleteMedia = F2(
 	function (mediaObject, expect) {
 		return $elm$http$Http$post(
 			{
-				J: $elm$http$Http$emptyBody,
-				M: $elm$http$Http$expectWhatever(expect),
+				K: $elm$http$Http$emptyBody,
+				N: $elm$http$Http$expectWhatever(expect),
 				V: 'text-editor/simple-media-remove?research=' + ($elm$core$String$fromInt(mediaObject.bU) + ('&simple-media=' + $elm$core$String$fromInt(mediaObject.j)))
 			});
 	});
@@ -9100,8 +9100,8 @@ var $author$project$RCAPI$getMediaList = F2(
 	function (id, msg) {
 		return $elm$http$Http$request(
 			{
-				J: $elm$http$Http$emptyBody,
-				M: A2(
+				K: $elm$http$Http$emptyBody,
+				N: A2(
 					$elm$http$Http$expectJson,
 					msg,
 					$elm$json$Json$Decode$list($author$project$RCAPI$apiMediaEntry)),
@@ -10246,7 +10246,7 @@ var $author$project$RCAPI$saveExposition = F2(
 				exposition.dD));
 		return $elm$http$Http$request(
 			{
-				J: $elm$http$Http$multipartBody(
+				K: $elm$http$Http$multipartBody(
 					_List_fromArray(
 						[
 							A2($elm$http$Http$stringPart, 'html', exposition.cF),
@@ -10292,7 +10292,7 @@ var $author$project$RCAPI$saveExposition = F2(
 										])))),
 							A2($elm$http$Http$stringPart, 'toc', encodedToc)
 						])),
-				M: $elm$http$Http$expectString(expect),
+				N: $elm$http$Http$expectString(expect),
 				au: _List_fromArray(
 					[
 						A2($elm$http$Http$header, 'X-Requested-With', 'XMLHttpRequest')
@@ -10599,7 +10599,7 @@ var $author$project$RCAPI$updateMedia = F2(
 	function (mediaObject, expect) {
 		return $elm$http$Http$request(
 			{
-				J: $elm$http$Http$multipartBody(
+				K: $elm$http$Http$multipartBody(
 					_List_fromArray(
 						[
 							A2($elm$http$Http$stringPart, 'name', mediaObject.l),
@@ -10613,7 +10613,7 @@ var $author$project$RCAPI$updateMedia = F2(
 							'license',
 							$author$project$Licenses$asString(mediaObject.b5))
 						])),
-				M: expect,
+				N: expect,
 				au: _List_fromArray(
 					[
 						A2($elm$http$Http$header, 'X-Requested-With', 'XMLHttpRequest')
@@ -10777,12 +10777,12 @@ var $author$project$RCAPI$uploadImport = F3(
 	function (researchId, file, expectMsg) {
 		return $elm$http$Http$request(
 			{
-				J: $elm$http$Http$multipartBody(
+				K: $elm$http$Http$multipartBody(
 					_List_fromArray(
 						[
 							A2($elm$http$Http$filePart, 'file', file)
 						])),
-				M: A2($elm$http$Http$expectJson, expectMsg, $author$project$RCAPI$apiPandocImport),
+				N: A2($elm$http$Http$expectJson, expectMsg, $author$project$RCAPI$apiPandocImport),
 				au: _List_fromArray(
 					[
 						A2($elm$http$Http$header, 'X-Requested-With', 'XMLHttpRequest')
@@ -10872,7 +10872,7 @@ var $author$project$RCAPI$uploadMedia = F5(
 			var m = mediaT.a;
 			return $elm$http$Http$request(
 				{
-					J: $elm$http$Http$multipartBody(
+					K: $elm$http$Http$multipartBody(
 						_List_fromArray(
 							[
 								A2(
@@ -10885,7 +10885,7 @@ var $author$project$RCAPI$uploadMedia = F5(
 								A2($elm$http$Http$stringPart, 'license', 'all-rights-reserved'),
 								A2($elm$http$Http$filePart, 'media', file)
 							])),
-					M: expect,
+					N: expect,
 					au: _List_fromArray(
 						[
 							A2($elm$http$Http$header, 'X-Requested-With', 'XMLHttpRequest')
@@ -11273,12 +11273,12 @@ var $author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						model,
 						A3($author$project$RCAPI$uploadImport, model.s, file, $author$project$Main$UploadedImport));
-				case 32:
+				case 33:
 					var ctype = msg.a;
 					return _Utils_Tuple2(
 						model,
 						A3($author$project$RCAPI$convertExposition, ctype, model.b, $author$project$Main$DownloadExport));
-				case 31:
+				case 32:
 					var ctype = msg.a;
 					var result = msg.b;
 					if (result.$ === 1) {
@@ -11441,6 +11441,12 @@ var $author$project$Main$update = F2(
 							{am: visibility}),
 						$elm$core$Platform$Cmd$none);
 				case 30:
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{H: _List_Nil}),
+						$elm$core$Platform$Cmd$none);
+				case 31:
 					var editor = msg.a;
 					var _v24 = model.p;
 					var tab = _v24.a;
@@ -11454,15 +11460,15 @@ var $author$project$Main$update = F2(
 						$author$project$Main$setEditor(
 							$author$project$Main$enumTabState(
 								$author$project$Main$getTabState(newModel.p))));
-				case 35:
+				case 36:
 					var obj = msg.a;
 					return A2($author$project$Main$insertMediaUpdate, obj, model);
-				case 33:
+				case 34:
 					var insertTuple = msg.a;
 					return _Utils_Tuple2(
 						model,
 						$author$project$Main$insertMdString(insertTuple));
-				case 34:
+				case 35:
 					var nextNumber = $author$project$FootnoteHelper$mdNextFootnoteNum(model.b.a7);
 					if (!nextNumber.$) {
 						var num = nextNumber.a;
@@ -11519,7 +11525,7 @@ var $author$project$Main$update = F2(
 									$elm$core$Platform$Cmd$none);
 						}
 					}
-				case 36:
+				case 37:
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -11527,7 +11533,7 @@ var $author$project$Main$update = F2(
 								r: _Utils_Tuple2(model.r.a, $rundis$elm_bootstrap$Bootstrap$Modal$shown)
 							}),
 						$elm$core$Platform$Cmd$none);
-				case 37:
+				case 38:
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -11535,7 +11541,7 @@ var $author$project$Main$update = F2(
 								r: _Utils_Tuple2(model.r.a, $rundis$elm_bootstrap$Bootstrap$Modal$hidden)
 							}),
 						$elm$core$Platform$Cmd$none);
-				case 38:
+				case 39:
 					var pickerMsg = msg.a;
 					if (!pickerMsg.$) {
 						var tableMsg = pickerMsg.a;
@@ -11554,10 +11560,10 @@ var $author$project$Main$update = F2(
 					} else {
 						var normalMsg = pickerMsg.a;
 						switch (normalMsg.$) {
-							case 35:
+							case 36:
 								var obj = normalMsg.a;
 								return A2($author$project$Main$insertMediaUpdate, obj, model);
-							case 36:
+							case 37:
 								return _Utils_Tuple2(
 									_Utils_update(
 										model,
@@ -11565,7 +11571,7 @@ var $author$project$Main$update = F2(
 											r: _Utils_Tuple2(model.r.a, $rundis$elm_bootstrap$Bootstrap$Modal$shown)
 										}),
 									$elm$core$Platform$Cmd$none);
-							case 37:
+							case 38:
 								return _Utils_Tuple2(
 									_Utils_update(
 										model,
@@ -11584,14 +11590,14 @@ var $author$project$Main$update = F2(
 									$elm$core$Platform$Cmd$none);
 						}
 					}
-				case 39:
+				case 40:
 					var state = msg.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{aZ: state}),
 						$elm$core$Platform$Cmd$none);
-				case 40:
+				case 41:
 					var str = msg.a;
 					return _Utils_Tuple2(
 						A2(
@@ -11599,15 +11605,15 @@ var $author$project$Main$update = F2(
 							model,
 							$author$project$Problems$UnkownUploadFileType(str)),
 						$elm$core$Platform$Cmd$none);
-				case 41:
-					return _Utils_Tuple2(
-						model,
-						$author$project$Main$cmUndo(0));
 				case 42:
 					return _Utils_Tuple2(
 						model,
-						$author$project$Main$cmRedo(0));
+						$author$project$Main$cmUndo(0));
 				case 43:
+					return _Utils_Tuple2(
+						model,
+						$author$project$Main$cmRedo(0));
+				case 44:
 					var title = msg.a;
 					return _Utils_Tuple2(
 						model,
@@ -11624,7 +11630,7 @@ var $author$project$Main$update = F2(
 	});
 var $author$project$Main$CloseMediaDialog = {$: 8};
 var $author$project$Main$ConvertExposition = function (a) {
-	return {$: 32, a: a};
+	return {$: 33, a: a};
 };
 var $author$project$RCAPI$Docx = 1;
 var $author$project$RCAPI$Epub = 6;
@@ -11632,7 +11638,7 @@ var $author$project$View$EyeIcon = 12;
 var $author$project$RCAPI$Html = 4;
 var $author$project$View$ImportIcon = 1;
 var $author$project$Main$InsertMediaAtCursor = function (a) {
-	return {$: 35, a: a};
+	return {$: 36, a: a};
 };
 var $author$project$RCAPI$Latex = 3;
 var $author$project$RCAPI$Md = 5;
@@ -11640,7 +11646,7 @@ var $author$project$Main$MediaList = function (a) {
 	return {$: 6, a: a};
 };
 var $author$project$Main$MediaPicker = function (a) {
-	return {$: 38, a: a};
+	return {$: 39, a: a};
 };
 var $author$project$RCAPI$Odt = 2;
 var $author$project$RCAPI$Pdf = 0;
@@ -11731,7 +11737,7 @@ var $author$project$Main$makeMediaEditFun = F3(
 							})));
 		}
 	});
-var $author$project$Main$CloseMediaPicker = {$: 37};
+var $author$project$Main$CloseMediaPicker = {$: 38};
 var $author$project$Main$makePickerConfig = function (uploadButtonHtml) {
 	return {e5: $author$project$Main$CloseMediaPicker, d7: $author$project$Main$InsertMediaAtCursor, eW: uploadButtonHtml};
 };
@@ -11906,7 +11912,7 @@ var $rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier = F2(
 				return _Utils_update(
 					options,
 					{
-						K: $elm$core$Maybe$Just(coloring)
+						L: $elm$core$Maybe$Just(coloring)
 					});
 			case 2:
 				return _Utils_update(
@@ -11936,7 +11942,7 @@ var $elm$html$Html$Attributes$classList = function (classes) {
 				$elm$core$Tuple$first,
 				A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
 };
-var $rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions = {aQ: _List_Nil, bH: false, K: $elm$core$Maybe$Nothing, bT: false, eG: $elm$core$Maybe$Nothing};
+var $rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions = {aQ: _List_Nil, bH: false, L: $elm$core$Maybe$Nothing, bT: false, eG: $elm$core$Maybe$Nothing};
 var $elm$html$Html$Attributes$boolProperty = F2(
 	function (key, bool) {
 		return A2(
@@ -12010,7 +12016,7 @@ var $rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes = function 
 			}(),
 			_Utils_ap(
 				function () {
-					var _v1 = options.K;
+					var _v1 = options.L;
 					if (!_v1.$) {
 						if (!_v1.a.$) {
 							var role = _v1.a.a;
@@ -13189,13 +13195,13 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$body = F3(
 		return _Utils_update(
 			conf,
 			{
-				J: $elm$core$Maybe$Just(
+				K: $elm$core$Maybe$Just(
 					{aQ: attributes, aS: children})
 			});
 	});
 var $rundis$elm_bootstrap$Bootstrap$Modal$config = function (closeMsg) {
 	return {
-		J: $elm$core$Maybe$Nothing,
+		K: $elm$core$Maybe$Nothing,
 		aT: closeMsg,
 		c8: $elm$core$Maybe$Nothing,
 		b1: $elm$core$Maybe$Nothing,
@@ -13699,7 +13705,7 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$view = F2(
 											_List_fromArray(
 												[
 													$rundis$elm_bootstrap$Bootstrap$Modal$renderHeader(conf),
-													$rundis$elm_bootstrap$Bootstrap$Modal$renderBody(conf.J),
+													$rundis$elm_bootstrap$Bootstrap$Modal$renderBody(conf.K),
 													$rundis$elm_bootstrap$Bootstrap$Modal$renderFooter(conf.c8)
 												])))
 									]))
@@ -14227,9 +14233,9 @@ var $author$project$Settings$H1 = 2;
 var $author$project$Settings$H2 = 3;
 var $author$project$Settings$H3 = 4;
 var $author$project$Main$InsertAtCursor = function (a) {
-	return {$: 33, a: a};
+	return {$: 34, a: a};
 };
-var $author$project$Main$InsertFootnoteAtCursor = {$: 34};
+var $author$project$Main$InsertFootnoteAtCursor = {$: 35};
 var $author$project$Settings$Italic = 1;
 var $author$project$View$ItalicIcon = 3;
 var $author$project$Settings$Link = 9;
@@ -14238,12 +14244,12 @@ var $author$project$View$ListIcon = 8;
 var $author$project$View$MediaIcon = 18;
 var $author$project$Settings$Numbered = 7;
 var $author$project$View$NumberedIcon = 9;
-var $author$project$Main$OpenMediaPicker = {$: 36};
+var $author$project$Main$OpenMediaPicker = {$: 37};
 var $author$project$Settings$Quote = 8;
 var $author$project$View$QuoteIcon = 6;
-var $author$project$Main$RedoCM = {$: 42};
+var $author$project$Main$RedoCM = {$: 43};
 var $author$project$View$RedoIcon = 15;
-var $author$project$Main$UndoCM = {$: 41};
+var $author$project$Main$UndoCM = {$: 42};
 var $author$project$View$UndoIcon = 14;
 var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Light = 7;
 var $rundis$elm_bootstrap$Bootstrap$Button$light = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
@@ -16375,6 +16381,7 @@ var $author$project$UserConfirm$view = function (_v0) {
 var $author$project$Main$AlertMsg = function (a) {
 	return {$: 29, a: a};
 };
+var $author$project$Main$DismissAllProblems = {$: 30};
 var $author$project$Problems$httpErrorString = function (err) {
 	switch (err.$) {
 		case 0:
@@ -16469,6 +16476,18 @@ var $rundis$elm_bootstrap$Bootstrap$Alert$h4 = F2(
 var $rundis$elm_bootstrap$Bootstrap$Alert$info = function (conf) {
 	return A2($rundis$elm_bootstrap$Bootstrap$Alert$role, 3, conf);
 };
+var $rundis$elm_bootstrap$Bootstrap$Alert$link = F2(
+	function (attributes, children_) {
+		return A2(
+			$elm$html$Html$a,
+			A2(
+				$elm$core$List$cons,
+				$elm$html$Html$Attributes$class('alert-link'),
+				attributes),
+			children_);
+	});
+var $rundis$elm_bootstrap$Bootstrap$Button$primary = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(0));
 var $author$project$Main$viewAlert = function (model) {
 	var isRealProblem = function (problem) {
 		if (problem.$ === 2) {
@@ -16477,7 +16496,7 @@ var $author$project$Main$viewAlert = function (model) {
 			return true;
 		}
 	};
-	var realProblems = A2($elm$core$List$filter, isRealProblem, model.Q);
+	var realProblems = A2($elm$core$List$filter, isRealProblem, model.H);
 	if (!realProblems.b) {
 		return A2(
 			$elm$html$Html$div,
@@ -16488,6 +16507,10 @@ var $author$project$Main$viewAlert = function (model) {
 			_List_Nil);
 	} else {
 		var problems = realProblems;
+		var problemString = A2(
+			$elm$core$String$join,
+			' ',
+			A2($elm$core$List$map, $author$project$Problems$asString, problems));
 		return A2(
 			$rundis$elm_bootstrap$Bootstrap$Alert$view,
 			model.am,
@@ -16502,11 +16525,32 @@ var $author$project$Main$viewAlert = function (model) {
 							[
 								$elm$html$Html$text('there is a problem')
 							])),
-						$elm$html$Html$text(
+						$elm$html$Html$text(problemString),
 						A2(
-							$elm$core$String$join,
-							' ',
-							A2($elm$core$List$map, $author$project$Problems$asString, problems)))
+						$rundis$elm_bootstrap$Bootstrap$Alert$link,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$href('mailto:support@researchcatalogue.net&body=' + problemString)
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('contact support')
+							])),
+						A2(
+						$rundis$elm_bootstrap$Bootstrap$Button$button,
+						_List_fromArray(
+							[
+								$rundis$elm_bootstrap$Bootstrap$Button$primary,
+								$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick($author$project$Main$DismissAllProblems)
+									]))
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('clear')
+							]))
 					]),
 				A2(
 					$rundis$elm_bootstrap$Bootstrap$Alert$dismissable,
@@ -16515,7 +16559,7 @@ var $author$project$Main$viewAlert = function (model) {
 	}
 };
 var $author$project$Main$SwitchMarkdownEditor = function (a) {
-	return {$: 30, a: a};
+	return {$: 31, a: a};
 };
 var $author$project$Main$TextareaMarkdown = 1;
 var $rundis$elm_bootstrap$Bootstrap$Form$Checkbox$Attrs = function (a) {
@@ -16752,7 +16796,7 @@ var $author$project$Main$viewEditorCheckbox = function (markdownEditor) {
 var $author$project$View$FullScreenIcon = 16;
 var $author$project$View$NormalScreenIcon = 17;
 var $author$project$Main$ToggleFullscreen = function (a) {
-	return {$: 44, a: a};
+	return {$: 45, a: a};
 };
 var $author$project$Main$viewFullscreenSwitch = function (currentMode) {
 	var tit = currentMode ? 'Exit Fullscreen' : 'Enter Fullscreen';
@@ -17315,7 +17359,7 @@ var $rundis$elm_bootstrap$Bootstrap$Navbar$renderDropdownToggle = F4(
 						'click',
 						$elm$json$Json$Decode$succeed(
 							{
-								O: A3($rundis$elm_bootstrap$Bootstrap$Navbar$toggleOpen, state, id, configRec),
+								P: A3($rundis$elm_bootstrap$Bootstrap$Navbar$toggleOpen, state, id, configRec),
 								dn: true,
 								dw: false
 							}))
@@ -17790,7 +17834,7 @@ var $author$project$Main$view = function (model) {
 	}();
 	var confirmDialogHtml = $author$project$UserConfirm$view(model.aq);
 	var alert = function () {
-		var _v0 = model.Q;
+		var _v0 = model.H;
 		if (!_v0.b) {
 			return A2($elm$html$Html$span, _List_Nil, _List_Nil);
 		} else {

@@ -340,6 +340,7 @@ type Msg
     | NavbarMsg Navbar.State
     | MediaDeleted (Result Http.Error ())
     | AlertMsg Alert.Visibility
+    | DismissAllProblems
     | SwitchMarkdownEditor MarkdownEditor
     | DownloadExport RCAPI.ConversionType (Result Http.Error Bytes.Bytes)
     | ConvertExposition RCAPI.ConversionType
@@ -828,6 +829,9 @@ update msg model =
         AlertMsg visibility ->
             ( { model | alertVisibility = visibility }, Cmd.none )
 
+        DismissAllProblems ->
+            ( { model | problems = [] }, Cmd.none )
+
         SwitchMarkdownEditor editor ->
             -- using the toggle
             let
@@ -1196,12 +1200,18 @@ viewAlert model =
             div [ style "display" "none" ] []
 
         problems ->
+            let
+                problemString =
+                    String.join " " <| List.map Problems.asString problems
+            in
             Alert.config
                 |> Alert.info
                 |> Alert.dismissable AlertMsg
                 |> Alert.children
                     [ Alert.h4 [] [ text "there is a problem" ]
-                    , text <| String.join " " <| List.map Problems.asString problems
+                    , text problemString
+                    , Alert.link [ href <| "mailto:support@researchcatalogue.net&body=" ++ problemString ] [ text "contact support" ]
+                    , Button.button [ Button.primary, Button.attrs [ onClick DismissAllProblems ] ] [ text "clear" ]
                     ]
                 |> Alert.view model.alertVisibility
 
