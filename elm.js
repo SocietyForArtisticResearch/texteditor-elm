@@ -16639,7 +16639,7 @@ var $author$project$Main$viewAlert = function (model) {
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text('clear all problems')
+										$elm$html$Html$text('Clear problems')
 									]))
 							]))
 					]),
