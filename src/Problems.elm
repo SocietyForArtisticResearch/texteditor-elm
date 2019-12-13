@@ -60,7 +60,7 @@ asString problem =
             "Cannot load, http error: " ++ httpErrorString e
 
         CannotSave ->
-            "Saving error, are you connected?"
+            "Saving error, please check your connection."
 
         CannotUpdateMedia e ->
             "Problem updating media :" ++ httpErrorString e

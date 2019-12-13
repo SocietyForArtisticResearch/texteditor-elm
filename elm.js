@@ -14453,6 +14453,20 @@ var $author$project$View$optionalBlock = F2(
 			_List_fromArray(
 				[elem]));
 	});
+var $author$project$View$optionalNonBlock = F2(
+	function (show, elem) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$Attributes$style,
+					'display',
+					show ? 'initial' : 'none')
+				]),
+			_List_fromArray(
+				[elem]));
+	});
 var $author$project$Main$selectedEditorIsMarkdown = function (model) {
 	var _v0 = model.p;
 	if (!_v0.a) {
@@ -16413,7 +16427,7 @@ var $author$project$Problems$asString = function (problem) {
 			var e = problem.a;
 			return 'Cannot load, http error: ' + $author$project$Problems$httpErrorString(e);
 		case 3:
-			return 'Saving error, are you connected?';
+			return 'Saving error, please check your connection.';
 		case 4:
 			var e = problem.a;
 			return 'Problem updating media :' + $author$project$Problems$httpErrorString(e);
@@ -16615,7 +16629,7 @@ var $author$project$Main$viewAlert = function (model) {
 								$rundis$elm_bootstrap$Bootstrap$Button$button,
 								_List_fromArray(
 									[
-										$rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess,
+										$rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary,
 										$rundis$elm_bootstrap$Bootstrap$Button$attrs(
 										_List_fromArray(
 											[
@@ -18006,7 +18020,7 @@ var $author$project$Main$view = function (model) {
 				alert,
 				mediaList,
 				A2(
-				$author$project$View$optionalBlock,
+				$author$project$View$optionalNonBlock,
 				showButtons,
 				$author$project$Main$statusBar(model))
 			]));

@@ -1,4 +1,4 @@
-module View exposing (ButtonInfo, Icon(..), defaultButton, mkButton, mkDropdown, optionalBlock, renderIcon)
+module View exposing (ButtonInfo, Icon(..), defaultButton, mkButton, mkDropdown, optionalBlock, optionalNonBlock, renderIcon)
 
 import Bootstrap.Button as Button
 import Bootstrap.Dropdown as Dropdown
