@@ -16413,7 +16413,7 @@ var $author$project$Problems$asString = function (problem) {
 			var e = problem.a;
 			return 'Cannot load, http error: ' + $author$project$Problems$httpErrorString(e);
 		case 3:
-			return 'Saving error';
+			return 'Saving error, are you connected?';
 		case 4:
 			var e = problem.a;
 			return 'Problem updating media :' + $author$project$Problems$httpErrorString(e);
@@ -16486,8 +16486,6 @@ var $rundis$elm_bootstrap$Bootstrap$Alert$link = F2(
 				attributes),
 			children_);
 	});
-var $rundis$elm_bootstrap$Bootstrap$Button$outlineLight = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(7));
 var $elm$core$Set$Set_elm_builtin = $elm$core$Basics$identity;
 var $elm$core$Set$empty = $elm$core$Dict$empty;
 var $elm$core$Set$insert = F2(
@@ -16583,7 +16581,7 @@ var $author$project$Main$viewAlert = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('there is a problem')
+								$elm$html$Html$text('There is a problem:')
 							])),
 						A2(
 						$elm$html$Html$p,
@@ -16617,7 +16615,7 @@ var $author$project$Main$viewAlert = function (model) {
 								$rundis$elm_bootstrap$Bootstrap$Button$button,
 								_List_fromArray(
 									[
-										$rundis$elm_bootstrap$Bootstrap$Button$outlineLight,
+										$rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess,
 										$rundis$elm_bootstrap$Bootstrap$Button$attrs(
 										_List_fromArray(
 											[
@@ -16626,7 +16624,7 @@ var $author$project$Main$viewAlert = function (model) {
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text('clear')
+										$elm$html$Html$text('clear all problems')
 									]))
 							]))
 					]),
