@@ -24,6 +24,7 @@ import Http
 import Json.Decode as D
 import Json.Encode as E
 import Licenses
+import List.Extra exposing (uniqueBy)
 import Problems
 import RCAPI
 import RCMediaEdit
@@ -198,19 +199,7 @@ init flags =
 
 addProblem : Model -> Problems.Problem -> Model
 addProblem model problem =
-    let
-        problems =
-            model.problems
-
-        newProblems =
-            if List.member problem problems then
-                problems
-                -- to avoid huge stack of the same problem
-
-            else
-                problem :: problems
-    in
-    { model | problems = newProblems, alertVisibility = Alert.shown }
+    { model | problems = problem :: model.problems, alertVisibility = Alert.shown }
 
 
 addProblems : Model -> List Problems.Problem -> Model
@@ -1206,8 +1195,11 @@ viewAlert model =
 
         realProblems =
             List.filter isRealProblem model.problems
+
+        uniqueProblems =
+            uniqueBy Problems.asString model.problems
     in
-    case realProblems of
+    case uniqueProblems of
         [] ->
             div [ style "display" "none" ] []
 
@@ -1221,9 +1213,9 @@ viewAlert model =
                 |> Alert.dismissable AlertMsg
                 |> Alert.children
                     [ Alert.h4 [] [ text "there is a problem" ]
-                    , text problemString
-                    , Alert.link [ href <| "mailto:support@researchcatalogue.net&body=" ++ problemString ] [ text "contact support" ]
-                    , Button.button [ Button.primary, Button.attrs [ onClick DismissAllProblems ] ] [ text "clear" ]
+                    , p [] [ text problemString ]
+                    , p [] [ Alert.link [ href <| "mailto:support@researchcatalogue.net&body=" ++ problemString ] [ text "contact support" ] ]
+                    , p [] [ Button.button [ Button.primary, Button.attrs [ onClick DismissAllProblems ] ] [ text "clear" ] ]
                     ]
                 |> Alert.view model.alertVisibility
 

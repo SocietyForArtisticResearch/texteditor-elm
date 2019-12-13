@@ -5767,45 +5767,16 @@ var $author$project$Main$NavbarMsg = function (a) {
 	return {$: 27, a: a};
 };
 var $author$project$Problems$WrongExpositionUrl = {$: 0};
-var $elm$core$List$any = F2(
-	function (isOkay, list) {
-		any:
-		while (true) {
-			if (!list.b) {
-				return false;
-			} else {
-				var x = list.a;
-				var xs = list.b;
-				if (isOkay(x)) {
-					return true;
-				} else {
-					var $temp$isOkay = isOkay,
-						$temp$list = xs;
-					isOkay = $temp$isOkay;
-					list = $temp$list;
-					continue any;
-				}
-			}
-		}
-	});
-var $elm$core$List$member = F2(
-	function (x, xs) {
-		return A2(
-			$elm$core$List$any,
-			function (a) {
-				return _Utils_eq(a, x);
-			},
-			xs);
-	});
 var $rundis$elm_bootstrap$Bootstrap$Alert$Shown = 0;
 var $rundis$elm_bootstrap$Bootstrap$Alert$shown = 0;
 var $author$project$Main$addProblem = F2(
 	function (model, problem) {
-		var problems = model.H;
-		var newProblems = A2($elm$core$List$member, problem, problems) ? problems : A2($elm$core$List$cons, problem, problems);
 		return _Utils_update(
 			model,
-			{am: $rundis$elm_bootstrap$Bootstrap$Alert$shown, H: newProblems});
+			{
+				am: $rundis$elm_bootstrap$Bootstrap$Alert$shown,
+				F: A2($elm$core$List$cons, problem, model.F)
+			});
 	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $author$project$Main$Flags = F2(
@@ -5876,7 +5847,7 @@ var $author$project$Main$emptyModel = F3(
 			r: _Utils_Tuple2($author$project$RCMediaList$empty, $rundis$elm_bootstrap$Bootstrap$Modal$hidden),
 			aA: $author$project$Main$Ready,
 			bb: navbarInitState,
-			H: _List_Nil,
+			F: _List_Nil,
 			s: research,
 			R: true,
 			aO: weave
@@ -7514,6 +7485,27 @@ var $rundis$elm_bootstrap$Bootstrap$Navbar$AnimatingUp = 4;
 var $rundis$elm_bootstrap$Bootstrap$Navbar$Closed = 2;
 var $rundis$elm_bootstrap$Bootstrap$Navbar$ListenClicks = 1;
 var $rundis$elm_bootstrap$Bootstrap$Navbar$Open = 0;
+var $elm$core$List$any = F2(
+	function (isOkay, list) {
+		any:
+		while (true) {
+			if (!list.b) {
+				return false;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				if (isOkay(x)) {
+					return true;
+				} else {
+					var $temp$isOkay = isOkay,
+						$temp$list = xs;
+					isOkay = $temp$isOkay;
+					list = $temp$list;
+					continue any;
+				}
+			}
+		}
+	});
 var $elm$core$Dict$map = F2(
 	function (func, dict) {
 		if (dict.$ === -2) {
@@ -7804,7 +7796,7 @@ var $author$project$Main$addProblems = F2(
 			model,
 			{
 				am: $rundis$elm_bootstrap$Bootstrap$Alert$shown,
-				H: _Utils_ap(problems, model.H)
+				F: _Utils_ap(problems, model.F)
 			});
 	});
 var $author$project$RCAPI$APIMedia = F4(
@@ -10652,6 +10644,15 @@ var $author$project$Exposition$validateCopyright = function (copyright) {
 		return $elm$core$Result$Ok(something);
 	}
 };
+var $elm$core$List$member = F2(
+	function (x, xs) {
+		return A2(
+			$elm$core$List$any,
+			function (a) {
+				return _Utils_eq(a, x);
+			},
+			xs);
+	});
 var $author$project$Exposition$validateName = F3(
 	function (exp, obj, newName) {
 		if ($elm$core$String$length(newName) < 4) {
@@ -11443,7 +11444,7 @@ var $author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{H: _List_Nil}),
+							{F: _List_Nil}),
 						$elm$core$Platform$Cmd$none);
 				case 31:
 					var editor = msg.a;
@@ -16487,7 +16488,67 @@ var $rundis$elm_bootstrap$Bootstrap$Alert$link = F2(
 	});
 var $rundis$elm_bootstrap$Bootstrap$Button$primary = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(0));
+var $elm$core$Set$Set_elm_builtin = $elm$core$Basics$identity;
+var $elm$core$Set$empty = $elm$core$Dict$empty;
+var $elm$core$Set$insert = F2(
+	function (key, _v0) {
+		var dict = _v0;
+		return A3($elm$core$Dict$insert, key, 0, dict);
+	});
+var $elm$core$Dict$member = F2(
+	function (key, dict) {
+		var _v0 = A2($elm$core$Dict$get, key, dict);
+		if (!_v0.$) {
+			return true;
+		} else {
+			return false;
+		}
+	});
+var $elm$core$Set$member = F2(
+	function (key, _v0) {
+		var dict = _v0;
+		return A2($elm$core$Dict$member, key, dict);
+	});
+var $elm_community$list_extra$List$Extra$uniqueHelp = F4(
+	function (f, existing, remaining, accumulator) {
+		uniqueHelp:
+		while (true) {
+			if (!remaining.b) {
+				return $elm$core$List$reverse(accumulator);
+			} else {
+				var first = remaining.a;
+				var rest = remaining.b;
+				var computedFirst = f(first);
+				if (A2($elm$core$Set$member, computedFirst, existing)) {
+					var $temp$f = f,
+						$temp$existing = existing,
+						$temp$remaining = rest,
+						$temp$accumulator = accumulator;
+					f = $temp$f;
+					existing = $temp$existing;
+					remaining = $temp$remaining;
+					accumulator = $temp$accumulator;
+					continue uniqueHelp;
+				} else {
+					var $temp$f = f,
+						$temp$existing = A2($elm$core$Set$insert, computedFirst, existing),
+						$temp$remaining = rest,
+						$temp$accumulator = A2($elm$core$List$cons, first, accumulator);
+					f = $temp$f;
+					existing = $temp$existing;
+					remaining = $temp$remaining;
+					accumulator = $temp$accumulator;
+					continue uniqueHelp;
+				}
+			}
+		}
+	});
+var $elm_community$list_extra$List$Extra$uniqueBy = F2(
+	function (f, list) {
+		return A4($elm_community$list_extra$List$Extra$uniqueHelp, f, $elm$core$Set$empty, list, _List_Nil);
+	});
 var $author$project$Main$viewAlert = function (model) {
+	var uniqueProblems = A2($elm_community$list_extra$List$Extra$uniqueBy, $author$project$Problems$asString, model.F);
 	var isRealProblem = function (problem) {
 		if (problem.$ === 2) {
 			return false;
@@ -16495,8 +16556,8 @@ var $author$project$Main$viewAlert = function (model) {
 			return true;
 		}
 	};
-	var realProblems = A2($elm$core$List$filter, isRealProblem, model.H);
-	if (!realProblems.b) {
+	var realProblems = A2($elm$core$List$filter, isRealProblem, model.F);
+	if (!uniqueProblems.b) {
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -16505,7 +16566,7 @@ var $author$project$Main$viewAlert = function (model) {
 				]),
 			_List_Nil);
 	} else {
-		var problems = realProblems;
+		var problems = uniqueProblems;
 		var problemString = A2(
 			$elm$core$String$join,
 			' ',
@@ -16524,31 +16585,49 @@ var $author$project$Main$viewAlert = function (model) {
 							[
 								$elm$html$Html$text('there is a problem')
 							])),
-						$elm$html$Html$text(problemString),
 						A2(
-						$rundis$elm_bootstrap$Bootstrap$Alert$link,
+						$elm$html$Html$p,
+						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$href('mailto:support@researchcatalogue.net&body=' + problemString)
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('contact support')
+								$elm$html$Html$text(problemString)
 							])),
 						A2(
-						$rundis$elm_bootstrap$Bootstrap$Button$button,
+						$elm$html$Html$p,
+						_List_Nil,
 						_List_fromArray(
 							[
-								$rundis$elm_bootstrap$Bootstrap$Button$primary,
-								$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+								A2(
+								$rundis$elm_bootstrap$Bootstrap$Alert$link,
 								_List_fromArray(
 									[
-										$elm$html$Html$Events$onClick($author$project$Main$DismissAllProblems)
+										$elm$html$Html$Attributes$href('mailto:support@researchcatalogue.net&body=' + problemString)
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('contact support')
 									]))
-							]),
+							])),
+						A2(
+						$elm$html$Html$p,
+						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('clear')
+								A2(
+								$rundis$elm_bootstrap$Bootstrap$Button$button,
+								_List_fromArray(
+									[
+										$rundis$elm_bootstrap$Bootstrap$Button$primary,
+										$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick($author$project$Main$DismissAllProblems)
+											]))
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('clear')
+									]))
 							]))
 					]),
 				A2(
@@ -17833,7 +17912,7 @@ var $author$project$Main$view = function (model) {
 	}();
 	var confirmDialogHtml = $author$project$UserConfirm$view(model.aq);
 	var alert = function () {
-		var _v0 = model.H;
+		var _v0 = model.F;
 		if (!_v0.b) {
 			return A2($elm$html$Html$span, _List_Nil, _List_Nil);
 		} else {
