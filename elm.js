@@ -16614,7 +16614,7 @@ var $author$project$Main$viewAlert = function (model) {
 								$rundis$elm_bootstrap$Bootstrap$Alert$link,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$href('mailto:support@researchcatalogue.net&body=' + problemString)
+										$elm$html$Html$Attributes$href('mailto:support@researchcatalogue.net?body=' + ('Error message: ' + problemString))
 									]),
 								_List_fromArray(
 									[
