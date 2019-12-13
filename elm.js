@@ -16609,6 +16609,7 @@ var $author$project$Main$viewAlert = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
+								$elm$html$Html$text('Need help? '),
 								A2(
 								$rundis$elm_bootstrap$Bootstrap$Alert$link,
 								_List_fromArray(

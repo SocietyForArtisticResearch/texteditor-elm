@@ -1214,7 +1214,7 @@ viewAlert model =
                 |> Alert.children
                     [ Alert.h4 [] [ text "There is a problem:" ]
                     , p [] [ text problemString ]
-                    , p [] [ Alert.link [ href <| "mailto:support@researchcatalogue.net&body=" ++ problemString ] [ text "contact support" ] ]
+                    , p [] [ text "Need help? ", Alert.link [ href <| "mailto:support@researchcatalogue.net&body=" ++ problemString ] [ text "contact support" ] ]
                     , p [] [ Button.button [ Button.outlineSecondary, Button.attrs [ onClick DismissAllProblems ] ] [ text "clear all problems" ] ]
                     ]
                 |> Alert.view model.alertVisibility
