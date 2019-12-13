@@ -319,3 +319,7 @@ body {
 .rc-media-table>thead:nth-child(1)>tr:nth-child(1)>th:nth-child(3) {
     width: 56%;
 }
+
+.alert {
+    margin-bottom: 0;
+}

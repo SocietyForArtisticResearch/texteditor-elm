@@ -207,3 +207,17 @@ optionalBlock show elem =
         ]
         [ elem
         ]
+
+
+optionalNonBlock : Bool -> Html msg -> Html msg
+optionalNonBlock show elem =
+    div
+        [ style "display" <|
+            if show then
+                "initial"
+
+            else
+                "none"
+        ]
+        [ elem
+        ]
