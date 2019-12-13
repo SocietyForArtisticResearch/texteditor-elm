@@ -3,7 +3,7 @@ module Settings exposing (Snippet(..), baseDomain, baseUrl, editorVersion, iconU
 
 editorVersion : String
 editorVersion =
-    "2.0.3"
+    "2.1.0"
 
 
 baseUrl : String
