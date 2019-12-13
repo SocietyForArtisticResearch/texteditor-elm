@@ -5767,16 +5767,45 @@ var $author$project$Main$NavbarMsg = function (a) {
 	return {$: 27, a: a};
 };
 var $author$project$Problems$WrongExpositionUrl = {$: 0};
+var $elm$core$List$any = F2(
+	function (isOkay, list) {
+		any:
+		while (true) {
+			if (!list.b) {
+				return false;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				if (isOkay(x)) {
+					return true;
+				} else {
+					var $temp$isOkay = isOkay,
+						$temp$list = xs;
+					isOkay = $temp$isOkay;
+					list = $temp$list;
+					continue any;
+				}
+			}
+		}
+	});
+var $elm$core$List$member = F2(
+	function (x, xs) {
+		return A2(
+			$elm$core$List$any,
+			function (a) {
+				return _Utils_eq(a, x);
+			},
+			xs);
+	});
 var $rundis$elm_bootstrap$Bootstrap$Alert$Shown = 0;
 var $rundis$elm_bootstrap$Bootstrap$Alert$shown = 0;
 var $author$project$Main$addProblem = F2(
 	function (model, problem) {
+		var problems = model.H;
+		var newProblems = A2($elm$core$List$member, problem, problems) ? problems : A2($elm$core$List$cons, problem, problems);
 		return _Utils_update(
 			model,
-			{
-				am: $rundis$elm_bootstrap$Bootstrap$Alert$shown,
-				H: A2($elm$core$List$cons, problem, model.H)
-			});
+			{am: $rundis$elm_bootstrap$Bootstrap$Alert$shown, H: newProblems});
 	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $author$project$Main$Flags = F2(
@@ -7485,27 +7514,6 @@ var $rundis$elm_bootstrap$Bootstrap$Navbar$AnimatingUp = 4;
 var $rundis$elm_bootstrap$Bootstrap$Navbar$Closed = 2;
 var $rundis$elm_bootstrap$Bootstrap$Navbar$ListenClicks = 1;
 var $rundis$elm_bootstrap$Bootstrap$Navbar$Open = 0;
-var $elm$core$List$any = F2(
-	function (isOkay, list) {
-		any:
-		while (true) {
-			if (!list.b) {
-				return false;
-			} else {
-				var x = list.a;
-				var xs = list.b;
-				if (isOkay(x)) {
-					return true;
-				} else {
-					var $temp$isOkay = isOkay,
-						$temp$list = xs;
-					isOkay = $temp$isOkay;
-					list = $temp$list;
-					continue any;
-				}
-			}
-		}
-	});
 var $elm$core$Dict$map = F2(
 	function (func, dict) {
 		if (dict.$ === -2) {
@@ -10644,15 +10652,6 @@ var $author$project$Exposition$validateCopyright = function (copyright) {
 		return $elm$core$Result$Ok(something);
 	}
 };
-var $elm$core$List$member = F2(
-	function (x, xs) {
-		return A2(
-			$elm$core$List$any,
-			function (a) {
-				return _Utils_eq(a, x);
-			},
-			xs);
-	});
 var $author$project$Exposition$validateName = F3(
 	function (exp, obj, newName) {
 		if ($elm$core$String$length(newName) < 4) {

@@ -198,7 +198,19 @@ init flags =
 
 addProblem : Model -> Problems.Problem -> Model
 addProblem model problem =
-    { model | problems = problem :: model.problems, alertVisibility = Alert.shown }
+    let
+        problems =
+            model.problems
+
+        newProblems =
+            if List.member problem problems then
+                problems
+                -- to avoid huge stack of the same problem
+
+            else
+                problem :: problems
+    in
+    { model | problems = newProblems, alertVisibility = Alert.shown }
 
 
 addProblems : Model -> List Problems.Problem -> Model
