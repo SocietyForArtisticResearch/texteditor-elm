@@ -5775,7 +5775,7 @@ var $author$project$Main$addProblem = F2(
 			model,
 			{
 				am: $rundis$elm_bootstrap$Bootstrap$Alert$shown,
-				F: A2($elm$core$List$cons, problem, model.F)
+				H: A2($elm$core$List$cons, problem, model.H)
 			});
 	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
@@ -5847,7 +5847,7 @@ var $author$project$Main$emptyModel = F3(
 			r: _Utils_Tuple2($author$project$RCMediaList$empty, $rundis$elm_bootstrap$Bootstrap$Modal$hidden),
 			aA: $author$project$Main$Ready,
 			bb: navbarInitState,
-			F: _List_Nil,
+			H: _List_Nil,
 			s: research,
 			R: true,
 			aO: weave
@@ -7796,7 +7796,7 @@ var $author$project$Main$addProblems = F2(
 			model,
 			{
 				am: $rundis$elm_bootstrap$Bootstrap$Alert$shown,
-				F: _Utils_ap(problems, model.F)
+				H: _Utils_ap(problems, model.H)
 			});
 	});
 var $author$project$RCAPI$APIMedia = F4(
@@ -11444,7 +11444,7 @@ var $author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{F: _List_Nil}),
+							{H: _List_Nil}),
 						$elm$core$Platform$Cmd$none);
 				case 31:
 					var editor = msg.a;
@@ -16548,7 +16548,6 @@ var $elm_community$list_extra$List$Extra$uniqueBy = F2(
 		return A4($elm_community$list_extra$List$Extra$uniqueHelp, f, $elm$core$Set$empty, list, _List_Nil);
 	});
 var $author$project$Main$viewAlert = function (model) {
-	var uniqueProblems = A2($elm_community$list_extra$List$Extra$uniqueBy, $author$project$Problems$asString, model.F);
 	var isRealProblem = function (problem) {
 		if (problem.$ === 2) {
 			return false;
@@ -16556,7 +16555,8 @@ var $author$project$Main$viewAlert = function (model) {
 			return true;
 		}
 	};
-	var realProblems = A2($elm$core$List$filter, isRealProblem, model.F);
+	var realProblems = A2($elm$core$List$filter, isRealProblem, model.H);
+	var uniqueProblems = A2($elm_community$list_extra$List$Extra$uniqueBy, $author$project$Problems$asString, realProblems);
 	if (!uniqueProblems.b) {
 		return A2(
 			$elm$html$Html$div,
@@ -17912,7 +17912,7 @@ var $author$project$Main$view = function (model) {
 	}();
 	var confirmDialogHtml = $author$project$UserConfirm$view(model.aq);
 	var alert = function () {
-		var _v0 = model.F;
+		var _v0 = model.H;
 		if (!_v0.b) {
 			return A2($elm$html$Html$span, _List_Nil, _List_Nil);
 		} else {

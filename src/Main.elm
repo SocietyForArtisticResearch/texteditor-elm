@@ -1197,7 +1197,7 @@ viewAlert model =
             List.filter isRealProblem model.problems
 
         uniqueProblems =
-            uniqueBy Problems.asString model.problems
+            uniqueBy Problems.asString realProblems
     in
     case uniqueProblems of
         [] ->
