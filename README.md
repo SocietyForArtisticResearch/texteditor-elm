@@ -39,8 +39,8 @@ Casper:
 - Drag and drop 
 	<https://elm-lang.org/examples/drag-and-drop>
 
-- Upload progress for upload button in Media list is broken (becuase handled by main)
-- cursor position on mobile
+
+
 
 Luc:
 
@@ -59,6 +59,9 @@ Luc:
 
 ## DONE
 
+- friendlier and less repetitive errors (filtered on unique)
+- cursor position on mobile
+- Upload progress for upload button in Media list is broken (becuase handled by main)
 - Added meta-data link
 - Fixed preview on Firefox, optimized preview on all other platforms
 - Added sortable&searchable table / restructured RCMediaList & Picker
