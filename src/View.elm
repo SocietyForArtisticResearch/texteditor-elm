@@ -6,7 +6,7 @@ import Bootstrap.Utilities.Spacing as Spacing
 import Html exposing (Html, a, button, div, img, li, p, span, text, ul)
 import Html.Attributes exposing (attribute, class, for, href, id, src, style, title)
 import Html.Events exposing (on, onCheck, onClick, onInput)
-import Settings exposing (iconUrl)
+import Settings exposing (BuildType, iconUrl)
 
 
 type Icon
@@ -34,12 +34,12 @@ type Icon
     | CameraIcon
 
 
-renderIcon : Icon -> Html msg
-renderIcon icon =
+renderIcon : BuildType -> Icon -> Html msg
+renderIcon buildTarget icon =
     let
         iconImg url =
             img
-                [ src (iconUrl ++ url)
+                [ src (iconUrl buildTarget ++ url)
                 , class "m-1"
                 , Html.Attributes.width 15
                 , Html.Attributes.height 15
@@ -142,8 +142,8 @@ defaultButton message =
     }
 
 
-mkButton : ButtonInfo msg -> Html msg
-mkButton props =
+mkButton : BuildType -> ButtonInfo msg -> Html msg
+mkButton buildTarget props =
     let
         spacing =
             if props.offset then
@@ -171,7 +171,7 @@ mkButton props =
                 ]
                 (List.append spacing props.otherAttrs)
         ]
-        [ renderIcon props.icon
+        [ renderIcon buildTarget props.icon
         , text props.text
         ]
 

@@ -1,68 +1,80 @@
-module Settings exposing (Snippet(..), baseDomain, baseUrl, editorVersion, iconUrl, snippet)
+module Settings exposing (BuildType, baseDomain, baseUrl, buildTypeFromString, defaultBuildType, editorVersion, iconUrl, select)
 
 
 editorVersion : String
 editorVersion =
-    "2.1.0"
+    "2.1.1"
 
 
-baseUrl : String
-baseUrl =
-    "elm-editor/"
+
+-- buildTarget =
+--     Local
 
 
-baseDomain : String
-baseDomain =
-    "https://www.researchcatalogue.net"
+type BuildType
+    = Dev
+    | Release
+    | Local
 
 
-iconUrl : String
-iconUrl =
-    baseUrl ++ "lib/icons/"
+defaultBuildType =
+    Release
 
 
-type Snippet
-    = Bold
-    | Italic
-    | H1
-    | H2
-    | H3
-    | H4
-    | Bullet
-    | Numbered
-    | Quote
-    | Link
-
-
-snippet : Snippet -> ( String, Int )
-snippet s =
+buildTypeFromString : String -> BuildType
+buildTypeFromString s =
     case s of
-        Bold ->
-            ( "****", -2 )
+        "Dev" ->
+            Dev
 
-        Italic ->
-            ( "__", -1 )
+        "Release" ->
+            Release
 
-        H1 ->
-            ( "# ", 0 )
+        "Local" ->
+            Local
 
-        H2 ->
-            ( "## ", 0 )
+        _ ->
+            defaultBuildType
 
-        H3 ->
-            ( "### ", 0 )
 
-        H4 ->
-            ( "#### ", 0 )
+type alias BuildSetting =
+    { release : String
+    , dev : String
+    , local : String
+    }
 
-        Bullet ->
-            ( "* ", 0 )
 
-        Numbered ->
-            ( "1. ", 0 )
+select : BuildType -> BuildSetting -> String
+select t =
+    case t of
+        Dev ->
+            .dev
 
-        Quote ->
-            ( "> ", 0 )
+        Release ->
+            .release
 
-        Link ->
-            ( "[](http://)", -10 )
+        Local ->
+            .local
+
+
+baseUrl : BuildType -> String
+baseUrl buildTarget =
+    select buildTarget <|
+        BuildSetting
+            "elm-editor/"
+            "elm-editor/"
+            ""
+
+
+baseDomain : BuildType -> String
+baseDomain buildTarget =
+    select buildTarget <|
+        BuildSetting
+            "https://www.researchcatalogue.net"
+            "https://dev.researchcatalogue.net"
+            ""
+
+
+iconUrl : BuildType -> String
+iconUrl buildTarget =
+    baseUrl buildTarget ++ "lib/icons/"

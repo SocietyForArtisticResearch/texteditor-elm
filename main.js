@@ -5785,17 +5785,39 @@ var $author$project$Main$addProblem = F2(
 			});
 	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
-var $author$project$Main$Flags = F2(
-	function (weave, research) {
-		return {research: research, weave: weave};
+var $author$project$Main$Flags = F3(
+	function (weave, research, buildTarget) {
+		return {buildTarget: buildTarget, research: research, weave: weave};
 	});
+var $author$project$Settings$Dev = {$: 'Dev'};
+var $author$project$Settings$Local = {$: 'Local'};
+var $author$project$Settings$Release = {$: 'Release'};
+var $author$project$Settings$defaultBuildType = $author$project$Settings$Release;
+var $author$project$Settings$buildTypeFromString = function (s) {
+	switch (s) {
+		case 'Dev':
+			return $author$project$Settings$Dev;
+		case 'Release':
+			return $author$project$Settings$Release;
+		case 'Local':
+			return $author$project$Settings$Local;
+		default:
+			return $author$project$Settings$defaultBuildType;
+	}
+};
 var $elm$json$Json$Decode$field = _Json_decodeField;
 var $elm$json$Json$Decode$int = _Json_decodeInt;
-var $author$project$Main$decodeFlags = A3(
-	$elm$json$Json$Decode$map2,
+var $elm$json$Json$Decode$map3 = _Json_map3;
+var $elm$json$Json$Decode$string = _Json_decodeString;
+var $author$project$Main$decodeFlags = A4(
+	$elm$json$Json$Decode$map3,
 	$author$project$Main$Flags,
 	A2($elm$json$Json$Decode$field, 'weave', $elm$json$Json$Decode$int),
-	A2($elm$json$Json$Decode$field, 'research', $elm$json$Json$Decode$int));
+	A2($elm$json$Json$Decode$field, 'research', $elm$json$Json$Decode$int),
+	A2(
+		$elm$json$Json$Decode$map,
+		$author$project$Settings$buildTypeFromString,
+		A2($elm$json$Json$Decode$field, 'buildTarget', $elm$json$Json$Decode$string)));
 var $elm$json$Json$Decode$decodeValue = _Json_run;
 var $author$project$Main$CodemirrorMarkdown = {$: 'CodemirrorMarkdown'};
 var $author$project$Main$EditorMarkdown = {$: 'EditorMarkdown'};
@@ -5804,7 +5826,7 @@ var $rundis$elm_bootstrap$Bootstrap$Alert$Closed = {$: 'Closed'};
 var $rundis$elm_bootstrap$Bootstrap$Alert$closed = $rundis$elm_bootstrap$Bootstrap$Alert$Closed;
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
-var $author$project$Settings$editorVersion = '2.0.0';
+var $author$project$Settings$editorVersion = '2.1.1';
 var $author$project$Exposition$empty = {authors: _List_Nil, contentVersion: 0, css: '', currentWeave: 0, editorVersion: $author$project$Settings$editorVersion, id: 0, markdownInput: '', media: _List_Nil, renderedHtml: '', title: '', toc: _List_Nil};
 var $rundis$elm_bootstrap$Bootstrap$Modal$Hide = {$: 'Hide'};
 var $rundis$elm_bootstrap$Bootstrap$Modal$hidden = $rundis$elm_bootstrap$Bootstrap$Modal$Hide;
@@ -5839,10 +5861,11 @@ var $rundis$elm_bootstrap$Bootstrap$Dropdown$initialState = $rundis$elm_bootstra
 var $elm$core$Basics$negate = function (n) {
 	return -n;
 };
-var $author$project$Main$emptyModel = F3(
-	function (navbarInitState, research, weave) {
+var $author$project$Main$emptyModel = F4(
+	function (navbarInitState, buildType, research, weave) {
 		return {
 			alertVisibility: $rundis$elm_bootstrap$Bootstrap$Alert$closed,
+			buildTarget: buildType,
 			confirmDialog: $author$project$UserConfirm$empty,
 			editGeneration: _Utils_Tuple2(-1, -1),
 			editor: _Utils_Tuple2($author$project$Main$EditorMarkdown, $author$project$Main$CodemirrorMarkdown),
@@ -5866,7 +5889,6 @@ var $author$project$RCAPI$APIAdditionalMediaMetadata = F3(
 	function (id, name, userClass) {
 		return {id: id, name: name, userClass: userClass};
 	});
-var $elm$json$Json$Decode$map3 = _Json_map3;
 var $elm$json$Json$Decode$oneOf = _Json_oneOf;
 var $elm$json$Json$Decode$maybe = function (decoder) {
 	return $elm$json$Json$Decode$oneOf(
@@ -5876,7 +5898,6 @@ var $elm$json$Json$Decode$maybe = function (decoder) {
 				$elm$json$Json$Decode$succeed($elm$core$Maybe$Nothing)
 			]));
 };
-var $elm$json$Json$Decode$string = _Json_decodeString;
 var $author$project$RCAPI$apiAdditionalMediaMetadata = A4(
 	$elm$json$Json$Decode$map3,
 	$author$project$RCAPI$APIAdditionalMediaMetadata,
@@ -6803,16 +6824,19 @@ var $rundis$elm_bootstrap$Bootstrap$Navbar$initialState = function (toMsg) {
 		state,
 		A2($rundis$elm_bootstrap$Bootstrap$Navbar$initWindowSize, toMsg, state));
 };
+var $elm$core$Debug$log = _Debug_log;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$init = function (flags) {
 	var _v0 = $rundis$elm_bootstrap$Bootstrap$Navbar$initialState($author$project$Main$NavbarMsg);
 	var navbarState = _v0.a;
 	var navCmd = _v0.b;
-	var _v1 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$decodeFlags, flags);
-	if (_v1.$ === 'Ok') {
-		var fl = _v1.a;
+	var _v1 = A2($elm$core$Debug$log, 'flags values', flags);
+	var _v2 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$decodeFlags, flags);
+	if (_v2.$ === 'Ok') {
+		var fl = _v2.a;
+		var _v3 = A2($elm$core$Debug$log, 'flags', fl);
 		return _Utils_Tuple2(
-			A3($author$project$Main$emptyModel, navbarState, fl.research, fl.weave),
+			A4($author$project$Main$emptyModel, navbarState, fl.buildTarget, fl.research, fl.weave),
 			$elm$core$Platform$Cmd$batch(
 				_List_fromArray(
 					[
@@ -6820,10 +6844,12 @@ var $author$project$Main$init = function (flags) {
 						A3($author$project$RCAPI$getExposition, fl.research, fl.weave, $author$project$Main$GotExposition)
 					])));
 	} else {
+		var e = _v2.a;
+		var _v4 = A2($elm$core$Debug$log, 'flags error', e);
 		return _Utils_Tuple2(
 			A2(
 				$author$project$Main$addProblem,
-				A3($author$project$Main$emptyModel, navbarState, -1, -1),
+				A4($author$project$Main$emptyModel, navbarState, $author$project$Settings$defaultBuildType, -1, -1),
 				$author$project$Problems$WrongExpositionUrl),
 			$elm$core$Platform$Cmd$none);
 	}
@@ -7955,7 +7981,32 @@ var $author$project$Main$confirmObjectDelete = function (object) {
 		{confirm: 'Delete', prompt: object.name + ' is about to be deleted. Are you sure?', reject: 'Keep'});
 	return A3($author$project$UserConfirm$Model, $rundis$elm_bootstrap$Bootstrap$Modal$shown, content, messages);
 };
-var $author$project$Settings$baseDomain = 'https://dev.researchcatalogue.net';
+var $author$project$Settings$BuildSetting = F3(
+	function (release, dev, local) {
+		return {dev: dev, local: local, release: release};
+	});
+var $author$project$Settings$select = function (t) {
+	switch (t.$) {
+		case 'Dev':
+			return function ($) {
+				return $.dev;
+			};
+		case 'Release':
+			return function ($) {
+				return $.release;
+			};
+		default:
+			return function ($) {
+				return $.local;
+			};
+	}
+};
+var $author$project$Settings$baseDomain = function (buildTarget) {
+	return A2(
+		$author$project$Settings$select,
+		buildTarget,
+		A3($author$project$Settings$BuildSetting, 'https://www.researchcatalogue.net', 'https://dev.researchcatalogue.net', '/'));
+};
 var $elm$http$Http$expectBytesResponse = F2(
 	function (toMsg, toResult) {
 		return A3(
@@ -8116,12 +8167,13 @@ var $author$project$RCAPI$typeEnding = function (t) {
 			return 'epub';
 	}
 };
-var $author$project$RCAPI$convertExposition = F3(
-	function (ctype, expo, expectMsg) {
+var $author$project$RCAPI$convertExposition = F4(
+	function (buildType, ctype, expo, expectMsg) {
 		var exportExpoMd = A2(
 			$author$project$Exposition$replaceToolsWithImages,
 			expo,
-			$elm$core$Maybe$Just($author$project$Settings$baseDomain));
+			$elm$core$Maybe$Just(
+				$author$project$Settings$baseDomain(buildType)));
 		return $elm$http$Http$post(
 			{
 				body: $elm$http$Http$multipartBody(
@@ -10390,6 +10442,35 @@ var $author$project$Problems$splitResultListAcc = F3(
 var $author$project$Problems$splitResultList = function (results) {
 	return A3($author$project$Problems$splitResultListAcc, results, _List_Nil, _List_Nil);
 };
+var $author$project$FileTypes$Audio = {$: 'Audio'};
+var $author$project$FileTypes$Image = {$: 'Image'};
+var $author$project$FileTypes$Pdf = {$: 'Pdf'};
+var $author$project$FileTypes$Svg = {$: 'Svg'};
+var $author$project$FileTypes$Video = {$: 'Video'};
+var $author$project$FileTypes$dict = $elm$core$Dict$fromList(
+	_List_fromArray(
+		[
+			_Utils_Tuple2('image/jpeg', $author$project$FileTypes$Image),
+			_Utils_Tuple2('image/jpg', $author$project$FileTypes$Image),
+			_Utils_Tuple2('image/png', $author$project$FileTypes$Image),
+			_Utils_Tuple2('image/gif', $author$project$FileTypes$Image),
+			_Utils_Tuple2('image/tiff', $author$project$FileTypes$Image),
+			_Utils_Tuple2('image/svg+xml', $author$project$FileTypes$Svg),
+			_Utils_Tuple2('audio/mp3', $author$project$FileTypes$Audio),
+			_Utils_Tuple2('audio/wav', $author$project$FileTypes$Audio),
+			_Utils_Tuple2('audio/x-wav', $author$project$FileTypes$Audio),
+			_Utils_Tuple2('audio/aiff', $author$project$FileTypes$Audio),
+			_Utils_Tuple2('audio/x-aiff', $author$project$FileTypes$Audio),
+			_Utils_Tuple2('application/pdf', $author$project$FileTypes$Pdf),
+			_Utils_Tuple2('audio/ogg', $author$project$FileTypes$Audio),
+			_Utils_Tuple2('audio/aif', $author$project$FileTypes$Audio),
+			_Utils_Tuple2('video/mp4', $author$project$FileTypes$Video),
+			_Utils_Tuple2('video/mpeg', $author$project$FileTypes$Video),
+			_Utils_Tuple2('video/ogv', $author$project$FileTypes$Video),
+			_Utils_Tuple2('video/quicktime', $author$project$FileTypes$Video),
+			_Utils_Tuple2('audio/x-m4a', $author$project$FileTypes$Audio)
+		]));
+var $author$project$FileTypes$strings = $elm$core$Dict$keys($author$project$FileTypes$dict);
 var $author$project$RCAPI$decodeMedia = function (exp) {
 	var mediaField = function () {
 		var _v0 = exp.media;
@@ -10584,11 +10665,18 @@ var $author$project$RCMediaList$update = F2(
 					{state: state});
 			default:
 				var id = message.a;
+				var newId = function () {
+					var _v1 = model.previewedMediaId;
+					if (_v1.$ === 'Just') {
+						var currentId = _v1.a;
+						return _Utils_eq(id, currentId) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(id);
+					} else {
+						return $elm$core$Maybe$Just(id);
+					}
+				}();
 				return _Utils_update(
 					model,
-					{
-						previewedMediaId: $elm$core$Maybe$Just(id)
-					});
+					{previewedMediaId: newId});
 		}
 	});
 var $author$project$Main$updateEditorContent = function (model) {
@@ -10826,65 +10914,20 @@ var $author$project$RCAPI$uploadImport = F3(
 				url: 'text-editor/import' + ('?research=' + $elm$core$String$fromInt(researchId))
 			});
 	});
-var $author$project$RCAPI$MAudio = {$: 'MAudio'};
-var $author$project$RCAPI$MImage = {$: 'MImage'};
-var $author$project$RCAPI$MPdf = {$: 'MPdf'};
-var $author$project$RCAPI$MVideo = {$: 'MVideo'};
-var $elm$file$File$mime = _File_mime;
-var $author$project$RCAPI$mediaType = function (f) {
-	var _v0 = $elm$file$File$mime(f);
-	switch (_v0) {
-		case 'image/gif':
-			return $elm$core$Maybe$Just($author$project$RCAPI$MImage);
-		case 'image/jpg':
-			return $elm$core$Maybe$Just($author$project$RCAPI$MImage);
-		case 'image/jpeg':
-			return $elm$core$Maybe$Just($author$project$RCAPI$MImage);
-		case 'image/png':
-			return $elm$core$Maybe$Just($author$project$RCAPI$MImage);
-		case 'image/tiff':
-			return $elm$core$Maybe$Just($author$project$RCAPI$MImage);
-		case 'image/svg+xml':
-			return $elm$core$Maybe$Just($author$project$RCAPI$MImage);
-		case 'audio/mp3':
-			return $elm$core$Maybe$Just($author$project$RCAPI$MAudio);
-		case 'audio/wav':
-			return $elm$core$Maybe$Just($author$project$RCAPI$MAudio);
-		case 'audio/x-wav':
-			return $elm$core$Maybe$Just($author$project$RCAPI$MAudio);
-		case 'audio/mpeg':
-			return $elm$core$Maybe$Just($author$project$RCAPI$MAudio);
-		case 'audio/ogg':
-			return $elm$core$Maybe$Just($author$project$RCAPI$MAudio);
-		case 'audio/aiff':
-			return $elm$core$Maybe$Just($author$project$RCAPI$MAudio);
-		case 'audio/x-aiff':
-			return $elm$core$Maybe$Just($author$project$RCAPI$MAudio);
-		case 'video/mp4':
-			return $elm$core$Maybe$Just($author$project$RCAPI$MVideo);
-		case 'video/mpeg':
-			return $elm$core$Maybe$Just($author$project$RCAPI$MVideo);
-		case 'video/ogv':
-			return $elm$core$Maybe$Just($author$project$RCAPI$MVideo);
-		case 'application/pdf':
-			return $elm$core$Maybe$Just($author$project$RCAPI$MPdf);
-		case 'video/quicktime':
-			return $elm$core$Maybe$Just($author$project$RCAPI$MVideo);
-		case 'audio/x-m4a':
-			return $elm$core$Maybe$Just($author$project$RCAPI$MAudio);
-		default:
-			return $elm$core$Maybe$Nothing;
-	}
+var $author$project$FileTypes$fromString = function (mime) {
+	return A2($elm$core$Dict$get, mime, $author$project$FileTypes$dict);
 };
-var $author$project$RCAPI$stringOfUploadMediaType = function (t) {
+var $elm$file$File$mime = _File_mime;
+var $author$project$FileTypes$fromFile = A2($elm$core$Basics$composeL, $author$project$FileTypes$fromString, $elm$file$File$mime);
+var $author$project$FileTypes$toString = function (t) {
 	switch (t.$) {
-		case 'MAudio':
+		case 'Audio':
 			return 'audio';
-		case 'MVideo':
+		case 'Video':
 			return 'video';
-		case 'MImage':
+		case 'Image':
 			return 'image';
-		case 'MPdf':
+		case 'Pdf':
 			return 'pdf';
 		default:
 			return 'image';
@@ -10892,7 +10935,7 @@ var $author$project$RCAPI$stringOfUploadMediaType = function (t) {
 };
 var $author$project$RCAPI$uploadMedia = F5(
 	function (researchId, mediaName, file, expect, badFileTypeMsg) {
-		var mediaT = $author$project$RCAPI$mediaType(file);
+		var mediaT = $author$project$FileTypes$fromFile(file);
 		if (mediaT.$ === 'Nothing') {
 			return A2(
 				$elm$core$Task$perform,
@@ -10911,7 +10954,7 @@ var $author$project$RCAPI$uploadMedia = F5(
 								A2(
 								$elm$http$Http$stringPart,
 								'mediatype',
-								$author$project$RCAPI$stringOfUploadMediaType(m)),
+								$author$project$FileTypes$toString(m)),
 								A2($elm$http$Http$stringPart, 'name', mediaName),
 								A2($elm$http$Http$stringPart, 'copyrightholder', 'copyright holder'),
 								A2($elm$http$Http$stringPart, 'description', 'description'),
@@ -10930,11 +10973,7 @@ var $author$project$RCAPI$uploadMedia = F5(
 				});
 		}
 	});
-var $author$project$Main$uploadMediaFilePrompt = A2(
-	$elm$file$File$Select$file,
-	_List_fromArray(
-		['image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/svg+xml', 'audio/mp3', 'audio/wav', 'audio/aiff', 'application/pdf', 'audio/ogg', 'audio/aif', 'video/mp4', 'video/mpeg', 'video/ogv', 'video/quicktime']),
-	$author$project$Main$UploadMediaFileSelected);
+var $author$project$Main$uploadMediaFilePrompt = A2($elm$file$File$Select$file, $author$project$FileTypes$strings, $author$project$Main$UploadMediaFileSelected);
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		update:
@@ -11277,11 +11316,7 @@ var $author$project$Main$update = F2(
 				case 'UploadMediaFileSelect':
 					return _Utils_Tuple2(
 						model,
-						A2(
-							$elm$file$File$Select$file,
-							_List_fromArray(
-								['image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/svg+xml', 'audio/mp3', 'audio/wav', 'audio/aiff', 'application/pdf', 'audio/ogg', 'audio/aif', 'video/mp4', 'video/mpeg', 'video/ogv', 'video/quicktime', 'quicktime/x-m4a']),
-							$author$project$Main$UploadMediaFileSelected));
+						A2($elm$file$File$Select$file, $author$project$FileTypes$strings, $author$project$Main$UploadMediaFileSelected));
 				case 'UploadMediaFileSelected':
 					var file = msg.a;
 					return _Utils_Tuple2(
@@ -11310,7 +11345,7 @@ var $author$project$Main$update = F2(
 					var ctype = msg.a;
 					return _Utils_Tuple2(
 						model,
-						A3($author$project$RCAPI$convertExposition, ctype, model.exposition, $author$project$Main$DownloadExport));
+						A4($author$project$RCAPI$convertExposition, model.buildTarget, ctype, model.exposition, $author$project$Main$DownloadExport));
 				case 'DownloadExport':
 					var ctype = msg.a;
 					var result = msg.b;
@@ -11472,6 +11507,12 @@ var $author$project$Main$update = F2(
 						_Utils_update(
 							model,
 							{alertVisibility: visibility}),
+						$elm$core$Platform$Cmd$none);
+				case 'DismissAllProblems':
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{problems: _List_Nil}),
 						$elm$core$Platform$Cmd$none);
 				case 'SwitchMarkdownEditor':
 					var editor = msg.a;
@@ -12219,13 +12260,17 @@ var $billstclair$elm_sortable_table$Table$stringColumn = F2(
 				viewData: A2($elm$core$Basics$composeL, $billstclair$elm_sortable_table$Table$textDetails, toStr)
 			});
 	});
-var $author$project$RCMediaPreview$PreviewButton = function (a) {
-	return {$: 'PreviewButton', a: a};
-};
+var $author$project$RCMediaPreview$PreviewPlayer = {$: 'PreviewPlayer'};
 var $author$project$RCMediaPreview$PreviewSmall = {$: 'PreviewSmall'};
 var $author$project$RCMediaList$SetPreviewMediaId = function (a) {
 	return {$: 'SetPreviewMediaId', a: a};
 };
+var $author$project$Exposition$getMediaTypeString = A2(
+	$elm$core$Basics$composeL,
+	$author$project$Exposition$rcClass,
+	function ($) {
+		return $.mediaType;
+	});
 var $author$project$View$CameraIcon = {$: 'CameraIcon'};
 var $author$project$View$SpeakerIcon = {$: 'SpeakerIcon'};
 var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty('alt');
@@ -12235,8 +12280,15 @@ var $elm$html$Html$Attributes$height = function (n) {
 		'height',
 		$elm$core$String$fromInt(n));
 };
-var $author$project$Settings$baseUrl = 'elm-editor/';
-var $author$project$Settings$iconUrl = $author$project$Settings$baseUrl + 'lib/icons/';
+var $author$project$Settings$baseUrl = function (buildTarget) {
+	return A2(
+		$author$project$Settings$select,
+		buildTarget,
+		A3($author$project$Settings$BuildSetting, 'elm-editor/', 'elm-editor/', '/'));
+};
+var $author$project$Settings$iconUrl = function (buildTarget) {
+	return $author$project$Settings$baseUrl(buildTarget) + 'lib/icons/';
+};
 var $elm$html$Html$img = _VirtualDom_node('img');
 var $elm$html$Html$Attributes$src = function (url) {
 	return A2(
@@ -12250,87 +12302,87 @@ var $elm$html$Html$Attributes$width = function (n) {
 		'width',
 		$elm$core$String$fromInt(n));
 };
-var $author$project$View$renderIcon = function (icon) {
-	var iconImg = function (url) {
-		return A2(
-			$elm$html$Html$img,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$src(
-					_Utils_ap($author$project$Settings$iconUrl, url)),
-					$elm$html$Html$Attributes$class('m-1'),
-					$elm$html$Html$Attributes$width(15),
-					$elm$html$Html$Attributes$height(15),
-					A2($elm$html$Html$Attributes$style, 'position', 'relative'),
-					A2($elm$html$Html$Attributes$style, 'top', '-2px'),
-					$elm$html$Html$Attributes$alt(
-					A3($elm$core$String$slice, 0, -4, url))
-				]),
-			_List_Nil);
-	};
-	switch (icon.$) {
-		case 'NoIcon':
-			return A2($elm$html$Html$div, _List_Nil, _List_Nil);
-		case 'PlusIcon':
-			return iconImg('plus.svg');
-		case 'ImportIcon':
-			return iconImg('import-export.svg');
-		case 'SaveIcon':
-			return iconImg('save.svg');
-		case 'ItalicIcon':
-			return iconImg('italic.svg');
-		case 'LinkIcon':
-			return iconImg('link-intact.svg');
-		case 'BoldIcon':
-			return iconImg('bold.svg');
-		case 'ListIcon':
-			return iconImg('list-unordered.svg');
-		case 'NumberedIcon':
-			return iconImg('list-ordered.svg');
-		case 'HeaderIcon':
-			return iconImg('header.svg');
-		case 'QuoteIcon':
-			return iconImg('double-quote-sans-left.svg');
-		case 'ArrowDown':
-			return iconImg('arrow-down.svg');
-		case 'UploadCloud':
-			return iconImg('cloud-upload.svg');
-		case 'EyeIcon':
-			return iconImg('eye.svg');
-		case 'UndoIcon':
-			return iconImg('undo.svg');
-		case 'RedoIcon':
-			return iconImg('redo.svg');
-		case 'FullScreenIcon':
-			return iconImg('screen-full.svg');
-		case 'NormalScreenIcon':
-			return iconImg('screen-normal.svg');
-		case 'MediaIcon':
-			return iconImg('file-media.svg');
-		case 'TriangleRight':
-			return iconImg('triangle-right.svg');
-		case 'SpeakerIcon':
-			return iconImg('unmute.svg');
-		default:
-			return iconImg('device-camera-video.svg');
-	}
-};
-var $elm$html$Html$Attributes$target = $elm$html$Html$Attributes$stringProperty('target');
+var $author$project$View$renderIcon = F2(
+	function (buildTarget, icon) {
+		var iconImg = function (url) {
+			return A2(
+				$elm$html$Html$img,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$src(
+						_Utils_ap(
+							$author$project$Settings$iconUrl(buildTarget),
+							url)),
+						$elm$html$Html$Attributes$class('m-1'),
+						$elm$html$Html$Attributes$width(15),
+						$elm$html$Html$Attributes$height(15),
+						A2($elm$html$Html$Attributes$style, 'position', 'relative'),
+						A2($elm$html$Html$Attributes$style, 'top', '-2px'),
+						$elm$html$Html$Attributes$alt(
+						A3($elm$core$String$slice, 0, -4, url))
+					]),
+				_List_Nil);
+		};
+		switch (icon.$) {
+			case 'NoIcon':
+				return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+			case 'PlusIcon':
+				return iconImg('plus.svg');
+			case 'ImportIcon':
+				return iconImg('import-export.svg');
+			case 'SaveIcon':
+				return iconImg('save.svg');
+			case 'ItalicIcon':
+				return iconImg('italic.svg');
+			case 'LinkIcon':
+				return iconImg('link-intact.svg');
+			case 'BoldIcon':
+				return iconImg('bold.svg');
+			case 'ListIcon':
+				return iconImg('list-unordered.svg');
+			case 'NumberedIcon':
+				return iconImg('list-ordered.svg');
+			case 'HeaderIcon':
+				return iconImg('header.svg');
+			case 'QuoteIcon':
+				return iconImg('double-quote-sans-left.svg');
+			case 'ArrowDown':
+				return iconImg('arrow-down.svg');
+			case 'UploadCloud':
+				return iconImg('cloud-upload.svg');
+			case 'EyeIcon':
+				return iconImg('eye.svg');
+			case 'UndoIcon':
+				return iconImg('undo.svg');
+			case 'RedoIcon':
+				return iconImg('redo.svg');
+			case 'FullScreenIcon':
+				return iconImg('screen-full.svg');
+			case 'NormalScreenIcon':
+				return iconImg('screen-normal.svg');
+			case 'MediaIcon':
+				return iconImg('file-media.svg');
+			case 'TriangleRight':
+				return iconImg('triangle-right.svg');
+			case 'SpeakerIcon':
+				return iconImg('unmute.svg');
+			default:
+				return iconImg('device-camera-video.svg');
+		}
+	});
 var $elm$html$Html$Attributes$title = $elm$html$Html$Attributes$stringProperty('title');
-var $author$project$RCMediaPreview$renderAsIconHyperlink = F2(
-	function (icon, object) {
+var $author$project$RCMediaPreview$renderAsIconHyperlink = F4(
+	function (buildType, icon, object, clickAction) {
 		return A2(
 			$elm$html$Html$a,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$href(
-					$author$project$Exposition$mediaUrl(object)),
-					$elm$html$Html$Attributes$target('_blank'),
-					$elm$html$Html$Attributes$title('preview audio ' + object.name)
+					$elm$html$Html$Attributes$title('preview audio ' + object.name),
+					$elm$html$Html$Events$onClick(clickAction)
 				]),
 			_List_fromArray(
 				[
-					$author$project$View$renderIcon(icon)
+					A2($author$project$View$renderIcon, buildType, icon)
 				]));
 	});
 var $author$project$Exposition$customThumbUrl = F2(
@@ -12379,8 +12431,9 @@ var $author$project$RCMediaPreview$renderAsMini = F2(
 			_List_Nil);
 	});
 var $author$project$View$TriangleRight = {$: 'TriangleRight'};
-var $author$project$RCMediaPreview$renderMediaAsHyperlink = F2(
-	function (typeString, object) {
+var $elm$html$Html$Attributes$target = $elm$html$Html$Attributes$stringProperty('target');
+var $author$project$RCMediaPreview$renderMediaAsHyperlink = F3(
+	function (buildType, typeString, object) {
 		return A2(
 			$elm$html$Html$span,
 			_List_fromArray(
@@ -12401,7 +12454,7 @@ var $author$project$RCMediaPreview$renderMediaAsHyperlink = F2(
 						]),
 					_List_fromArray(
 						[
-							$author$project$View$renderIcon($author$project$View$TriangleRight)
+							A2($author$project$View$renderIcon, buildType, $author$project$View$TriangleRight)
 						]))
 				]));
 	});
@@ -12449,7 +12502,8 @@ var $author$project$RCMediaPreview$viewThumbnail = F2(
 							$elm$html$Html$Attributes$class('audio-preview'),
 							$elm$html$Html$Attributes$preload('none'),
 							A2($elm$html$Html$Attributes$style, 'width', '200px'),
-							A2($elm$html$Html$Attributes$style, 'position', 'absolute')
+							A2($elm$html$Html$Attributes$style, 'position', 'relative'),
+							A2($elm$html$Html$Attributes$style, 'top', '0')
 						]),
 					_List_fromArray(
 						[
@@ -12477,7 +12531,8 @@ var $author$project$RCMediaPreview$viewThumbnail = F2(
 								$elm$html$Html$Attributes$class('video-preview'),
 								$elm$html$Html$Attributes$preload('none'),
 								A2($elm$html$Html$Attributes$style, 'width', '200px'),
-								A2($elm$html$Html$Attributes$style, 'position', 'absolute')
+								A2($elm$html$Html$Attributes$style, 'position', 'relative'),
+								A2($elm$html$Html$Attributes$style, 'top', '0')
 							]),
 						$author$project$RCMediaPreview$getStyle(size)),
 					_List_fromArray(
@@ -12501,8 +12556,8 @@ var $author$project$RCMediaPreview$viewThumbnail = F2(
 						]));
 		}
 	});
-var $author$project$RCMediaPreview$viewTableThumbnail = F2(
-	function (object, size) {
+var $author$project$RCMediaPreview$viewTableThumbnail = F4(
+	function (buildType, object, size, clickAction) {
 		var _v0 = object.mediaType;
 		switch (_v0.$) {
 			case 'RCImage':
@@ -12511,80 +12566,79 @@ var $author$project$RCMediaPreview$viewTableThumbnail = F2(
 				return A2($author$project$RCMediaPreview$renderAsMini, object, size);
 			case 'RCAudio':
 				var settings = _v0.a;
-				switch (size.$) {
-					case 'PreviewLink':
-						return A2($author$project$RCMediaPreview$renderAsIconHyperlink, $author$project$View$SpeakerIcon, object);
-					case 'PreviewPlayer':
-						return A2($author$project$RCMediaPreview$viewThumbnail, object, size);
-					case 'PreviewButton':
-						var msg = size.a;
-						return A2(
-							$elm$html$Html$button,
-							_List_fromArray(
-								[
-									$elm$html$Html$Events$onClick(msg)
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('preview')
-								]));
-					default:
-						return A2($elm$html$Html$span, _List_Nil, _List_Nil);
+				var thumb = A2($author$project$RCMediaPreview$viewThumbnail, object, size);
+				if (size.$ === 'PreviewPlayer') {
+					return A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A4($author$project$RCMediaPreview$renderAsIconHyperlink, buildType, $author$project$View$SpeakerIcon, object, clickAction),
+								thumb
+							]));
+				} else {
+					return A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A4($author$project$RCMediaPreview$renderAsIconHyperlink, buildType, $author$project$View$SpeakerIcon, object, clickAction)
+							]));
 				}
 			case 'RCVideo':
 				var settings = _v0.a;
-				switch (size.$) {
-					case 'PreviewLink':
-						return A2($author$project$RCMediaPreview$renderAsIconHyperlink, $author$project$View$CameraIcon, object);
-					case 'PreviewPlayer':
-						return A2($author$project$RCMediaPreview$viewThumbnail, object, size);
-					case 'PreviewButton':
-						var msg = size.a;
-						return A2(
-							$elm$html$Html$button,
-							_List_fromArray(
-								[
-									$elm$html$Html$Events$onClick(msg)
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('preview')
-								]));
-					default:
-						return A2($elm$html$Html$span, _List_Nil, _List_Nil);
+				var thumb = A2($author$project$RCMediaPreview$viewThumbnail, object, size);
+				if (size.$ === 'PreviewPlayer') {
+					return A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A4($author$project$RCMediaPreview$renderAsIconHyperlink, buildType, $author$project$View$CameraIcon, object, clickAction),
+								thumb
+							]));
+				} else {
+					return A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A4($author$project$RCMediaPreview$renderAsIconHyperlink, buildType, $author$project$View$CameraIcon, object, clickAction)
+							]));
 				}
 			default:
-				return A2($author$project$RCMediaPreview$renderMediaAsHyperlink, 'PDF', object);
+				return A3($author$project$RCMediaPreview$renderMediaAsHyperlink, buildType, 'PDF', object);
 		}
 	});
-var $author$project$RCMediaList$thumbnailColumn = function (previewedMediaId) {
-	return $billstclair$elm_sortable_table$Table$veryCustomColumn(
-		{
-			name: 'Preview',
-			sorter: $billstclair$elm_sortable_table$Table$unsortable,
-			viewData: function (rcObject) {
-				var size = function () {
-					if (previewedMediaId.$ === 'Just') {
-						var id = previewedMediaId.a;
-						return _Utils_eq(id, rcObject.id) ? $author$project$RCMediaPreview$PreviewButton(
-							$author$project$RCMediaList$SortableTableMessage(
-								$author$project$RCMediaList$SetPreviewMediaId(rcObject.id))) : $author$project$RCMediaPreview$PreviewSmall;
-					} else {
-						return $author$project$RCMediaPreview$PreviewSmall;
-					}
-				}();
-				return A2(
-					$billstclair$elm_sortable_table$Table$HtmlDetails,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2($author$project$RCMediaPreview$viewTableThumbnail, rcObject, size)
-						]));
-			}
-		});
-};
-var $author$project$RCMediaList$configMediaList = F2(
-	function (previewedMediaId, messages) {
+var $author$project$RCMediaList$thumbnailColumn = F2(
+	function (buildType, previewedMediaId) {
+		return $billstclair$elm_sortable_table$Table$veryCustomColumn(
+			{
+				name: 'Preview',
+				sorter: $billstclair$elm_sortable_table$Table$increasingOrDecreasingBy($author$project$Exposition$getMediaTypeString),
+				viewData: function (rcObject) {
+					var size = function () {
+						if (previewedMediaId.$ === 'Just') {
+							var id = previewedMediaId.a;
+							return _Utils_eq(id, rcObject.id) ? $author$project$RCMediaPreview$PreviewPlayer : $author$project$RCMediaPreview$PreviewSmall;
+						} else {
+							return $author$project$RCMediaPreview$PreviewSmall;
+						}
+					}();
+					var action = $author$project$RCMediaList$SortableTableMessage(
+						$author$project$RCMediaList$SetPreviewMediaId(rcObject.id));
+					return A2(
+						$billstclair$elm_sortable_table$Table$HtmlDetails,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A4($author$project$RCMediaPreview$viewTableThumbnail, buildType, rcObject, size, action)
+							]));
+				}
+			});
+	});
+var $author$project$RCMediaList$configMediaList = F3(
+	function (buildType, previewedMediaId, messages) {
 		var doubleClickAction = A2(
 			$elm$core$Basics$composeL,
 			A2(
@@ -12599,7 +12653,7 @@ var $author$project$RCMediaList$configMediaList = F2(
 			{
 				columns: _List_fromArray(
 					[
-						$author$project$RCMediaList$thumbnailColumn(previewedMediaId),
+						A2($author$project$RCMediaList$thumbnailColumn, buildType, previewedMediaId),
 						A2(
 						$billstclair$elm_sortable_table$Table$stringColumn,
 						'ID',
@@ -13202,15 +13256,15 @@ var $author$project$RCMediaList$view = F5(
 			}
 		}
 	});
-var $author$project$RCMediaList$mediaListView = F3(
-	function (model, objects, messages) {
+var $author$project$RCMediaList$mediaListView = F4(
+	function (buildType, model, objects, messages) {
 		var uploadBtn = A2($elm$html$Html$map, $author$project$RCMediaList$MainMessage, messages.uploadButtonHtml);
 		return A5(
 			$author$project$RCMediaList$view,
 			uploadBtn,
 			$author$project$RCMediaList$MediaTable,
 			model,
-			A2($author$project$RCMediaList$configMediaList, model.previewedMediaId, messages),
+			A3($author$project$RCMediaList$configMediaList, buildType, model.previewedMediaId, messages),
 			objects);
 	});
 var $author$project$RCMediaList$PickerTable = {$: 'PickerTable'};
@@ -13294,15 +13348,15 @@ var $author$project$RCMediaList$pickerButton = function (messages) {
 			viewData: $author$project$RCMediaList$insertButton(messages)
 		});
 };
-var $author$project$RCMediaList$configMediaPicker = F2(
-	function (previewedMediaId, messages) {
+var $author$project$RCMediaList$configMediaPicker = F3(
+	function (buildType, previewedMediaId, messages) {
 		var doubleClickAction = A2($elm$core$Basics$composeL, $author$project$RCMediaList$MainMessage, messages.insertObject);
 		var buttons = $author$project$RCMediaList$pickerButton(messages);
 		return $billstclair$elm_sortable_table$Table$customConfig(
 			{
 				columns: _List_fromArray(
 					[
-						$author$project$RCMediaList$thumbnailColumn(previewedMediaId),
+						A2($author$project$RCMediaList$thumbnailColumn, buildType, previewedMediaId),
 						A2(
 						$billstclair$elm_sortable_table$Table$stringColumn,
 						'ID',
@@ -13771,12 +13825,12 @@ var $rundis$elm_bootstrap$Bootstrap$Modal$view = F2(
 					]),
 				A2($rundis$elm_bootstrap$Bootstrap$Modal$backdrop, visibility, conf)));
 	});
-var $author$project$RCMediaList$mediaPickerView = F3(
-	function (_v0, objectList, messages) {
+var $author$project$RCMediaList$mediaPickerView = F4(
+	function (buildType, _v0, objectList, messages) {
 		var model = _v0.a;
 		var visibility = _v0.b;
 		var uploadBtn = A2($elm$html$Html$map, $author$project$RCMediaList$MainMessage, messages.uploadButtonHtml);
-		var tableConfig = A2($author$project$RCMediaList$configMediaPicker, model.previewedMediaId, messages);
+		var tableConfig = A3($author$project$RCMediaList$configMediaPicker, buildType, model.previewedMediaId, messages);
 		var tableList = A5($author$project$RCMediaList$view, uploadBtn, $author$project$RCMediaList$PickerTable, model, tableConfig, objectList);
 		return A2(
 			$rundis$elm_bootstrap$Bootstrap$Modal$view,
@@ -14295,26 +14349,26 @@ var $author$project$View$mkDropdown = F5(
 					})
 				]));
 	});
-var $author$project$Settings$Bold = {$: 'Bold'};
+var $author$project$Snippets$Bold = {$: 'Bold'};
 var $author$project$View$BoldIcon = {$: 'BoldIcon'};
-var $author$project$Settings$Bullet = {$: 'Bullet'};
-var $author$project$Settings$H1 = {$: 'H1'};
-var $author$project$Settings$H2 = {$: 'H2'};
-var $author$project$Settings$H3 = {$: 'H3'};
+var $author$project$Snippets$Bullet = {$: 'Bullet'};
+var $author$project$Snippets$H1 = {$: 'H1'};
+var $author$project$Snippets$H2 = {$: 'H2'};
+var $author$project$Snippets$H3 = {$: 'H3'};
 var $author$project$Main$InsertAtCursor = function (a) {
 	return {$: 'InsertAtCursor', a: a};
 };
 var $author$project$Main$InsertFootnoteAtCursor = {$: 'InsertFootnoteAtCursor'};
-var $author$project$Settings$Italic = {$: 'Italic'};
+var $author$project$Snippets$Italic = {$: 'Italic'};
 var $author$project$View$ItalicIcon = {$: 'ItalicIcon'};
-var $author$project$Settings$Link = {$: 'Link'};
+var $author$project$Snippets$Link = {$: 'Link'};
 var $author$project$View$LinkIcon = {$: 'LinkIcon'};
 var $author$project$View$ListIcon = {$: 'ListIcon'};
 var $author$project$View$MediaIcon = {$: 'MediaIcon'};
-var $author$project$Settings$Numbered = {$: 'Numbered'};
+var $author$project$Snippets$Numbered = {$: 'Numbered'};
 var $author$project$View$NumberedIcon = {$: 'NumberedIcon'};
 var $author$project$Main$OpenMediaPicker = {$: 'OpenMediaPicker'};
-var $author$project$Settings$Quote = {$: 'Quote'};
+var $author$project$Snippets$Quote = {$: 'Quote'};
 var $author$project$View$QuoteIcon = {$: 'QuoteIcon'};
 var $author$project$Main$RedoCM = {$: 'RedoCM'};
 var $author$project$View$RedoIcon = {$: 'RedoIcon'};
@@ -14324,34 +14378,35 @@ var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Light = {$: 'Light'};
 var $rundis$elm_bootstrap$Bootstrap$Button$light = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	$rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled($rundis$elm_bootstrap$Bootstrap$Internal$Button$Light));
 var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0 = $elm$html$Html$Attributes$class('m-0');
-var $author$project$View$mkButton = function (props) {
-	var spacing = props.offset ? _List_fromArray(
-		[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0]) : _List_Nil;
-	return A2(
-		$rundis$elm_bootstrap$Bootstrap$Button$button,
-		_List_fromArray(
-			[
-				props.primary ? $rundis$elm_bootstrap$Bootstrap$Button$outlineDark : $rundis$elm_bootstrap$Bootstrap$Button$light,
-				$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-				A2(
-					$elm$core$List$append,
-					_List_fromArray(
-						[
-							$elm$html$Html$Events$onClick(props.onClickMsg),
-							A2(
-							$elm$html$Html$Attributes$style,
-							'display',
-							props.hidden ? 'none' : 'inline-block'),
-							$elm$html$Html$Attributes$title(props.title)
-						]),
-					A2($elm$core$List$append, spacing, props.otherAttrs)))
-			]),
-		_List_fromArray(
-			[
-				$author$project$View$renderIcon(props.icon),
-				$elm$html$Html$text(props.text)
-			]));
-};
+var $author$project$View$mkButton = F2(
+	function (buildTarget, props) {
+		var spacing = props.offset ? _List_fromArray(
+			[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$m0]) : _List_Nil;
+		return A2(
+			$rundis$elm_bootstrap$Bootstrap$Button$button,
+			_List_fromArray(
+				[
+					props.primary ? $rundis$elm_bootstrap$Bootstrap$Button$outlineDark : $rundis$elm_bootstrap$Bootstrap$Button$light,
+					$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+					A2(
+						$elm$core$List$append,
+						_List_fromArray(
+							[
+								$elm$html$Html$Events$onClick(props.onClickMsg),
+								A2(
+								$elm$html$Html$Attributes$style,
+								'display',
+								props.hidden ? 'none' : 'inline-block'),
+								$elm$html$Html$Attributes$title(props.title)
+							]),
+						A2($elm$core$List$append, spacing, props.otherAttrs)))
+				]),
+			_List_fromArray(
+				[
+					A2($author$project$View$renderIcon, buildTarget, props.icon),
+					$elm$html$Html$text(props.text)
+				]));
+	});
 var $author$project$Main$separator = A2(
 	$elm$html$Html$span,
 	_List_fromArray(
@@ -14362,7 +14417,7 @@ var $author$project$Main$separator = A2(
 		[
 			$elm$html$Html$text('|')
 		]));
-var $author$project$Settings$snippet = function (s) {
+var $author$project$Snippets$snippet = function (s) {
 	switch (s.$) {
 		case 'Bold':
 			return _Utils_Tuple2('****', -2);
@@ -14386,126 +14441,128 @@ var $author$project$Settings$snippet = function (s) {
 			return _Utils_Tuple2('[](http://)', -10);
 	}
 };
-var $author$project$Main$mkEditorToolbar = function (tabState) {
-	var snippetMsg = function (action) {
-		return $author$project$Main$InsertAtCursor(
-			$author$project$Settings$snippet(action));
-	};
-	var _default = $author$project$View$defaultButton(
-		$author$project$Main$InsertAtCursor(
-			_Utils_Tuple2('', 0)));
-	var cmEditor = function () {
-		switch (tabState.$) {
-			case 'CmMarkdownTab':
-				return true;
-			case 'TxtMarkdownTab':
-				return false;
-			case 'StyleTab':
-				return true;
-			default:
-				return false;
-		}
-	}();
-	return _Utils_ap(
-		_List_fromArray(
-			[
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{
-						onClickMsg: snippetMsg($author$project$Settings$H1),
-						text: 'H1',
-						title: 'Header 1'
-					})),
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{
-						onClickMsg: snippetMsg($author$project$Settings$H2),
-						text: 'H2',
-						title: 'Header 2'
-					})),
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{
-						onClickMsg: snippetMsg($author$project$Settings$H3),
-						text: 'H3',
-						title: 'Header 3'
-					})),
-				$author$project$Main$separator,
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{
-						icon: $author$project$View$BoldIcon,
-						onClickMsg: snippetMsg($author$project$Settings$Bold),
-						title: 'Bold'
-					})),
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{
-						icon: $author$project$View$ItalicIcon,
-						onClickMsg: snippetMsg($author$project$Settings$Italic),
-						title: 'Italic'
-					})),
-				$author$project$Main$separator,
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{
-						icon: $author$project$View$ListIcon,
-						onClickMsg: snippetMsg($author$project$Settings$Bullet),
-						title: 'Unordered list'
-					})),
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{
-						icon: $author$project$View$NumberedIcon,
-						onClickMsg: snippetMsg($author$project$Settings$Numbered),
-						title: 'Numbered list'
-					})),
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{
-						icon: $author$project$View$LinkIcon,
-						onClickMsg: snippetMsg($author$project$Settings$Link),
-						title: 'Hyperlink'
-					})),
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{
-						icon: $author$project$View$QuoteIcon,
-						onClickMsg: snippetMsg($author$project$Settings$Quote),
-						title: 'Quote'
-					})),
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{onClickMsg: $author$project$Main$InsertFootnoteAtCursor, text: '*', title: 'Insert footnote'})),
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{icon: $author$project$View$MediaIcon, onClickMsg: $author$project$Main$OpenMediaPicker, title: 'Insert media object'})),
-				$author$project$Main$separator
-			]),
-		cmEditor ? _List_fromArray(
-			[
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{hidden: !cmEditor, icon: $author$project$View$UndoIcon, onClickMsg: $author$project$Main$UndoCM, title: 'Undo'})),
-				$author$project$View$mkButton(
-				_Utils_update(
-					_default,
-					{hidden: !cmEditor, icon: $author$project$View$RedoIcon, onClickMsg: $author$project$Main$RedoCM, title: 'Redo'})),
-				$author$project$Main$separator
-			]) : _List_Nil);
-};
+var $author$project$Main$mkEditorToolbar = F2(
+	function (buildType, tabState) {
+		var snippetMsg = function (action) {
+			return $author$project$Main$InsertAtCursor(
+				$author$project$Snippets$snippet(action));
+		};
+		var mkButtonTarget = $author$project$View$mkButton(buildType);
+		var _default = $author$project$View$defaultButton(
+			$author$project$Main$InsertAtCursor(
+				_Utils_Tuple2('', 0)));
+		var cmEditor = function () {
+			switch (tabState.$) {
+				case 'CmMarkdownTab':
+					return true;
+				case 'TxtMarkdownTab':
+					return false;
+				case 'StyleTab':
+					return true;
+				default:
+					return false;
+			}
+		}();
+		return _Utils_ap(
+			_List_fromArray(
+				[
+					mkButtonTarget(
+					_Utils_update(
+						_default,
+						{
+							onClickMsg: snippetMsg($author$project$Snippets$H1),
+							text: 'H1',
+							title: 'Header 1'
+						})),
+					mkButtonTarget(
+					_Utils_update(
+						_default,
+						{
+							onClickMsg: snippetMsg($author$project$Snippets$H2),
+							text: 'H2',
+							title: 'Header 2'
+						})),
+					mkButtonTarget(
+					_Utils_update(
+						_default,
+						{
+							onClickMsg: snippetMsg($author$project$Snippets$H3),
+							text: 'H3',
+							title: 'Header 3'
+						})),
+					$author$project$Main$separator,
+					mkButtonTarget(
+					_Utils_update(
+						_default,
+						{
+							icon: $author$project$View$BoldIcon,
+							onClickMsg: snippetMsg($author$project$Snippets$Bold),
+							title: 'Bold'
+						})),
+					mkButtonTarget(
+					_Utils_update(
+						_default,
+						{
+							icon: $author$project$View$ItalicIcon,
+							onClickMsg: snippetMsg($author$project$Snippets$Italic),
+							title: 'Italic'
+						})),
+					$author$project$Main$separator,
+					mkButtonTarget(
+					_Utils_update(
+						_default,
+						{
+							icon: $author$project$View$ListIcon,
+							onClickMsg: snippetMsg($author$project$Snippets$Bullet),
+							title: 'Unordered list'
+						})),
+					mkButtonTarget(
+					_Utils_update(
+						_default,
+						{
+							icon: $author$project$View$NumberedIcon,
+							onClickMsg: snippetMsg($author$project$Snippets$Numbered),
+							title: 'Numbered list'
+						})),
+					mkButtonTarget(
+					_Utils_update(
+						_default,
+						{
+							icon: $author$project$View$LinkIcon,
+							onClickMsg: snippetMsg($author$project$Snippets$Link),
+							title: 'Hyperlink'
+						})),
+					mkButtonTarget(
+					_Utils_update(
+						_default,
+						{
+							icon: $author$project$View$QuoteIcon,
+							onClickMsg: snippetMsg($author$project$Snippets$Quote),
+							title: 'Quote'
+						})),
+					mkButtonTarget(
+					_Utils_update(
+						_default,
+						{onClickMsg: $author$project$Main$InsertFootnoteAtCursor, text: '*', title: 'Insert footnote'})),
+					mkButtonTarget(
+					_Utils_update(
+						_default,
+						{icon: $author$project$View$MediaIcon, onClickMsg: $author$project$Main$OpenMediaPicker, title: 'Insert media object'})),
+					$author$project$Main$separator
+				]),
+			cmEditor ? _List_fromArray(
+				[
+					mkButtonTarget(
+					_Utils_update(
+						_default,
+						{hidden: !cmEditor, icon: $author$project$View$UndoIcon, onClickMsg: $author$project$Main$UndoCM, title: 'Undo'})),
+					mkButtonTarget(
+					_Utils_update(
+						_default,
+						{hidden: !cmEditor, icon: $author$project$View$RedoIcon, onClickMsg: $author$project$Main$RedoCM, title: 'Redo'})),
+					$author$project$Main$separator
+				]) : _List_Nil);
+	});
 var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1 = $elm$html$Html$Attributes$class('mr-1');
 var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1 = $elm$html$Html$Attributes$class('mt-1');
 var $author$project$View$optionalBlock = F2(
@@ -14518,6 +14575,20 @@ var $author$project$View$optionalBlock = F2(
 					$elm$html$Html$Attributes$style,
 					'display',
 					show ? 'inline-block' : 'none')
+				]),
+			_List_fromArray(
+				[elem]));
+	});
+var $author$project$View$optionalNonBlock = F2(
+	function (show, elem) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$Attributes$style,
+					'display',
+					show ? 'initial' : 'none')
 				]),
 			_List_fromArray(
 				[elem]));
@@ -14584,7 +14655,7 @@ var $author$project$Main$statusBar = function (model) {
 			]),
 		_List_fromArray(
 			[
-				$author$project$View$renderIcon($author$project$View$SaveIcon),
+				A2($author$project$View$renderIcon, model.buildTarget, $author$project$View$SaveIcon),
 				$elm$html$Html$text(saveButtonText)
 			]));
 	return A2(
@@ -16329,7 +16400,7 @@ var $author$project$RCMediaEdit$view = F5(
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('Close')
+							$elm$html$Html$text('Done')
 						]));
 				var buttons = allowInsert ? _List_fromArray(
 					[insertButton, closeButton]) : _List_fromArray(
@@ -16463,6 +16534,7 @@ var $author$project$UserConfirm$view = function (_v0) {
 var $author$project$Main$AlertMsg = function (a) {
 	return {$: 'AlertMsg', a: a};
 };
+var $author$project$Main$DismissAllProblems = {$: 'DismissAllProblems'};
 var $author$project$Problems$httpErrorString = function (err) {
 	switch (err.$) {
 		case 'BadUrl':
@@ -16494,18 +16566,18 @@ var $author$project$Problems$asString = function (problem) {
 			var e = problem.a;
 			return 'Cannot load, http error: ' + $author$project$Problems$httpErrorString(e);
 		case 'CannotSave':
-			return 'Saving error';
+			return 'Saving error, please check your connection.';
 		case 'CannotUpdateMedia':
 			var e = problem.a;
 			return 'Problem updating media :' + $author$project$Problems$httpErrorString(e);
 		case 'CannotFindMediaFieldInJson':
-			return 'Unkown media field in the json';
+			return 'Unknown media field in the json';
 		case 'CannotImportFile':
 			var e = problem.a;
 			return 'Import http error: ' + $author$project$Problems$httpErrorString(e);
 		case 'UnkownUploadFileType':
 			var s = problem.a;
-			return 'Unkown upload file type: ' + s;
+			return 'Unknown upload file type: ' + s;
 		case 'MediaUploadFailed':
 			var e = problem.a;
 			return 'Media upload failed with an http error, because of ' + $author$project$Problems$httpErrorString(e);
@@ -16558,6 +16630,78 @@ var $rundis$elm_bootstrap$Bootstrap$Alert$h4 = F2(
 var $rundis$elm_bootstrap$Bootstrap$Alert$info = function (conf) {
 	return A2($rundis$elm_bootstrap$Bootstrap$Alert$role, $rundis$elm_bootstrap$Bootstrap$Internal$Role$Info, conf);
 };
+var $rundis$elm_bootstrap$Bootstrap$Alert$link = F2(
+	function (attributes, children_) {
+		return A2(
+			$elm$html$Html$a,
+			A2(
+				$elm$core$List$cons,
+				$elm$html$Html$Attributes$class('alert-link'),
+				attributes),
+			children_);
+	});
+var $elm$core$Set$Set_elm_builtin = function (a) {
+	return {$: 'Set_elm_builtin', a: a};
+};
+var $elm$core$Set$empty = $elm$core$Set$Set_elm_builtin($elm$core$Dict$empty);
+var $elm$core$Set$insert = F2(
+	function (key, _v0) {
+		var dict = _v0.a;
+		return $elm$core$Set$Set_elm_builtin(
+			A3($elm$core$Dict$insert, key, _Utils_Tuple0, dict));
+	});
+var $elm$core$Dict$member = F2(
+	function (key, dict) {
+		var _v0 = A2($elm$core$Dict$get, key, dict);
+		if (_v0.$ === 'Just') {
+			return true;
+		} else {
+			return false;
+		}
+	});
+var $elm$core$Set$member = F2(
+	function (key, _v0) {
+		var dict = _v0.a;
+		return A2($elm$core$Dict$member, key, dict);
+	});
+var $elm_community$list_extra$List$Extra$uniqueHelp = F4(
+	function (f, existing, remaining, accumulator) {
+		uniqueHelp:
+		while (true) {
+			if (!remaining.b) {
+				return $elm$core$List$reverse(accumulator);
+			} else {
+				var first = remaining.a;
+				var rest = remaining.b;
+				var computedFirst = f(first);
+				if (A2($elm$core$Set$member, computedFirst, existing)) {
+					var $temp$f = f,
+						$temp$existing = existing,
+						$temp$remaining = rest,
+						$temp$accumulator = accumulator;
+					f = $temp$f;
+					existing = $temp$existing;
+					remaining = $temp$remaining;
+					accumulator = $temp$accumulator;
+					continue uniqueHelp;
+				} else {
+					var $temp$f = f,
+						$temp$existing = A2($elm$core$Set$insert, computedFirst, existing),
+						$temp$remaining = rest,
+						$temp$accumulator = A2($elm$core$List$cons, first, accumulator);
+					f = $temp$f;
+					existing = $temp$existing;
+					remaining = $temp$remaining;
+					accumulator = $temp$accumulator;
+					continue uniqueHelp;
+				}
+			}
+		}
+	});
+var $elm_community$list_extra$List$Extra$uniqueBy = F2(
+	function (f, list) {
+		return A4($elm_community$list_extra$List$Extra$uniqueHelp, f, $elm$core$Set$empty, list, _List_Nil);
+	});
 var $author$project$Main$viewAlert = function (model) {
 	var isRealProblem = function (problem) {
 		if (problem.$ === 'NoMediaWithNameOrId') {
@@ -16567,10 +16711,21 @@ var $author$project$Main$viewAlert = function (model) {
 		}
 	};
 	var realProblems = A2($elm$core$List$filter, isRealProblem, model.problems);
-	if (!realProblems.b) {
-		return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+	var uniqueProblems = A2($elm_community$list_extra$List$Extra$uniqueBy, $author$project$Problems$asString, realProblems);
+	if (!uniqueProblems.b) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					A2($elm$html$Html$Attributes$style, 'display', 'none')
+				]),
+			_List_Nil);
 	} else {
-		var problems = realProblems;
+		var problems = uniqueProblems;
+		var problemString = A2(
+			$elm$core$String$join,
+			' ',
+			A2($elm$core$List$map, $author$project$Problems$asString, problems));
 		return A2(
 			$rundis$elm_bootstrap$Bootstrap$Alert$view,
 			model.alertVisibility,
@@ -16583,13 +16738,53 @@ var $author$project$Main$viewAlert = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('there is a problem')
+								$elm$html$Html$text('There is a problem:')
 							])),
-						$elm$html$Html$text(
 						A2(
-							$elm$core$String$join,
-							' ',
-							A2($elm$core$List$map, $author$project$Problems$asString, problems)))
+						$elm$html$Html$p,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(problemString)
+							])),
+						A2(
+						$elm$html$Html$p,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Need help? '),
+								A2(
+								$rundis$elm_bootstrap$Bootstrap$Alert$link,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$href('mailto:support@researchcatalogue.net?body=' + ('Error message: ' + problemString))
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('contact support')
+									]))
+							])),
+						A2(
+						$elm$html$Html$p,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								$rundis$elm_bootstrap$Bootstrap$Button$button,
+								_List_fromArray(
+									[
+										$rundis$elm_bootstrap$Bootstrap$Button$outlineSecondary,
+										$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick($author$project$Main$DismissAllProblems)
+											]))
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Clear problems')
+									]))
+							]))
 					]),
 				A2(
 					$rundis$elm_bootstrap$Bootstrap$Alert$dismissable,
@@ -16844,21 +17039,24 @@ var $author$project$View$NormalScreenIcon = {$: 'NormalScreenIcon'};
 var $author$project$Main$ToggleFullscreen = function (a) {
 	return {$: 'ToggleFullscreen', a: a};
 };
-var $author$project$Main$viewFullscreenSwitch = function (currentMode) {
-	var tit = currentMode ? 'Exit Fullscreen' : 'Enter Fullscreen';
-	var message = $author$project$Main$ToggleFullscreen(!currentMode);
-	var icn = (!currentMode) ? $author$project$View$FullScreenIcon : $author$project$View$NormalScreenIcon;
-	var btn = $author$project$View$defaultButton(message);
-	var attrs = currentMode ? _List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('enabled'),
-			$elm$html$Html$Attributes$class('ml-1')
-		]) : _List_Nil;
-	return $author$project$View$mkButton(
-		_Utils_update(
-			btn,
-			{icon: icn, otherAttrs: attrs, title: tit}));
-};
+var $author$project$Main$viewFullscreenSwitch = F2(
+	function (buildType, currentMode) {
+		var tit = currentMode ? 'Exit Fullscreen' : 'Enter Fullscreen';
+		var message = $author$project$Main$ToggleFullscreen(!currentMode);
+		var icn = (!currentMode) ? $author$project$View$FullScreenIcon : $author$project$View$NormalScreenIcon;
+		var btn = $author$project$View$defaultButton(message);
+		var attrs = currentMode ? _List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('enabled'),
+				$elm$html$Html$Attributes$class('ml-1')
+			]) : _List_Nil;
+		return A2(
+			$author$project$View$mkButton,
+			buildType,
+			_Utils_update(
+				btn,
+				{icon: icn, otherAttrs: attrs, title: tit}));
+	});
 var $author$project$Main$EditorMedia = {$: 'EditorMedia'};
 var $author$project$Main$EditorStyle = {$: 'EditorStyle'};
 var $author$project$Main$SwitchTab = function (a) {
@@ -17666,31 +17864,34 @@ var $rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem = function (a) {
 var $rundis$elm_bootstrap$Bootstrap$Navbar$customItem = function (elem) {
 	return $rundis$elm_bootstrap$Bootstrap$Navbar$CustomItem(elem);
 };
-var $author$project$Main$viewNavbarItem = function (props) {
-	return $rundis$elm_bootstrap$Bootstrap$Navbar$customItem(
-		A2(
-			$elm$html$Html$a,
-			_List_fromArray(
-				[
-					props.spacing,
-					$elm$html$Html$Attributes$href(props.link),
-					$elm$html$Html$Attributes$target('_blank')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$img,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$src(
-							_Utils_ap($author$project$Settings$iconUrl, props.icon)),
-							$elm$html$Html$Attributes$class('d-inline-block align-top'),
-							A2($elm$html$Html$Attributes$style, 'width', '25px'),
-							$elm$html$Html$Attributes$title(props.title)
-						]),
-					_List_Nil)
-				])));
-};
+var $author$project$Main$viewNavbarItem = F2(
+	function (buildType, props) {
+		return $rundis$elm_bootstrap$Bootstrap$Navbar$customItem(
+			A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						props.spacing,
+						$elm$html$Html$Attributes$href(props.link),
+						$elm$html$Html$Attributes$target('_blank')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$img,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$src(
+								_Utils_ap(
+									$author$project$Settings$iconUrl(buildType),
+									props.icon)),
+								$elm$html$Html$Attributes$class('d-inline-block align-top'),
+								A2($elm$html$Html$Attributes$style, 'width', '25px'),
+								$elm$html$Html$Attributes$title(props.title)
+							]),
+						_List_Nil)
+					])));
+	});
 var $rundis$elm_bootstrap$Bootstrap$Navbar$withAnimation = function (config_) {
 	return A2(
 		$rundis$elm_bootstrap$Bootstrap$Navbar$updateConfig,
@@ -17701,95 +17902,105 @@ var $rundis$elm_bootstrap$Bootstrap$Navbar$withAnimation = function (config_) {
 		},
 		config_);
 };
-var $author$project$Main$viewNavbar = function (model) {
-	var tabLink = function (tab) {
-		var selectedClass = _Utils_eq(model.editor.a, tab) ? 'nav-link active' : 'nav-link';
-		return _List_fromArray(
-			[
-				$elm$html$Html$Attributes$class(selectedClass),
-				$elm$html$Html$Attributes$href('#'),
-				$elm$html$Html$Events$onClick(
-				$author$project$Main$SwitchTab(tab))
-			]);
-	};
-	var previewUrl = A2(
-		$elm$core$String$join,
-		'/',
-		_List_fromArray(
-			[
-				'view',
-				$elm$core$String$fromInt(model.exposition.id),
-				$elm$core$String$fromInt(model.exposition.currentWeave)
-			]));
-	return A2(
-		$rundis$elm_bootstrap$Bootstrap$Navbar$view,
-		model.navbarState,
-		A2(
-			$rundis$elm_bootstrap$Bootstrap$Navbar$customItems,
+var $author$project$Main$viewNavbar = F2(
+	function (buildType, model) {
+		var tabLink = function (tab) {
+			var selectedClass = _Utils_eq(model.editor.a, tab) ? 'nav-link active' : 'nav-link';
+			return _List_fromArray(
+				[
+					$elm$html$Html$Attributes$class(selectedClass),
+					$elm$html$Html$Attributes$href('#'),
+					$elm$html$Html$Events$onClick(
+					$author$project$Main$SwitchTab(tab))
+				]);
+		};
+		var previewUrl = A2(
+			$elm$core$String$join,
+			'/',
 			_List_fromArray(
 				[
-					$author$project$Main$viewNavbarItem(
-					{icon: 'question.svg', link: 'https://guide.researchcatalogue.net/#text-based-editor', spacing: $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0, title: 'Help'}),
-					$author$project$Main$viewNavbarItem(
-					{icon: 'eye_metro.svg', link: previewUrl, spacing: $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml3, title: 'Preview'}),
-					$author$project$Main$viewNavbarItem(
-					{icon: 'profile_metro.svg', link: 'profile', spacing: $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml3, title: 'Profile'}),
-					$author$project$Main$viewNavbarItem(
-					{icon: 'logout_metro.svg', link: 'session/logout', spacing: $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml3, title: 'Logout'})
-				]),
+					'view',
+					$elm$core$String$fromInt(model.exposition.id),
+					$elm$core$String$fromInt(model.exposition.currentWeave)
+				]));
+		var navItem = $author$project$Main$viewNavbarItem(buildType);
+		var metaDataUrl = 'profile/show-exposition?exposition=' + $elm$core$String$fromInt(model.exposition.id);
+		return A2(
+			$rundis$elm_bootstrap$Bootstrap$Navbar$view,
+			model.navbarState,
 			A2(
-				$rundis$elm_bootstrap$Bootstrap$Navbar$items,
+				$rundis$elm_bootstrap$Bootstrap$Navbar$customItems,
 				_List_fromArray(
 					[
-						A2(
-						$rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
-						_Utils_ap(
-							_List_fromArray(
-								[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0]),
-							tabLink($author$project$Main$EditorMarkdown)),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Markdown')
-							])),
-						A2(
-						$rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
-						tabLink($author$project$Main$EditorMedia),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Media')
-							])),
-						A2(
-						$rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
-						tabLink($author$project$Main$EditorStyle),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Style')
-							]))
+						navItem(
+						{icon: 'question.svg', link: 'https://guide.researchcatalogue.net/#text-based-editor', spacing: $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0, title: 'Help'}),
+						navItem(
+						{icon: 'pencil.svg', link: metaDataUrl, spacing: $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml3, title: 'Show/edit metadata'}),
+						navItem(
+						{icon: 'eye_metro.svg', link: previewUrl, spacing: $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml3, title: 'Preview'}),
+						navItem(
+						{icon: 'profile_metro.svg', link: 'profile', spacing: $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml3, title: 'Profile'}),
+						navItem(
+						{icon: 'logout_metro.svg', link: 'session/logout', spacing: $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml3, title: 'Logout'})
 					]),
-				$rundis$elm_bootstrap$Bootstrap$Navbar$collapseMedium(
-					$rundis$elm_bootstrap$Bootstrap$Navbar$withAnimation(
-						A2(
-							$rundis$elm_bootstrap$Bootstrap$Navbar$attrs,
+				A2(
+					$rundis$elm_bootstrap$Bootstrap$Navbar$items,
+					_List_fromArray(
+						[
+							A2(
+							$rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
+							_Utils_ap(
+								_List_fromArray(
+									[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml0]),
+								tabLink($author$project$Main$EditorMarkdown)),
 							_List_fromArray(
 								[
-									A2($elm$html$Html$Attributes$style, 'padding-left', '0')
-								]),
-							$rundis$elm_bootstrap$Bootstrap$Navbar$config($author$project$Main$NavbarMsg)))))));
-};
-var $author$project$Main$viewUpload = F2(
-	function (buttonInfo, status) {
+									$elm$html$Html$text('Markdown')
+								])),
+							A2(
+							$rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
+							tabLink($author$project$Main$EditorMedia),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Media')
+								])),
+							A2(
+							$rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
+							tabLink($author$project$Main$EditorStyle),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Style')
+								]))
+						]),
+					$rundis$elm_bootstrap$Bootstrap$Navbar$collapseMedium(
+						$rundis$elm_bootstrap$Bootstrap$Navbar$withAnimation(
+							A2(
+								$rundis$elm_bootstrap$Bootstrap$Navbar$attrs,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$style, 'padding-left', '0')
+									]),
+								$rundis$elm_bootstrap$Bootstrap$Navbar$config($author$project$Main$NavbarMsg)))))));
+	});
+var $author$project$Util$classListFromString = A2(
+	$elm$core$Basics$composeL,
+	$elm$core$List$map(
+		function (str) {
+			return $elm$html$Html$Attributes$class(str);
+		}),
+	$elm$core$String$split(' '));
+var $author$project$Main$viewUpload = F3(
+	function (buildType, buttonInfo, status) {
 		if (status.$ === 'Ready') {
-			return $author$project$View$mkButton(buttonInfo);
+			return A2($author$project$View$mkButton, buildType, buttonInfo);
 		} else {
 			var fraction = status.a;
 			var uploadStatusMessage = (fraction < 0.99) ? ($elm$core$String$fromInt(
 				$elm$core$Basics$round(100 * fraction)) + '%') : 'processing..';
+			var uploadCssClasses = $author$project$Util$classListFromString('upload-percentage btn btn-outline-dark m-0 mb-1 mt-1 mr-1');
 			return A2(
 				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('upload-percentage')
-					]),
+				uploadCssClasses,
 				_List_fromArray(
 					[
 						$elm$html$Html$text(uploadStatusMessage)
@@ -17805,13 +18016,18 @@ var $author$project$Main$view = function (model) {
 				icon: $author$project$View$UploadCloud,
 				offset: true,
 				otherAttrs: _List_fromArray(
-					[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1, $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1, $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1]),
+					[
+						$elm$html$Html$Attributes$class('soft-blue-background'),
+						$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1,
+						$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1,
+						$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1
+					]),
 				primary: true,
 				text: 'Upload Media',
 				title: 'Add media files: images, video, audio or pdf'
 			});
 	}();
-	var uploadButtonHtml = A2($author$project$Main$viewUpload, uploadMediaButtonInfo, model.mediaUploadStatus);
+	var uploadButtonHtml = A3($author$project$Main$viewUpload, model.buildTarget, uploadMediaButtonInfo, model.mediaUploadStatus);
 	var showMediaUpload = $author$project$Main$selectedEditorIsMarkdown(model);
 	var showButtons = $author$project$Main$selectedEditorIsMarkdown(model);
 	var previewButton = function () {
@@ -17836,14 +18052,15 @@ var $author$project$Main$view = function (model) {
 				]),
 			_List_fromArray(
 				[
-					$author$project$View$renderIcon($author$project$View$EyeIcon)
+					A2($author$project$View$renderIcon, model.buildTarget, $author$project$View$EyeIcon)
 				]));
 	}();
 	var mediaList = A2(
 		$elm$html$Html$map,
 		$author$project$Main$MediaList,
-		A3(
+		A4(
 			$author$project$RCMediaList$mediaListView,
+			model.buildTarget,
 			model.mediaList,
 			model.exposition.media,
 			$author$project$Main$makeTableMessages(uploadButtonHtml)));
@@ -17862,7 +18079,9 @@ var $author$project$Main$view = function (model) {
 				title: 'Import external documents (Word, Open office, Markdown, LaTeX etc..'
 			});
 	}();
-	var editorToolbar = $author$project$Main$mkEditorToolbar(
+	var editorToolbar = A2(
+		$author$project$Main$mkEditorToolbar,
+		model.buildTarget,
 		$author$project$Main$getTabState(model.editor));
 	var editorCheckbox = function () {
 		var _v1 = model.editor;
@@ -17888,14 +18107,15 @@ var $author$project$Main$view = function (model) {
 		_List_Nil,
 		_List_fromArray(
 			[
-				$author$project$Main$viewNavbar(model),
+				A2($author$project$Main$viewNavbar, model.buildTarget, model),
 				mediaDialogHtml,
 				confirmDialogHtml,
 				A2(
 				$elm$html$Html$map,
 				$author$project$Main$MediaPicker,
-				A3(
+				A4(
 					$author$project$RCMediaList$mediaPickerView,
+					model.buildTarget,
 					model.mediaPickerDialog,
 					model.exposition.media,
 					$author$project$Main$makePickerConfig(uploadButtonHtml))),
@@ -17912,11 +18132,11 @@ var $author$project$Main$view = function (model) {
 						A2(
 						$author$project$View$optionalBlock,
 						showMediaUpload,
-						A2($author$project$Main$viewUpload, uploadMediaButtonInfo, model.mediaUploadStatus)),
+						A3($author$project$Main$viewUpload, model.buildTarget, uploadMediaButtonInfo, model.mediaUploadStatus)),
 						A2(
 						$author$project$View$optionalBlock,
 						showButtons,
-						A2($author$project$Main$viewUpload, importDocButtonInfo, model.importUploadStatus)),
+						A3($author$project$Main$viewUpload, model.buildTarget, importDocButtonInfo, model.importUploadStatus)),
 						A2(
 						$author$project$View$optionalBlock,
 						showButtons,
@@ -17967,12 +18187,12 @@ var $author$project$Main$view = function (model) {
 						_List_fromArray(
 							[
 								editorCheckbox,
-								$author$project$Main$viewFullscreenSwitch(model.fullscreenMode)
+								A2($author$project$Main$viewFullscreenSwitch, model.buildTarget, model.fullscreenMode)
 							])))),
 				alert,
 				mediaList,
 				A2(
-				$author$project$View$optionalBlock,
+				$author$project$View$optionalNonBlock,
 				showButtons,
 				$author$project$Main$statusBar(model))
 			]));

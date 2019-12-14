@@ -8,6 +8,7 @@ import Exposition exposing (RCMediaObject)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import Settings exposing (BuildType)
 import View
 
 
@@ -36,8 +37,8 @@ getStyle size =
             []
 
 
-viewTableThumbnail : RCMediaObject -> PreviewSize -> msg -> Html msg
-viewTableThumbnail object size clickAction =
+viewTableThumbnail : BuildType -> RCMediaObject -> PreviewSize -> msg -> Html msg
+viewTableThumbnail buildType object size clickAction =
     case object.mediaType of
         Exposition.RCImage ->
             renderAsMini object size
@@ -53,12 +54,12 @@ viewTableThumbnail object size clickAction =
             case size of
                 PreviewPlayer ->
                     div []
-                        [ renderAsIconHyperlink View.SpeakerIcon object clickAction
+                        [ renderAsIconHyperlink buildType View.SpeakerIcon object clickAction
                         , thumb
                         ]
 
                 _ ->
-                    div [] [ renderAsIconHyperlink View.SpeakerIcon object clickAction ]
+                    div [] [ renderAsIconHyperlink buildType View.SpeakerIcon object clickAction ]
 
         Exposition.RCVideo settings ->
             let
@@ -68,16 +69,16 @@ viewTableThumbnail object size clickAction =
             case size of
                 PreviewPlayer ->
                     div []
-                        [ renderAsIconHyperlink View.CameraIcon object clickAction
+                        [ renderAsIconHyperlink buildType View.CameraIcon object clickAction
                         , thumb
                         ]
 
                 _ ->
                     div []
-                        [ renderAsIconHyperlink View.CameraIcon object clickAction ]
+                        [ renderAsIconHyperlink buildType View.CameraIcon object clickAction ]
 
         Exposition.RCPdf ->
-            renderMediaAsHyperlink "PDF" object
+            renderMediaAsHyperlink buildType "PDF" object
 
 
 renderAsMini : RCMediaObject -> PreviewSize -> Html msg
@@ -101,8 +102,8 @@ renderAsMini object size =
         []
 
 
-renderMediaAsHyperlink : String -> RCMediaObject -> Html msg
-renderMediaAsHyperlink typeString object =
+renderMediaAsHyperlink : BuildType -> String -> RCMediaObject -> Html msg
+renderMediaAsHyperlink buildType typeString object =
     span [ class "rc-media-preview" ]
         [ text <| typeString ++ " "
         , a
@@ -110,18 +111,18 @@ renderMediaAsHyperlink typeString object =
             , target "_blank"
             , title "open preview"
             ]
-            [ View.renderIcon View.TriangleRight ]
+            [ View.renderIcon buildType View.TriangleRight ]
         ]
 
 
-renderAsIconHyperlink : View.Icon -> RCMediaObject -> msg -> Html msg
-renderAsIconHyperlink icon object clickAction =
+renderAsIconHyperlink : BuildType -> View.Icon -> RCMediaObject -> msg -> Html msg
+renderAsIconHyperlink buildType icon object clickAction =
     a
         -- [ href <| Exposition.mediaUrl object
         [ title <| "preview audio " ++ object.name
         , onClick clickAction
         ]
-        [ View.renderIcon icon ]
+        [ View.renderIcon buildType icon ]
 
 
 viewThumbnail : RCMediaObject -> PreviewSize -> Html msg
