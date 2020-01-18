@@ -152,9 +152,10 @@
 
 		if (selectedEditor === editorCmMd && cmMarkdown != null) {
 		    cmMarkdownPosition = cmMarkdown.getCursor();
+		    console.log('cursor is : cmMarkdownCursor');
 		}
 		if (selectedEditor === editorCmCss && cmStyle != null) {
-			cmStylePosition = cmStyle.getCursor();
+		    cmStylePosition = cmStyle.getCursor();
 		}
 			
 	    switch (editor) {
@@ -171,9 +172,10 @@
 	                cmMarkdown.setValue(textareaMarkdown.value);
 	                cmMarkdown.refresh();
 	            } else {
-			    // recover position
-			    	cmMarkdown.setCursor(cmMarkdownPosition);
-				}
+			// recover position
+			cmMarkdown.setCursor(cmMarkdownPosition);
+			console.log('cursos position reset');
+		    }
 	            break;
 	        case editorTxtMd:
 	            setNodeVisibility(textareaMarkdown, true);
