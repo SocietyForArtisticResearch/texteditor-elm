@@ -29,8 +29,9 @@ be made outside of elm.
 General:
 	
 
-- when a media is direclty inserted after upload, it shorly appears as a previously uploaded media ? (seems to occur on ff)
-- When a large document is imported, there is a timeout from the server. Perhaps a size limit is necessary?
+- Add a "display as link" option for media.
+- Make a closure/module of editor.html's js code.
+
 
 
 

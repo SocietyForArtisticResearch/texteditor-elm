@@ -89,6 +89,9 @@
 
     var selectedEditor = editorCmMd;
 
+    var cmMarkdownPosition = null; // used to save 
+    var cmStylePosition = null;
+
     var cmMarkdown = CodeMirror.fromTextArea(document.getElementById("js-cm-markdown"), {
         mode: "markdown",
         lineWrapping: true
@@ -139,44 +142,71 @@
             }
         }
 
-        switch (editor) {
-            case editorCmMd:
-                let setAfterShow = (selectedEditor == editorTxtMd);
-                textareaMarkdown.style.display = "none"
-                cmStyle.getWrapperElement().style.display = "none";
-                showMediaList(false);
-                cmMarkdown.getWrapperElement().style.display = "block";
-                selectedEditor = editor;
-                if (setAfterShow) {
-                    cmMarkdown.setValue(textareaMarkdown.value);
-                    cmMarkdown.refresh();
-                };
-                break;
-            case editorTxtMd:
-                cmMarkdown.getWrapperElement().style.display = "none";
-                cmStyle.getWrapperElement().style.display = "none";
-                showMediaList(false);
-                textareaMarkdown.style.display = "block"
-                selectedEditor = editor;
-                break;
-            case editorCmCss:
-                cmMarkdown.getWrapperElement().style.display = "none";
-                textareaMarkdown.style.display = "none"
-                showMediaList(false);
-                cmStyle.getWrapperElement().style.display = "block";
-                selectedEditor = editor;
-                cmStyle.refresh();
-                break;
-            case editorMediaList:
-                cmMarkdown.getWrapperElement().style.display = "none";
-                cmStyle.getWrapperElement().style.display = "none";
-                textareaMarkdown.style.display = "none";
-                showMediaList(true);
-                selectedEditor = editor;
-                break;
-            default:
-                console.log("editor selection not known or not implemented");
-        }
+		let setNodeVisibility = function (node, show) {
+		    if (show) {
+				node.style.display = "block";
+		   	} else {
+				node.style.display = "none";
+		    }
+		};
+
+		if (selectedEditor === editorCmMd && cmMarkdown != null) {
+		    cmMarkdownPosition = cmMarkdown.getCursor();
+		}
+		if (selectedEditor === editorCmCss && cmStyle != null) {
+			cmStylePosition = cmStyle.getCursor();
+		}
+			
+	    switch (editor) {
+	        case editorCmMd:
+	            let setAfterShow = (selectedEditor === editorTxtMd);
+		        setNodeVisibility(textareaMarkdown, false);
+		        setNodeVisibility(cmStyle.getWrapperElement(), false);
+		        showMediaList(false);
+		        setNodeVisibility(cmMarkdown.getWrapperElement(), true);
+
+
+		        selectedEditor = editor;
+	            if (setAfterShow) {
+	                cmMarkdown.setValue(textareaMarkdown.value);
+	                cmMarkdown.refresh();
+	            } else {
+			    // recover position
+			    	cmMarkdown.setCursor(cmMarkdownPosition);
+				}
+	            break;
+	        case editorTxtMd:
+	            setNodeVisibility(textareaMarkdown, true);
+		        setNodeVisibility(cmStyle.getWrapperElement(), false);
+		        showMediaList(false);
+		        setNodeVisibility(cmMarkdown.getWrapperElement(), false);
+	            
+	            selectedEditor = editor;
+	            break;
+	        case editorCmCss:
+	            setNodeVisibility(textareaMarkdown, false);
+		        setNodeVisibility(cmStyle.getWrapperElement(), true);
+		        showMediaList(false);
+		        setNodeVisibility(cmMarkdown.getWrapperElement(), false);
+
+		        if (cmStylePosition !== null) {
+		        	cmStyle.setCursor(cmStylePosition);
+		        }
+
+	            selectedEditor = editor;
+	            cmStyle.refresh();
+	            break;
+	        case editorMediaList:
+	            setNodeVisibility(textareaMarkdown, false);
+		        setNodeVisibility(cmStyle.getWrapperElement(), false);
+		        showMediaList(true);
+		        setNodeVisibility(cmMarkdown.getWrapperElement(), false);
+
+	            selectedEditor = editor;
+	            break;
+	        default:
+	        	console.log("editor selection not known or not implemented");
+	    }
     }
 
     setEditorDisplay(selectedEditor);
