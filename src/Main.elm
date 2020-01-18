@@ -1340,14 +1340,21 @@ mkEditorToolbar tabState =
            )
 
 
-statusBar : Model -> Html Msg
-statusBar model =
+statusBar : Bool -> Model -> Html Msg
+statusBar showStatus model =
     let
         wc =
             Exposition.wordCount model.exposition
 
         status =
             "Word count: " ++ String.fromInt wc
+
+        statusDisplayStyle =
+            if showStatus then
+                "inline-block"
+
+            else
+                "none"
 
         saveButtonText =
             if model.saved then
@@ -1364,7 +1371,7 @@ statusBar model =
                 [ renderIcon SaveIcon, text saveButtonText ]
     in
     div [ class "editor-status-bar" ]
-        [ span [] [ text status ]
+        [ span [ style "display" statusDisplayStyle ] [ text status ]
         , saveButton
         ]
 
@@ -1506,5 +1513,5 @@ view model =
                     [ editorCheckbox, viewFullscreenSwitch model.fullscreenMode ]
         , alert
         , mediaList
-        , optionalNonBlock showButtons <| statusBar model
+        , statusBar (selectedEditorIsMarkdown model) model -- only show wordcount in markdown
         ]

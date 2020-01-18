@@ -14453,20 +14453,6 @@ var $author$project$View$optionalBlock = F2(
 			_List_fromArray(
 				[elem]));
 	});
-var $author$project$View$optionalNonBlock = F2(
-	function (show, elem) {
-		return A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$Attributes$style,
-					'display',
-					show ? 'initial' : 'none')
-				]),
-			_List_fromArray(
-				[elem]));
-	});
 var $author$project$Main$selectedEditorIsMarkdown = function (model) {
 	var _v0 = model.p;
 	if (!_v0.a) {
@@ -14511,45 +14497,50 @@ var $author$project$Util$wordCount = function (str) {
 var $author$project$Exposition$wordCount = function (expo) {
 	return $author$project$Util$wordCount(expo.a7);
 };
-var $author$project$Main$statusBar = function (model) {
-	var wc = $author$project$Exposition$wordCount(model.b);
-	var status = 'Word count: ' + $elm$core$String$fromInt(wc);
-	var saveButtonText = model.R ? 'Saved' : 'Not Saved';
-	var saveButton = A2(
-		$rundis$elm_bootstrap$Bootstrap$Button$button,
-		_List_fromArray(
-			[
-				$rundis$elm_bootstrap$Bootstrap$Button$light,
-				$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('save-button'),
-						$elm$html$Html$Events$onClick($author$project$Main$SaveExposition)
-					]))
-			]),
-		_List_fromArray(
-			[
-				$author$project$View$renderIcon(2),
-				$elm$html$Html$text(saveButtonText)
-			]));
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('editor-status-bar')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$span,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(status)
-					])),
-				saveButton
-			]));
-};
+var $author$project$Main$statusBar = F2(
+	function (showStatus, model) {
+		var wc = $author$project$Exposition$wordCount(model.b);
+		var statusDisplayStyle = showStatus ? 'inline-block' : 'none';
+		var status = 'Word count: ' + $elm$core$String$fromInt(wc);
+		var saveButtonText = model.R ? 'Saved' : 'Not Saved';
+		var saveButton = A2(
+			$rundis$elm_bootstrap$Bootstrap$Button$button,
+			_List_fromArray(
+				[
+					$rundis$elm_bootstrap$Bootstrap$Button$light,
+					$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('save-button'),
+							$elm$html$Html$Events$onClick($author$project$Main$SaveExposition)
+						]))
+				]),
+			_List_fromArray(
+				[
+					$author$project$View$renderIcon(2),
+					$elm$html$Html$text(saveButtonText)
+				]));
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('editor-status-bar')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							A2($elm$html$Html$Attributes$style, 'display', statusDisplayStyle)
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(status)
+						])),
+					saveButton
+				]));
+	});
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
 var $rundis$elm_bootstrap$Bootstrap$Modal$h2 = $rundis$elm_bootstrap$Bootstrap$Modal$titledHeader($elm$html$Html$h2);
 var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = 0;
@@ -18021,9 +18012,9 @@ var $author$project$Main$view = function (model) {
 				alert,
 				mediaList,
 				A2(
-				$author$project$View$optionalNonBlock,
-				showButtons,
-				$author$project$Main$statusBar(model))
+				$author$project$Main$statusBar,
+				$author$project$Main$selectedEditorIsMarkdown(model),
+				model)
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
