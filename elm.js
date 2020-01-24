@@ -13124,6 +13124,7 @@ var $author$project$RCMediaList$view = F5(
 				domIdAndStyle,
 				_List_fromArray(
 					[
+						tableControls,
 						A2(
 						$rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo,
 						_List_Nil,
