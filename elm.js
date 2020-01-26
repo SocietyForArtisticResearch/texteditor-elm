@@ -13124,7 +13124,14 @@ var $author$project$RCMediaList$view = F5(
 				domIdAndStyle,
 				_List_fromArray(
 					[
-						tableControls,
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('mt-1')
+							]),
+						_List_fromArray(
+							[upload])),
 						A2(
 						$rundis$elm_bootstrap$Bootstrap$Alert$simpleInfo,
 						_List_Nil,

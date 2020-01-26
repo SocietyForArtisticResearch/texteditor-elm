@@ -315,8 +315,8 @@ view upload tableType { query, state } tableConfig objectList =
     case objectList of
         [] ->
             div domIdAndStyle
-                [ tableControls,
-                 Alert.simpleInfo [] [ text "Media list is empty. Hint: add a file by using the \"upload media\" button." ]
+                [ div [ class "mt-1" ] [ upload ]
+                , Alert.simpleInfo [] [ text "Media list is empty. Hint: add a file by using the \"upload media\" button." ]
                 ]
 
         nonEmptyObjectList ->
