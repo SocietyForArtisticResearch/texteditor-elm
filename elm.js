@@ -17907,7 +17907,7 @@ var $author$project$Main$view = function (model) {
 					[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb1, $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt1, $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mr1]),
 				ep: true,
 				aI: 'Import Doc',
-				dC: 'Import external documents (Word, Open office, Markdown, LaTeX etc..'
+				dC: 'Import text from document (Word, Open office, Markdown, LaTeX etc..'
 			});
 	}();
 	var editorToolbar = $author$project$Main$mkEditorToolbar(

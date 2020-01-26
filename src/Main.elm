@@ -1471,7 +1471,7 @@ view model =
                 , text = "Import Doc"
                 , primary = True
                 , otherAttrs = [ Spacing.mb1, Spacing.mt1, Spacing.mr1 ]
-                , title = "Import external documents (Word, Open office, Markdown, LaTeX etc.."
+                , title = "Import text from document (Word, Open office, Markdown, LaTeX etc.."
             }
     in
     div []
