@@ -118,7 +118,7 @@ function setEditorDisplay(editor) {
                 // recover position
                 cmMarkdown.setCursor(cmMarkdownPosition);
 		cmMarkdown.focus();
-                console.log('cursos position reset');
+                console.log('focus cmMarkdown');
             }
             break;
         case editorTxtMd:
