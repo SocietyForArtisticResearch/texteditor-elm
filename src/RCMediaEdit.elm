@@ -317,12 +317,16 @@ type alias InsertMediaMessage msg =
     Exposition.RCMediaObject -> msg
 
 
+type alias InsertMediaAsLinkMessage msg =
+    Exposition.RCMediaObject -> msg
+
+
 
 -- object ObjectId field newValue -> msg
 
 
-view : MakeMediaEditFun msg -> msg -> InsertMediaMessage msg -> RCExposition -> Model -> Html msg
-view makeMediaEditFun closeMediaDialogMsg insertMediaMsg exposition model =
+view : MakeMediaEditFun msg -> msg -> InsertMediaMessage msg -> InsertMediaAsLinkMessage msg -> RCExposition -> Model -> Html msg
+view makeMediaEditFun closeMediaDialogMsg insertMediaMsg insertMediaAsLinkMsg exposition model =
     let
         { visibility, object, objectViewState, allowInsert } =
             model

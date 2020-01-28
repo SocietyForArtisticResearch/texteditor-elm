@@ -147,6 +147,11 @@ editorNumber tab =
             3
 
 
+type MediaInsertMethod
+    = FullMedia
+    | OnlyTheLink
+
+
 type alias Flags =
     { weave : Int, research : Int }
 
@@ -348,6 +353,7 @@ type Msg
     | InsertAtCursor ( String, Int ) -- string and cursor offset after insert
     | InsertFootnoteAtCursor
     | InsertMediaAtCursor RCMediaObject
+    | InsertMediaAsLinkAtCursor RCMediaObject
     | OpenMediaPicker
     | CloseMediaPicker
     | MediaPicker (RCMediaList.Msg Msg)
@@ -845,7 +851,10 @@ update msg model =
             ( newModel, enumTabState (getTabState newModel.editor) |> setEditor )
 
         InsertMediaAtCursor obj ->
-            insertMediaUpdate obj model
+            insertMediaUpdate FullMedia obj model
+
+        InsertMediaAsLinkAtCursor obj ->
+            insertMediaUpdate OnlyTheLink obj model
 
         InsertAtCursor insertTuple ->
             ( model, insertMdString insertTuple )
@@ -910,7 +919,7 @@ update msg model =
                 RCMediaList.MainMessage normalMsg ->
                     case normalMsg of
                         InsertMediaAtCursor obj ->
-                            insertMediaUpdate obj model
+                            insertMediaUpdate FullMedia obj model
 
                         OpenMediaPicker ->
                             ( { model | mediaPickerDialog = ( Tuple.first model.mediaPickerDialog, Modal.shown ) }, Cmd.none )
@@ -998,8 +1007,8 @@ confirmObjectDelete object =
     UserConfirm.Model Modal.shown content messages
 
 
-insertMediaUpdate : RCMediaObject -> Model -> ( Model, Cmd Msg )
-insertMediaUpdate object model =
+insertMediaUpdate : MediaInsertMethod -> RCMediaObject -> Model -> ( Model, Cmd Msg )
+insertMediaUpdate insertMethod object model =
     let
         foundObj =
             Exposition.objectByNameOrId (String.fromInt object.id) model.exposition
@@ -1023,10 +1032,18 @@ insertMediaUpdate object model =
                         | mediaPickerDialog = ( Tuple.first model.mediaPickerDialog, Modal.hidden )
                         , mediaDialog = RCMediaEdit.empty
                     }
+
+                mediaSnippet =
+                    case insertMethod of
+                        OnlyTheLink ->
+                            "[" ++ Exposition.mediaUrl o ++ "]](" ++ o.name ++ ")"
+
+                        FullMedia ->
+                            "!{" ++ o.name ++ "}"
             in
             ( updatedModel
             , Cmd.batch
-                [ insertMdString ( "!{" ++ o.name ++ "}", 0 )
+                [ insertMdString ( mediaSnippet, 0 )
                 , closeMediaListIfOpen -- close media list
                 ]
             )
@@ -1384,6 +1401,7 @@ view model =
             RCMediaEdit.view
                 makeMediaEditFun
                 CloseMediaDialog
+                InsertMediaAsLinkAtCursor
                 InsertMediaAtCursor
                 model.exposition
                 model.mediaDialog

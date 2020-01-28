@@ -116,12 +116,12 @@ function setEditorDisplay(editor) {
                 cmMarkdown.refresh();
             } else {
                 // recover position
-		console.log(cmMarkdownPosition,' = pos');
+		//console.log(cmMarkdownPosition,' = pos');
                 
 		setTimeout(() => {
 		    cmMarkdown.focus();
 		    cmMarkdown.setCursor(cmMarkdownPosition);
-		    console.log('bang');
+		    //console.log('');
 		}
 		,500);
             }
@@ -141,8 +141,10 @@ function setEditorDisplay(editor) {
             setNodeVisibility(cmMarkdown.getWrapperElement(), false);
 
             if (cmStylePosition !== null) {
-                cmStyle.setCursor(cmStylePosition);
-		cmStyle.focus();
+		setTimeout( () => {
+		    cmStyle.focus();
+		    cmStyle.setCursor(cmStylePosition);
+		}, 500);
             }
 
             selectedEditor = editor;

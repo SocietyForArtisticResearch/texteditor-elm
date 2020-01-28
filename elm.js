@@ -6822,7 +6822,7 @@ var $author$project$Main$EditGeneration = function (a) {
 	return {$: 0, a: a};
 };
 var $author$project$Main$ExportDropMsg = function (a) {
-	return {$: 40, a: a};
+	return {$: 41, a: a};
 };
 var $author$project$Main$GotConvertedHtml = function (a) {
 	return {$: 4, a: a};
@@ -7664,7 +7664,7 @@ var $author$project$Main$subscriptions = function (model) {
 			]));
 };
 var $author$project$Main$BadUploadFileType = function (a) {
-	return {$: 41, a: a};
+	return {$: 42, a: a};
 };
 var $author$project$Problems$CannotFindMediaFieldInJson = {$: 5};
 var $author$project$Problems$CannotImportFile = function (a) {
@@ -7692,6 +7692,7 @@ var $author$project$Problems$ExportFailed = {$: 10};
 var $author$project$Problems$FootnoteHelperError = function (a) {
 	return {$: 14, a: a};
 };
+var $author$project$Main$FullMedia = 0;
 var $author$project$Main$GotMediaList = function (a) {
 	return {$: 10, a: a};
 };
@@ -7709,6 +7710,7 @@ var $author$project$Problems$MediaUserClassesProblem = {$: 15};
 var $author$project$Problems$NoMediaWithNameOrId = function (a) {
 	return {$: 2, a: a};
 };
+var $author$project$Main$OnlyTheLink = 1;
 var $author$project$Main$OpenNewMediaGotMediaList = F2(
 	function (a, b) {
 		return {$: 11, a: a, b: b};
@@ -9183,8 +9185,8 @@ var $author$project$Main$insertMdString = _Platform_outgoingPort(
 				]));
 	});
 var $author$project$Main$setEditor = _Platform_outgoingPort('setEditor', $elm$json$Json$Encode$int);
-var $author$project$Main$insertMediaUpdate = F2(
-	function (object, model) {
+var $author$project$Main$insertMediaUpdate = F3(
+	function (insertMethod, object, model) {
 		var foundObj = A2(
 			$author$project$Exposition$objectByNameOrId,
 			$elm$core$String$fromInt(object.j),
@@ -9197,6 +9199,13 @@ var $author$project$Main$insertMediaUpdate = F2(
 					D: $author$project$RCMediaEdit$empty,
 					r: _Utils_Tuple2(model.r.a, $rundis$elm_bootstrap$Bootstrap$Modal$hidden)
 				});
+			var mediaSnippet = function () {
+				if (insertMethod === 1) {
+					return '[' + ($author$project$Exposition$mediaUrl(o) + (']](' + (o.l + ')')));
+				} else {
+					return '!{' + (o.l + '}');
+				}
+			}();
 			var closeMediaListIfOpen = function () {
 				var _v1 = model.p;
 				if (_v1.a === 2) {
@@ -9219,7 +9228,7 @@ var $author$project$Main$insertMediaUpdate = F2(
 					_List_fromArray(
 						[
 							$author$project$Main$insertMdString(
-							_Utils_Tuple2('!{' + (o.l + '}'), 0)),
+							_Utils_Tuple2(mediaSnippet, 0)),
 							closeMediaListIfOpen
 						])));
 		} else {
@@ -11462,7 +11471,10 @@ var $author$project$Main$update = F2(
 								$author$project$Main$getTabState(newModel.p))));
 				case 36:
 					var obj = msg.a;
-					return A2($author$project$Main$insertMediaUpdate, obj, model);
+					return A3($author$project$Main$insertMediaUpdate, 0, obj, model);
+				case 37:
+					var obj = msg.a;
+					return A3($author$project$Main$insertMediaUpdate, 1, obj, model);
 				case 34:
 					var insertTuple = msg.a;
 					return _Utils_Tuple2(
@@ -11525,7 +11537,7 @@ var $author$project$Main$update = F2(
 									$elm$core$Platform$Cmd$none);
 						}
 					}
-				case 37:
+				case 38:
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -11533,7 +11545,7 @@ var $author$project$Main$update = F2(
 								r: _Utils_Tuple2(model.r.a, $rundis$elm_bootstrap$Bootstrap$Modal$shown)
 							}),
 						$elm$core$Platform$Cmd$none);
-				case 38:
+				case 39:
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -11541,7 +11553,7 @@ var $author$project$Main$update = F2(
 								r: _Utils_Tuple2(model.r.a, $rundis$elm_bootstrap$Bootstrap$Modal$hidden)
 							}),
 						$elm$core$Platform$Cmd$none);
-				case 39:
+				case 40:
 					var pickerMsg = msg.a;
 					if (!pickerMsg.$) {
 						var tableMsg = pickerMsg.a;
@@ -11562,8 +11574,8 @@ var $author$project$Main$update = F2(
 						switch (normalMsg.$) {
 							case 36:
 								var obj = normalMsg.a;
-								return A2($author$project$Main$insertMediaUpdate, obj, model);
-							case 37:
+								return A3($author$project$Main$insertMediaUpdate, 0, obj, model);
+							case 38:
 								return _Utils_Tuple2(
 									_Utils_update(
 										model,
@@ -11571,7 +11583,7 @@ var $author$project$Main$update = F2(
 											r: _Utils_Tuple2(model.r.a, $rundis$elm_bootstrap$Bootstrap$Modal$shown)
 										}),
 									$elm$core$Platform$Cmd$none);
-							case 38:
+							case 39:
 								return _Utils_Tuple2(
 									_Utils_update(
 										model,
@@ -11590,14 +11602,14 @@ var $author$project$Main$update = F2(
 									$elm$core$Platform$Cmd$none);
 						}
 					}
-				case 40:
+				case 41:
 					var state = msg.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{aZ: state}),
 						$elm$core$Platform$Cmd$none);
-				case 41:
+				case 42:
 					var str = msg.a;
 					return _Utils_Tuple2(
 						A2(
@@ -11605,15 +11617,15 @@ var $author$project$Main$update = F2(
 							model,
 							$author$project$Problems$UnkownUploadFileType(str)),
 						$elm$core$Platform$Cmd$none);
-				case 42:
-					return _Utils_Tuple2(
-						model,
-						$author$project$Main$cmUndo(0));
 				case 43:
 					return _Utils_Tuple2(
 						model,
-						$author$project$Main$cmRedo(0));
+						$author$project$Main$cmUndo(0));
 				case 44:
+					return _Utils_Tuple2(
+						model,
+						$author$project$Main$cmRedo(0));
+				case 45:
 					var title = msg.a;
 					return _Utils_Tuple2(
 						model,
@@ -11637,6 +11649,9 @@ var $author$project$RCAPI$Epub = 6;
 var $author$project$View$EyeIcon = 12;
 var $author$project$RCAPI$Html = 4;
 var $author$project$View$ImportIcon = 1;
+var $author$project$Main$InsertMediaAsLinkAtCursor = function (a) {
+	return {$: 37, a: a};
+};
 var $author$project$Main$InsertMediaAtCursor = function (a) {
 	return {$: 36, a: a};
 };
@@ -11646,7 +11661,7 @@ var $author$project$Main$MediaList = function (a) {
 	return {$: 6, a: a};
 };
 var $author$project$Main$MediaPicker = function (a) {
-	return {$: 39, a: a};
+	return {$: 40, a: a};
 };
 var $author$project$RCAPI$Odt = 2;
 var $author$project$RCAPI$Pdf = 0;
@@ -11737,7 +11752,7 @@ var $author$project$Main$makeMediaEditFun = F3(
 							})));
 		}
 	});
-var $author$project$Main$CloseMediaPicker = {$: 38};
+var $author$project$Main$CloseMediaPicker = {$: 39};
 var $author$project$Main$makePickerConfig = function (uploadButtonHtml) {
 	return {e5: $author$project$Main$CloseMediaPicker, d7: $author$project$Main$InsertMediaAtCursor, eW: uploadButtonHtml};
 };
@@ -14252,12 +14267,12 @@ var $author$project$View$ListIcon = 8;
 var $author$project$View$MediaIcon = 18;
 var $author$project$Settings$Numbered = 7;
 var $author$project$View$NumberedIcon = 9;
-var $author$project$Main$OpenMediaPicker = {$: 37};
+var $author$project$Main$OpenMediaPicker = {$: 38};
 var $author$project$Settings$Quote = 8;
 var $author$project$View$QuoteIcon = 6;
-var $author$project$Main$RedoCM = {$: 43};
+var $author$project$Main$RedoCM = {$: 44};
 var $author$project$View$RedoIcon = 15;
-var $author$project$Main$UndoCM = {$: 42};
+var $author$project$Main$UndoCM = {$: 43};
 var $author$project$View$UndoIcon = 14;
 var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Light = 7;
 var $rundis$elm_bootstrap$Bootstrap$Button$light = $rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
@@ -16215,8 +16230,8 @@ var $author$project$RCMediaEdit$viewBody = F3(
 								]))))
 				]));
 	});
-var $author$project$RCMediaEdit$view = F5(
-	function (makeMediaEditFun, closeMediaDialogMsg, insertMediaMsg, exposition, model) {
+var $author$project$RCMediaEdit$view = F6(
+	function (makeMediaEditFun, closeMediaDialogMsg, insertMediaMsg, insertMediaAsLinkMsg, exposition, model) {
 		var emptyDiv = A2($elm$html$Html$div, _List_Nil, _List_Nil);
 		var _v0 = model;
 		var visibility = _v0.cZ;
@@ -16886,7 +16901,7 @@ var $author$project$Main$viewEditorCheckbox = function (markdownEditor) {
 var $author$project$View$FullScreenIcon = 16;
 var $author$project$View$NormalScreenIcon = 17;
 var $author$project$Main$ToggleFullscreen = function (a) {
-	return {$: 45, a: a};
+	return {$: 46, a: a};
 };
 var $author$project$Main$viewFullscreenSwitch = function (currentMode) {
 	var tit = currentMode ? 'Exit Fullscreen' : 'Enter Fullscreen';
@@ -17895,7 +17910,7 @@ var $author$project$Main$view = function (model) {
 			model.a8,
 			model.b.n,
 			$author$project$Main$makeTableMessages(uploadButtonHtml)));
-	var mediaDialogHtml = A5($author$project$RCMediaEdit$view, $author$project$Main$makeMediaEditFun, $author$project$Main$CloseMediaDialog, $author$project$Main$InsertMediaAtCursor, model.b, model.D);
+	var mediaDialogHtml = A6($author$project$RCMediaEdit$view, $author$project$Main$makeMediaEditFun, $author$project$Main$CloseMediaDialog, $author$project$Main$InsertMediaAsLinkAtCursor, $author$project$Main$InsertMediaAtCursor, model.b, model.D);
 	var importDocButtonInfo = function () {
 		var bttn = $author$project$View$defaultButton($author$project$Main$UploadImportFileSelect);
 		return _Utils_update(
