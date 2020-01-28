@@ -117,8 +117,13 @@ function setEditorDisplay(editor) {
             } else {
                 // recover position
 		console.log(cmMarkdownPosition,' = pos');
-                cmMarkdown.setCursor(cmMarkdownPosition);
-		setTimeout(() => cmMarkdown.focus(),4000);
+                
+		setTimeout(() => {
+		    cmMarkdown.focus();
+		    cmMarkdown.setCursor(cmMarkdownPosition);
+		    console.log('bang');
+		}
+		,1000);
             }
             break;
         case editorTxtMd:
