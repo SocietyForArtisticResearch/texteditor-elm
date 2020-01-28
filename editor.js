@@ -117,7 +117,7 @@ function setEditorDisplay(editor) {
             } else {
                 // recover position
                 cmMarkdown.setCursor(cmMarkdownPosition);
-		cmMarkdown.focus();
+		setTimeout(function() {cmMarkdown.focus();},10);
                 console.log('focus cmMarkdown');
             }
             break;
