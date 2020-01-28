@@ -95,7 +95,7 @@ function setEditorDisplay(editor) {
 
     if (selectedEditor === editorCmMd && cmMarkdown != null) {
         cmMarkdownPosition = cmMarkdown.getCursor();
-        console.log('cursor is : cmMarkdownCursor');
+        console.log('cursor is : cmMarkdownPos', cmMarkdownPosition);
     }
     if (selectedEditor === editorCmCss && cmStyle != null) {
         cmStylePosition = cmStyle.getCursor();
