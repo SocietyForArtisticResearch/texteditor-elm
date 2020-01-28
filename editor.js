@@ -123,7 +123,7 @@ function setEditorDisplay(editor) {
 		    cmMarkdown.setCursor(cmMarkdownPosition);
 		    console.log('bang');
 		}
-		,1);
+		,50);
             }
             break;
         case editorTxtMd:
