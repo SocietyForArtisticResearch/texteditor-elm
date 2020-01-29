@@ -16247,6 +16247,22 @@ var $author$project$RCMediaEdit$view = F6(
 					objViewState,
 					makeMediaEditFun(obj),
 					obj);
+				var insertLinkButton = A2(
+					$rundis$elm_bootstrap$Bootstrap$Button$button,
+					_List_fromArray(
+						[
+							$rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary,
+							$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick(
+									insertMediaAsLinkMsg(obj))
+								]))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Insert as link')
+						]));
 				var insertButton = A2(
 					$rundis$elm_bootstrap$Bootstrap$Button$button,
 					_List_fromArray(
@@ -16279,7 +16295,7 @@ var $author$project$RCMediaEdit$view = F6(
 							$elm$html$Html$text('Done')
 						]));
 				var buttons = allowInsert ? _List_fromArray(
-					[insertButton, closeButton]) : _List_fromArray(
+					[insertLinkButton, insertButton, closeButton]) : _List_fromArray(
 					[closeButton]);
 				return A2(
 					$rundis$elm_bootstrap$Bootstrap$Modal$view,

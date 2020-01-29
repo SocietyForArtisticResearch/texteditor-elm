@@ -342,6 +342,13 @@ view makeMediaEditFun closeMediaDialogMsg insertMediaMsg insertMediaAsLinkMsg ex
                         mediaEditView =
                             viewBody objViewState (makeMediaEditFun obj) obj
 
+                        insertLinkButton =
+                            Button.button
+                                [ Button.outlinePrimary
+                                , Button.attrs [ Events.onClick <| insertMediaAsLinkMsg obj ]
+                                ]
+                                [ text "Insert as link" ]
+
                         insertButton =
                             Button.button
                                 [ Button.outlinePrimary
@@ -358,7 +365,7 @@ view makeMediaEditFun closeMediaDialogMsg insertMediaMsg insertMediaAsLinkMsg ex
 
                         buttons =
                             if allowInsert then
-                                [ insertButton, closeButton ]
+                                [ insertLinkButton, insertButton, closeButton ]
 
                             else
                                 [ closeButton ]
