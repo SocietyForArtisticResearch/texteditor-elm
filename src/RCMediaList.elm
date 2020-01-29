@@ -30,12 +30,14 @@ type alias TableEditConfig msg =
     { editObject : String -> msg
     , deleteObject : RCMediaObject -> msg
     , insertObject : RCMediaObject -> msg
+    , insertObjectAsLink : RCMediaObject -> msg
     , uploadButtonHtml : Html msg -- includes upload percentage, so it is controlled from Main.elm
     }
 
 
 type alias PickerConfig msg =
     { insertObject : RCMediaObject -> msg
+    , insertObjectAsLink : RCMediaObject -> msg
     , closeModal : msg
     , uploadButtonHtml : Html msg
     }
@@ -117,7 +119,7 @@ configMediaPicker : PreviewedMediaId -> PickerConfig msg -> Table.Config RCMedia
 configMediaPicker previewedMediaId messages =
     let
         buttons =
-            pickerButton messages
+            pickerButtons messages
 
         doubleClickAction =
             MainMessage << messages.insertObject
@@ -205,29 +207,36 @@ deleteButton messages object =
         [ text "Delete" ]
 
 
-pickerButton : PickerConfig msg -> Table.Column RCMediaObject (Msg msg)
-pickerButton messages =
+pickerButtons : PickerConfig msg -> Table.Column RCMediaObject (Msg msg)
+pickerButtons messages =
     Table.veryCustomColumn
         { name = "Edit"
-        , viewData = insertButton messages
+        , viewData = (\object -> Table.HtmlDetails
+                          []
+                          [ insertButton messages object
+                          , insertAsLinkButton messages object ])
         , sorter = Table.unsortable
         }
 
 
-insertButton : PickerConfig msg -> RCMediaObject -> Table.HtmlDetails (Msg msg)
-insertButton messages object =
-    let
-        makeInsertMessage =
-            MainMessage << messages.insertObject
-    in
-    Table.HtmlDetails []
-        [ Button.button
-            [ Button.small
-            , Button.outlineSuccess
-            , Button.attrs [ onClick <| makeInsertMessage object ]
-            ]
-            [ text "Insert" ]
+
+makeInsertButton : String -> (RCMediaObject -> (Msg msg)) -> RCMediaObject -> Html (Msg msg)
+makeInsertButton buttonText objectAction object =
+    Button.button
+        [ Button.small
+        , Button.outlineSuccess
+        , Button.attrs [ onClick <| objectAction object ]
         ]
+        [ text buttonText ]
+
+insertButton : PickerConfig msg -> RCMediaObject -> Html (Msg msg)
+insertButton messages object =
+    makeInsertButton "Insert media" (MainMessage << messages.insertObject) object
+
+
+insertAsLinkButton : PickerConfig msg -> RCMediaObject -> Html (Msg msg)
+insertAsLinkButton messages object =
+    makeInsertButton "Insert as Link" (MainMessage << messages.insertObjectAsLink) object
 
 
 mediaListButtons : TableEditConfig msg -> Table.Column RCMediaObject (Msg msg)

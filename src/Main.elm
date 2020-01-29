@@ -393,6 +393,7 @@ makeTableMessages uploadButtonHtml =
     { editObject = MediaDialog False
     , deleteObject = ConfirmMediaDelete
     , insertObject = InsertMediaAtCursor
+    , insertObjectAsLink = InsertMediaAsLinkAtCursor
     , uploadButtonHtml = uploadButtonHtml
     }
 
@@ -401,6 +402,7 @@ makePickerConfig : Html Msg -> RCMediaList.PickerConfig Msg
 makePickerConfig uploadButtonHtml =
     { uploadButtonHtml = uploadButtonHtml
     , insertObject = InsertMediaAtCursor
+    , insertObjectAsLink = InsertMediaAsLinkAtCursor
     , closeModal = CloseMediaPicker
     }
 
