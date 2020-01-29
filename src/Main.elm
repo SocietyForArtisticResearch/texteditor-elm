@@ -923,6 +923,10 @@ update msg model =
                         InsertMediaAtCursor obj ->
                             insertMediaUpdate FullMedia obj model
 
+                        InsertMediaAsLinkAtCursor obj ->
+                            insertMediaUpdate OnlyTheLink obj model
+
+                                
                         OpenMediaPicker ->
                             ( { model | mediaPickerDialog = ( Tuple.first model.mediaPickerDialog, Modal.shown ) }, Cmd.none )
 
