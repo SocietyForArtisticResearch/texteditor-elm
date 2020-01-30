@@ -915,7 +915,6 @@ update msg model =
                         InsertMediaAsLinkAtCursor obj ->
                             insertMediaUpdate OnlyTheLink obj model
 
-                                
                         OpenMediaPicker ->
                             ( { model | mediaPickerDialog = ( Tuple.first model.mediaPickerDialog, Modal.shown ) }, Cmd.none )
 
@@ -1031,7 +1030,7 @@ insertMediaUpdate insertMethod object model =
                 mediaSnippet =
                     case insertMethod of
                         OnlyTheLink ->
-                            "\n[" ++ o.name ++ "](" ++  Exposition.mediaUrl o ++ ")\n"
+                            "\n[" ++ o.name ++ "](" ++ Exposition.mediaUrl o ++ ")\n"
 
                         FullMedia ->
                             "\n!{" ++ o.name ++ "}\n"
@@ -1138,24 +1137,32 @@ viewNavbarItem buildType props =
             ]
         )
 
+
 viewPreviewNavbarItem : Bool -> BuildType -> NavbarItemProps -> Navbar.CustomItem Msg
 viewPreviewNavbarItem expositionIsSaved buildType props =
-    let saveExpositionAttrs =
-             if expositionIsSaved  then   [] else [ onClick SaveExposition, class "opacity-3" ]
+    let
+        saveExpositionAttrs =
+            if expositionIsSaved then
+                []
+
+            else
+                [ onClick SaveExposition, class "opacity-2" ]
     in
     Navbar.customItem
         (a
-             [ props.spacing, href props.link, Html.Attributes.target "_blank" ]
-             [ img
+            [ props.spacing, href props.link, Html.Attributes.target "_blank" ]
+            [ img
                 ([ src (Settings.iconUrl buildType ++ props.icon)
-                , class "d-inline-block align-top"
-                , style "width" "25px"
-                , Html.Attributes.title props.title
-                ] ++ saveExpositionAttrs)
-
+                 , class "d-inline-block align-top"
+                 , style "width" "25px"
+                 , Html.Attributes.title props.title
+                 ]
+                    ++ saveExpositionAttrs
+                )
                 []
             ]
         )
+
 
 viewNavbar : BuildType -> Model -> Html Msg
 viewNavbar buildType model =
