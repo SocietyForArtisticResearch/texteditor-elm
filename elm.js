@@ -11575,6 +11575,9 @@ var $author$project$Main$update = F2(
 							case 36:
 								var obj = normalMsg.a;
 								return A3($author$project$Main$insertMediaUpdate, 0, obj, model);
+							case 37:
+								var obj = normalMsg.a;
+								return A3($author$project$Main$insertMediaUpdate, 1, obj, model);
 							case 38:
 								return _Utils_Tuple2(
 									_Utils_update(
