@@ -1042,7 +1042,7 @@ insertMediaUpdate insertMethod object model =
                 mediaSnippet =
                     case insertMethod of
                         OnlyTheLink ->
-                            "[" ++ Exposition.mediaUrl o ++ "]](" ++ o.name ++ ")"
+                            "[" ++ o.name ++ "](" ++  Exposition.mediaUrl o ++ ")"
 
                         FullMedia ->
                             "!{" ++ o.name ++ "}"
