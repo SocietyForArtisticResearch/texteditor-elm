@@ -1140,18 +1140,18 @@ viewNavbarItem buildType props =
 
 viewPreviewNavbarItem : Bool -> BuildType -> NavbarItemProps -> Navbar.CustomItem Msg
 viewPreviewNavbarItem expositionIsSaved buildType props =
-    let saveExpositionAttr =
-             if expositionIsSaved  then   [] else [ onClick SaveExposition, "class" "opacity-3" ]
-
+    let saveExpositionAttrs =
+             if expositionIsSaved  then   [] else [ onClick SaveExposition, class "opacity-3" ]
+    in
     Navbar.customItem
         (a
-             [ props.spacing, href props.link Html.Attributes.target "_blank" ]
+             [ props.spacing, href props.link, Html.Attributes.target "_blank" ]
              [ img
                 ([ src (Settings.iconUrl buildType ++ props.icon)
                 , class "d-inline-block align-top"
                 , style "width" "25px"
                 , Html.Attributes.title props.title
-                ] ++ 
+                ] ++ saveExpositionAttrs)
 
                 []
             ]
