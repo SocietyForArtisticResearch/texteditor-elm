@@ -62,7 +62,7 @@ var app = Elm.Main.init({
     node: document.getElementById('elm'),
     flags: {
         weave: parseInt(urlParams.get('weave')),
-        research: parseInt(urlParams.get('research'))
+        research: parseInt(urlParams.get('research')),
 	buildTarget: "Release"
     }
 });
