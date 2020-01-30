@@ -16,6 +16,7 @@ import Dict
 import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectViewState, addMediaUserClasses, incContentVersion)
 import File exposing (File)
 import File.Select as Select
+import FileTypes
 import FootnoteHelper
 import Html exposing (Html, a, button, div, img, li, p, span, text, ul)
 import Html.Attributes exposing (attribute, class, classList, for, href, id, src, style, title)
@@ -30,7 +31,8 @@ import RCAPI
 import RCMediaEdit
 import RCMediaList
 import Regex
-import Settings exposing (..)
+import Settings exposing (BuildType)
+import Snippets exposing (..)
 import String.Extra as Str
 import Time
 import UserConfirm exposing (ConfirmDialogContent)
@@ -57,6 +59,7 @@ type alias Model =
     , exportDropState : Dropdown.State
     , navbarState : Navbar.State
     , fullscreenMode : Bool
+    , buildTarget : BuildType
     }
 
 
@@ -148,16 +151,19 @@ editorNumber tab =
 
 
 type alias Flags =
-    { weave : Int, research : Int }
+    { weave : Int, research : Int, buildTarget : BuildType }
 
 
 decodeFlags : D.Decoder Flags
 decodeFlags =
-    D.map2 Flags (D.field "weave" D.int) (D.field "research" D.int)
+    D.map3 Flags
+        (D.field "weave" D.int)
+        (D.field "research" D.int)
+        (D.map Settings.buildTypeFromString (D.field "buildTarget" D.string))
 
 
-emptyModel : Navbar.State -> Int -> Int -> Model
-emptyModel navbarInitState research weave =
+emptyModel : Navbar.State -> BuildType -> Int -> Int -> Model
+emptyModel navbarInitState buildType research weave =
     { editGeneration = ( -1, -1 )
     , exposition = Exposition.empty
     , mediaList = RCMediaList.empty
@@ -176,6 +182,7 @@ emptyModel navbarInitState research weave =
     , exportDropState = Dropdown.initialState
     , navbarState = navbarInitState
     , fullscreenMode = False
+    , buildTarget = buildType
     }
 
 
@@ -187,12 +194,12 @@ init flags =
     in
     case D.decodeValue decodeFlags flags of
         Ok fl ->
-            ( emptyModel navbarState fl.research fl.weave
+            ( emptyModel navbarState fl.buildTarget fl.research fl.weave
             , Cmd.batch [ navCmd, RCAPI.getExposition fl.research fl.weave GotExposition ]
             )
 
-        Err _ ->
-            ( addProblem (emptyModel navbarState -1 -1) Problems.WrongExpositionUrl
+        Err e ->
+            ( addProblem (emptyModel navbarState Settings.defaultBuildType -1 -1) Problems.WrongExpositionUrl
             , Cmd.none
             )
 
@@ -684,26 +691,8 @@ update msg model =
             ( model, RCAPI.getMediaList model.research GotMediaList )
 
         UploadMediaFileSelect ->
-            -- alowed media types:
             ( model
-            , Select.file
-                [ "image/jpeg"
-                , "image/png"
-                , "image/gif"
-                , "image/tiff"
-                , "image/svg+xml"
-                , "audio/mp3"
-                , "audio/wav"
-                , "audio/aiff"
-                , "application/pdf"
-                , "audio/ogg"
-                , "audio/aif"
-                , "video/mp4"
-                , "video/mpeg"
-                , "video/ogv"
-                , "video/quicktime"
-                , "audio/x-m4a"
-                ]
+            , Select.file FileTypes.strings
                 UploadMediaFileSelected
             )
 
@@ -734,7 +723,7 @@ update msg model =
             )
 
         ConvertExposition ctype ->
-            ( model, RCAPI.convertExposition ctype model.exposition DownloadExport )
+            ( model, RCAPI.convertExposition model.buildTarget ctype model.exposition DownloadExport )
 
         DownloadExport ctype result ->
             case result of
@@ -1037,31 +1026,15 @@ insertMediaUpdate object model =
 
 uploadMediaFilePrompt : Cmd Msg
 uploadMediaFilePrompt =
-    Select.file
-        [ "image/jpeg"
-        , "image/png"
-        , "image/gif"
-        , "image/tiff"
-        , "image/svg+xml"
-        , "audio/mp3"
-        , "audio/wav"
-        , "audio/aiff"
-        , "application/pdf"
-        , "audio/ogg"
-        , "audio/aif"
-        , "video/mp4"
-        , "video/mpeg"
-        , "video/ogv"
-        , "video/quicktime"
-        ]
+    Select.file FileTypes.strings
         UploadMediaFileSelected
 
 
-viewUpload : ButtonInfo Msg -> UploadStatus -> Html Msg
-viewUpload buttonInfo status =
+viewUpload : BuildType -> ButtonInfo Msg -> UploadStatus -> Html Msg
+viewUpload buildType buttonInfo status =
     case status of
         Ready ->
-            mkButton buttonInfo
+            mkButton buildType buttonInfo
 
         Uploading fraction ->
             let
@@ -1127,13 +1100,13 @@ type alias NavbarItemProps =
     }
 
 
-viewNavbarItem : NavbarItemProps -> Navbar.CustomItem Msg
-viewNavbarItem props =
+viewNavbarItem : BuildType -> NavbarItemProps -> Navbar.CustomItem Msg
+viewNavbarItem buildType props =
     Navbar.customItem
         (a
             [ props.spacing, href props.link, Html.Attributes.target "_blank" ]
             [ img
-                [ src (iconUrl ++ props.icon)
+                [ src (Settings.iconUrl buildType ++ props.icon)
                 , class "d-inline-block align-top"
                 , style "width" "25px"
                 , Html.Attributes.title props.title
@@ -1143,9 +1116,12 @@ viewNavbarItem props =
         )
 
 
-viewNavbar : Model -> Html Msg
-viewNavbar model =
+viewNavbar : BuildType -> Model -> Html Msg
+viewNavbar buildType model =
     let
+        navItem =
+            viewNavbarItem buildType
+
         tabLink : EditorType -> List (Html.Attribute Msg)
         tabLink tab =
             let
@@ -1173,11 +1149,11 @@ viewNavbar model =
             , Navbar.itemLink (tabLink EditorStyle) [ text "Style" ]
             ]
         |> Navbar.customItems
-            [ viewNavbarItem { link = "https://guide.researchcatalogue.net/#text-based-editor", icon = "question.svg", title = "Help", spacing = Spacing.ml0 }
-            , viewNavbarItem { link = metaDataUrl, icon = "pencil.svg", title = "Show/edit metadata", spacing = Spacing.ml3 }
-            , viewNavbarItem { link = previewUrl, icon = "eye_metro.svg", title = "Preview", spacing = Spacing.ml3 }
-            , viewNavbarItem { link = "profile", icon = "profile_metro.svg", title = "Profile", spacing = Spacing.ml3 }
-            , viewNavbarItem { link = "session/logout", icon = "logout_metro.svg", title = "Logout", spacing = Spacing.ml3 }
+            [ navItem { link = "https://guide.researchcatalogue.net/#text-based-editor", icon = "question.svg", title = "Help", spacing = Spacing.ml0 }
+            , navItem { link = metaDataUrl, icon = "pencil.svg", title = "Show/edit metadata", spacing = Spacing.ml3 }
+            , navItem { link = previewUrl, icon = "eye_metro.svg", title = "Preview", spacing = Spacing.ml3 }
+            , navItem { link = "profile", icon = "profile_metro.svg", title = "Profile", spacing = Spacing.ml3 }
+            , navItem { link = "session/logout", icon = "logout_metro.svg", title = "Logout", spacing = Spacing.ml3 }
             ]
         |> Navbar.view model.navbarState
 
@@ -1239,8 +1215,8 @@ viewEditorCheckbox markdownEditor =
         "txt"
 
 
-viewFullscreenSwitch : Bool -> Html Msg
-viewFullscreenSwitch currentMode =
+viewFullscreenSwitch : BuildType -> Bool -> Html Msg
+viewFullscreenSwitch buildType currentMode =
     let
         message =
             ToggleFullscreen (not currentMode)
@@ -1269,7 +1245,7 @@ viewFullscreenSwitch currentMode =
             else
                 []
     in
-    mkButton { btn | icon = icn, title = tit, otherAttrs = attrs }
+    mkButton buildType { btn | icon = icn, title = tit, otherAttrs = attrs }
 
 
 viewLink : String -> String -> Html Msg
@@ -1288,9 +1264,12 @@ separator =
         [ text "|" ]
 
 
-mkEditorToolbar : TabState -> List (Html Msg)
-mkEditorToolbar tabState =
+mkEditorToolbar : BuildType -> TabState -> List (Html Msg)
+mkEditorToolbar buildType tabState =
     let
+        mkButtonTarget =
+            mkButton buildType
+
         cmEditor =
             case tabState of
                 CmMarkdownTab ->
@@ -1306,7 +1285,7 @@ mkEditorToolbar tabState =
                     False
 
         snippetMsg action =
-            InsertAtCursor (Settings.snippet action)
+            InsertAtCursor (snippet action)
 
         default : ButtonInfo Msg
         default =
@@ -1314,24 +1293,24 @@ mkEditorToolbar tabState =
 
         -- note, this is a nonsense Msg, should always be overridden, is only here to satisfy msg requirement.
     in
-    [ mkButton { default | onClickMsg = snippetMsg Settings.H1, text = "H1", title = "Header 1" }
-    , mkButton { default | onClickMsg = snippetMsg Settings.H2, text = "H2", title = "Header 2" }
-    , mkButton { default | onClickMsg = snippetMsg Settings.H3, text = "H3", title = "Header 3" }
+    [ mkButtonTarget { default | onClickMsg = snippetMsg H1, text = "H1", title = "Header 1" }
+    , mkButtonTarget { default | onClickMsg = snippetMsg H2, text = "H2", title = "Header 2" }
+    , mkButtonTarget { default | onClickMsg = snippetMsg H3, text = "H3", title = "Header 3" }
     , separator
-    , mkButton { default | onClickMsg = snippetMsg Settings.Bold, icon = BoldIcon, title = "Bold" }
-    , mkButton { default | onClickMsg = snippetMsg Settings.Italic, icon = ItalicIcon, title = "Italic" }
+    , mkButtonTarget { default | onClickMsg = snippetMsg Bold, icon = BoldIcon, title = "Bold" }
+    , mkButtonTarget { default | onClickMsg = snippetMsg Italic, icon = ItalicIcon, title = "Italic" }
     , separator
-    , mkButton { default | onClickMsg = snippetMsg Settings.Bullet, icon = ListIcon, title = "Unordered list" }
-    , mkButton { default | onClickMsg = snippetMsg Settings.Numbered, icon = NumberedIcon, title = "Numbered list" }
-    , mkButton { default | onClickMsg = snippetMsg Settings.Link, icon = LinkIcon, title = "Hyperlink" }
-    , mkButton { default | onClickMsg = snippetMsg Settings.Quote, icon = QuoteIcon, title = "Quote" }
-    , mkButton { default | onClickMsg = InsertFootnoteAtCursor, text = "*", title = "Insert footnote" }
-    , mkButton { default | onClickMsg = OpenMediaPicker, icon = MediaIcon, title = "Insert media object" }
+    , mkButtonTarget { default | onClickMsg = snippetMsg Bullet, icon = ListIcon, title = "Unordered list" }
+    , mkButtonTarget { default | onClickMsg = snippetMsg Numbered, icon = NumberedIcon, title = "Numbered list" }
+    , mkButtonTarget { default | onClickMsg = snippetMsg Link, icon = LinkIcon, title = "Hyperlink" }
+    , mkButtonTarget { default | onClickMsg = snippetMsg Quote, icon = QuoteIcon, title = "Quote" }
+    , mkButtonTarget { default | onClickMsg = InsertFootnoteAtCursor, text = "*", title = "Insert footnote" }
+    , mkButtonTarget { default | onClickMsg = OpenMediaPicker, icon = MediaIcon, title = "Insert media object" }
     , separator
     ]
         ++ (if cmEditor then
-                [ mkButton { default | onClickMsg = UndoCM, icon = UndoIcon, title = "Undo", hidden = not cmEditor }
-                , mkButton { default | onClickMsg = RedoCM, icon = RedoIcon, title = "Redo", hidden = not cmEditor }
+                [ mkButtonTarget { default | onClickMsg = UndoCM, icon = UndoIcon, title = "Undo", hidden = not cmEditor }
+                , mkButtonTarget { default | onClickMsg = RedoCM, icon = RedoIcon, title = "Redo", hidden = not cmEditor }
                 , separator
                 ]
 
@@ -1368,7 +1347,7 @@ statusBar showStatus model =
                 [ Button.light
                 , Button.attrs [ class "save-button", onClick SaveExposition ]
                 ]
-                [ renderIcon SaveIcon, text saveButtonText ]
+                [ renderIcon model.buildTarget SaveIcon, text saveButtonText ]
     in
     div [ class "editor-status-bar" ]
         [ span [ style "display" statusDisplayStyle ] [ text status ]
@@ -1392,13 +1371,13 @@ view model =
             UserConfirm.view model.confirmDialog
 
         uploadButtonHtml =
-            viewUpload uploadMediaButtonInfo model.mediaUploadStatus
+            viewUpload model.buildTarget uploadMediaButtonInfo model.mediaUploadStatus
 
         mediaList =
             Html.map
                 MediaList
             <|
-                RCMediaList.mediaListView model.mediaList model.exposition.media (makeTableMessages uploadButtonHtml)
+                RCMediaList.mediaListView model.buildTarget model.mediaList model.exposition.media (makeTableMessages uploadButtonHtml)
 
         alert =
             case model.problems of
@@ -1432,7 +1411,7 @@ view model =
                 , Html.Attributes.target "_blank"
                 , class "btn btn-link ml-1"
                 ]
-                [ renderIcon EyeIcon
+                [ renderIcon model.buildTarget EyeIcon
                 ]
 
         -- some buttons should only show when editing the text
@@ -1444,7 +1423,7 @@ view model =
             selectedEditorIsMarkdown model
 
         editorToolbar =
-            mkEditorToolbar (getTabState model.editor)
+            mkEditorToolbar model.buildTarget (getTabState model.editor)
 
         uploadMediaButtonInfo =
             let
@@ -1475,19 +1454,19 @@ view model =
             }
     in
     div []
-        [ viewNavbar model
+        [ viewNavbar model.buildTarget model
 
         --        , viewTabs model
         , mediaDialogHtml
         , confirmDialogHtml
         , Html.map MediaPicker <|
-            RCMediaList.mediaPickerView
+            RCMediaList.mediaPickerView model.buildTarget
                 model.mediaPickerDialog
                 model.exposition.media
                 (makePickerConfig uploadButtonHtml)
         , div [ class "btn-toolbar", class "import-export-toolbar", attribute "role" "toolbar" ]
-            [ optionalBlock showMediaUpload <| viewUpload uploadMediaButtonInfo model.mediaUploadStatus
-            , optionalBlock showButtons <| viewUpload importDocButtonInfo model.importUploadStatus
+            [ optionalBlock showMediaUpload <| viewUpload model.buildTarget uploadMediaButtonInfo model.mediaUploadStatus
+            , optionalBlock showButtons <| viewUpload model.buildTarget importDocButtonInfo model.importUploadStatus
             , optionalBlock showButtons <|
                 mkDropdown model.exportDropState
                     ExportDropMsg
@@ -1510,7 +1489,7 @@ view model =
             <|
                 List.append
                     editorToolbar
-                    [ editorCheckbox, viewFullscreenSwitch model.fullscreenMode ]
+                    [ editorCheckbox, viewFullscreenSwitch model.buildTarget model.fullscreenMode ]
         , alert
         , mediaList
         , statusBar (selectedEditorIsMarkdown model) model -- only show wordcount in markdown

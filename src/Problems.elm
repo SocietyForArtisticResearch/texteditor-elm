@@ -66,13 +66,13 @@ asString problem =
             "Problem updating media :" ++ httpErrorString e
 
         CannotFindMediaFieldInJson ->
-            "Unkown media field in the json"
+            "Unknown media field in the json"
 
         CannotImportFile e ->
             "Import http error: " ++ httpErrorString e
 
         UnkownUploadFileType s ->
-            "Unkown upload file type: " ++ s
+            "Unknown upload file type: " ++ s
 
         MediaUploadFailed e ->
             "Media upload failed with an http error, because of " ++ httpErrorString e
