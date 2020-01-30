@@ -48,43 +48,43 @@ asString : Problem -> String
 asString problem =
     case problem of
         WrongExpositionUrl ->
-            "Unknown exposition url"
+            "unknown exposition url"
 
         CannotLoadMedia e ->
             "cannot load media " ++ httpErrorString e
 
         NoMediaWithNameOrId name ->
-            "Media object \"" ++ name ++ "\" cannot be found"
+            "media object \"" ++ name ++ "\" cannot be found"
 
         CannotLoadExposition e ->
-            "Cannot load, http error: " ++ httpErrorString e
+            "cannot load, http error: " ++ httpErrorString e
 
         CannotSave ->
-            "Saving error, please check your connection."
+            "saving error, please check your connection."
 
         CannotUpdateMedia e ->
-            "Problem updating media :" ++ httpErrorString e
+            "problem updating media :" ++ httpErrorString e
 
         CannotFindMediaFieldInJson ->
-            "Unknown media field in the json"
+            "unknown media field in the json"
 
         CannotImportFile e ->
-            "Import http error: " ++ httpErrorString e
+            "import http error: " ++ httpErrorString e
 
         UnkownUploadFileType s ->
-            "Unknown upload file type: " ++ s
+            "unknown upload file type: " ++ s
 
         MediaUploadFailed e ->
-            "Media upload failed with an http error, because of " ++ httpErrorString e
+            "media upload failed with an http error, because of " ++ httpErrorString e
 
         FootnoteError e ->
-            "Problem with footnotes: " ++ e
+            "problem with footnotes: " ++ e
 
         ExportFailed ->
-            "Exposition export failed "
+            "exposition export failed "
 
         DecodingJsonError e ->
-            "Json decode problem "
+            "json decode problem "
 
         UnknownType s ->
             s
@@ -108,16 +108,16 @@ httpErrorString : Http.Error -> String
 httpErrorString err =
     case err of
         Http.BadUrl url ->
-            "Bad url: " ++ url
+            "bad url: " ++ url
 
         Http.Timeout ->
-            "Timeout"
+            "timeout"
 
         Http.NetworkError ->
-            "A network error"
+            "a network error"
 
         Http.BadStatus status ->
-            "Bad status: " ++ String.fromInt status
+            "bad status: " ++ String.fromInt status
 
         Http.BadBody body ->
-            "Bad body:" ++ body
+            "bad body:" ++ body

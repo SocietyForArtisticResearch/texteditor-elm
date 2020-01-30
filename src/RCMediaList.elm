@@ -214,30 +214,31 @@ pickerButtons messages =
         { name = "Edit"
         , viewData = (\object -> Table.HtmlDetails
                           []
-                          [ insertButton messages object
+                          [ insertButton  messages object
                           , insertAsLinkButton messages object ])
         , sorter = Table.unsortable
         }
 
 
 
-makeInsertButton : String -> (RCMediaObject -> (Msg msg)) -> RCMediaObject -> Html (Msg msg)
-makeInsertButton buttonText objectAction object =
+makeInsertButton : Bool -> String -> (RCMediaObject -> (Msg msg)) -> RCMediaObject -> Html (Msg msg)
+makeInsertButton hasLeftMargin buttonText objectAction object =
     Button.button
         [ Button.small
         , Button.outlineSuccess
-        , Button.attrs [ onClick <| objectAction object ]
-        ]
+        , Button.attrs <|
+            [ onClick <| objectAction object ] ++ if hasLeftMargin then [class "ml-1"] else []
+        ] 
         [ text buttonText ]
 
 insertButton : PickerConfig msg -> RCMediaObject -> Html (Msg msg)
 insertButton messages object =
-    makeInsertButton "Insert media" (MainMessage << messages.insertObject) object
+    makeInsertButton False "Insert media" (MainMessage << messages.insertObject) object
 
 
 insertAsLinkButton : PickerConfig msg -> RCMediaObject -> Html (Msg msg)
 insertAsLinkButton messages object =
-    makeInsertButton "Insert as Link" (MainMessage << messages.insertObjectAsLink) object
+    makeInsertButton True "Insert link" (MainMessage << messages.insertObjectAsLink) object
 
 
 mediaListButtons : TableEditConfig msg -> Table.Column RCMediaObject (Msg msg)
