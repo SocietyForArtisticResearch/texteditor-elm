@@ -1138,6 +1138,21 @@ viewNavbarItem buildType props =
             ]
         )
 
+viewPreviewNavbarItem : BuildType -> NavbarItemProps -> Navbar.CustomItem Msg
+viewPreviewNavbarItem buildType props =
+    Navbar.customItem
+        (a
+             [ props.spacing, Html.Attributes.target "_blank" ]
+             [ img
+                [ onClick SaveExposition -- this makes shure the expo is saved before opened
+                , src (Settings.iconUrl buildType ++ props.icon)
+                , class "d-inline-block align-top"
+                , style "width" "25px"
+                , Html.Attributes.title props.title
+                ]
+                []
+            ]
+        )
 
 viewNavbar : BuildType -> Model -> Html Msg
 viewNavbar buildType model =
@@ -1174,7 +1189,7 @@ viewNavbar buildType model =
         |> Navbar.customItems
             [ navItem { link = "https://guide.researchcatalogue.net/#text-based-editor", icon = "question.svg", title = "Help", spacing = Spacing.ml0 }
             , navItem { link = metaDataUrl, icon = "pencil.svg", title = "Show/edit metadata", spacing = Spacing.ml3 }
-            , navItem { link = previewUrl, icon = "eye_metro.svg", title = "Preview", spacing = Spacing.ml3 }
+            , viewPreviewNavbarItem buildType { link = previewUrl, icon = "eye_metro.svg", title = "Preview", spacing = Spacing.ml3 }
             , navItem { link = "profile", icon = "profile_metro.svg", title = "Profile", spacing = Spacing.ml3 }
             , navItem { link = "session/logout", icon = "logout_metro.svg", title = "Logout", spacing = Spacing.ml3 }
             ]
