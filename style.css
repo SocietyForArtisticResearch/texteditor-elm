@@ -312,8 +312,8 @@ body {
 
 
 .rc-media-picker>thead:nth-child(1)>tr:nth-child(1)>th:nth-child(4) {
-    min-width: 60px;
-    width: 60px;
+    min-width: 200px;
+    width: 25%;
 }
 
 .rc-media-table>thead:nth-child(1)>tr:nth-child(1)>th:nth-child(3) {
