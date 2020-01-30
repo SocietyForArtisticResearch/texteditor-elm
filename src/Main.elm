@@ -1031,10 +1031,10 @@ insertMediaUpdate insertMethod object model =
                 mediaSnippet =
                     case insertMethod of
                         OnlyTheLink ->
-                            "[" ++ o.name ++ "](" ++  Exposition.mediaUrl o ++ ")"
+                            "\n[" ++ o.name ++ "](" ++  Exposition.mediaUrl o ++ ")\n"
 
                         FullMedia ->
-                            "!{" ++ o.name ++ "}"
+                            "\n!{" ++ o.name ++ "}\n"
             in
             ( updatedModel
             , Cmd.batch
