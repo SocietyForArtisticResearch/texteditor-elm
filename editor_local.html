@@ -1,34 +1,62 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Main</title>
+
+    
     <script src="lib/codemirror.js"></script>
     <link rel="stylesheet" href="lib/codemirror.css">
     <script src="lib/markdown.js"></script>
-    <script src="elm.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="lib/markdown-it.min.js"></script>
+    <script src="lib/markdown-it-center-text.min.js"></script>
+    <script src="lib/markdown-it-footnote.min.js"></script>
+    <!-- <script src="lib/markdown-it-toc.min.js"></script> -->
+    <script src="lib/markdownit-headers-browser.js"></script>
+    <script src="lib/css.js"></script>
+    <script src="lib/morphdom-umd.min.js"></script>
+    <script src="elm.js"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    -->
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -->
+
+    <link rel="stylesheet" href="style.css" type="text/css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
+
 <body>
-<body>
-    <div class="container-fluid">
-      <div class="row">
-	<div class="col">
-	  <div id="elm">
-          </div>
-          <div id="cm">
-            <textarea id="cm-textarea">
-	    </textarea>
-          </div>
-	</div>
-          <div class="col">
-            <div id="preview">
+    <div class="container-fluid main">
+        <div class="row main-row">
+            <div class="col-sm-6 editor-col">
+                <div id="elm">
+                </div>
+
+                <div class="editors">
+                    <textarea id="js-cm-markdown">
+		    </textarea>
+
+                    <textarea id="js-textarea-markdown" class="textarea-markdown">
+		    </textarea>
+
+                    <textarea id="js-cm-style">
+		    </textarea>
+                </div>
+
+
             </div>
-          </div>
+            <div class="col-sm-6 preview-container">
+                <!-- <h2>Preview</h2> -->
+                <div class="exposition exposition-content" id="preview">
+                </div>
+            </div>
         </div>
-      </div>
+    </div>
     </div>
 </body>
-</body>
-<script src="editor.js" type="text/javascript"></script>
+<script src="editor-local.js" type="text/javascript"></script>
 </html>

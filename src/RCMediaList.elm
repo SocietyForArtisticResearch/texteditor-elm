@@ -22,6 +22,7 @@ import Html.Attributes exposing (autoplay, class, controls, id, loop, placeholde
 import Html.Events exposing (onClick, onDoubleClick, onInput)
 import RCMediaPreview exposing (PreviewSize(..), viewTableThumbnail, viewThumbnail)
 import Reader exposing (Reader, andThen, ask, reader, run)
+import Settings exposing (BuildType)
 import Table exposing (defaultCustomizations)
 import View exposing (defaultButton, mkButton)
 
@@ -89,8 +90,8 @@ empty =
     }
 
 
-configMediaList : PreviewedMediaId -> TableEditConfig msg -> Table.Config RCMediaObject (Msg msg)
-configMediaList previewedMediaId messages =
+configMediaList : BuildType -> PreviewedMediaId -> TableEditConfig msg -> Table.Config RCMediaObject (Msg msg)
+configMediaList buildType previewedMediaId messages =
     let
         buttons =
             mediaListButtons messages
@@ -102,7 +103,7 @@ configMediaList previewedMediaId messages =
         { toId = String.fromInt << .id
         , toMsg = makeTableMsg
         , columns =
-            [ thumbnailColumn previewedMediaId
+            [ thumbnailColumn buildType previewedMediaId
             , Table.stringColumn "ID" (String.fromInt << .id)
             , Table.stringColumn "Name" .name
             , buttons
@@ -115,8 +116,8 @@ configMediaList previewedMediaId messages =
         }
 
 
-configMediaPicker : PreviewedMediaId -> PickerConfig msg -> Table.Config RCMediaObject (Msg msg)
-configMediaPicker previewedMediaId messages =
+configMediaPicker : BuildType -> PreviewedMediaId -> PickerConfig msg -> Table.Config RCMediaObject (Msg msg)
+configMediaPicker buildType previewedMediaId messages =
     let
         buttons =
             pickerButtons messages
@@ -128,7 +129,7 @@ configMediaPicker previewedMediaId messages =
         { toId = String.fromInt << .id
         , toMsg = makeTableMsg
         , columns =
-            [ thumbnailColumn previewedMediaId
+            [ thumbnailColumn buildType previewedMediaId
             , Table.stringColumn "ID" (String.fromInt << .id)
             , Table.stringColumn "Name" .name
             , buttons
@@ -141,17 +142,17 @@ configMediaPicker previewedMediaId messages =
         }
 
 
-mediaListView : Model -> List RCMediaObject -> TableEditConfig msg -> Html (Msg msg)
-mediaListView model objects messages =
+mediaListView : BuildType -> Model -> List RCMediaObject -> TableEditConfig msg -> Html (Msg msg)
+mediaListView buildType model objects messages =
     let
         uploadBtn =
             Html.map MainMessage messages.uploadButtonHtml
     in
-    view uploadBtn MediaTable model (configMediaList model.previewedMediaId messages) objects
+    view uploadBtn MediaTable model (configMediaList buildType model.previewedMediaId messages) objects
 
 
-thumbnailColumn : PreviewedMediaId -> Table.Column RCMediaObject (Msg msg)
-thumbnailColumn previewedMediaId =
+thumbnailColumn : BuildType -> PreviewedMediaId -> Table.Column RCMediaObject (Msg msg)
+thumbnailColumn buildType previewedMediaId =
     Table.veryCustomColumn
         { name = "Preview"
         , viewData =
@@ -173,7 +174,7 @@ thumbnailColumn previewedMediaId =
                                 PreviewSmall
                 in
                 Table.HtmlDetails []
-                    [ viewTableThumbnail rcObject size action
+                    [ viewTableThumbnail buildType rcObject size action
                     ]
         , sorter = Table.increasingOrDecreasingBy <| Exposition.getMediaTypeString
         }
@@ -324,8 +325,7 @@ view upload tableType { query, state } tableConfig objectList =
     case objectList of
         [] ->
             div domIdAndStyle
-                [ div [ class "mt-1" ] [ upload ]
-                , Alert.simpleInfo [] [ text "Media list is empty. Hint: add a file by using the \"upload media\" button." ]
+                [ tableControls, Alert.simpleInfo [] [ text "Media list is empty. Hint: add a file by using the \"upload media\" button." ]
                 ]
 
         nonEmptyObjectList ->
@@ -348,13 +348,13 @@ view upload tableType { query, state } tableConfig objectList =
                         ]
 
 
-uploadButton : msg -> Html (Msg msg)
-uploadButton uploadMessage =
+uploadButton : BuildType -> msg -> Html (Msg msg)
+uploadButton buildType uploadMessage =
     let
         aButton =
             defaultButton (MainMessage uploadMessage)
     in
-    mkButton
+    mkButton buildType
         { aButton
             | icon = View.UploadCloud
             , offset = False
@@ -365,11 +365,11 @@ uploadButton uploadMessage =
         }
 
 
-mediaPickerView : ( Model, Modal.Visibility ) -> List RCMediaObject -> PickerConfig msg -> Html (Msg msg)
-mediaPickerView ( model, visibility ) objectList messages =
+mediaPickerView : BuildType -> ( Model, Modal.Visibility ) -> List RCMediaObject -> PickerConfig msg -> Html (Msg msg)
+mediaPickerView buildType ( model, visibility ) objectList messages =
     let
         tableConfig =
-            configMediaPicker model.previewedMediaId messages
+            configMediaPicker buildType model.previewedMediaId messages
 
         uploadBtn =
             Html.map MainMessage messages.uploadButtonHtml

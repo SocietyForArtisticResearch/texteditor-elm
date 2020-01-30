@@ -63,7 +63,7 @@ var app = Elm.Main.init({
     flags: {
         weave: parseInt(urlParams.get('weave')),
         research: parseInt(urlParams.get('research'))
-	buildTarget: "Release"
+	buildTarget: "Local"
     }
 });
 

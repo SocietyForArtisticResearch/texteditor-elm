@@ -1,20 +1,19 @@
 module RCAPI exposing (APIExposition, APIMedia, APIMediaEntry, APIPandocImport, ConversionType(..), apiMediaEntry, convertExposition, deleteMedia, downloadExport, getExposition, getMediaList, saveExposition, toMediaClassesDict, toRCExposition, toRCMediaObject, updateMedia, uploadImport, uploadMedia)
 
---import Bytes.Decode
-
 import Bytes exposing (Bytes)
 import Bytes.Encode
 import Dict
 import Exposition exposing (OptionalDimensions, RCExposition, RCMediaObject, RCMediaType(..), TOC, TOCEntry, defaultPlayerSettings)
 import File exposing (File)
 import File.Download
+import FileTypes
 import Html exposing (Html, span)
 import Http exposing (header)
 import Json.Decode exposing (..)
 import Json.Encode as Encode
 import Licenses
 import Problems exposing (..)
-import Settings
+import Settings exposing (BuildType)
 import Task
 import Time
 import Url.Builder
@@ -182,102 +181,76 @@ getExposition researchId weave msg =
         }
 
 
-type UploadMediaType
-    = MAudio
-    | MVideo
-    | MImage
-    | MPdf
-    | MSvg
 
-
-stringOfUploadMediaType : UploadMediaType -> String
-stringOfUploadMediaType t =
-    case t of
-        MAudio ->
-            "audio"
-
-        MVideo ->
-            "video"
-
-        MImage ->
-            "image"
-
-        MPdf ->
-            "pdf"
-
-        MSvg ->
-            "image"
-
-
-mediaType : File -> Maybe UploadMediaType
-mediaType f =
-    case File.mime f of
-        "image/gif" ->
-            Just MImage
-
-        "image/jpg" ->
-            Just MImage
-
-        "image/jpeg" ->
-            Just MImage
-
-        "image/png" ->
-            Just MImage
-
-        "image/tiff" ->
-            Just MImage
-
-        "image/svg+xml" ->
-            Just MImage
-
-        "audio/mp3" ->
-            Just MAudio
-
-        "audio/wav" ->
-            Just MAudio
-
-        "audio/x-wav" ->
-            Just MAudio
-
-        "audio/mpeg" ->
-            Just MAudio
-
-        "audio/ogg" ->
-            Just MAudio
-
-        "audio/aiff" ->
-            Just MAudio
-
-        "audio/x-aiff" ->
-            Just MAudio
-
-        "video/mp4" ->
-            Just MVideo
-
-        "video/mpeg" ->
-            Just MVideo
-
-        "video/ogv" ->
-            Just MVideo
-
-        "application/pdf" ->
-            Just MPdf
-
-        "video/quicktime" ->
-            Just MVideo
-
-        "audio/x-m4a" ->
-            Just MAudio
-
-        _ ->
-            Nothing
+-- type UploadMediaType
+--     = MAudio
+--     | MVideo
+--     | MImage
+--     | MPdf
+--     | MSvg
+-- stringOfUploadMediaType : UploadMediaType -> String
+-- stringOfUploadMediaType t =
+--     case t of
+--         MAudio ->
+--             "audio"
+--         MVideo ->
+--             "video"
+--         MImage ->
+--             "image"
+--         MPdf ->
+--             "pdf"
+--         MSvg ->
+--             "image"
+-- mediaType : File -> Maybe UploadMediaType
+-- mediaType f =
+--     case File.mime f of
+--         "image/gif" ->
+--             Just MImage
+--         "image/jpg" ->
+--             Just MImage
+--         "image/jpeg" ->
+--             Just MImage
+--         "image/png" ->
+--             Just MImage
+--         "image/tiff" ->
+--             Just MImage
+--         "image/svg+xml" ->
+--             Just MImage
+--         "audio/mp3" ->
+--             Just MAudio
+--         "audio/wav" ->
+--             Just MAudio
+--         "audio/x-wav" ->
+--             Just MAudio
+--         "audio/mpeg" ->
+--             Just MAudio
+--         "audio/ogg" ->
+--             Just MAudio
+--         "audio/aiff" ->
+--             Just MAudio
+--         "audio/x-aiff" ->
+--             Just MAudio
+--         "video/mp4" ->
+--             Just MVideo
+--         "video/mpeg" ->
+--             Just MVideo
+--         "video/ogv" ->
+--             Just MVideo
+--         "application/pdf" ->
+--             Just MPdf
+--         "video/quicktime" ->
+--             Just MVideo
+--         "audio/x-m4a" ->
+--             Just MAudio
+--         _ ->
+--             Nothing
 
 
 uploadMedia : Int -> String -> File -> Http.Expect msg -> (String -> msg) -> Cmd msg
 uploadMedia researchId mediaName file expect badFileTypeMsg =
     let
         mediaT =
-            mediaType file
+            FileTypes.fromFile file
     in
     case mediaT of
         Nothing ->
@@ -290,7 +263,7 @@ uploadMedia researchId mediaName file expect badFileTypeMsg =
                 , headers = [ header "X-Requested-With" "XMLHttpRequest" ]
                 , body =
                     Http.multipartBody
-                        [ Http.stringPart "mediatype" (stringOfUploadMediaType m)
+                        [ Http.stringPart "mediatype" (FileTypes.toString m)
                         , Http.stringPart "name" mediaName
                         , Http.stringPart "copyrightholder" "copyright holder"
                         , Http.stringPart "description" "description"
@@ -391,21 +364,6 @@ typeEnding t =
             "epub"
 
 
-
--- CONVERSION
--- convertExposition : ConversionType -> RCExposition -> Cmd msg
--- convertExposition ctype expo =
---     -- TODO tools to images
---     let
---         path =
---             Url.Builder.relative [ "text-editor", "export" ]
---                 [ Url.Builder.string "type" (typeEnding ctype)
---                 , Url.Builder.string "markdown" (Exposition.replaceToolsWithImages expo (Just Settings.baseDomain))
---                 ]
---     in
---     File.Download.url path
-
-
 resolve : (body -> Result String a) -> Http.Response body -> Result Http.Error a
 resolve toResult response =
     case response of
@@ -425,11 +383,11 @@ resolve toResult response =
             Result.mapError Http.BadBody (toResult body)
 
 
-convertExposition : ConversionType -> RCExposition -> (ConversionType -> Result Http.Error Bytes -> msg) -> Cmd msg
-convertExposition ctype expo expectMsg =
+convertExposition : BuildType -> ConversionType -> RCExposition -> (ConversionType -> Result Http.Error Bytes -> msg) -> Cmd msg
+convertExposition buildType ctype expo expectMsg =
     let
         exportExpoMd =
-            Exposition.replaceToolsWithImages expo (Just Settings.baseDomain)
+            Exposition.replaceToolsWithImages expo (Just (Settings.baseDomain buildType))
     in
     Http.post
         { url =
