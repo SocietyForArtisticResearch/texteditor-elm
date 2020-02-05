@@ -1143,10 +1143,10 @@ viewPreviewNavbarItem expositionIsSaved buildType props =
     let
         saveExpositionAttrs =
             if expositionIsSaved then
-                []
+                [ Html.Attributes.title props.title ]
 
             else
-                [ onClick SaveExposition, class "opacity-2" ]
+                [ onClick SaveExposition, class "opacity-2", Html.attributes.title "preview of unsaved content, forcing save" ]
     in
     Navbar.customItem
         (a
@@ -1155,7 +1155,6 @@ viewPreviewNavbarItem expositionIsSaved buildType props =
                 ([ src (Settings.iconUrl buildType ++ props.icon)
                  , class "d-inline-block align-top"
                  , style "width" "25px"
-                 , Html.Attributes.title props.title
                  ]
                     ++ saveExpositionAttrs
                 )
