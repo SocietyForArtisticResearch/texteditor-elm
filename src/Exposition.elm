@@ -335,6 +335,13 @@ withPrefix prefix str =
             pre ++ str
 
 
+minimumPdfDimensions : OptionalDimensions -> OptionalDimensions
+minimumPdfDimensions dims =
+   case dims of
+       Just (0,0) -> Just (900,1273)
+       allOther -> allOther
+       
+                
 addDimensions : OptionalDimensions -> List (Html.Attribute msg) -> List (Html.Attribute msg)
 addDimensions dims attributes =
     case dims of
@@ -481,7 +488,7 @@ asHtml media mediaId =
                     objectDiv data <|
                         Html.figure [ Attr.id mediaId ]
                             [ Html.object
-                                (addDimensions data.dimensions
+                                  ((addDimensions << minimumPdfDimensions <| data.dimensions)
                                     [ Attr.attribute "data" (mediaUrl data)
                                     , Attr.attribute "type" "application/pdf"
                                     , Attr.attribute "title" data.name
