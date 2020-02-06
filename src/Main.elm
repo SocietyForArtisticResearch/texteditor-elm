@@ -1483,7 +1483,7 @@ view model =
                 , offset = True
                 , text = "Upload Media"
                 , primary = True
-                , otherAttrs = [ class "soft-blue-background", Spacing.mb1, Spacing.mt1, Spacing.mr1 ]
+                , otherAttrs = [ class "upload-button" ,class "soft-blue-background", Spacing.mb1, Spacing.mt1, Spacing.mr1 ]
                 , title = "Add media files: images, video, audio or pdf"
             }
 

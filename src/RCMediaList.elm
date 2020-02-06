@@ -110,7 +110,7 @@ configMediaList buildType previewedMediaId messages =
             ]
         , customizations =
             { defaultCustomizations
-                | tableAttrs = [ class "rc-media-table", class "mt-1" ]
+                | tableAttrs = [ class "rc-media-table" ]
                 , rowAttrs = \object -> [ class "rc-media-table-row", onDoubleClick (doubleClickAction object) ]
             }
         }
@@ -320,7 +320,7 @@ view upload tableType { query, state } tableConfig objectList =
                 []
 
         tableControls =
-            div [ class "mt-1" ]
+            div [ ]
                 [ upload, searchBox ]
     in
     case objectList of
