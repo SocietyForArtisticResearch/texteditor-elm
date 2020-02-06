@@ -221,11 +221,11 @@ pickerButtons messages =
 
 
 
-makeInsertButton : Bool -> String -> (RCMediaObject -> (Msg msg)) -> RCMediaObject -> Html (Msg msg)
-makeInsertButton hasLeftMargin buttonText objectAction object =
+makeInsertButton : Bool -> Bool -> String -> (RCMediaObject -> (Msg msg)) -> RCMediaObject -> Html (Msg msg)
+makeInsertButton outline hasLeftMargin buttonText objectAction object =
     Button.button
         [ Button.small
-        , Button.outlineSuccess
+        , if outline then Button.outlineSuccess else Button.success
         , Button.attrs <|
             [ onClick <| objectAction object ] ++ if hasLeftMargin then [class "ml-1"] else []
         ] 
@@ -233,12 +233,12 @@ makeInsertButton hasLeftMargin buttonText objectAction object =
 
 insertButton : PickerConfig msg -> RCMediaObject -> Html (Msg msg)
 insertButton messages object =
-    makeInsertButton False "Insert media" (MainMessage << messages.insertObject) object
+    makeInsertButton False False "Insert media" (MainMessage << messages.insertObject) object
 
 
 insertAsLinkButton : PickerConfig msg -> RCMediaObject -> Html (Msg msg)
 insertAsLinkButton messages object =
-    makeInsertButton True "Insert link" (MainMessage << messages.insertObjectAsLink) object
+    makeInsertButton True True "Insert link" (MainMessage << messages.insertObjectAsLink) object
 
 
 mediaListButtons : TableEditConfig msg -> Table.Column RCMediaObject (Msg msg)
