@@ -351,7 +351,7 @@ view makeMediaEditFun closeMediaDialogMsg insertMediaMsg insertMediaAsLinkMsg ex
 
                         insertButton =
                             Button.button
-                                [ Button.outlinePrimary
+                                [ Button.primary
                                 , Button.attrs [ Events.onClick <| insertMediaMsg obj ]
                                 ]
                                 [ text "Insert" ]

@@ -1146,7 +1146,7 @@ viewPreviewNavbarItem expositionIsSaved buildType props =
                 [ Html.Attributes.title props.title ]
 
             else
-                [ onClick SaveExposition, class "opacity-2", Html.attributes.title "preview of unsaved content, forcing save" ]
+                [ onClick SaveExposition, class "opacity-2", Html.Attributes.title "preview of unsaved content, forcing save" ]
     in
     Navbar.customItem
         (a
@@ -1410,8 +1410,8 @@ view model =
             RCMediaEdit.view
                 makeMediaEditFun
                 CloseMediaDialog
-                InsertMediaAsLinkAtCursor
                 InsertMediaAtCursor
+                InsertMediaAsLinkAtCursor
                 model.exposition
                 model.mediaDialog
 
