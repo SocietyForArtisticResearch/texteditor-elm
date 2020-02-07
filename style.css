@@ -70,6 +70,10 @@ body {
     right: 10px;
 }
 
+.upload-button {
+    font-size: 15px;
+}
+
 /* .CodeMirror-scroll * { */
 /*     white-space: pre-wrap; */
 /* } */
@@ -288,7 +292,7 @@ body {
 
 .rc-media-table-searchbox {
     position: absolute;
-    right: 1.0rem;
+    right: 0;
     max-width: 33%; /* to avoid overlap with the upload button */
 }
 
@@ -304,10 +308,13 @@ body {
     border-bottom: 1px solid #dee2e6;
 }
 
+.rc-media-table-row {
+    hieght:35px;
+}
+
 .rc-media-table>thead:nth-child(1)>tr:nth-child(1)>th:nth-child(4) {
     /* sorry for this, sortable table does not have an elegant way for adding column attrs :-P */
-    min-width: 100px;
-    width: 100px;
+    width: 170px;
 }
 
 

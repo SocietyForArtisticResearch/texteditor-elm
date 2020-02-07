@@ -214,8 +214,9 @@ pickerButtons messages =
         { name = "Edit"
         , viewData = (\object -> Table.HtmlDetails
                           []
-                          [ insertButton  messages object
-                          , insertAsLinkButton messages object ])
+                          [ insertAsLinkButton messages object
+                          , insertButton  messages object
+                           ])
         , sorter = Table.unsortable
         }
 
@@ -233,12 +234,12 @@ makeInsertButton outline hasLeftMargin buttonText objectAction object =
 
 insertButton : PickerConfig msg -> RCMediaObject -> Html (Msg msg)
 insertButton messages object =
-    makeInsertButton False False "Insert media" (MainMessage << messages.insertObject) object
+    makeInsertButton False False "Insert" (MainMessage << messages.insertObject) object
 
 
 insertAsLinkButton : PickerConfig msg -> RCMediaObject -> Html (Msg msg)
 insertAsLinkButton messages object =
-    makeInsertButton True True "Insert link" (MainMessage << messages.insertObjectAsLink) object
+    makeInsertButton True True "Hyperlink" (MainMessage << messages.insertObjectAsLink) object
 
 
 mediaListButtons : TableEditConfig msg -> Table.Column RCMediaObject (Msg msg)
@@ -314,6 +315,7 @@ view upload tableType { query, state } tableConfig objectList =
         searchBox =
             input
                 [ class "rc-media-table-searchbox"
+                , class "mt-1"
                 , placeholder "Search by name"
                 , onInput (SortableTableMessage << SetQuery)
                 ]
