@@ -120,7 +120,7 @@ configMediaPicker : BuildType -> PreviewedMediaId -> PickerConfig msg -> Table.C
 configMediaPicker buildType previewedMediaId messages =
     let
         buttons =
-            pickerButtons messages
+            pickerButtons buildType messages
 
         doubleClickAction =
             MainMessage << messages.insertObject
@@ -208,38 +208,62 @@ deleteButton messages object =
         [ text "Delete" ]
 
 
-pickerButtons : PickerConfig msg -> Table.Column RCMediaObject (Msg msg)
-pickerButtons messages =
+pickerButtons : BuildType -> PickerConfig msg -> Table.Column RCMediaObject (Msg msg)
+pickerButtons buildType messages =
     Table.veryCustomColumn
         { name = "Edit"
-        , viewData = (\object -> Table.HtmlDetails
-                          []
-                          [ insertAsLinkButton messages object
-                          , insertButton  messages object
-                           ])
+        , viewData =
+            \object ->
+                Table.HtmlDetails
+                    []
+                    [ insertAsLinkButton buildType messages object
+                    , insertButton messages object
+                    ]
         , sorter = Table.unsortable
         }
 
 
-
-makeInsertButton : Bool -> Bool -> String -> (RCMediaObject -> (Msg msg)) -> RCMediaObject -> Html (Msg msg)
+makeInsertButton : Bool -> Bool -> String -> (RCMediaObject -> Msg msg) -> RCMediaObject -> Html (Msg msg)
 makeInsertButton outline hasLeftMargin buttonText objectAction object =
     Button.button
         [ Button.small
-        , if outline then Button.outlineSuccess else Button.success
+        , if outline then
+            Button.outlineSuccess
+
+          else
+            Button.success
         , Button.attrs <|
-            [ onClick <| objectAction object ] ++ if hasLeftMargin then [class "ml-1"] else []
-        ] 
+            [ onClick <| objectAction object ]
+                ++ (if hasLeftMargin then
+                        [ class "ml-1" ]
+
+                    else
+                        []
+                   )
+        ]
         [ text buttonText ]
+
 
 insertButton : PickerConfig msg -> RCMediaObject -> Html (Msg msg)
 insertButton messages object =
     makeInsertButton False False "Insert" (MainMessage << messages.insertObject) object
 
 
-insertAsLinkButton : PickerConfig msg -> RCMediaObject -> Html (Msg msg)
-insertAsLinkButton messages object =
-    makeInsertButton True True "Hyperlink" (MainMessage << messages.insertObjectAsLink) object
+insertAsLinkButton : BuildType -> PickerConfig msg -> RCMediaObject -> Html (Msg msg)
+insertAsLinkButton buildType messages object =
+    -- makeInsertButton True True "Hyperlink" (MainMessage << messages.insertObjectAsLink) object
+    let
+        defaultProps =
+            defaultButton <| (MainMessage << messages.insertObjectAsLink) object
+
+        customProps =
+            { defaultProps
+                | icon = View.HyperlinkIcon
+                , title = "insert as hyperlink"
+                , offset = True
+            }
+    in
+    View.mkButton buildType customProps
 
 
 mediaListButtons : TableEditConfig msg -> Table.Column RCMediaObject (Msg msg)
@@ -322,13 +346,14 @@ view upload tableType { query, state } tableConfig objectList =
                 []
 
         tableControls =
-            div [ ]
+            div []
                 [ upload, searchBox ]
     in
     case objectList of
         [] ->
             div domIdAndStyle
-                [ tableControls, Alert.simpleInfo [] [ text "Media list is empty. Hint: add a file by using the \"upload media\" button." ]
+                [ tableControls
+                , Alert.simpleInfo [] [ text "Media list is empty. Hint: add a file by using the \"upload media\" button." ]
                 ]
 
         nonEmptyObjectList ->

@@ -32,6 +32,7 @@ type Icon
     | TriangleRight
     | SpeakerIcon
     | CameraIcon
+    | HyperlinkIcon
 
 
 renderIcon : BuildType -> Icon -> Html msg
@@ -115,6 +116,9 @@ renderIcon buildTarget icon =
 
         CameraIcon ->
             iconImg "device-camera-video.svg"
+
+        HyperlinkIcon ->
+            iconImg "link.svg"
 
 
 type alias ButtonInfo msg =
