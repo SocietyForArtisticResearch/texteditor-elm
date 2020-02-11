@@ -238,7 +238,7 @@ body {
 
 @media only screen and (max-width: 576px) {
     .fullscreen-button {
-	display: none; /* do not show the full screen button on mobile! */
+	display: none !important; /* do not show the full screen button on mobile! */
     }
 
     
@@ -299,7 +299,7 @@ body {
     max-width: 33%; /* to avoid overlap with the upload button */
 }
 
-#rc-media-list .rc-media-table-searchbox {
+#media-list .rc-media-table-searchbox {
     right: 5px;
 }
 
