@@ -771,8 +771,15 @@ update msg model =
                             let
                                 id =
                                     String.fromInt (.id media)
+
+                                onMediaListReceived =
+                                    if selectedEditorIsMedia model then
+                                        GotMediaList
+
+                                    else
+                                        OpenNewMediaGotMediaList id
                             in
-                            ( { model | mediaUploadStatus = Ready }, RCAPI.getMediaList model.research (OpenNewMediaGotMediaList id) )
+                            ( { model | mediaUploadStatus = Ready }, RCAPI.getMediaList model.research onMediaListReceived )
 
                         Err e ->
                             ( addProblem model (Problems.DecodingJsonError e), RCAPI.getMediaList model.research GotMediaList )
@@ -1292,7 +1299,7 @@ viewFullscreenSwitch buildType currentMode =
             else
                 []
     in
-    mkButton buildType { btn | icon = icn, title = tit, otherAttrs = attrs ++ [ class "fullscreen-button" ]}
+    mkButton buildType { btn | icon = icn, title = tit, otherAttrs = attrs ++ [ class "fullscreen-button" ] }
 
 
 viewLink : String -> String -> Html Msg
@@ -1483,7 +1490,7 @@ view model =
                 , offset = True
                 , text = "Upload Media"
                 , primary = True
-                , otherAttrs = [ class "upload-button" ,class "soft-blue-background", Spacing.mb1, Spacing.mt1, Spacing.mr1 ]
+                , otherAttrs = [ class "upload-button", class "soft-blue-background", Spacing.mb1, Spacing.mt1, Spacing.mr1 ]
                 , title = "Add media files: images, video, audio or pdf"
             }
 
