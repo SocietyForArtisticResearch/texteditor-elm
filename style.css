@@ -299,6 +299,11 @@ body {
     max-width: 33%; /* to avoid overlap with the upload button */
 }
 
+#rc-media-list .rc-media-table-searchbox {
+    right: 5px;
+}
+
+
 .rc-media-table thead th {
     border-top: 1px solid #dee2e6;
     border-bottom: 2px solid #dee2e6;
