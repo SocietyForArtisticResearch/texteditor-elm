@@ -113,6 +113,19 @@ selectedEditorIsMedia model =
             False
 
 
+isMediaPickerVisible : Model -> Bool
+isMediaPickerVisible model =
+    let
+        vis =
+            Tuple.second model.mediaPickerDialog
+    in
+    if vis == Modal.shown then
+        True
+
+    else
+        False
+
+
 type MarkdownEditor
     = CodemirrorMarkdown
     | TextareaMarkdown
@@ -772,14 +785,14 @@ update msg model =
                                 id =
                                     String.fromInt (.id media)
 
-                                onMediaListReceived =
-                                    if selectedEditorIsMedia model then
+                                onGotMediaList =
+                                    if isMediaPickerVisible model then
                                         GotMediaList
 
                                     else
                                         OpenNewMediaGotMediaList id
                             in
-                            ( { model | mediaUploadStatus = Ready }, RCAPI.getMediaList model.research onMediaListReceived )
+                            ( { model | mediaUploadStatus = Ready }, RCAPI.getMediaList model.research onGotMediaList )
 
                         Err e ->
                             ( addProblem model (Problems.DecodingJsonError e), RCAPI.getMediaList model.research GotMediaList )
