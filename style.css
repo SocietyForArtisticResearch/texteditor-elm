@@ -317,10 +317,20 @@ body {
     width: 170px;
 }
 
+#media-picker .rc-media-table-searchbox {
+    right:1rem;
+}
+
+.rc-media-picker .modal-body {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top:0;
+    padding-bottom:1rem;
+}
 
 .rc-media-picker>thead:nth-child(1)>tr:nth-child(1)>th:nth-child(4) {
-    min-width: 200px;
-    width: 25%;
+    min-width: 100px;
+    width: 100px;
 }
 
 .rc-media-table>thead:nth-child(1)>tr:nth-child(1)>th:nth-child(3) {
