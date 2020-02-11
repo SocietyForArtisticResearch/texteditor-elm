@@ -237,7 +237,11 @@ body {
 }
 
 @media only screen and (max-width: 576px) {
+    .fullscreen-button {
+	display: none; /* do not show the full screen button on mobile! */
+    }
 
+    
     /* hide the preview on mobile, bigger phones have a width of 750px */
     .preview-container {
         display: none;
@@ -266,7 +270,6 @@ body {
 }
 
 /* fullscreen mode */
-
 
 .fullscreen .editor-col {
     width: 100%;
@@ -314,7 +317,7 @@ body {
 
 .rc-media-table>thead:nth-child(1)>tr:nth-child(1)>th:nth-child(4) {
     /* sorry for this, sortable table does not have an elegant way for adding column attrs :-P */
-    width: 170px;
+    width: 105px;
 }
 
 #media-picker .rc-media-table-searchbox {

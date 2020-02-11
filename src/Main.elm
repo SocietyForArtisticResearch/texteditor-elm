@@ -1292,7 +1292,7 @@ viewFullscreenSwitch buildType currentMode =
             else
                 []
     in
-    mkButton buildType { btn | icon = icn, title = tit, otherAttrs = attrs }
+    mkButton buildType { btn | icon = icn, title = tit, otherAttrs = attrs ++ [ class "fullscreen-button" ]}
 
 
 viewLink : String -> String -> Html Msg
