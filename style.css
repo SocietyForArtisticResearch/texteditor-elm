@@ -1,3 +1,4 @@
+
 /** reminder to self:
 
 https://paulcpederson.com/articles/css-for-people-who-hate-css/
@@ -121,10 +122,11 @@ body {
     background-color: #fbfbff;
     border-color: #999999;
     font-size: 15px;
+    height: 2em;
 }
 
 .import-export-toolbar .btn.dropdown-toggle {
-    padding: 0.17em 1em;
+    padding: 0 1em;
 }
 
 .import-export-toolbar .btn:hover {
@@ -322,7 +324,7 @@ body {
 
 .rc-media-table>thead:nth-child(1)>tr:nth-child(1)>th:nth-child(4) {
     /* sorry for this, sortable table does not have an elegant way for adding column attrs :-P */
-    width: 105px;
+    width: 6.3em;
 }
 
 #media-picker .rc-media-table-searchbox {
@@ -337,8 +339,7 @@ body {
 }
 
 .rc-media-picker>thead:nth-child(1)>tr:nth-child(1)>th:nth-child(4) {
-    min-width: 100px;
-    width: 100px;
+    width: 5em;
 }
 
 .rc-media-table>thead:nth-child(1)>tr:nth-child(1)>th:nth-child(3) {
