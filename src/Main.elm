@@ -237,8 +237,6 @@ main =
 
 
 
-
-
 -- PORTS
 -- general
 -- code mirror markdown
@@ -1395,14 +1393,11 @@ statusBar showStatus model =
             Exposition.wordCount model.exposition
 
         status =
-            "Word count: " ++ String.fromInt wc
-
-        statusDisplayStyle =
             if showStatus then
-                "inline-block"
+                "Word count: " ++ String.fromInt wc
 
             else
-                "none"
+                ""
 
         saveButtonText =
             if model.saved then
@@ -1419,7 +1414,7 @@ statusBar showStatus model =
                 [ renderIcon model.buildTarget SaveIcon, text saveButtonText ]
     in
     div [ class "editor-status-bar" ]
-        [ span [ style "display" statusDisplayStyle ] [ text status ]
+        [ span [] [ text status ]
         , saveButton
         ]
 
