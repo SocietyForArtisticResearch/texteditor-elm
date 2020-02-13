@@ -237,6 +237,8 @@ main =
 
 
 
+
+
 -- PORTS
 -- general
 -- code mirror markdown
@@ -1166,7 +1168,7 @@ viewPreviewNavbarItem expositionIsSaved buildType props =
                 [ Html.Attributes.title props.title ]
 
             else
-                [ onClick SaveExposition, class "opacity-2", Html.Attributes.title "preview of unsaved content, forcing save" ]
+                [ onClick SaveExposition, class "opacity-4", Html.Attributes.title "preview of unsaved content, forcing save" ]
     in
     Navbar.customItem
         (a
