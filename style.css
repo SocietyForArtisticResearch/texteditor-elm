@@ -295,6 +295,12 @@ body {
     width: 100%;
 }
 
+.scrollbox {
+    height: 100%;
+    display: block;
+    overflow-y: scroll;
+}
+
 .rc-media-table-searchbox {
     position: absolute;
     right: 0;
@@ -303,6 +309,10 @@ body {
 
 #media-list .rc-media-table-searchbox {
     right: 5px;
+}
+
+#media-list {
+    heigth: calc(100vh - 95px);
 }
 
 
