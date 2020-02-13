@@ -60,6 +60,7 @@ body {
 }
 
 .editor-status-bar {
+    background-color: white;
     position: fixed;
     bottom: 0;
     left:0.3rem;
@@ -312,7 +313,7 @@ body {
 }
 
 #media-list {
-    height: calc(100vh - 95px);
+    height: calc(100vh - 119px);
 }
 
 
