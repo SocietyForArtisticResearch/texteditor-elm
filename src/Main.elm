@@ -1557,5 +1557,5 @@ view model =
                     [ editorCheckbox, viewFullscreenSwitch model.buildTarget model.fullscreenMode ]
         , alert
         , mediaList
-        , statusBar True model -- only show wordcount in markdown
+        , statusBar (selectedEditorIsMarkdown model)  model -- only show wordcount in markdown
         ]
