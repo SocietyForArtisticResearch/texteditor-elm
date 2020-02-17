@@ -1,4 +1,4 @@
-module RCMediaList exposing
+smodule RCMediaList exposing
     ( Model
     , Msg(..)
     , PickerConfig
@@ -259,7 +259,7 @@ insertAsLinkButton buildType messages object =
         customProps =
             { defaultProps
                 | icon = View.HyperlinkIcon
-                , title = "insert as hyperlink"
+                , title = "insert direct hyperlink to the file"
                 , offset = True
             }
     in

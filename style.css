@@ -70,7 +70,7 @@ body {
 .save-button {
     position: absolute;
     right: 10px;
-    bottom: 0;
+    bottom: -5px;
 }
 
 .upload-button {

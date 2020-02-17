@@ -29,7 +29,6 @@ be made outside of elm.
 General:
 	
 
-- Add a "display as link" option for media.
 - Make a closure/module of editor.html's js code.
 
 
