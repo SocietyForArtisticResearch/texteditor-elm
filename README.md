@@ -38,6 +38,7 @@ Casper:
 
 - Drag and drop 
 	<https://elm-lang.org/examples/drag-and-drop>
+- Update transcoding state more often, also refresh preview
 
 
 
