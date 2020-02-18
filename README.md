@@ -38,7 +38,7 @@ Casper:
 
 - Drag and drop 
 	<https://elm-lang.org/examples/drag-and-drop>
-- Update transcoding state more often, also refresh preview
+- Update transcoding state more often, also refresh preview https://docs.brightcove.com/zencoder-api/v2/doc/index.html#operation/getJobProgress
 
 
 
