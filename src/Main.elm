@@ -217,19 +217,19 @@ init flags =
             )
 
         Err e ->
-            ( addProblem (emptyModel navbarState Settings.defaultBuildType -1 -1) Problems.WrongExpositionUrl
+            ( Problems.addProblem (emptyModel navbarState Settings.defaultBuildType -1 -1) Problems.WrongExpositionUrl
             , Cmd.none
             )
 
 
-addProblem : Model -> Problems.Problem -> Model
-addProblem model problem =
-    { model | problems = problem :: model.problems, alertVisibility = Alert.shown }
+-- addProblem : Model -> Problems.Problem -> Model
+-- addProblem model problem =
+--     { model | problems = problem :: model.problems, alertVisibility = Alert.shown }
 
 
-addProblems : Model -> List Problems.Problem -> Model
-addProblems model problems =
-    { model | problems = problems ++ model.problems, alertVisibility = Alert.shown }
+-- addProblems : Model -> List Problems.Problem -> Model
+-- addProblems model problems =
+--     { model | problems = problems ++ model.problems, alertVisibility = Alert.shown }
 
 
 main =
@@ -338,7 +338,7 @@ subscriptions model =
 type Msg
     = EditGeneration E.Value
     | MdContent E.Value
-    | MediaDialog Bool String
+    | MediaDialog RCMediaEdit.DialogType String
     | CMOpenMediaDialog E.Value
     | GotConvertedHtml { html : String, toc : List ( String, String, String ) }
     | MediaEdit ( String, Exposition.RCMediaObject )
@@ -410,7 +410,7 @@ makeMediaEditFun obj field input =
 
 makeTableMessages : Html Msg -> RCMediaList.TableEditConfig Msg
 makeTableMessages uploadButtonHtml =
-    { editObject = MediaDialog False
+    { editObject = MediaDialog RCMediaEdit.WithoutInsertButton
     , deleteObject = ConfirmMediaDelete
     , insertObject = InsertMediaAtCursor
     , insertObjectAsLink = InsertMediaAsLinkAtCursor
@@ -515,13 +515,13 @@ update msg model =
         CMOpenMediaDialog val ->
             case D.decodeValue (D.field "media" D.string) val of
                 Ok mediaNameOrId ->
-                    ( updateMediaDialog model False mediaNameOrId, Cmd.none )
+                    ( RCMediaEdit.update model (RCMediaEdit.ShowMediaWithId RCMediaEdit.WithoutInsertButton mediaNameOrId ), Cmd.none )
 
                 Err _ ->
-                    ( addProblem model Problems.CannotFindMediaFieldInJson, Cmd.none )
+                    ( Problems.addProblem model Problems.CannotFindMediaFieldInJson, Cmd.none )
 
-        MediaDialog allowInsert mediaNameOrId ->
-            ( updateMediaDialog model allowInsert mediaNameOrId, Cmd.none )
+        MediaDialog dialogType mediaNameOrId ->
+            ( RCMediaEdit.update model (RCMediaEdit.ShowMediaWithId dialogType mediaNameOrId), Cmd.none )
 
         CloseMediaDialog ->
             forceRerender { model | mediaDialog = RCMediaEdit.empty }
@@ -547,7 +547,7 @@ update msg model =
                                 Err emptyDict ->
                                     let
                                         problemModel =
-                                            addProblem model Problems.MediaUserClassesProblem
+                                            Problems.addProblem model Problems.MediaUserClassesProblem
                                     in
                                     { problemModel
                                         | exposition = newExposition
@@ -563,7 +563,7 @@ update msg model =
                     )
 
                 Err err ->
-                    ( addProblem model <| Problems.CannotLoadExposition err, Cmd.none )
+                    ( Problems.addProblem model <| Problems.CannotLoadExposition err, Cmd.none )
 
         SaveExposition ->
             if not model.saved then
@@ -583,12 +583,12 @@ update msg model =
                             ( model, Nav.reload )
 
                         _ ->
-                            ( addProblem model Problems.CannotSave, Cmd.none )
+                            ( Problems.addProblem model Problems.CannotSave, Cmd.none )
 
         GotMediaList mediaResult ->
             case mediaResult of
                 Err err ->
-                    ( addProblem model (Problems.CannotLoadMedia err)
+                    ( Problems.addProblem model (Problems.CannotLoadMedia err)
                     , Cmd.none
                     )
 
@@ -599,7 +599,7 @@ update msg model =
                                 (List.map (RCAPI.toRCMediaObject model.research) media)
 
                         modelWithProblems =
-                            addProblems model problems
+                            Problems.addProblems model problems
 
                         expositionWithMedia =
                             List.foldr Exposition.addOrReplaceObject modelWithProblems.exposition mediaEntries
@@ -633,17 +633,20 @@ update msg model =
                 ( modelWithNewMedia, _ ) =
                     update (GotMediaList mediaList) model
 
-                canInsert =
-                    not <| selectedEditorIsMedia model
+                dialogType =
+                    if (not <| selectedEditorIsMedia model) then
+                        RCMediaEdit.WithoutInsertButton
+                    else
+                        RCMediaEdit.WithInsertButton
             in
-            update (MediaDialog canInsert id) modelWithNewMedia
+            update (MediaDialog dialogType id) modelWithNewMedia
 
         MediaEdit ( objInModelName, objFromDialog ) ->
             case Exposition.objectByNameOrId objInModelName model.exposition of
                 Nothing ->
                     let
                         modelWithProblem =
-                            addProblem model <| Problems.NoMediaWithNameOrId objInModelName
+                            Problems.addProblem model <| Problems.NoMediaWithNameOrId objInModelName
                     in
                     ( modelWithProblem, Cmd.none )
 
@@ -693,7 +696,7 @@ update msg model =
                     ( model, Cmd.none )
 
                 Err e ->
-                    ( addProblem model <| Problems.CannotUpdateMedia e, Cmd.none )
+                    ( Problems.addProblem model <| Problems.CannotUpdateMedia e, Cmd.none )
 
         MediaDelete obj ->
             let
@@ -749,7 +752,7 @@ update msg model =
         DownloadExport ctype result ->
             case result of
                 Err err ->
-                    ( addProblem model <| Problems.ExportFailed, Cmd.none )
+                    ( Problems.addProblem model <| Problems.ExportFailed, Cmd.none )
 
                 Ok bytes ->
                     ( model, RCAPI.downloadExport ctype bytes )
@@ -795,10 +798,10 @@ update msg model =
                             ( { model | mediaUploadStatus = Ready }, RCAPI.getMediaList model.research onGotMediaList )
 
                         Err e ->
-                            ( addProblem model (Problems.DecodingJsonError e), RCAPI.getMediaList model.research GotMediaList )
+                            ( Problems.addProblem model (Problems.DecodingJsonError e), RCAPI.getMediaList model.research GotMediaList )
 
                 Err e ->
-                    ( addProblem model <| Problems.MediaUploadFailed e, Cmd.none )
+                    ( Problems.addProblem model <| Problems.MediaUploadFailed e, Cmd.none )
 
         UploadedImport result ->
             case result of
@@ -823,7 +826,7 @@ update msg model =
                     )
 
                 Err e ->
-                    ( addProblem model (Problems.CannotImportFile e), Cmd.none )
+                    ( Problems.addProblem model (Problems.CannotImportFile e), Cmd.none )
 
         ConfirmMediaDelete object ->
             ( { model | confirmDialog = confirmObjectDelete object }, Cmd.none )
@@ -881,7 +884,7 @@ update msg model =
                     ( model, insertFootnote (FootnoteHelper.footnoteSnippet num) )
 
                 Err err ->
-                    ( addProblem model (Problems.FootnoteHelperError err), Cmd.none )
+                    ( Problems.addProblem model (Problems.FootnoteHelperError err), Cmd.none )
 
         MediaList message ->
             case message of
@@ -896,12 +899,12 @@ update msg model =
                 RCMediaList.MainMessage action ->
                     -- media editing (Main.elm Msg)
                     case action of
-                        MediaDialog showInsert mediaNameOrId ->
-                            ( updateMediaDialog model showInsert mediaNameOrId
+                        MediaDialog dialogType mediaNameOrId ->
+                            ( RCMediaEdit.update model (RCMediaEdit.ShowMediaWithId dialogType mediaNameOrId )
                             , Cmd.none
                             )
 
-                        ConfirmMediaDelete object ->
+                        ConfirmMediaDelete object -> 
                             ( { model | confirmDialog = confirmObjectDelete object }
                             , Cmd.none
                             )
@@ -910,7 +913,7 @@ update msg model =
                             ( model, uploadMediaFilePrompt )
 
                         _ ->
-                            ( addProblem model <| Problems.UnsupportedMessage "Media List button is doing something unexpected", Cmd.none )
+                            ( Problems.addProblem model <| Problems.UnsupportedMessage "Media List button is doing something unexpected", Cmd.none )
 
         OpenMediaPicker ->
             ( { model | mediaPickerDialog = ( Tuple.first model.mediaPickerDialog, Modal.shown ) }, Cmd.none )
@@ -945,7 +948,7 @@ update msg model =
                             ( model, uploadMediaFilePrompt )
 
                         _ ->
-                            ( addProblem model <| Problems.UnsupportedMessage "media insert is doing something unexpected", Cmd.none )
+                            ( Problems.addProblem model <| Problems.UnsupportedMessage "media insert is doing something unexpected", Cmd.none )
 
         ExportDropMsg state ->
             ( { model | exportDropState = state }
@@ -953,7 +956,7 @@ update msg model =
             )
 
         BadUploadFileType str ->
-            ( addProblem model (Problems.UnkownUploadFileType str), Cmd.none )
+            ( Problems.addProblem model (Problems.UnkownUploadFileType str), Cmd.none )
 
         UndoCM ->
             ( model, cmUndo () )
@@ -972,34 +975,9 @@ update msg model =
 -- safer because specific
 
 
-type alias MediaDialogModel model =
-    { model
-        | exposition : Exposition.RCExposition
-        , mediaDialog : RCMediaEdit.Model
-    }
 
 
-updateMediaDialog : MediaDialogModel Model -> Bool -> String -> MediaDialogModel Model
-updateMediaDialog model allowInsert mediaNameOrId =
-    case Exposition.objectByNameOrId mediaNameOrId model.exposition of
-        Just obj ->
-            let
-                viewObjectState =
-                    Exposition.validateMediaObject model.exposition obj obj
-            in
-            { model
-                | mediaDialog =
-                    RCMediaEdit.showWithObject obj viewObjectState allowInsert
-            }
 
-        Nothing ->
-            let
-                modelWithProblem =
-                    addProblem model <| Problems.NoMediaWithNameOrId mediaNameOrId
-            in
-            { modelWithProblem
-                | mediaDialog = RCMediaEdit.empty
-            }
 
 
 confirmObjectDelete : RCMediaObject -> UserConfirm.Model Msg
@@ -1063,7 +1041,7 @@ insertMediaUpdate insertMethod object model =
             )
 
         Nothing ->
-            ( addProblem model <| Problems.NoMediaWithNameOrId object.name, Cmd.none )
+            ( Problems.addProblem model <| Problems.NoMediaWithNameOrId object.name, Cmd.none )
 
 
 uploadMediaFilePrompt : Cmd Msg
@@ -1425,6 +1403,7 @@ view model =
         -- todo : simplify arguments
         mediaDialogHtml =
             RCMediaEdit.view
+                model.buildTarget
                 makeMediaEditFun
                 CloseMediaDialog
                 InsertMediaAtCursor

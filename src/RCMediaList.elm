@@ -1,4 +1,4 @@
-smodule RCMediaList exposing
+module RCMediaList exposing
     ( Model
     , Msg(..)
     , PickerConfig

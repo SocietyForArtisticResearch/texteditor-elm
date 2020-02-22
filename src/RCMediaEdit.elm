@@ -1,4 +1,4 @@
-module RCMediaEdit exposing (Field(..), MediaEditMessage, Model, empty, showWithObject, view)
+module RCMediaEdit exposing (Field(..), MediaEditMessage, Model, empty, showWithObject, update, view, Msg (..), DialogType (..))
 
 import Bootstrap.Button as Button
 import Bootstrap.CDN as CDN
@@ -15,7 +15,10 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events as Events
 import Licenses exposing (..)
+import Problems exposing (..)
 import RCMediaPreview
+import Settings
+import View
 
 
 type Field
@@ -31,6 +34,24 @@ type alias Model =
     , object : Maybe RCMediaObject
     , objectViewState : Maybe RCMediaObjectViewState
     , allowInsert : Bool
+    }
+
+
+type DialogType
+    = WithInsertButton
+    | WithoutInsertButton
+
+
+type Msg
+    = ShowMediaWithId DialogType String
+    
+-- extensible record, any model with this RCMediaEdit and an exposition
+
+
+type alias MediaDialogModel model =
+    { model
+        | exposition : RCExposition
+        , mediaDialog : Model
     }
 
 
@@ -75,6 +96,9 @@ cssClasses =
     , CssClass "floatRightSmall" "small & float right"
     , CssClass "floatRightMedium" "medium & float right"
     , CssClass "floatLeftMedium" "medium & float left"
+    , CssClass "custom1" "custom1"
+    , CssClass "custom2" "custom2"
+    , CssClass "custom3" "custom3"
     ]
 
 
@@ -117,7 +141,7 @@ viewLicensePicker id licenseOptions currentSelection editMessage =
                     currentSelection == license
             in
             Select.item
-                [ value <| asString license
+                [ value <| Licenses.asString license
                 , selected isSelected
                 ]
                 [ text <| getDescription license ]
@@ -322,11 +346,47 @@ type alias InsertMediaAsLinkMessage msg =
 
 
 
+
+
+update : MediaDialogModel (Problemized model) -> Msg -> MediaDialogModel (Problemized model)
+update model message =
+    case message of
+        ShowMediaWithId dialogType mediaNameOrId ->
+            case Exposition.objectByNameOrId mediaNameOrId model.exposition of
+                Just obj ->
+                    let
+                        viewObjectState =
+                            Exposition.validateMediaObject model.exposition obj obj
+
+                        showInsert =
+                            case dialogType of
+                                WithInsertButton ->
+                                    True
+
+                                WithoutInsertButton ->
+                                    False
+                    in
+                    { model
+                        | mediaDialog =
+                            showWithObject obj viewObjectState showInsert
+                    }
+
+                Nothing ->
+                    let
+                        modelWithProblem =
+                            Problems.addProblem model <| Problems.NoMediaWithNameOrId mediaNameOrId
+                    in
+                    { modelWithProblem
+                        | mediaDialog = empty
+                    }
+
+
+
 -- object ObjectId field newValue -> msg
 
 
-view : MakeMediaEditFun msg -> msg -> InsertMediaMessage msg -> InsertMediaAsLinkMessage msg -> RCExposition -> Model -> Html msg
-view makeMediaEditFun closeMediaDialogMsg insertMediaMsg insertMediaAsLinkMsg exposition model =
+view : Settings.BuildType -> MakeMediaEditFun msg -> msg -> InsertMediaMessage msg -> InsertMediaAsLinkMessage msg -> RCExposition -> Model -> Html msg
+view buildTarget makeMediaEditFun closeMediaDialogMsg insertMediaMsg insertMediaAsLinkMsg exposition model =
     let
         { visibility, object, objectViewState, allowInsert } =
             model
@@ -342,12 +402,18 @@ view makeMediaEditFun closeMediaDialogMsg insertMediaMsg insertMediaAsLinkMsg ex
                         mediaEditView =
                             viewBody objViewState (makeMediaEditFun obj) obj
 
+                                
+                        defaultBut =
+                            View.defaultButton (insertMediaAsLinkMsg obj)
+
+                        insertLinkButton : Html msg
                         insertLinkButton =
-                            Button.button
-                                [ Button.outlinePrimary
-                                , Button.attrs [ Events.onClick <| insertMediaAsLinkMsg obj ]
-                                ]
-                                [ text "Insert as link" ]
+                            View.mkButton buildTarget
+                                { defaultBut
+                                    | icon = View.HyperlinkIcon
+                                    , text = ""
+                                    , title = "insert as hyperlink"
+                                }
 
                         insertButton =
                             Button.button

@@ -368,9 +368,12 @@ validateName exp obj newName =
 
             objName =
                 obj.name
+
+            isHyphen =
+                ((==) '-')
         in
         if (obj.name == newName) || not (List.member newName mediaNames) then
-            if String.all Char.isAlphaNum newName then
+            if String.all (Util.liftA2 (||) Char.isAlphaNum isHyphen) newName then
                 Ok newName
 
             else
