@@ -515,7 +515,7 @@ update msg model =
         CMOpenMediaDialog val ->
             case D.decodeValue (D.field "media" D.string) val of
                 Ok mediaNameOrId ->
-                    ( RCMediaEdit.update model (RCMediaEdit.ShowMediaWithId RCMediaEdit.WithoutInsertButton mediaNameOrId ), Cmd.none )
+                    ( RCMediaEdit.update model (RCMediaEdit.ShowMediaWithId RCMediaEdit.WithoutInsertButton mediaNameOrId), Cmd.none )
 
                 Err _ ->
                     ( Problems.addProblem model Problems.CannotFindMediaFieldInJson, Cmd.none )
@@ -635,9 +635,9 @@ update msg model =
 
                 dialogType =
                     if (not <| selectedEditorIsMedia model) then
-                        RCMediaEdit.WithoutInsertButton
-                    else
                         RCMediaEdit.WithInsertButton
+                    else
+                        RCMediaEdit.WithoutInsertButton
             in
             update (MediaDialog dialogType id) modelWithNewMedia
 
