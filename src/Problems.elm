@@ -1,7 +1,8 @@
-module Problems exposing (Problem(..), asString, splitResultList)
+module Problems exposing (Problem(..), asString, splitResultList, Problemized,addProblem, addProblems)
 
 -- problem idea comes from rtfeldman sp-application talk youtube
 
+import Bootstrap.Alert as Alert
 import Http
 import Json.Decode as Decode
 
@@ -24,6 +25,23 @@ type Problem
     | FootnoteHelperError String
     | MediaUserClassesProblem
     | UnsupportedMessage String
+
+
+type alias Problemized model =
+    { model
+        | problems : List Problem
+        , alertVisibility : Alert.Visibility
+    }
+
+
+addProblem : Problemized m -> Problem -> Problemized m
+addProblem model problem =
+    { model | problems = problem :: model.problems, alertVisibility = Alert.shown }
+
+
+addProblems : Problemized m -> List Problem -> Problemized m
+addProblems model problems =
+    { model | problems = problems ++ model.problems, alertVisibility = Alert.shown }
 
 
 splitResultList : List (Result Problem a) -> ( List Problem, List a )

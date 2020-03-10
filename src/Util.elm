@@ -1,4 +1,4 @@
-module Util exposing (classListFromString, find, fst, snd, wordCount)
+module Util exposing (classListFromString, find, fst, snd, wordCount, liftA2)
 
 import Html
 import Html.Attributes
@@ -33,6 +33,10 @@ snd ( a, b ) =
     b
 
 
+-- applicative of functions: a <$> b <*> c
+liftA2 : (a -> b -> c) -> (d -> a)  -> (d -> b) -> d -> c
+liftA2 operator a b arg =
+    operator (a arg) (b arg) 
 
 -- This tries to intelligently split sentences according to spaces or characters.
 
