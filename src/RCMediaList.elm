@@ -1,4 +1,4 @@
-smodule RCMediaList exposing
+module RCMediaList exposing
     ( Model
     , Msg(..)
     , PickerConfig
@@ -211,7 +211,7 @@ deleteButton messages object =
 pickerButtons : BuildType -> PickerConfig msg -> Table.Column RCMediaObject (Msg msg)
 pickerButtons buildType messages =
     Table.veryCustomColumn
-        { name = "Edit"
+        { name = "Insert"
         , viewData =
             \object ->
                 Table.HtmlDetails
