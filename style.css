@@ -1,4 +1,3 @@
-
 /** reminder to self:
 
 https://paulcpederson.com/articles/css-for-people-who-hate-css/
@@ -63,7 +62,7 @@ body {
     background-color: white;
     position: fixed;
     bottom: 0;
-    left:0.3rem;
+    left: 0.3rem;
     width: 50%;
 }
 
@@ -242,10 +241,11 @@ body {
 
 @media only screen and (max-width: 576px) {
     .fullscreen-button {
-	display: none !important; /* do not show the full screen button on mobile! */
+        display: none !important;
+        /* do not show the full screen button on mobile! */
     }
 
-    
+
     /* hide the preview on mobile, bigger phones have a width of 750px */
     .preview-container {
         display: none;
@@ -271,6 +271,12 @@ body {
 .edit-media-dialog .media img {
     width: 368px;
     height: auto;
+}
+
+.css-class-name {
+    float: right;
+    font-size: 0.8em;
+    color: #999;
 }
 
 /* fullscreen mode */
@@ -306,7 +312,8 @@ body {
 .rc-media-table-searchbox {
     position: absolute;
     right: 0;
-    max-width: 33%; /* to avoid overlap with the upload button */
+    max-width: 33%;
+    /* to avoid overlap with the upload button */
 }
 
 #media-list .rc-media-table-searchbox {
@@ -331,7 +338,7 @@ body {
 }
 
 .rc-media-table-row {
-    hieght:35px;
+    hieght: 35px;
 }
 
 .rc-media-table>thead:nth-child(1)>tr:nth-child(1)>th:nth-child(4) {
@@ -340,14 +347,14 @@ body {
 }
 
 #media-picker .rc-media-table-searchbox {
-    right:1rem;
+    right: 1rem;
 }
 
 .rc-media-picker .modal-body {
     padding-left: 1rem;
     padding-right: 1rem;
-    padding-top:0;
-    padding-bottom:1rem;
+    padding-top: 0;
+    padding-bottom: 1rem;
 }
 
 .rc-media-picker>thead:nth-child(1)>tr:nth-child(1)>th:nth-child(4) {
@@ -366,7 +373,7 @@ body {
 .opacity-0 {
     opacity: 0.0;
 }
-    
+
 .opacity-1 {
     opacity: 0.25;
 }

@@ -320,7 +320,7 @@ viewBody objectState editTool objectInEdit =
                     , Form.group []
                         [ Form.label [ for "classPicker" ] [ text "display size and location" ]
                         , viewClassesPicker "classPicker" cssClasses currentClass (editTool UserClass)
-                        , p [class "css-class-name"] [text <| "CSS class: " ++  cssClassFromObject objectInEdit]
+                        , p [class "css-class-name", title "CSS class name for this object"] [text <| cssClassFromObject objectInEdit]
                         ]
                     , viewTextAreaWithLabel descriptionProps
                     ]
