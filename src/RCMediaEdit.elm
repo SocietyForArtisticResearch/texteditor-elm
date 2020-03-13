@@ -320,6 +320,7 @@ viewBody objectState editTool objectInEdit =
                     , Form.group []
                         [ Form.label [ for "classPicker" ] [ text "display size and location" ]
                         , viewClassesPicker "classPicker" cssClasses currentClass (editTool UserClass)
+                        , p [class "css-class-name"] [text <| "CSS class: " ++  cssClassFromObject objectInEdit]
                         ]
                     , viewTextAreaWithLabel descriptionProps
                     ]
@@ -443,7 +444,6 @@ view buildTarget makeMediaEditFun closeMediaDialogMsg insertMediaMsg insertMedia
                     Modal.config closeMediaDialogMsg
                         |> Modal.scrollableBody True
                         |> Modal.h2 [] [ text <| "Edit " ++ obj.name ]
-                        |> Modal.h5 [] [ text <| ("css class : " ++ (cssClassFromObject obj))]
                         |> Modal.large
                         |> Modal.hideOnBackdropClick True
                         |> Modal.body [] [ p [] [ mediaEditView ] ]
