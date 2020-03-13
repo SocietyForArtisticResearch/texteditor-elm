@@ -384,6 +384,10 @@ update model message =
 
 -- object ObjectId field newValue -> msg
 
+cssClassFromObject : RCMediaObject -> String
+cssClassFromObject obj =
+    ".rc-media-" ++ (String.fromInt obj.id)
+
 
 view : Settings.BuildType -> MakeMediaEditFun msg -> msg -> InsertMediaMessage msg -> InsertMediaAsLinkMessage msg -> RCExposition -> Model -> Html msg
 view buildTarget makeMediaEditFun closeMediaDialogMsg insertMediaMsg insertMediaAsLinkMsg exposition model =
@@ -439,6 +443,7 @@ view buildTarget makeMediaEditFun closeMediaDialogMsg insertMediaMsg insertMedia
                     Modal.config closeMediaDialogMsg
                         |> Modal.scrollableBody True
                         |> Modal.h2 [] [ text <| "Edit " ++ obj.name ]
+                        |> Modal.h5 [] [ text <| ("css class : " ++ (cssClassFromObject obj))]
                         |> Modal.large
                         |> Modal.hideOnBackdropClick True
                         |> Modal.body [] [ p [] [ mediaEditView ] ]

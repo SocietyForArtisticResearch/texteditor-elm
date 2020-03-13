@@ -346,7 +346,7 @@ view upload tableType { query, state } tableConfig objectList =
                 []
 
         tableControls =
-            div []
+            div [class "table-controls"]
                 [ upload, searchBox ]
     in
     case objectList of
