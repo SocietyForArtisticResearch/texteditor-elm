@@ -337,11 +337,14 @@ withPrefix prefix str =
 
 minimumPdfDimensions : OptionalDimensions -> OptionalDimensions
 minimumPdfDimensions dims =
-   case dims of
-       Just (0,0) -> Just (900,1273)
-       allOther -> allOther
-       
-                
+    case dims of
+        Just ( 0, 0 ) ->
+            Just ( 900, 1273 )
+
+        allOther ->
+            allOther
+
+
 addDimensions : OptionalDimensions -> List (Html.Attribute msg) -> List (Html.Attribute msg)
 addDimensions dims attributes =
     case dims of
@@ -370,7 +373,7 @@ validateName exp obj newName =
                 obj.name
 
             isHyphen =
-                ((==) '-')
+                (==) '-'
         in
         if (obj.name == newName) || not (List.member newName mediaNames) then
             if String.all (Util.liftA2 (||) Char.isAlphaNum isHyphen) newName then
@@ -491,7 +494,7 @@ asHtml media mediaId =
                     objectDiv data <|
                         Html.figure [ Attr.id mediaId ]
                             [ Html.object
-                                  ((addDimensions << minimumPdfDimensions <| data.dimensions)
+                                ((addDimensions << minimumPdfDimensions <| data.dimensions)
                                     [ Attr.attribute "data" (mediaUrl data)
                                     , Attr.attribute "type" "application/pdf"
                                     , Attr.attribute "title" data.name
@@ -659,7 +662,7 @@ replaceImagesWithTools : String -> List Int -> String
 replaceImagesWithTools md mediaIds =
     let
         r =
-            Regex.fromString "![[^]*](\\([^)]+)\\){[^}]+}"
+            Regex.fromString "!\\[[^]*\\](\\([^)]+)\\){[^}]+}"
     in
     case r of
         Nothing ->
