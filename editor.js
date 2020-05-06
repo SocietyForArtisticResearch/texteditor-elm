@@ -1,5 +1,6 @@
-console.log('v 2.1.1');
-console.log('test1');
+const version = "v 2.1.1";
+
+console.log(version);
 
 var mdIt = window.markdownit({
     html: true,
@@ -34,6 +35,7 @@ var selectedEditor = editorCmMd;
 
 var cmMarkdownPosition = null; // used to save 
 var cmStylePosition = null;
+var txtMarkdownPosition = null;
 
 var cmMarkdown = CodeMirror.fromTextArea(document.getElementById("js-cm-markdown"), {
     mode: "markdown",
@@ -63,7 +65,8 @@ var app = Elm.Main.init({
     flags: {
         weave: parseInt(urlParams.get('weave')),
         research: parseInt(urlParams.get('research')),
-	buildTarget: "Release"
+        buildTarget: "Release",
+        version: version
     }
 });
 
@@ -83,7 +86,7 @@ function setEditorDisplay(editor) {
         } else {
             console.log("media list does not exist (yet?)", document.getElementById("media-list"));
         }
-    }
+    };
 
     let setNodeVisibility = function(node, show) {
         if (show) {
@@ -95,10 +98,13 @@ function setEditorDisplay(editor) {
 
     if (selectedEditor === editorCmMd && cmMarkdown != null) {
         cmMarkdownPosition = cmMarkdown.getCursor();
-        console.log('cursor is : cmMarkdownPos', cmMarkdownPosition);
+        //console.log('cursor is : cmMarkdownPos', cmMarkdownPosition);
     }
     if (selectedEditor === editorCmCss && cmStyle != null) {
         cmStylePosition = cmStyle.getCursor();
+    }
+    if (selectedEditor === editorTxtMd && textareaMarkdown != null) {
+        txtMarkdownPosition = textareaMarkdown.selectionStart;
     }
 
     switch (editor) {
@@ -116,24 +122,24 @@ function setEditorDisplay(editor) {
                 cmMarkdown.refresh();
             } else {
                 // recover position
-		//console.log(cmMarkdownPosition,' = pos');
-                
-		setTimeout(() => {
-		    cmMarkdown.focus();
-		    cmMarkdown.setCursor(cmMarkdownPosition);
-		    //console.log('');
-		}
-		,500);
+                //console.log(cmMarkdownPosition,' = pos');
+
+                cmMarkdown.focus();
+                cmMarkdown.on("focus", () => cmMarkdown.setCursor(cmMarkdownPosition));
             }
             break;
+
         case editorTxtMd:
             setNodeVisibility(textareaMarkdown, true);
             setNodeVisibility(cmStyle.getWrapperElement(), false);
             showMediaList(false);
             setNodeVisibility(cmMarkdown.getWrapperElement(), false);
-
             selectedEditor = editor;
+            if (txtMarkdownPosition !== null) {
+                textareaMarkdown.selectionStart = textareaMarkdown.selectionEnd = txtMarkdownPosition;
+            }
             break;
+
         case editorCmCss:
             setNodeVisibility(textareaMarkdown, false);
             setNodeVisibility(cmStyle.getWrapperElement(), true);
@@ -141,10 +147,10 @@ function setEditorDisplay(editor) {
             setNodeVisibility(cmMarkdown.getWrapperElement(), false);
 
             if (cmStylePosition !== null) {
-		setTimeout( () => {
-		    cmStyle.focus();
-		    cmStyle.setCursor(cmStylePosition);
-		}, 500);
+                setTimeout(() => {
+                    cmStyle.focus();
+                    cmStyle.setCursor(cmStylePosition);
+                }, 500);
             }
 
             selectedEditor = editor;

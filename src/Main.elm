@@ -60,6 +60,7 @@ type alias Model =
     , navbarState : Navbar.State
     , fullscreenMode : Bool
     , buildTarget : BuildType
+    , version : String
     }
 
 
@@ -169,15 +170,16 @@ type MediaInsertMethod
 
 
 type alias Flags =
-    { weave : Int, research : Int, buildTarget : BuildType }
+    { weave : Int, research : Int, buildTarget : BuildType, version : String }
 
 
 decodeFlags : D.Decoder Flags
 decodeFlags =
-    D.map3 Flags
+    D.map4 Flags
         (D.field "weave" D.int)
         (D.field "research" D.int)
         (D.map Settings.buildTypeFromString (D.field "buildTarget" D.string))
+        (D.field "version" D.string)
 
 
 emptyModel : Navbar.State -> BuildType -> Int -> Int -> Model
@@ -201,6 +203,7 @@ emptyModel navbarInitState buildType research weave =
     , navbarState = navbarInitState
     , fullscreenMode = False
     , buildTarget = buildType
+    , version = ""
     }
 
 
@@ -1393,6 +1396,7 @@ statusBar showStatus model =
     in
     div [ class "editor-status-bar" ]
         [ span [] [ text status ]
+        , span [class "version-string"] [text model.version]
         , saveButton
         ]
 
