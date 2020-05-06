@@ -182,8 +182,8 @@ decodeFlags =
         (D.field "version" D.string)
 
 
-emptyModel : Navbar.State -> BuildType -> Int -> Int -> Model
-emptyModel navbarInitState buildType research weave =
+emptyModel : String -> Navbar.State -> BuildType -> Int -> Int -> Model
+emptyModel version navbarInitState buildType research weave =
     { editGeneration = ( -1, -1 )
     , exposition = Exposition.empty
     , mediaList = RCMediaList.empty
@@ -203,7 +203,7 @@ emptyModel navbarInitState buildType research weave =
     , navbarState = navbarInitState
     , fullscreenMode = False
     , buildTarget = buildType
-    , version = ""
+    , version = version
     }
 
 
@@ -215,12 +215,12 @@ init flags =
     in
     case D.decodeValue decodeFlags flags of
         Ok fl ->
-            ( emptyModel navbarState fl.buildTarget fl.research fl.weave
+            ( emptyModel fl.version navbarState fl.buildTarget fl.research fl.weave
             , Cmd.batch [ navCmd, RCAPI.getExposition fl.research fl.weave GotExposition ]
             )
 
         Err e ->
-            ( Problems.addProblem (emptyModel navbarState Settings.defaultBuildType -1 -1) Problems.WrongExpositionUrl
+            ( Problems.addProblem (emptyModel "" navbarState Settings.defaultBuildType -1 -1) Problems.WrongExpositionUrl
             , Cmd.none
             )
 
