@@ -1396,7 +1396,6 @@ statusBar showStatus model =
     in
     div [ class "editor-status-bar" ]
         [ span [] [ text status ]
-        , span [class "version-string"] [text model.version]
         , saveButton
         ]
 
@@ -1528,6 +1527,7 @@ view model =
                     , ( "markdown", ConvertExposition RCAPI.Md )
                     ]
                     "Export the current exposition"
+            , span [class "version-string"] [text model.version]
             ]
         , optionalBlock showButtons <|
             div

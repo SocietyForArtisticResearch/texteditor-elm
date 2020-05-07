@@ -139,6 +139,12 @@ body {
     border-color: #000 #777 #777 #000;
 }
 
+span.version-string {
+    font-size: 0.5em;
+    margin-left: auto;
+    color: #ccc;
+}
+
 .toolbar {
     display: block;
 }
