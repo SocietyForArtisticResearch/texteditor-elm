@@ -1527,7 +1527,8 @@ view model =
                     , ( "markdown", ConvertExposition RCAPI.Md )
                     ]
                     "Export the current exposition"
-            , span [class "version-string"] [text model.version]
+            , span [class "version-string"
+                   ,title <| "Version: " ++ model.version] [text model.version]
             ]
         , optionalBlock showButtons <|
             div
