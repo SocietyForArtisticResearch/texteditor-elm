@@ -130,10 +130,10 @@ function setEditorDisplay(editor) {
         if (setAfterShow) {
             cmMarkdown.setValue(textareaMarkdown.value);
             cmMarkdown.refresh();
+	    console.log("debug - refresh called");
 	    restorePositionMarkdown();
         } else {
-	    cmMarkdown.focus();
-            setTimeout(() => restorePositionMarkdown(),500);
+            setTimeout(() => { cmMarkdown.focus(); restorePositionMarkdown()},500);
         }
         break;
 
