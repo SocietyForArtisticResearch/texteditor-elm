@@ -369,7 +369,7 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
         } else {
             extraPart = syntaxHelper(str, cmSelection);
 
-            cmMarkdown.replaceSelection(str + extraPart);
+            cmMarkdown.replaceSelection(str + cmSelection + extraPart);
 
             cmMarkdown.focus();
 
@@ -378,10 +378,6 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
                 line: cursor.line,
                 ch: Math.max(0, cursor.ch + offset + extraPart.length)
             });
-
-
-
-            cmMarkdown.replaceSelection(cmSelection);
         }
 
         textareaMarkdown.value = cmMarkdown.getValue();
