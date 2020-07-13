@@ -324,7 +324,10 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
             if (selectionString.length === 0) {
                 extraPart = " header";
             }
-        }
+	    
+        } else { 
+	    str : selectionString, extraPart.length
+	}
 
         return { str : extraPart
 		 , offset : extraPart.length + syntaxString.length };
@@ -361,6 +364,7 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
     if (selectedEditor == editorCmMd) {
         let cmSelection = cmMarkdown.getSelection();
         let isPhone = detectmob();
+	let extraPart = {};
 
         if (isPhone) {
             cmSelection = phoneReplace(str, cmSelection);
