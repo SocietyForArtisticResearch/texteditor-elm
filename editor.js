@@ -376,7 +376,7 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
             let cursor = cmMarkdown.getCursor();
             cmMarkdown.setCursor({
                 line: cursor.line,
-                ch: Math.max(0, cursor.ch + offset)
+                ch: Math.max(0, cursor.ch + offset + extraPart.length)
             });
 
 
