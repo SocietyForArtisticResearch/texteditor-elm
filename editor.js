@@ -353,12 +353,15 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
 	    cmMarkdown.replaceSelection(str);
 	    cmMarkdown.focus();
 	    let cursor = cmMarkdown.getCursor("to");
-	    console.log("debug", cursor);
-	    cmMarkdown.setCursor({
-                line: cursor.line,
-                ch: Math.max(0, cursor.ch + offset)
-	    });
-	    console.log("debugafter",cmMarkdown.getCursor("to"),offset);
+	    let newPos = {
+		line: cursor.line
+		ch: Math.max(0, cursor.ch + offset)
+	    };
+	    cmMarkdown.focus();
+	    cmMarkdown.setCursor(newPos);
+	    cmMarkdown.focus();
+
+	    console.log("debugafter",cmMarkdown.getCursor("to"));
 
 	    if (str.charAt(0) === "#") {	    
 		if(cmSelection.length === 0) {
