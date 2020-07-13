@@ -123,9 +123,7 @@ function setEditorDisplay(editor) {
             // recover position
             
 	    cmMarkdown.focus();
-	    console.log("debug, set focus-focus:",cmMarkdown.hasFocus());
-	    
-	    setTimeout(() => {cmMarkdown.setCursor(cmMarkdownPosition)},100);
+	    cmMarkdown.on("focus", () => { console.log("hallo");cmMarkdown.setCursor(cmMarkdownPosition) });
             
         }
         break;
