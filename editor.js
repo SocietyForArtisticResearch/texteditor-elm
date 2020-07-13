@@ -50,7 +50,7 @@ function restorePositionMarkdown() {
 	cmMarkdown.setCursor(cmMarkdownPosition);
 	console.log("set position",cmMarkdownPosition);
 
-	cmMarkdown.refresh();
+
     }
 }
 
@@ -136,7 +136,7 @@ function setEditorDisplay(editor) {
 	    console.log("debug - refresh called");
 
 	    restorePositionMarkdown();
-	    cmMarkdown.refresh();
+	    
         } else {
             //setTimeout(() => { cmMarkdown.focus(); restorePositionMarkdown()},500);
 	    
@@ -170,11 +170,11 @@ function setEditorDisplay(editor) {
 
 
 	cmStyle.focus();
-        cmStyle.setCursor(cmStylePosition);
-	cmStyle.refresh();	
+
+	cmStyle.setCursor(cmStylePosition);	
 
         selectedEditor = editor;
-        cmStyle.refresh();
+        
         break;
     case editorMediaList:
         setNodeVisibility(textareaMarkdown, false);
