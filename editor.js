@@ -326,7 +326,8 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
             }
         }
 
-        return extraPart;
+        return { str : extraPart
+		 , offset : extraPart.length + syntaxString.length };
     };
 
     let phoneReplace = function(syntax, selected) {
@@ -369,14 +370,14 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
         } else {
             extraPart = syntaxHelper(str, cmSelection);
 
-            cmMarkdown.replaceSelection(str + cmSelection + extraPart);
+            cmMarkdown.replaceSelection(str + cmSelection + extraPart.str);
 
             cmMarkdown.focus();
 
             let cursor = cmMarkdown.getCursor();
             cmMarkdown.setCursor({
                 line: cursor.line,
-                ch: Math.max(0, cursor.ch + offset + extraPart.length + str.length)
+                ch: Math.max(0, cursor.ch + offset + extraPart.offset)
             });
         }
 
