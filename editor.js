@@ -322,7 +322,7 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
 	let numberOfHashtags = 0;
 	const headerTemplate = ["# Header","## Header","### Header"];
 	for (let i = 0;i<3;i++) {
-	   if syntaxString.charAt(i) === "#" {
+	    if (syntaxString.charAt(i) === "#") {
 	      numberOfHashtags++;
 	   }
 	}
