@@ -98,6 +98,7 @@ function setEditorDisplay(editor) {
 
     if (selectedEditor === editorCmMd && cmMarkdown != null) {
         cmMarkdownPosition = cmMarkdown.getCursor();
+	console.log("saving cursor position: ",cmMarkdownPosition);
         //console.log('cursor is : cmMarkdownPos', cmMarkdownPosition);
     }
     if (selectedEditor === editorCmCss && cmStyle != null) {
@@ -122,7 +123,7 @@ function setEditorDisplay(editor) {
                 cmMarkdown.refresh();
             } else {
                 // recover position
-                //console.log(cmMarkdownPosition,' = pos');
+                console.log(cmMarkdownPosition,' = pos');
 
                 cmMarkdown.focus();
                 cmMarkdown.on("focus", () => cmMarkdown.setCursor(cmMarkdownPosition));
