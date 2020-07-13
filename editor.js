@@ -321,7 +321,6 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
         
         if (syntaxString.charAt(0) === "#") {
             if (selectionString.length === 0) {
-console.log("debug", selectionString);
                 selectionString = " header";
             } else {
                 selectionString.replace("\n", ""); // headers should not contain newlines
@@ -364,18 +363,15 @@ console.log("debug", selectionString);
         let isPhone = detectmob();
 
         if (isPhone) {
-	    //debug
-	    console.log("is a phone");
             cmSelection = phoneReplace(str, cmSelection);
 
             cmMarkdown.replaceSelection(cmSelection);
 
         } else {
             cmSelection = syntaxHelper(str, cmSelection);
-	    //debug
 	    console.log("cmSelection",cmSelection);
 
-            cmMarkdown.replaceSelection(str);
+            cmMarkdown.replaceSelection(cmSelection);
 
             cmMarkdown.focus();
 
@@ -383,11 +379,7 @@ console.log("debug", selectionString);
             cmMarkdown.setCursor({
                 line: cursor.line,
                 ch: Math.max(0, cursor.ch + offset)
-            });
-
-
-
-            cmMarkdown.replaceSelection(cmSelection);
+            });            
         }
 
         textareaMarkdown.value = cmMarkdown.getValue();
