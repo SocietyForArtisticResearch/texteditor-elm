@@ -318,16 +318,15 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
         /*
     	     If header, and the selection is empty string, then insert something to make it more clear
         */
-        
+	let extraPart = "";
+	
         if (syntaxString.charAt(0) === "#") {
             if (selectionString.length === 0) {
-                selectionString = " header";
-            } else {
-                selectionString.replace("\n", ""); // headers should not contain newlines
+                extraPart = " header";
             }
         }
 
-        return selectionString;
+        return extraPart;
     };
 
     let phoneReplace = function(syntax, selected) {
@@ -368,10 +367,9 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
             cmMarkdown.replaceSelection(cmSelection);
 
         } else {
-            cmSelection = syntaxHelper(str, cmSelection);
-	    console.log("cmSelection",cmSelection);
+            extraPart = syntaxHelper(str, cmSelection);
 
-            cmMarkdown.replaceSelection(cmSelection);
+            cmMarkdown.replaceSelection(str + extraPart);
 
             cmMarkdown.focus();
 
@@ -379,7 +377,11 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
             cmMarkdown.setCursor({
                 line: cursor.line,
                 ch: Math.max(0, cursor.ch + offset)
-            });            
+            });
+
+
+
+            cmMarkdown.replaceSelection(cmSelection);
         }
 
         textareaMarkdown.value = cmMarkdown.getValue();
