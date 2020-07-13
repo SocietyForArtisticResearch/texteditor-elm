@@ -109,64 +109,64 @@ function setEditorDisplay(editor) {
     }
 
     switch (editor) {
-        case editorCmMd:
-            let setAfterShow = (selectedEditor === editorTxtMd);
-            setNodeVisibility(textareaMarkdown, false);
-            setNodeVisibility(cmStyle.getWrapperElement(), false);
-            showMediaList(false);
-            setNodeVisibility(cmMarkdown.getWrapperElement(), true);
+    case editorCmMd:
+        let setAfterShow = (selectedEditor === editorTxtMd);
+        setNodeVisibility(textareaMarkdown, false);
+        setNodeVisibility(cmStyle.getWrapperElement(), false);
+        showMediaList(false);
+        setNodeVisibility(cmMarkdown.getWrapperElement(), true);
 
+	cmMarkdown.focus();
+        selectedEditor = editor;
+        if (setAfterShow) {
+            cmMarkdown.setValue(textareaMarkdown.value);
+            cmMarkdown.refresh();
+        } else {
+            // recover position
+            console.log(cmMarkdownPosition,' = pos');
 
-            selectedEditor = editor;
-            if (setAfterShow) {
-                cmMarkdown.setValue(textareaMarkdown.value);
-                cmMarkdown.refresh();
-            } else {
-                // recover position
-                console.log(cmMarkdownPosition,' = pos');
+            
+            cmMarkdown.on("focus", () => cmMarkdown.setCursor(cmMarkdownPosition));
+        }
+        break;
 
-                
-                cmMarkdown.on("focus", () => cmMarkdown.setCursor(cmMarkdownPosition));
-            }
-            break;
+    case editorTxtMd:
+        setNodeVisibility(textareaMarkdown, true);
+        setNodeVisibility(cmStyle.getWrapperElement(), false);
+        showMediaList(false);
+        setNodeVisibility(cmMarkdown.getWrapperElement(), false);
+        selectedEditor = editor;
+        if (txtMarkdownPosition !== null) {
+            textareaMarkdown.selectionStart = textareaMarkdown.selectionEnd = txtMarkdownPosition;
+        }
+        break;
 
-        case editorTxtMd:
-            setNodeVisibility(textareaMarkdown, true);
-            setNodeVisibility(cmStyle.getWrapperElement(), false);
-            showMediaList(false);
-            setNodeVisibility(cmMarkdown.getWrapperElement(), false);
-            selectedEditor = editor;
-            if (txtMarkdownPosition !== null) {
-                textareaMarkdown.selectionStart = textareaMarkdown.selectionEnd = txtMarkdownPosition;
-            }
-            break;
+    case editorCmCss:
+        setNodeVisibility(textareaMarkdown, false);
+        setNodeVisibility(cmStyle.getWrapperElement(), true);
+        showMediaList(false);
+        setNodeVisibility(cmMarkdown.getWrapperElement(), false);
 
-        case editorCmCss:
-            setNodeVisibility(textareaMarkdown, false);
-            setNodeVisibility(cmStyle.getWrapperElement(), true);
-            showMediaList(false);
-            setNodeVisibility(cmMarkdown.getWrapperElement(), false);
+        if (cmStylePosition !== null) {
+            setTimeout(() => {
+                cmStyle.focus();
+                cmStyle.setCursor(cmStylePosition);
+            }, 500);
+        }
 
-            if (cmStylePosition !== null) {
-                setTimeout(() => {
-                    cmStyle.focus();
-                    cmStyle.setCursor(cmStylePosition);
-                }, 500);
-            }
+        selectedEditor = editor;
+        cmStyle.refresh();
+        break;
+    case editorMediaList:
+        setNodeVisibility(textareaMarkdown, false);
+        setNodeVisibility(cmStyle.getWrapperElement(), false);
+        showMediaList(true);
+        setNodeVisibility(cmMarkdown.getWrapperElement(), false);
 
-            selectedEditor = editor;
-            cmStyle.refresh();
-            break;
-        case editorMediaList:
-            setNodeVisibility(textareaMarkdown, false);
-            setNodeVisibility(cmStyle.getWrapperElement(), false);
-            showMediaList(true);
-            setNodeVisibility(cmMarkdown.getWrapperElement(), false);
-
-            selectedEditor = editor;
-            break;
-        default:
-            console.log("editor selection not known or not implemented");
+        selectedEditor = editor;
+        break;
+    default:
+        console.log("editor selection not known or not implemented");
     }
 }
 
