@@ -132,7 +132,7 @@ function setEditorDisplay(editor) {
             cmMarkdown.refresh();
 	    restorePositionMarkdown();
         } else {
-            setTimeout(() =>restorePositionMarkdown(),2500);
+            setTimeout(() =>restorePositionMarkdown(),20);
         }
         break;
 
