@@ -339,9 +339,6 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
         return syntax + selected;
     }
 
-
-
-
     if (selectedEditor == editorCmMd) {
         let cmSelection = cmMarkdown.getSelection();
         let isPhone = detectmob();
@@ -357,6 +354,7 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
 	    cmMarkdown.focus();
 
 	    let cursor = cmMarkdown.getCursor();
+	    console.log("debug, cursorpos",cursor);
 	    cmMarkdown.setCursor({
                 line: cursor.line,
                 ch: Math.max(0, cursor.ch + offset)
