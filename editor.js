@@ -116,7 +116,6 @@ function setEditorDisplay(editor) {
         showMediaList(false);
         setNodeVisibility(cmMarkdown.getWrapperElement(), true);
 
-	cmMarkdown.focus();
         selectedEditor = editor;
         if (setAfterShow) {
             cmMarkdown.setValue(textareaMarkdown.value);
@@ -125,7 +124,7 @@ function setEditorDisplay(editor) {
             // recover position
             console.log(cmMarkdownPosition,' = pos');
 
-            
+	    cmMarkdown.focus();            
             cmMarkdown.on("focus", () => cmMarkdown.setCursor(cmMarkdownPosition));
         }
         break;
