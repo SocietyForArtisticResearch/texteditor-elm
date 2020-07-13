@@ -314,24 +314,6 @@ function detectmob() {
 app.ports.insertMdString.subscribe(function(insertTuple) {
     var [str, offset] = insertTuple;
 
-    /*
-    let syntaxHelper = function(syntaxString, selectionString) {
-	let extraPart = "";
-	
-        if (syntaxString.charAt(0) === "#") {
-            if (selectionString.length === 0) {
-                extraPart = " header";
-            }
-	    return { str : extraPart
-		 , offset : extraPart.length + syntaxString.length };
-   	    
-        } else {
-	    return null;
-	}
-	
-};
-    */
-
     let phoneReplace = function(syntax, selected) {
         // sigh, codemirror messes up cursor, so we do something local here:
         if (selected === "") {
@@ -383,7 +365,9 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
 	    if (str.charAt(0) === "#") {	    
 		if(cmSelection.length === 0) {
 		    cmMarkdown.replaceSelection("header");
-		}		
+		} else {
+		    // do nothing
+		}
 	    } else {
 		cmMarkdown.replaceSelection(cmSelection);
 	    }
