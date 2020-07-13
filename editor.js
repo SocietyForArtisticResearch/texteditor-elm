@@ -350,7 +350,8 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
 
         } else {
 	    cmMarkdown.replaceSelection(str);
-	    
+
+	    cmMarkdown.focus();
 	    let cursor = cmMarkdown.getCursor("to");
 	    
 	    let newPos = {
@@ -362,12 +363,8 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
 	    
 	    console.log("debugafter",cmMarkdown.getCursor("to"));
 
-	    if (str.charAt(0) === "#") {	    
-		if(cmSelection.length === 0) {
-		    cmMarkdown.replaceSelection("header");
-		} else {
-		    // do nothing
-		}
+	    if (str.charAt(0) === "#" && cmSelection.length === 0) {	    
+		cmMarkdown.replaceSelection("header");
 	    } else {
 		cmMarkdown.replaceSelection(cmSelection);
 	    }
@@ -378,8 +375,6 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
     } else if (selectedEditor == editorTxtMd) {
         let txtSelection = getTextareaSelection(textareaMarkdown);
 
-        txtSelection = syntaxHelper(str, txtSelection);
-
         insertAtCursor(textareaMarkdown, str);
 
         textareaMarkdown.focus();
@@ -387,6 +382,10 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
         textareaMarkdown.selectionStart = sel + offset;
         textareaMarkdown.selectionEnd = sel + offset;
 
+	if ((str.charAt(0) === '#') && (txtSelection.length === 0)) {
+	    insertAtCursor(textareaMarkdown, "header");
+	}
+	    
         insertAtCursor(textareaMarkdown, txtSelection);
 
         cmMarkdown.setValue(textareaMarkdown.value);
