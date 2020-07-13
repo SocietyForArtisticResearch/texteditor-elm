@@ -320,7 +320,8 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
         */
         
         if (selectionString.charAt(0) === "#") {
-            if (selectionString === "") {
+            if (selectionString.length === 0) {
+console.log("debug", selectionString);
                 selectionString = " header";
             } else {
                 selectionString.replace("\n", ""); // headers should not contain newlines
@@ -363,6 +364,7 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
         let isPhone = detectmob();
 
         if (isPhone) {
+	    //debug
 	    console.log("is a phone");
             cmSelection = phoneReplace(str, cmSelection);
 
@@ -370,6 +372,7 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
 
         } else {
             cmSelection = syntaxHelper(str, cmSelection);
+	    //debug
 	    console.log("cmSelection",cmSelection);
 
             cmMarkdown.replaceSelection(str);
