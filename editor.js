@@ -44,13 +44,11 @@ var cmMarkdown = CodeMirror.fromTextArea(document.getElementById("js-cm-markdown
 
 function restorePositionMarkdown() {
     if (cmMarkdown !== null && cmMarkdownPosition !== null) {
-	
-	cmMarkdown.focus();
-	console.log("focus?:",cmMarkdown.hasFocus());
-	cmMarkdown.setCursor(cmMarkdownPosition);
-	console.log("set position",cmMarkdownPosition);
 
-
+        cmMarkdown.focus();
+        console.log("focus?:", cmMarkdown.hasFocus());
+        cmMarkdown.setCursor(cmMarkdownPosition);
+        console.log("set position", cmMarkdownPosition);
     }
 }
 
@@ -74,7 +72,7 @@ var textareaMarkdown = document.getElementById("js-textarea-markdown");
 
 var app = Elm.Main.init({
     node: document.getElementById('elm'),
-    flags: {
+1    flags: {
         weave: parseInt(urlParams.get('weave')),
         research: parseInt(urlParams.get('research')),
         buildTarget: "Release",
@@ -84,7 +82,6 @@ var app = Elm.Main.init({
 
 
 function setEditorDisplay(editor) {
-
     let showMediaList = function(shouldDisplayIfExist) {
         let mediaList = document.getElementById("media-list");
         /* media List may not exist yet, this will only set if it does */
@@ -110,9 +107,8 @@ function setEditorDisplay(editor) {
     };
 
     if (selectedEditor === editorCmMd && cmMarkdown != null) {
-
-	cmMarkdownPosition = cmMarkdown.getCursor();
-	console.log("storing position markdown codemirror", cmMarkdownPosition);	
+        cmMarkdownPosition = cmMarkdown.getCursor();
+        console.log("storing position markdown codemirror", cmMarkdownPosition);
     }
     if (selectedEditor === editorCmCss && cmStyle != null) {
         cmStylePosition = cmStyle.getCursor();
@@ -122,46 +118,46 @@ function setEditorDisplay(editor) {
     }
 
     switch (editor) {
-    case editorCmMd:
-        let setAfterShow = (selectedEditor === editorTxtMd);
-        setNodeVisibility(textareaMarkdown, false);
-        setNodeVisibility(cmStyle.getWrapperElement(), false);
-        showMediaList(false);
-        setNodeVisibility(cmMarkdown.getWrapperElement(), true);
+        case editorCmMd:
+            let setAfterShow = (selectedEditor === editorTxtMd);
+            setNodeVisibility(textareaMarkdown, false);
+            setNodeVisibility(cmStyle.getWrapperElement(), false);
+            showMediaList(false);
+            setNodeVisibility(cmMarkdown.getWrapperElement(), true);
 
-        selectedEditor = editor;
-        if (setAfterShow) {
-            cmMarkdown.setValue(textareaMarkdown.value);
+            selectedEditor = editor;
+            if (setAfterShow) {
+                cmMarkdown.setValue(textareaMarkdown.value);
 
-	    console.log("debug - refresh called");
+                console.log("debug - refresh called");
 
-	    restorePositionMarkdown();
-	    
-        } else {
-            //setTimeout(() => { cmMarkdown.focus(); restorePositionMarkdown()},500);
-	    
-	    restorePositionMarkdown();
-	}
-        break;
+                restorePositionMarkdown();
 
-    case editorTxtMd:
-        setNodeVisibility(textareaMarkdown, true);
-        setNodeVisibility(cmStyle.getWrapperElement(), false);
-        showMediaList(false);
-        setNodeVisibility(cmMarkdown.getWrapperElement(), false);
-        selectedEditor = editor;
-        if (txtMarkdownPosition !== null) {
-            textareaMarkdown.selectionStart = textareaMarkdown.selectionEnd = txtMarkdownPosition;
-        }
-        break;
+            } else {
+                //setTimeout(() => { cmMarkdown.focus(); restorePositionMarkdown()},500);
 
-    case editorCmCss:
-        setNodeVisibility(textareaMarkdown, false);
-        setNodeVisibility(cmStyle.getWrapperElement(), true);
-        showMediaList(false);
-        setNodeVisibility(cmMarkdown.getWrapperElement(), false);
+                restorePositionMarkdown();
+            }
+            break;
 
-	/*
+        case editorTxtMd:
+            setNodeVisibility(textareaMarkdown, true);
+            setNodeVisibility(cmStyle.getWrapperElement(), false);
+            showMediaList(false);
+            setNodeVisibility(cmMarkdown.getWrapperElement(), false);
+            selectedEditor = editor;
+            if (txtMarkdownPosition !== null) {
+                textareaMarkdown.selectionStart = textareaMarkdown.selectionEnd = txtMarkdownPosition;
+            }
+            break;
+
+        case editorCmCss:
+            setNodeVisibility(textareaMarkdown, false);
+            setNodeVisibility(cmStyle.getWrapperElement(), true);
+            showMediaList(false);
+            setNodeVisibility(cmMarkdown.getWrapperElement(), false);
+
+            /*
         if (cmStylePosition !== null) {
             setTimeout(() => {
   
@@ -169,23 +165,23 @@ function setEditorDisplay(editor) {
             }*/
 
 
-	cmStyle.focus();
+            cmStyle.focus();
 
-	cmStyle.setCursor(cmStylePosition);	
+            cmStyle.setCursor(cmStylePosition);
 
-        selectedEditor = editor;
-        
-        break;
-    case editorMediaList:
-        setNodeVisibility(textareaMarkdown, false);
-        setNodeVisibility(cmStyle.getWrapperElement(), false);
-        showMediaList(true);
-        setNodeVisibility(cmMarkdown.getWrapperElement(), false);
+            selectedEditor = editor;
 
-        selectedEditor = editor;
-        break;
-    default:
-        console.log("editor selection not known or not implemented");
+            break;
+        case editorMediaList:
+            setNodeVisibility(textareaMarkdown, false);
+            setNodeVisibility(cmStyle.getWrapperElement(), false);
+            showMediaList(true);
+            setNodeVisibility(cmMarkdown.getWrapperElement(), false);
+
+            selectedEditor = editor;
+            break;
+        default:
+            console.log("editor selection not known or not implemented");
     }
 }
 
@@ -369,24 +365,24 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
             cmMarkdown.replaceSelection(cmSelection);
 
         } else {
-	    cmMarkdown.replaceSelection(str);
+            cmMarkdown.replaceSelection(str);
 
-	    cmMarkdown.focus();
-	    let cursor = cmMarkdown.getCursor();
-	    
-	    let newPos = {
-		line: cursor.line,
-		ch: Math.max(0, cursor.ch + offset)
-	    };
-	    
-	    cmMarkdown.setCursor(newPos);
-	   
+            cmMarkdown.focus();
+            let cursor = cmMarkdown.getCursor();
 
-	    if (str.charAt(0) === "#" && cmSelection.length === 0) {	    
-		cmMarkdown.replaceSelection("header");
-	    } else {
-		cmMarkdown.replaceSelection(cmSelection);
-	    }
+            let newPos = {
+                line: cursor.line,
+                ch: Math.max(0, cursor.ch + offset)
+            };
+
+            cmMarkdown.setCursor(newPos);
+
+
+            if (str.charAt(0) === "#" && cmSelection.length === 0) {
+                cmMarkdown.replaceSelection("header");
+            } else {
+                cmMarkdown.replaceSelection(cmSelection);
+            }
         }
 
         textareaMarkdown.value = cmMarkdown.getValue();
@@ -401,10 +397,10 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
         textareaMarkdown.selectionStart = sel + offset;
         textareaMarkdown.selectionEnd = sel + offset;
 
-	if ((str.charAt(0) === '#') && (txtSelection.length === 0)) {
-	    insertAtCursor(textareaMarkdown, "header");
-	}
-	    
+        if ((str.charAt(0) === '#') && (txtSelection.length === 0)) {
+            insertAtCursor(textareaMarkdown, "header");
+        }
+
         insertAtCursor(textareaMarkdown, txtSelection);
 
         cmMarkdown.setValue(textareaMarkdown.value);
