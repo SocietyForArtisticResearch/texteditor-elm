@@ -127,7 +127,9 @@ function setEditorDisplay(editor) {
             cmMarkdown.setValue(textareaMarkdown.value);
             cmMarkdown.refresh();
         } else {
+	    cmMarkdown.focus();
 	    console.log("does markdown have focus? :",cmMarkdown.hasFocus());
+	    
             restorePositionMarkdown();
         }
         break;
