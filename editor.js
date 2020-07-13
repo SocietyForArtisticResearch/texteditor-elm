@@ -352,9 +352,8 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
         } else {
 	    cmMarkdown.replaceSelection(str);
 	    cmMarkdown.focus();
-
 	    let cursor = cmMarkdown.getCursor("to");
-
+	    console.log("debug", cursor);
 	    cmMarkdown.setCursor({
                 line: cursor.line,
                 ch: Math.max(0, cursor.ch + offset)
