@@ -130,6 +130,7 @@ function setEditorDisplay(editor) {
         if (setAfterShow) {
             cmMarkdown.setValue(textareaMarkdown.value);
             cmMarkdown.refresh();
+	    restorePositionMarkdown();
         } else {
             restorePositionMarkdown();
         }
