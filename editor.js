@@ -354,7 +354,7 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
 	    cmMarkdown.focus();
 	    let cursor = cmMarkdown.getCursor("to");
 	    let newPos = {
-		line: cursor.line
+		line: cursor.line,
 		ch: Math.max(0, cursor.ch + offset)
 	    };
 	    cmMarkdown.focus();
