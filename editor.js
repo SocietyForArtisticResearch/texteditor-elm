@@ -363,12 +363,14 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
         let isPhone = detectmob();
 
         if (isPhone) {
+	    console.log("is a phone");
             cmSelection = phoneReplace(str, cmSelection);
 
             cmMarkdown.replaceSelection(cmSelection);
 
         } else {
             cmSelection = syntaxHelper(str, cmSelection);
+	    console.log("cmSelection",cmSelection);
 
             cmMarkdown.replaceSelection(str);
 
