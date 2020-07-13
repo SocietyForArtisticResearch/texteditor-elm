@@ -42,6 +42,13 @@ var cmMarkdown = CodeMirror.fromTextArea(document.getElementById("js-cm-markdown
     lineWrapping: true
 });
 
+function restorePositionMarkdown() {
+    if (cmMarkdown !== null && cmMarkdownPosition !== null) {
+	cmMarkdown.setCursor(cmMarkdownPosition);
+	console.log("set position");
+    }
+}
+
 var cmStyle = CodeMirror.fromTextArea(document.getElementById("js-cm-style"), {
     mode: "css",
     lineWrapping: true
@@ -70,12 +77,13 @@ var app = Elm.Main.init({
     }
 });
 
+
 function setEditorDisplay(editor) {
 
     let showMediaList = function(shouldDisplayIfExist) {
         let mediaList = document.getElementById("media-list");
         /* media List may not exist yet, this will only set if it does */
-        if (mediaList != null) {
+        if (mediaList !== null) {
             if (shouldDisplayIfExist) {
                 mediaList.style.display = "block";
                 console.log("show media");
@@ -97,9 +105,7 @@ function setEditorDisplay(editor) {
     };
 
     if (selectedEditor === editorCmMd && cmMarkdown != null) {
-        cmMarkdownPosition = cmMarkdown.getCursor();
-	
-	cmMarkdown.off("focus",null); // remove handler !
+        cmMarkdownPosition = cmMarkdown.getCursor();	
     }
     if (selectedEditor === editorCmCss && cmStyle != null) {
         cmStylePosition = cmStyle.getCursor();
@@ -121,13 +127,8 @@ function setEditorDisplay(editor) {
             cmMarkdown.setValue(textareaMarkdown.value);
             cmMarkdown.refresh();
         } else {
-            // recover position
-           
-	    cmMarkdown.on("focus", () => {
-		console.log("restore position",cmMarkdownPosition);cmMarkdown.setCursor(cmMarkdownPosition);
-	    });
-	    cmMarkdown.focus();
-            
+	    console.log("does markdown have focus? :",cmMarkdown.hasFocus());
+            restorePositionMarkdown();
         }
         break;
 
