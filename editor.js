@@ -128,7 +128,7 @@ function setEditorDisplay(editor) {
             selectedEditor = editor;
             if (setAfterShow) {
                 cmMarkdown.setValue(textareaMarkdown.value);
-
+		cmMarkdown.refresh();
                 console.log("debug - refresh called");
 
                 restorePositionMarkdown();
@@ -170,6 +170,7 @@ function setEditorDisplay(editor) {
             cmStyle.setCursor(cmStylePosition);
 
             selectedEditor = editor;
+            cmStyle.refresh();
 
             break;
         case editorMediaList:
