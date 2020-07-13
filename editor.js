@@ -342,7 +342,6 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
     if (selectedEditor == editorCmMd) {
         let cmSelection = cmMarkdown.getSelection();
         let isPhone = detectmob();
-	let extraPart = {};
 
         if (isPhone) {
             cmSelection = phoneReplace(str, cmSelection);
@@ -353,6 +352,7 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
 	    cmMarkdown.replaceSelection(str);
 	    cmMarkdown.focus();
 	    let cursor = cmMarkdown.getCursor("to");
+	    console.log("cursor pos: ", cursor);
 	    let newPos = {
 		line: cursor.line,
 		ch: Math.max(0, cursor.ch + offset)
