@@ -317,10 +317,20 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
     let syntaxHelper = function(syntaxString, selectionString) {
         /*
     	     If header, and the selection is empty string, then insert something to make it more clear
-                */
-        if (syntaxString.charAt(0) === "#") {
+        */
+ 
+	let numberOfHashtags = 0;
+	const headerTemplate = ["# Header","## Header","### Header"];
+	for (let i = 0;i<3;i++) {
+	   if syntaxString.charAt(i) === "#" {
+	      numberOfHashtags++;
+	   }
+	}
+
+        
+        if (numberOfHashtags > 0) {
             if (selectionString === "") {
-                selectionString = "Header"
+                str = headerTemplate[numberOfHashtags];
             } else {
                 selectionString.replace("\n", ""); // headers should not contain newlines
             }
