@@ -72,7 +72,7 @@ var textareaMarkdown = document.getElementById("js-textarea-markdown");
 
 var app = Elm.Main.init({
     node: document.getElementById('elm'),
-1    flags: {
+    flags: {
         weave: parseInt(urlParams.get('weave')),
         research: parseInt(urlParams.get('research')),
         buildTarget: "Release",
