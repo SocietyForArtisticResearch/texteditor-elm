@@ -319,7 +319,7 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
     	     If header, and the selection is empty string, then insert something to make it more clear
         */
         
-        if (selectionString.charAt(0) === "#") {
+        if (syntaxString.charAt(0) === "#") {
             if (selectionString.length === 0) {
 console.log("debug", selectionString);
                 selectionString = " header";
