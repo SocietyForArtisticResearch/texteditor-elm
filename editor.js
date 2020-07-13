@@ -352,7 +352,7 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
 	    cmMarkdown.replaceSelection(str);
 
 	    cmMarkdown.focus();
-	    let cursor = cmMarkdown.getCursor("to");
+	    let cursor = cmMarkdown.getCursor();
 	    
 	    let newPos = {
 		line: cursor.line,
@@ -360,8 +360,7 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
 	    };
 	    
 	    cmMarkdown.setCursor(newPos);
-	    
-	    console.log("debugafter",cmMarkdown.getCursor("to"));
+	   
 
 	    if (str.charAt(0) === "#" && cmSelection.length === 0) {	    
 		cmMarkdown.replaceSelection("header");
