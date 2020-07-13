@@ -314,24 +314,23 @@ function detectmob() {
 app.ports.insertMdString.subscribe(function(insertTuple) {
     var [str, offset] = insertTuple;
 
+    /*
     let syntaxHelper = function(syntaxString, selectionString) {
-        /*
-    	     If header, and the selection is empty string, then insert something to make it more clear
-        */
 	let extraPart = "";
 	
         if (syntaxString.charAt(0) === "#") {
             if (selectionString.length === 0) {
                 extraPart = " header";
             }
-	    
-        } else { 
-	    str : selectionString, extraPart.length
-	}
-
-        return { str : extraPart
+	    return { str : extraPart
 		 , offset : extraPart.length + syntaxString.length };
-    };
+   	    
+        } else {
+	    return null;
+	}
+	
+};
+    */
 
     let phoneReplace = function(syntax, selected) {
         // sigh, codemirror messes up cursor, so we do something local here:
@@ -372,17 +371,22 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
             cmMarkdown.replaceSelection(cmSelection);
 
         } else {
-            extraPart = syntaxHelper(str, cmSelection);
+	    cmMarkdown.replaceSelection(str);
+	    cmMarkdown.focus();
 
-            cmMarkdown.replaceSelection(str + cmSelection + extraPart.str);
-
-            cmMarkdown.focus();
-
-            let cursor = cmMarkdown.getCursor();
-            cmMarkdown.setCursor({
+	    let cursor = cmMarkdown.getCursor();
+	    cmMarkdown.setCursor({
                 line: cursor.line,
-                ch: Math.max(0, cursor.ch + offset + extraPart.offset)
-            });
+                ch: Math.max(0, cursor.ch + offset)
+	    });
+
+	    if (str.charAt(0) === "#") {	    
+		if(cmSelection.length === 0) {
+		    cmMarkdown.replaceSelection("header");
+		}		
+	    } else {
+		cmMarkdown.replaceSelection(cmSelection);
+	    }
         }
 
         textareaMarkdown.value = cmMarkdown.getValue();
