@@ -44,11 +44,13 @@ var cmMarkdown = CodeMirror.fromTextArea(document.getElementById("js-cm-markdown
 
 function restorePositionMarkdown() {
     if (cmMarkdown !== null && cmMarkdownPosition !== null) {
-	cmMarkdown.refresh();
+	
 	cmMarkdown.focus();
 	console.log("focus?:",cmMarkdown.hasFocus());
 	cmMarkdown.setCursor(cmMarkdownPosition);
 	console.log("set position",cmMarkdownPosition);
+
+	cmMarkdown.refresh();
     }
 }
 
@@ -130,11 +132,14 @@ function setEditorDisplay(editor) {
         selectedEditor = editor;
         if (setAfterShow) {
             cmMarkdown.setValue(textareaMarkdown.value);
-            cmMarkdown.refresh();
+
 	    console.log("debug - refresh called");
+
 	    restorePositionMarkdown();
+	    cmMarkdown.refresh();
         } else {
             //setTimeout(() => { cmMarkdown.focus(); restorePositionMarkdown()},500);
+	    
 	    restorePositionMarkdown();
 	}
         break;
@@ -163,10 +168,10 @@ function setEditorDisplay(editor) {
             }, 500);
             }*/
 
-	cmStyle.refresh();
+
 	cmStyle.focus();
         cmStyle.setCursor(cmStylePosition);
-	
+	cmStyle.refresh();	
 
         selectedEditor = editor;
         cmStyle.refresh();
