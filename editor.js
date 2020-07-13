@@ -358,6 +358,7 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
                 line: cursor.line,
                 ch: Math.max(0, cursor.ch + offset)
 	    });
+	    console.log("debugafter",cmMarkdown.getCursor("to"));
 
 	    if (str.charAt(0) === "#") {	    
 		if(cmSelection.length === 0) {
