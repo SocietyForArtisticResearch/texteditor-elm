@@ -225,11 +225,10 @@ init flags =
             )
 
 
+
 -- addProblem : Model -> Problems.Problem -> Model
 -- addProblem model problem =
 --     { model | problems = problem :: model.problems, alertVisibility = Alert.shown }
-
-
 -- addProblems : Model -> List Problems.Problem -> Model
 -- addProblems model problems =
 --     { model | problems = problems ++ model.problems, alertVisibility = Alert.shown }
@@ -615,15 +614,7 @@ update msg model =
                         | exposition = expositionWithClasses
                       }
                     , Cmd.batch
-                        ([ setContent
-                            (E.object
-                                [ ( "md"
-                                  , E.string expositionWithClasses.markdownInput
-                                  )
-                                , ( "style", E.string expositionWithClasses.css )
-                                ]
-                            )
-                         , setPreviewContent expositionWithClasses.renderedHtml
+                        ([ setPreviewContent expositionWithClasses.renderedHtml
                          ]
                             ++ List.map (\o -> RCAPI.updateMedia o (Http.expectString SavedMediaEdit))
                                 expositionWithClasses.media
@@ -637,8 +628,9 @@ update msg model =
                     update (GotMediaList mediaList) model
 
                 dialogType =
-                    if (not <| selectedEditorIsMedia model) then
+                    if not <| selectedEditorIsMedia model then
                         RCMediaEdit.WithInsertButton
+
                     else
                         RCMediaEdit.WithoutInsertButton
             in
@@ -903,11 +895,11 @@ update msg model =
                     -- media editing (Main.elm Msg)
                     case action of
                         MediaDialog dialogType mediaNameOrId ->
-                            ( RCMediaEdit.update model (RCMediaEdit.ShowMediaWithId dialogType mediaNameOrId )
+                            ( RCMediaEdit.update model (RCMediaEdit.ShowMediaWithId dialogType mediaNameOrId)
                             , Cmd.none
                             )
 
-                        ConfirmMediaDelete object -> 
+                        ConfirmMediaDelete object ->
                             ( { model | confirmDialog = confirmObjectDelete object }
                             , Cmd.none
                             )
@@ -976,11 +968,6 @@ update msg model =
 
 
 -- safer because specific
-
-
-
-
-
 
 
 confirmObjectDelete : RCMediaObject -> UserConfirm.Model Msg
@@ -1527,8 +1514,11 @@ view model =
                     , ( "markdown", ConvertExposition RCAPI.Md )
                     ]
                     "Export the current exposition"
-            , span [class "version-string"
-                   ,title <| "Version: " ++ model.version] [text model.version]
+            , span
+                [ class "version-string"
+                , title <| "Version: " ++ model.version
+                ]
+                [ text model.version ]
             ]
         , optionalBlock showButtons <|
             div
@@ -1541,5 +1531,5 @@ view model =
                     [ editorCheckbox, viewFullscreenSwitch model.buildTarget model.fullscreenMode ]
         , alert
         , mediaList
-        , statusBar (selectedEditorIsMarkdown model)  model -- only show wordcount in markdown
+        , statusBar (selectedEditorIsMarkdown model) model -- only show wordcount in markdown
         ]

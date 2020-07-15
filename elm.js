@@ -5821,7 +5821,7 @@ var $rundis$elm_bootstrap$Bootstrap$Alert$Closed = 3;
 var $rundis$elm_bootstrap$Bootstrap$Alert$closed = 3;
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: -2};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
-var $author$project$Settings$editorVersion = '2.1.1';
+var $author$project$Settings$editorVersion = '2.1.2';
 var $author$project$Exposition$empty = {dL: _List_Nil, bQ: 0, c5: '', dS: 0, dX: $author$project$Settings$editorVersion, j: 0, a6: '', n: _List_Nil, cG: '', dD: '', dE: _List_Nil};
 var $rundis$elm_bootstrap$Bootstrap$Modal$Hide = 3;
 var $rundis$elm_bootstrap$Bootstrap$Modal$hidden = 3;
@@ -10104,19 +10104,6 @@ var $author$project$Exposition$mkMediaName = function (exp) {
 		imageNames);
 	return 'media' + $elm$core$String$fromInt(maxImage + 1);
 };
-var $elm$json$Json$Encode$object = function (pairs) {
-	return _Json_wrap(
-		A3(
-			$elm$core$List$foldl,
-			F2(
-				function (_v0, obj) {
-					var k = _v0.a;
-					var v = _v0.b;
-					return A3(_Json_addField, k, v, obj);
-				}),
-			_Json_emptyObject(0),
-			pairs));
-};
 var $elm$regex$Regex$find = _Regex_findAtMost(_Regex_infinity);
 var $elm$regex$Regex$never = _Regex_never;
 var $author$project$Exposition$updateCaption = F3(
@@ -10297,6 +10284,19 @@ var $author$project$Exposition$replaceImagesWithTools = F2(
 	});
 var $elm$json$Json$Encode$bool = _Json_wrap;
 var $author$project$Main$reportIsSaved = _Platform_outgoingPort('reportIsSaved', $elm$json$Json$Encode$bool);
+var $elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			$elm$core$List$foldl,
+			F2(
+				function (_v0, obj) {
+					var k = _v0.a;
+					var v = _v0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(0),
+			pairs));
+};
 var $author$project$RCAPI$saveExposition = F2(
 	function (exposition, expect) {
 		var url = 'text-editor/save' + ('?research=' + ($elm$core$String$fromInt(exposition.j) + ('&weave=' + $elm$core$String$fromInt(exposition.dS))));
@@ -10389,7 +10389,6 @@ var $author$project$Main$selectedEditorIsMedia = function (model) {
 		return false;
 	}
 };
-var $author$project$Main$setContent = _Platform_outgoingPort('setContent', $elm$core$Basics$identity);
 var $author$project$Main$setDocumentTitle = _Platform_outgoingPort('setDocumentTitle', $elm$json$Json$Encode$string);
 var $author$project$Main$setFullscreenMode = _Platform_outgoingPort('setFullscreenMode', $elm$json$Json$Encode$bool);
 var $author$project$Main$setPreviewContent = _Platform_outgoingPort('setPreviewContent', $elm$json$Json$Encode$string);
@@ -10785,6 +10784,7 @@ var $author$project$RCMediaList$update = F2(
 					{aE: newId});
 		}
 	});
+var $author$project$Main$setContent = _Platform_outgoingPort('setContent', $elm$core$Basics$identity);
 var $author$project$Main$updateEditorContent = function (model) {
 	return $author$project$Main$setContent(
 		$elm$json$Json$Encode$object(
@@ -11181,17 +11181,6 @@ var $author$project$Main$update = F2(
 								_Utils_ap(
 									_List_fromArray(
 										[
-											$author$project$Main$setContent(
-											$elm$json$Json$Encode$object(
-												_List_fromArray(
-													[
-														_Utils_Tuple2(
-														'md',
-														$elm$json$Json$Encode$string(expositionWithClasses.a6)),
-														_Utils_Tuple2(
-														'style',
-														$elm$json$Json$Encode$string(expositionWithClasses.c5))
-													]))),
 											$author$project$Main$setPreviewContent(expositionWithClasses.cG)
 										]),
 									A2(
