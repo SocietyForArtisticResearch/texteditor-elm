@@ -1,4 +1,4 @@
-console.log('v 2.1.1');
+console.log('v 2.1.2');
 console.log('test1');
 
 var mdIt = window.markdownit({

@@ -1,4 +1,4 @@
-const version = "v 2.1.1";
+const version = "v 2.1.2";
 
 console.log(version);
 
@@ -51,6 +51,19 @@ function restorePositionMarkdown() {
     }
 }
 
+
+function restorePositionStyle() {
+   if (cmStyle !== null && cmStylePosition !== null) {
+	cmStyle.focus();
+	console.log("focus?:",cmStyle.hasFocus());
+	cmStyle.setCursor(cmStylePosition);
+	console.log("set position",cmStylePosition);
+    }
+}
+
+cmMarkdown.on('refresh', restorePositionMarkdown);
+cmStyle.on('refresh', restorePositionStyle);
+
 var cmStyle = CodeMirror.fromTextArea(document.getElementById("js-cm-style"), {
     mode: "css",
     lineWrapping: true
@@ -58,8 +71,8 @@ var cmStyle = CodeMirror.fromTextArea(document.getElementById("js-cm-style"), {
 
 
 if (typeof window.innerWidth != 'undefined') {
-    viewportwidth = window.innerWidth,
-        viewportheight = window.innerHeight
+    viewportwidth = window.innerWidth;
+    viewportheight = window.innerHeight;
 }
 //cmStyle.setSize(viewportwidth / 2.0, null);
 
@@ -129,12 +142,13 @@ function setEditorDisplay(editor) {
         selectedEditor = editor;
         if (setAfterShow) {
             cmMarkdown.setValue(textareaMarkdown.value);
-            cmMarkdown.refresh();
-	    console.log("debug - refresh called");
-	    restorePositionMarkdown();
-        } else {
-            setTimeout(() => { cmMarkdown.focus();console.log("hasfocus?",cmMarkdown.hasFocus()); restorePositionMarkdown()},500);
-        }
+	}
+        cmMarkdown.refresh();
+	//     console.log("debug - refresh called");
+	//     restorePositionMarkdown();
+        // } else {
+        //     setTimeout(() => { cmMarkdown.focus(); console.log("hasfocus?",cmMarkdown.hasFocus()); restorePositionMarkdown()}, 500);
+        // }
         break;
 
     case editorTxtMd:
@@ -153,13 +167,6 @@ function setEditorDisplay(editor) {
         setNodeVisibility(cmStyle.getWrapperElement(), true);
         showMediaList(false);
         setNodeVisibility(cmMarkdown.getWrapperElement(), false);
-
-        if (cmStylePosition !== null) {
-            setTimeout(() => {
-                cmStyle.focus();
-                cmStyle.setCursor(cmStylePosition);
-            }, 500);
-        }
 
         selectedEditor = editor;
         cmStyle.refresh();
@@ -211,7 +218,7 @@ const touchOrClickMediaTag = function() {
     if (tok !== null && tok !== undefined) {
         if (tok.includes("rcmedia")) {
             let word = cmMarkdown.findWordAt(pos);
-            let content = cmMarkdown.getRange(word.anchor, word.head)
+            let content = cmMarkdown.getRange(word.anchor, word.head);
             //		console.log(word);
             if (content !== "}" && content !== "{") {
                 app.ports.mediaDialog.send({
@@ -345,7 +352,7 @@ app.ports.insertMdString.subscribe(function(insertTuple) {
         }
 
         return syntax + selected;
-    }
+    };
 
     if (selectedEditor == editorCmMd) {
         let cmSelection = cmMarkdown.getSelection();
@@ -432,7 +439,7 @@ function appendToCodemirrorContent(data) {
     var pos = { // create a new object to avoid mutation of the original selection
         line: (doc.size + 5),
         ch: line.length - 1 // set the character position to the end of the line
-    }
+    };
     doc.replaceRange('\n' + data + '\n', pos); // adds a new line
 }
 
@@ -466,11 +473,12 @@ var observerConfig = {
     childList: true,
     characterData: true,
     subtree: true
-}
+};
+
 observer.observe(document.getElementById("preview"), observerConfig);
 
 app.ports.setPreviewContent.subscribe(function(content) {
-    var preview = document.getElementById("preview")
+    var preview = document.getElementById("preview");
     var newTo = document.createElement('div');
     newTo.id = "preview";
     newTo.classList.add("exposition");
