@@ -614,7 +614,15 @@ update msg model =
                         | exposition = expositionWithClasses
                       }
                     , Cmd.batch
-                        ([ setPreviewContent expositionWithClasses.renderedHtml
+                        ([ setContent
+                            (E.object
+                                [ ( "md"
+                                  , E.string expositionWithClasses.markdownInput
+                                  )
+                                , ( "style", E.string expositionWithClasses.css )
+                                ]
+                            )
+                         , setPreviewContent expositionWithClasses.renderedHtml
                          ]
                             ++ List.map (\o -> RCAPI.updateMedia o (Http.expectString SavedMediaEdit))
                                 expositionWithClasses.media
@@ -837,8 +845,9 @@ update msg model =
                 newModel =
                     { model | editor = ( tab, mdEditor ) }
             in
-            ( newModel, Cmd.batch [ RCAPI.getMediaList model.research GotMediaList, enumTabState (getTabState newModel.editor) |> setEditor ] )
+            ( newModel, enumTabState (getTabState newModel.editor) |> setEditor )
 
+        -- Cmd.batch [ RCAPI.getMediaList model.research GotMediaList,
         NavbarMsg state ->
             ( { model | navbarState = state }, Cmd.none )
 
