@@ -143,7 +143,10 @@ body {
 span.version-string {
     font-size: 0.5em;
     margin-left: auto;
-    color: #ccc;
+    color: #e8e8e8;
+    position:absolute;
+    top: 42px;
+    right:9px;
 }
 
 .toolbar {
