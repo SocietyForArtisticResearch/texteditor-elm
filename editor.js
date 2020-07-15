@@ -142,7 +142,7 @@ function setEditorDisplay(editor) {
         setNodeVisibility(cmStyle.getWrapperElement(), false);
         showMediaList(false);
         setNodeVisibility(cmMarkdown.getWrapperElement(), true);
-	setNodeVisibility(editors,true);
+	
 
         selectedEditor = editor;
         if (setAfterShow) {
@@ -161,7 +161,7 @@ function setEditorDisplay(editor) {
         setNodeVisibility(cmStyle.getWrapperElement(), false);
         showMediaList(false);
         setNodeVisibility(cmMarkdown.getWrapperElement(), false);
-	setNodeVisibility(editors,true);
+	
 	
         selectedEditor = editor;
         if (txtMarkdownPosition !== null) {
@@ -174,7 +174,7 @@ function setEditorDisplay(editor) {
         setNodeVisibility(cmStyle.getWrapperElement(), true);
         showMediaList(false);
         setNodeVisibility(cmMarkdown.getWrapperElement(), false);
-	setNodeVisibility(editors,true);
+	
 
         selectedEditor = editor;
         cmStyle.refresh();
@@ -184,7 +184,6 @@ function setEditorDisplay(editor) {
         setNodeVisibility(cmStyle.getWrapperElement(), false);
         showMediaList(true);
         setNodeVisibility(cmMarkdown.getWrapperElement(), false);
-	setNodeVisibility(editors,false);
 
         selectedEditor = editor;
         break;
