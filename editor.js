@@ -61,13 +61,15 @@ function restorePositionStyle() {
     }
 }
 
-cmMarkdown.on('refresh', restorePositionMarkdown);
-cmStyle.on('refresh', restorePositionStyle);
 
 var cmStyle = CodeMirror.fromTextArea(document.getElementById("js-cm-style"), {
     mode: "css",
     lineWrapping: true
 });
+
+
+cmMarkdown.on('refresh', restorePositionMarkdown);
+cmStyle.on('refresh', restorePositionStyle);
 
 
 if (typeof window.innerWidth != 'undefined') {
