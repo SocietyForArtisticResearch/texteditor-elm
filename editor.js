@@ -37,6 +37,8 @@ var cmMarkdownPosition = null; // used to save
 var cmStylePosition = null;
 var txtMarkdownPosition = null;
 
+var editorElement = document.getElementsByClassName("editors")[0];
+
 var cmMarkdown = CodeMirror.fromTextArea(document.getElementById("js-cm-markdown"), {
     mode: "markdown",
     lineWrapping: true
@@ -140,6 +142,7 @@ function setEditorDisplay(editor) {
         setNodeVisibility(cmStyle.getWrapperElement(), false);
         showMediaList(false);
         setNodeVisibility(cmMarkdown.getWrapperElement(), true);
+	setNodeVisibility(editors,true);
 
         selectedEditor = editor;
         if (setAfterShow) {
@@ -158,6 +161,8 @@ function setEditorDisplay(editor) {
         setNodeVisibility(cmStyle.getWrapperElement(), false);
         showMediaList(false);
         setNodeVisibility(cmMarkdown.getWrapperElement(), false);
+	setNodeVisibility(editors,true);
+	
         selectedEditor = editor;
         if (txtMarkdownPosition !== null) {
             textareaMarkdown.selectionStart = textareaMarkdown.selectionEnd = txtMarkdownPosition;
@@ -169,6 +174,7 @@ function setEditorDisplay(editor) {
         setNodeVisibility(cmStyle.getWrapperElement(), true);
         showMediaList(false);
         setNodeVisibility(cmMarkdown.getWrapperElement(), false);
+	setNodeVisibility(editors,true);
 
         selectedEditor = editor;
         cmStyle.refresh();
@@ -178,6 +184,7 @@ function setEditorDisplay(editor) {
         setNodeVisibility(cmStyle.getWrapperElement(), false);
         showMediaList(true);
         setNodeVisibility(cmMarkdown.getWrapperElement(), false);
+	setNodeVisibility(editors,false);
 
         selectedEditor = editor;
         break;
