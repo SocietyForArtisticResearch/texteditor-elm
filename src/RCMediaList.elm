@@ -372,7 +372,7 @@ view upload tableType { query, state } tableConfig objectList =
                 results ->
                     div domIdAndStyle
                         [ tableControls
-                        , div [class "scrollbox"] [
+                        , div [] [
                                Table.view tableConfig state results]
                         ]
 
