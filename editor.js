@@ -216,7 +216,7 @@ function setEditorDisplay(editor) {
         setNodeVisibility(cmStyle.getWrapperElement(), false);
         showMediaList(true);
         setNodeVisibility(cmMarkdown.getWrapperElement(), false);
-	addClassToElement("editors-hidden");
+	addClassToElement("editors-hidden",editorElement);
 
         selectedEditor = editor;
         break;
