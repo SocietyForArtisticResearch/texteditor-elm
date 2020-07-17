@@ -16,9 +16,13 @@ body {
 }
 
 .editors {
-    /* width: 100%; */
-    /* height: 100%; */
+    width: 100%;
+    height: 100%;
     overflow-y: hidden;
+}
+
+.editors-hidden {
+    height: 0;
 }
 
 .main-row {
@@ -144,9 +148,9 @@ span.version-string {
     font-size: 0.5em;
     margin-left: auto;
     color: #e8e8e8;
-    position:absolute;
+    position: absolute;
     top: 42px;
-    right:9px;
+    right: 9px;
 }
 
 .toolbar {

@@ -44,6 +44,35 @@ var cmMarkdown = CodeMirror.fromTextArea(document.getElementById("js-cm-markdown
     lineWrapping: true
 });
 
+function addClassToElement (className, element) {
+    if (element.classList) {
+	element.classList.add(className);
+    } else {
+	
+	// For IE9
+	console.log("your browser is very old, upgrade it to browse safely");
+	let classes = element.className.split(" ");
+	let i = classes.indexOf(className);
+
+	if (i >= 0)
+	    classes.splice(i, 1);
+	else
+	    classes.push(className);
+	element.className = classes.join(" ");
+    }
+}
+
+function removeClassFromElement(className, element) {
+    if (element.classList) {
+	element.classList.remove(className);
+    } else {
+	console.log("your browser is very old, upgrade it to browse safely.");
+	// for IE 10
+	let old = element.className
+	element.className = replace(element,"");
+    }
+}
+
 function restorePositionMarkdown() {
     if (cmMarkdown !== null && cmMarkdownPosition !== null) {
 	cmMarkdown.focus();
@@ -142,6 +171,8 @@ function setEditorDisplay(editor) {
         setNodeVisibility(cmStyle.getWrapperElement(), false);
         showMediaList(false);
         setNodeVisibility(cmMarkdown.getWrapperElement(), true);
+	removeClassFromElement("editors-hidden",editorElement);
+	
 	
 
         selectedEditor = editor;
@@ -161,6 +192,7 @@ function setEditorDisplay(editor) {
         setNodeVisibility(cmStyle.getWrapperElement(), false);
         showMediaList(false);
         setNodeVisibility(cmMarkdown.getWrapperElement(), false);
+	removeClassFromElement("editors-hidden",editorElement);
 	
 	
         selectedEditor = editor;
@@ -174,7 +206,7 @@ function setEditorDisplay(editor) {
         setNodeVisibility(cmStyle.getWrapperElement(), true);
         showMediaList(false);
         setNodeVisibility(cmMarkdown.getWrapperElement(), false);
-	
+	removeClassFromElement("editors-hidden",editorElement);
 
         selectedEditor = editor;
         cmStyle.refresh();
@@ -184,6 +216,7 @@ function setEditorDisplay(editor) {
         setNodeVisibility(cmStyle.getWrapperElement(), false);
         showMediaList(true);
         setNodeVisibility(cmMarkdown.getWrapperElement(), false);
+	addClassToElement("editors-hidden");
 
         selectedEditor = editor;
         break;
