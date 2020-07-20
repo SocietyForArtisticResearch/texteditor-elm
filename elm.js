@@ -9265,7 +9265,7 @@ var $author$project$Main$insertMediaUpdate = F3(
 				});
 			var mediaSnippet = function () {
 				if (insertMethod === 1) {
-					return '\n[' + (o.l + ('](' + ($author$project$Exposition$mediaUrl(o) + ')\n')));
+					return '\n[download ' + (o.l + ('](' + ($author$project$Exposition$mediaUrl(o) + ')\n')));
 				} else {
 					return '\n!{' + (o.l + '}\n');
 				}
@@ -13259,10 +13259,7 @@ var $author$project$RCMediaList$view = F5(
 							tableControls,
 							A2(
 							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('scrollbox')
-								]),
+							_List_Nil,
 							_List_fromArray(
 								[
 									A3($billstclair$elm_sortable_table$Table$view, tableConfig, state, results)

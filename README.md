@@ -29,7 +29,7 @@ be made outside of elm.
 General:
 	
 
-- Make a closure/module of editor.html's js code.
+- Make a closure/module of editor.html's js code. Or convert into typescript?
 
 
 
