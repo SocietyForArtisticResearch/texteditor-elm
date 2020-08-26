@@ -22,7 +22,7 @@ body {
 }
 
 .editors-hidden {
-    height: 0;
+    display: none;
 }
 
 .main-row {
@@ -327,6 +327,7 @@ span.version-string {
     position: absolute;
     right: 0;
     max-width: 33%;
+    height: 1.85rem;
     /* to avoid overlap with the upload button */
 }
 
