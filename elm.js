@@ -14655,7 +14655,6 @@ var $author$project$Main$statusBar = F2(
 					saveButton
 				]));
 	});
-var $author$project$View$HyperlinkIcon = 22;
 var $rundis$elm_bootstrap$Bootstrap$Modal$Footer = $elm$core$Basics$identity;
 var $rundis$elm_bootstrap$Bootstrap$Modal$footer = F3(
 	function (attributes, children, _v0) {
@@ -16387,12 +16386,6 @@ var $author$project$RCMediaEdit$view = F7(
 						]));
 				var defaultBut = $author$project$View$defaultButton(
 					insertMediaAsLinkMsg(obj));
-				var insertLinkButton = A2(
-					$author$project$View$mkButton,
-					buildTarget,
-					_Utils_update(
-						defaultBut,
-						{i: 22, aH: '', dD: 'insert as hyperlink'}));
 				var closeButton = A2(
 					$rundis$elm_bootstrap$Bootstrap$Button$button,
 					_List_fromArray(
@@ -16409,7 +16402,7 @@ var $author$project$RCMediaEdit$view = F7(
 							$elm$html$Html$text('Done')
 						]));
 				var buttons = allowInsert ? _List_fromArray(
-					[insertLinkButton, insertButton, closeButton]) : _List_fromArray(
+					[insertButton, closeButton]) : _List_fromArray(
 					[closeButton]);
 				return A2(
 					$rundis$elm_bootstrap$Bootstrap$Modal$view,

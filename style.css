@@ -145,9 +145,9 @@ body {
 }
 
 span.version-string {
-    font-size: 0.5em;
+    font-size: 0.22em;
     margin-left: auto;
-    color: #e8e8e8;
+    color: #fdfdfd;
     position: absolute;
     top: 42px;
     right: 9px;

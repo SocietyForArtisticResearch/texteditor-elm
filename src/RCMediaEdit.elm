@@ -411,14 +411,14 @@ view buildTarget makeMediaEditFun closeMediaDialogMsg insertMediaMsg insertMedia
                         defaultBut =
                             View.defaultButton (insertMediaAsLinkMsg obj)
 
-                        insertLinkButton : Html msg
+                        {-insertLinkButton : Html msg
                         insertLinkButton =
                             View.mkButton buildTarget
                                 { defaultBut
                                     | icon = View.HyperlinkIcon
                                     , text = ""
                                     , title = "insert as hyperlink"
-                                }
+                                }-}
 
                         insertButton =
                             Button.button
@@ -436,7 +436,8 @@ view buildTarget makeMediaEditFun closeMediaDialogMsg insertMediaMsg insertMedia
 
                         buttons =
                             if allowInsert then
-                                [ insertLinkButton, insertButton, closeButton ]
+                                [ --insertLinkButton
+                                insertButton, closeButton ]
 
                             else
                                 [ closeButton ]
