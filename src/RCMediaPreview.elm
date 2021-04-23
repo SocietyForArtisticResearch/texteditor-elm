@@ -171,6 +171,10 @@ viewThumbnail object size =
             let
                 videoUrl =
                     Exposition.mediaUrl object
+
+                thumbUrl =
+                    Exposition.customThumbUrlWH 368 250 object
+                            
             in
             video
                 ([ title "Preview"
@@ -182,6 +186,7 @@ viewThumbnail object size =
                  , style "width" "200px"
                  , style "position" "relative"
                  , style "top" "0"
+                 , poster thumbUrl
                  ]
                     ++ getStyle size
                 )

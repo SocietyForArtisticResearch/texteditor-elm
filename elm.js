@@ -12502,6 +12502,7 @@ var $elm$html$Html$audio = _VirtualDom_node('audio');
 var $elm$html$Html$Attributes$autoplay = $elm$html$Html$Attributes$boolProperty('autoplay');
 var $elm$html$Html$Attributes$controls = $elm$html$Html$Attributes$boolProperty('controls');
 var $elm$html$Html$Attributes$loop = $elm$html$Html$Attributes$boolProperty('loop');
+var $elm$html$Html$Attributes$poster = $elm$html$Html$Attributes$stringProperty('poster');
 var $elm$html$Html$Attributes$preload = $elm$html$Html$Attributes$stringProperty('preload');
 var $elm$html$Html$source = _VirtualDom_node('source');
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
@@ -12559,6 +12560,7 @@ var $author$project$RCMediaPreview$viewThumbnail = F2(
 			case 0:
 				var settings = _v0.a;
 				var videoUrl = $author$project$Exposition$mediaUrl(object);
+				var thumbUrl = A3($author$project$Exposition$customThumbUrlWH, 368, 250, object);
 				return A2(
 					$elm$html$Html$video,
 					_Utils_ap(
@@ -12572,7 +12574,8 @@ var $author$project$RCMediaPreview$viewThumbnail = F2(
 								$elm$html$Html$Attributes$preload('none'),
 								A2($elm$html$Html$Attributes$style, 'width', '200px'),
 								A2($elm$html$Html$Attributes$style, 'position', 'relative'),
-								A2($elm$html$Html$Attributes$style, 'top', '0')
+								A2($elm$html$Html$Attributes$style, 'top', '0'),
+								$elm$html$Html$Attributes$poster(thumbUrl)
 							]),
 						$author$project$RCMediaPreview$getStyle(size)),
 					_List_fromArray(

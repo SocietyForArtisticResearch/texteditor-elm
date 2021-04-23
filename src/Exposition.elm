@@ -1,4 +1,43 @@
-module Exposition exposing (OptionalDimensions, Preload(..), RCExposition, RCMediaObject, RCMediaObjectValidation, RCMediaObjectViewState, RCMediaType(..), TOC, TOCEntry, TranscodingStatus(..), addMediaUserClasses, addOrReplaceObject, asHtml, asMarkdown, customThumbUrl, defaultPlayerSettings, empty, getMediaTypeString, incContentVersion, insertToolHtml, isValid, mediaUrl, mkMediaName, objectByNameOrId, parseToolCaptions, removeObjectWithID, renameDuplicateMedia, replaceImagesWithTools, replaceObject, replaceToolsWithImages, thumbUrl, updateToc, validateMediaObject, withCSS, withHtml, withMd, wordCount)
+module Exposition exposing
+    ( OptionalDimensions
+    , Preload(..)
+    , RCExposition
+    , RCMediaObject
+    , RCMediaObjectValidation
+    , RCMediaObjectViewState
+    , RCMediaType(..)
+    , TOC
+    , TOCEntry
+    , TranscodingStatus(..)
+    , addMediaUserClasses
+    , addOrReplaceObject
+    , asHtml
+    , asMarkdown
+    , customThumbUrl
+    , customThumbUrlWH
+    , defaultPlayerSettings
+    , empty
+    , getMediaTypeString
+    , incContentVersion
+    , insertToolHtml
+    , isValid
+    , mediaUrl
+    , mkMediaName
+    , objectByNameOrId
+    , parseToolCaptions
+    , removeObjectWithID
+    , renameDuplicateMedia
+    , replaceImagesWithTools
+    , replaceObject
+    , replaceToolsWithImages
+    , thumbUrl
+    , updateToc
+    , validateMediaObject
+    , withCSS
+    , withHtml
+    , withMd
+    , wordCount
+    )
 
 import Dict
 import Html.Parser as HtmlParser
