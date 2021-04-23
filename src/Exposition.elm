@@ -135,6 +135,16 @@ type alias OptionalDimensions =
     Maybe ( Int, Int )
 
 
+getWidthHeight : OptionalDimensions -> ( Int, Int )
+getWidthHeight opt =
+    case opt of
+        Just ( x, y ) ->
+            ( x, y )
+
+        Nothing ->
+            ( 1024, 768 )
+
+
 type alias PlaySettings =
     { autoplay : Bool
     , loop : Bool
@@ -144,7 +154,7 @@ type alias PlaySettings =
 
 defaultPlayerSettings : PlaySettings
 defaultPlayerSettings =
-    { autoplay = False, loop = False, preload = Auto }
+    { autoplay = False, loop = False, preload = None }
 
 
 type RCMediaType
@@ -306,18 +316,26 @@ thumbUrl data =
 
 customThumbUrl : Int -> RCMediaObject -> String
 customThumbUrl size data =
+    customThumbUrlWH size size data
+
+
+customThumbUrlWH : Int -> Int -> RCMediaObject -> String
+customThumbUrlWH w h data =
     let
-        sizeStr =
-            String.fromInt size
+        f =
+            String.fromInt
+
+        ( width, height ) =
+            ( f w, f h )
     in
     "/text-editor/simple-media-thumb?research="
         ++ String.fromInt data.expositionId
         ++ "&simple-media="
         ++ String.fromInt data.id
         ++ "&width="
-        ++ sizeStr
+        ++ width
         ++ "&height="
-        ++ sizeStr
+        ++ height
 
 
 versionString : RCMediaObject -> String
@@ -536,6 +554,10 @@ asHtml media mediaId =
                             ]
 
                 ( RCVideo playerData, data ) ->
+                    let
+                        ( w, h ) =
+                            getWidthHeight data.dimensions
+                    in
                     objectDiv data <|
                         Html.figure [ Attr.id mediaId ]
                             [ Html.video
@@ -544,6 +566,7 @@ asHtml media mediaId =
                                     , Attr.preload (preloadToString playerData.preload)
                                     , Attr.autoplay playerData.autoplay
                                     , Attr.loop playerData.loop
+                                    , Attr.poster (customThumbUrlWH w h data)
                                     ]
                                 )
                                 [ Html.source [ Attr.src (mediaUrl data), Attr.attribute "type" "video/mp4" ] []

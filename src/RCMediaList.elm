@@ -216,8 +216,8 @@ pickerButtons buildType messages =
             \object ->
                 Table.HtmlDetails
                     []
-                    [ insertAsLinkButton buildType messages object
-                    , insertButton messages object
+                    [ 
+                    insertButton messages object
                     ]
         , sorter = Table.unsortable
         }
