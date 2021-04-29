@@ -267,7 +267,7 @@ uploadMedia researchId mediaName file expect badFileTypeMsg =
                         , Http.stringPart "name" mediaName
                         , Http.stringPart "copyrightholder" "copyright holder"
                         , Http.stringPart "description" "description"
-                        , Http.stringPart "license" "all-rights-reserved"
+                        , Http.stringPart "license" (Licenses.defaultLicense |> Licenses.asString)
                         , Http.filePart "media" file
                         ]
                 , expect = expect
