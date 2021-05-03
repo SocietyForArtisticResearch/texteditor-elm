@@ -336,7 +336,7 @@ viewBody objectState editTool objectInEdit =
                                 , title "help me pick a license"
                                 , target "_blank"
                                 ]
-                                [ text " ?" ]
+                                [ text " (help me choose)" ]
                             ]
                         , viewLicensePicker "licensePicker" allLicenses currentLicense (editTool LicenseField)
                         ]
