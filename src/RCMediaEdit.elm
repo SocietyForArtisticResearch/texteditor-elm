@@ -328,14 +328,16 @@ viewBody objectState editTool objectInEdit =
                     ]
                     [ viewInputWithLabel copyrightProps
                     , Form.group []
-                        [ Form.label [ for "licensePicker" ] [ text "license type" ]
-                        , viewLicensePicker "licensePicker" allLicenses currentLicense (editTool LicenseField)
-                        , a
-                            [ style "display" "block"
-                            , href "https://creativecommons.org/choose/"
-                            , title "help me pick a license"
+                        [ Form.label [ for "licensePicker" ]
+                            [ text "license type"
+                            , a
+                                [ style "color" "rgb(153,153,153)"
+                                , href "https://creativecommons.org/choose/"
+                                , title "help me pick a license"
+                                ]
+                                [ text "?" ]
                             ]
-                            [ text "?" ]
+                        , viewLicensePicker "licensePicker" allLicenses currentLicense (editTool LicenseField)
                         ]
                     , RCMediaPreview.viewThumbnail objectInEdit RCMediaPreview.PreviewBig
                     ]
