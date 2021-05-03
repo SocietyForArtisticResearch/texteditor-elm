@@ -334,8 +334,9 @@ viewBody objectState editTool objectInEdit =
                                 [ style "color" "rgb(153,153,153)"
                                 , href "https://creativecommons.org/choose/"
                                 , title "help me pick a license"
+                                , target "_blank"
                                 ]
-                                [ text "?" ]
+                                [ text " ?" ]
                             ]
                         , viewLicensePicker "licensePicker" allLicenses currentLicense (editTool LicenseField)
                         ]
