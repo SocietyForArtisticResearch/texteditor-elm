@@ -1,4 +1,4 @@
-module RCMediaEdit exposing (Field(..), MediaEditMessage, Model, empty, showWithObject, update, view, Msg (..), DialogType (..))
+module RCMediaEdit exposing (DialogType(..), Field(..), MediaEditMessage, Model, Msg(..), empty, showWithObject, update, view)
 
 import Bootstrap.Button as Button
 import Bootstrap.CDN as CDN
@@ -44,7 +44,9 @@ type DialogType
 
 type Msg
     = ShowMediaWithId DialogType String
-    
+
+
+
 -- extensible record, any model with this RCMediaEdit and an exposition
 
 
@@ -320,7 +322,7 @@ viewBody objectState editTool objectInEdit =
                     , Form.group []
                         [ Form.label [ for "classPicker" ] [ text "display size and location" ]
                         , viewClassesPicker "classPicker" cssClasses currentClass (editTool UserClass)
-                        , p [class "css-class-name", title "CSS class name for this object"] [text <| cssClassFromObject objectInEdit]
+                        , p [ class "css-class-name", title "CSS class name for this object" ] [ text <| cssClassFromObject objectInEdit ]
                         ]
                     , viewTextAreaWithLabel descriptionProps
                     ]
@@ -328,6 +330,12 @@ viewBody objectState editTool objectInEdit =
                     , Form.group []
                         [ Form.label [ for "licensePicker" ] [ text "license type" ]
                         , viewLicensePicker "licensePicker" allLicenses currentLicense (editTool LicenseField)
+                        , a
+                            [ style "display" "block"
+                            , href "https://creativecommons.org/choose/"
+                            , title "help me pick a license"
+                            ]
+                            [ text "?" ]
                         ]
                     , RCMediaPreview.viewThumbnail objectInEdit RCMediaPreview.PreviewBig
                     ]
@@ -344,9 +352,6 @@ type alias InsertMediaMessage msg =
 
 type alias InsertMediaAsLinkMessage msg =
     Exposition.RCMediaObject -> msg
-
-
-
 
 
 update : MediaDialogModel (Problemized model) -> Msg -> MediaDialogModel (Problemized model)
@@ -385,9 +390,10 @@ update model message =
 
 -- object ObjectId field newValue -> msg
 
+
 cssClassFromObject : RCMediaObject -> String
 cssClassFromObject obj =
-    ".rc-media-" ++ (String.fromInt obj.id)
+    ".rc-media-" ++ String.fromInt obj.id
 
 
 view : Settings.BuildType -> MakeMediaEditFun msg -> msg -> InsertMediaMessage msg -> InsertMediaAsLinkMessage msg -> RCExposition -> Model -> Html msg
@@ -407,19 +413,18 @@ view buildTarget makeMediaEditFun closeMediaDialogMsg insertMediaMsg insertMedia
                         mediaEditView =
                             viewBody objViewState (makeMediaEditFun obj) obj
 
-                                
                         defaultBut =
                             View.defaultButton (insertMediaAsLinkMsg obj)
 
-                        {-insertLinkButton : Html msg
-                        insertLinkButton =
-                            View.mkButton buildTarget
-                                { defaultBut
-                                    | icon = View.HyperlinkIcon
-                                    , text = ""
-                                    , title = "insert as hyperlink"
-                                }-}
-
+                        {- insertLinkButton : Html msg
+                           insertLinkButton =
+                               View.mkButton buildTarget
+                                   { defaultBut
+                                       | icon = View.HyperlinkIcon
+                                       , text = ""
+                                       , title = "insert as hyperlink"
+                                   }
+                        -}
                         insertButton =
                             Button.button
                                 [ Button.primary
@@ -437,7 +442,9 @@ view buildTarget makeMediaEditFun closeMediaDialogMsg insertMediaMsg insertMedia
                         buttons =
                             if allowInsert then
                                 [ --insertLinkButton
-                                insertButton, closeButton ]
+                                  insertButton
+                                , closeButton
+                                ]
 
                             else
                                 [ closeButton ]
