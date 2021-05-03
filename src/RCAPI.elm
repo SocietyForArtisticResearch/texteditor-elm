@@ -81,7 +81,7 @@ mkMediaEntry id media description copyright name license =
         (Maybe.withDefault "" description)
         (Maybe.withDefault "" copyright)
         name
-        (Licenses.fromString (Maybe.withDefault "" license))
+        Licenses.defaultLicense
 
 
 type alias APIMedia =
