@@ -1,4 +1,4 @@
-module Licenses exposing (License(..), allLicenses, asString, fromString, getDescription)
+module Licenses exposing (License(..), allLicenses, asString, fromString, getDescription, defaultLicense)
 
 import Util
 

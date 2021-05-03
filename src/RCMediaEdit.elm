@@ -306,7 +306,7 @@ viewBody objectState editTool objectInEdit =
                     fromString val
 
                 Err val ->
-                    AllRightsReserved
+                    Licenses.defaultLicense
 
         thumbnailUrl =
             Exposition.thumbUrl objectInEdit
