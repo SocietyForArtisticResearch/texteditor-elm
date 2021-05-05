@@ -334,10 +334,10 @@ viewBody objectState editTool objectInEdit =
                                 [ style "color" "rgb(153,153,153)"
                                 , style "margin-left" "0.25em"
                                 , href "https://guide.researchcatalogue.net/#licenses"
-                                , title "more info about these licenses"
+                                , title "more info about choosing a license"
                                 , target "_blank"
                                 ]
-                                [ text "(explain)" ]
+                                [ text "(?)" ]
                             ]
                         , viewLicensePicker "licensePicker" allLicenses currentLicense (editTool LicenseField)
                         ]
