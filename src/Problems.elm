@@ -25,6 +25,7 @@ type Problem
     | FootnoteHelperError String
     | MediaUserClassesProblem
     | UnsupportedMessage String
+    | UnsupportedImportType String
 
 
 type alias Problemized model =
@@ -115,6 +116,11 @@ asString problem =
 
         UnsupportedMessage s ->
             "Message error: " ++ s
+
+        UnsupportedImportType mime ->
+          "Sorry, but import does not support files of type "
+          ++ mime
+              ++ "You should try uploading as txt, Word, html, LaTeX , Open/LibreOffice"
 
 
 jsonErrorString : Decode.Error -> String
