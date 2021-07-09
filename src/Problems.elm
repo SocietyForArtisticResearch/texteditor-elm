@@ -1,4 +1,4 @@
-module Problems exposing (Problem(..), asString, splitResultList, Problemized,addProblem, addProblems)
+module Problems exposing (Problem(..), Problemized, addProblem, addProblems, asString, splitResultList)
 
 -- problem idea comes from rtfeldman sp-application talk youtube
 
@@ -118,9 +118,9 @@ asString problem =
             "Message error: " ++ s
 
         UnsupportedImportType mime ->
-          "Sorry, but import does not support files of type "
-          ++ mime
-              ++ "You should try uploading as txt, Word, html, LaTeX , Open/LibreOffice"
+            "Sorry, import cannot convert from format "
+                ++ mime
+                ++ ". You could try to upload your content as (plain) text (.txt), Word (.docx), html, LaTeX , Open/LibreOffice (.odt)"
 
 
 jsonErrorString : Decode.Error -> String
