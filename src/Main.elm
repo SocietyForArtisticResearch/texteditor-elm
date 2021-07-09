@@ -745,9 +745,14 @@ update msg model =
             )
 
         UploadImportFileSelected file ->
-            ( model
-            , RCAPI.uploadImport model.research file UploadedImport
-            )
+            case importHasCorrectMime file of
+                Ok okfile ->
+                    ( model
+                    , RCAPI.uploadImport model.research okfile UploadedImport
+                    )
+
+                Err problem ->
+                    ( Problems.addProblem model <| problem, Cmd.none )
 
         ConvertExposition ctype ->
             ( model, RCAPI.convertExposition model.buildTarget ctype model.exposition DownloadExport )
@@ -1542,3 +1547,28 @@ view model =
         , mediaList
         , statusBar (selectedEditorIsMarkdown model) model -- only show wordcount in markdown
         ]
+
+
+importHasCorrectMime : File -> Result Problems.Problem File
+importHasCorrectMime file =
+    let
+        mime =
+            File.mime file
+
+        supported =
+            [ "application/vnd.oasis.opendocument.text"
+            , "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            , "application/x-tex"
+            , "text/plain"
+            , "text/html"
+            , "application/xhtml+xml"
+            , "text/markdown"
+            , "text/x-markdown"
+            , "text/x-org"
+            ]
+    in
+    if List.member mime supported then
+        Ok file
+
+    else
+        Err <| Problems.UnsupportedImportType mime
