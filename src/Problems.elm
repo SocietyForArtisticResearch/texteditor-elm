@@ -118,9 +118,14 @@ asString problem =
             "Message error: " ++ s
 
         UnsupportedImportType mime ->
-            "Sorry, import cannot convert from format "
-                ++ mime
-                ++ ". You could try to upload your content as (plain) text (.txt), Word (.docx), html, LaTeX , Open/LibreOffice (.odt)"
+            case mime of
+                "application/pdf" ->
+                    "Sorry, we cannot extract the text from a PDF. You can import and insert the PDF as a media file, using [ upload media ] or try importing the source text (txt/docx)."
+
+                other ->
+                    "Sorry, import cannot convert from format "
+                        ++ other
+                        ++ ". You could try to upload your content as (plain) text (.txt), Word (.docx), html, LaTeX , Open/LibreOffice (.odt)"
 
 
 jsonErrorString : Decode.Error -> String
