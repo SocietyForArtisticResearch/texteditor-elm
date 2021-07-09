@@ -76,9 +76,9 @@ function removeClassFromElement(className, element) {
 function restorePositionMarkdown() {
     if (cmMarkdown !== null && cmMarkdownPosition !== null) {
 	cmMarkdown.focus();
-	console.log("focus?:",cmMarkdown.hasFocus());
+	//console.log("focus?:",cmMarkdown.hasFocus());
 	cmMarkdown.setCursor(cmMarkdownPosition);
-	console.log("set position",cmMarkdownPosition);
+	//console.log("set position",cmMarkdownPosition);
     }
 }
 
@@ -86,9 +86,9 @@ function restorePositionMarkdown() {
 function restorePositionStyle() {
    if (cmStyle !== null && cmStylePosition !== null) {
 	cmStyle.focus();
-	console.log("focus?:",cmStyle.hasFocus());
+	//console.log("focus?:",cmStyle.hasFocus());
 	cmStyle.setCursor(cmStylePosition);
-	console.log("set position",cmStylePosition);
+	//console.log("set position",cmStylePosition);
     }
 }
 
@@ -134,13 +134,13 @@ function setEditorDisplay(editor) {
         if (mediaList !== null) {
             if (shouldDisplayIfExist) {
                 mediaList.style.display = "block";
-                console.log("show media");
+                //console.log("show media");
             } else {
                 mediaList.style.display = "none";
-                console.log("hide media");
+                //console.log("hide media");
             }
         } else {
-            console.log("media list does not exist (yet?)", document.getElementById("media-list"));
+            //console.log("media list does not exist (yet?)", document.getElementById("media-list"));
         }
     };
 
@@ -155,7 +155,7 @@ function setEditorDisplay(editor) {
     if (selectedEditor === editorCmMd && cmMarkdown != null) {
 
 	cmMarkdownPosition = cmMarkdown.getCursor();
-	console.log("storing position markdown codemirror", cmMarkdownPosition);	
+	//console.log("storing position markdown codemirror", cmMarkdownPosition);	
     }
     if (selectedEditor === editorCmCss && cmStyle != null) {
         cmStylePosition = cmStyle.getCursor();
@@ -581,7 +581,7 @@ function toggleFullscreen(shouldBecomeFull) {
     let mainContainer = document.getElementsByClassName("container-fluid main");
     let editorCol = document.getElementsByClassName("editor-col");
 
-    console.log(editorCol[0]);
+    //console.log(editorCol[0]);
 
     if (!mainContainer[0] || !editorCol[0]) {
         console.log("fullscreen cannot find elements");
