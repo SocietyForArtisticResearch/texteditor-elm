@@ -3,7 +3,7 @@ module Settings exposing (BuildType, baseDomain, baseUrl, buildTypeFromString, d
 
 editorVersion : String
 editorVersion =
-    "2.1.5"
+    "2.1.6"
 
 
 

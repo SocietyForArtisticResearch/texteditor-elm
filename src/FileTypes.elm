@@ -41,6 +41,7 @@ dict =
         , ( "image/tiff", Image )
         , ( "image/svg+xml", Svg )
         , ( "audio/mp3", Audio )
+        , ( "audio/mpeg", Audio )
         , ( "audio/wav", Audio )
         , ( "audio/x-wav", Audio )
         , ( "audio/aiff", Audio )

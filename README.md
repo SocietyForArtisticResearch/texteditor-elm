@@ -60,6 +60,7 @@ Luc:
 
 ## DONE
 
+- Added "audio/mpeg" mime type, which is .mpga file, an alternative for .mp3
 - Fixed issue with video's getting stuck on firefox and safari.
   All videos now do not preload but use a poster image (based on the thumb).
   Also use this preview poster for edit dialogs, so you can see something useful without playing.
