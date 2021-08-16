@@ -46,6 +46,7 @@ dict =
         , ( "audio/x-wav", Audio )
         , ( "audio/aiff", Audio )
         , ( "audio/x-aiff", Audio )
+        , ( "audio/aac", Audio )
         , ( "application/pdf", Pdf )
         , ( "audio/ogg", Audio )
         , ( "audio/aif", Audio )
