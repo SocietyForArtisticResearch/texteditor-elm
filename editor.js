@@ -1,4 +1,4 @@
-const version = "v 2.1.6";
+const version = "v 2.1.7";
 
 console.log(version);
 
