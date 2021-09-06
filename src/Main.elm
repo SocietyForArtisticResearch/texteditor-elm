@@ -54,7 +54,7 @@ type alias Model =
     , importUploadStatus : UploadStatus
     , problems : List Problems.Problem
     , mediaClassesDict : Dict.Dict Int String -- stores userclasses for media to be added to media list
-    , saved : Bool
+    , saved : SaveState
     , editor : ( EditorType, MarkdownEditor )
     , exportDropState : Dropdown.State
     , navbarState : Navbar.State
@@ -62,6 +62,12 @@ type alias Model =
     , buildTarget : BuildType
     , version : String
     }
+
+
+type SaveState
+    = Saved
+    | Unsaved
+    | UnsavedEmpty
 
 
 type UploadStatus
@@ -197,7 +203,7 @@ emptyModel version navbarInitState buildType research weave =
     , importUploadStatus = Ready
     , problems = []
     , mediaClassesDict = Dict.empty
-    , saved = True
+    , saved = Saved
     , editor = ( EditorMarkdown, CodemirrorMarkdown )
     , exportDropState = Dropdown.initialState
     , navbarState = navbarInitState
@@ -328,7 +334,7 @@ subscriptions model =
         , Http.track "uploadMedia" GotMediaUploadProgress
         , Http.track "uploadImport" GotImportUploadProgress
         , Dropdown.subscriptions model.exportDropState ExportDropMsg
-        , Time.every 10000 (\_ -> SaveTrigger)
+        , Time.every 10000 (\_ -> AutosaveTrigger)
         , Navbar.subscriptions model.navbarState NavbarMsg
         ]
 
@@ -359,6 +365,7 @@ type Msg
     | Uploaded (Result Http.Error String)
     | UploadedImport (Result Http.Error RCAPI.APIPandocImport)
     | SaveTrigger
+    | AutosaveTrigger
     | SaveEmptyExposition
     | SavedExposition (Result Http.Error String)
     | SaveMediaEdit Exposition.RCMediaObject
@@ -473,7 +480,7 @@ update msg model =
                         ( { model
                             | editGeneration = gen
                             , exposition = incContentVersion model.exposition
-                            , saved = False
+                            , saved = Unsaved
                           }
                         , Cmd.batch [ reportIsSaved False, getContent () ]
                         )
@@ -570,29 +577,58 @@ update msg model =
 
         SaveTrigger ->
             let
-                expo = model.exposition
+                expo =
+                    model.exposition
 
                 -- safety, do not save the empty expo without asking :-)
                 empty =
                     Exposition.isEmpty expo
             in
             case ( empty, model.saved ) of
-                ( True, False ) ->
-                    ( { model | confirmDialog = confirmSavingEmptyExposition expo }, Cmd.none )
+                ( False, Saved ) ->
+                    ( model, Cmd.none )
 
-                ( False, False ) ->
+                ( True, Saved ) ->
+                    ( model, Cmd.none )
+
+                ( True, UnsavedEmpty ) ->
+                    ( { model
+                        | confirmDialog = confirmSavingEmptyExposition expo
+                      }
+                    , Cmd.none
+                    )
+
+                ( True, Unsaved ) ->
+                    ( { model
+                        | confirmDialog = confirmSavingEmptyExposition expo
+                        , saved = UnsavedEmpty
+                      }
+                    , Cmd.none
+                    )
+
+                ( False, _ ) ->
                     ( model, RCAPI.saveExposition expo SavedExposition )
 
-                ( _, True ) ->
+        AutosaveTrigger ->
+            let
+                -- safety, do not save the empty expo without asking :-)
+                empty =
+                    Exposition.isEmpty model.exposition
+            in
+            case ( model.saved, empty ) of
+                ( Unsaved, False ) ->
+                    ( model, RCAPI.saveExposition model.exposition SavedExposition )
+
+                ( _, _ ) ->
                     ( model, Cmd.none )
 
         SaveEmptyExposition ->
-            (model, RCAPI.saveExposition model.exposition SavedExposition)
+            ( model, RCAPI.saveExposition model.exposition SavedExposition )
 
         SavedExposition result ->
             case result of
                 Ok r ->
-                    ( { model | saved = True }, reportIsSaved True )
+                    ( { model | saved = Saved }, reportIsSaved True )
 
                 Err s ->
                     case s of
@@ -698,13 +734,13 @@ update msg model =
                                         , mediaClassesDict = model.mediaClassesDict |> Dict.update objFromDialog.id (Maybe.map (\_ -> objFromDialog.userClass))
                                     }
                             in
-                            ( { newModel | saved = False }
+                            ( { newModel | saved = Unsaved }
                             , RCAPI.updateMedia objFromDialog (Http.expectString SavedMediaEdit)
                             )
 
         SaveMediaEdit obj ->
             -- no longer used
-            ( { model | saved = False }
+            ( { model | saved = Unsaved }
             , RCAPI.updateMedia obj (Http.expectString SavedMediaEdit)
             )
 
@@ -1174,15 +1210,22 @@ viewNavbarItem buildType props =
         )
 
 
-viewPreviewNavbarItem : Bool -> BuildType -> NavbarItemProps -> Navbar.CustomItem Msg
-viewPreviewNavbarItem expositionIsSaved buildType props =
+viewPreviewNavbarItem : SaveState -> BuildType -> NavbarItemProps -> Navbar.CustomItem Msg
+viewPreviewNavbarItem saveState buildType props =
     let
-        saveExpositionAttrs =
-            if expositionIsSaved then
-                [ Html.Attributes.title props.title ]
+        unsavedprops =
+            [ onClick SaveTrigger, class "opacity-4", Html.Attributes.title "preview of unsaved content, forcing save" ]
 
-            else
-                [ onClick SaveTrigger, class "opacity-4", Html.Attributes.title "preview of unsaved content, forcing save" ]
+        saveExpositionAttrs =
+            case saveState of
+                Saved ->
+                    [ Html.Attributes.title props.title ]
+
+                Unsaved ->
+                    unsavedprops
+
+                UnsavedEmpty ->
+                    unsavedprops
     in
     Navbar.customItem
         (a
@@ -1415,17 +1458,21 @@ statusBar showStatus model =
             else
                 ""
 
-        saveButtonText =
-            if model.saved then
-                "Saved"
+        ( saveButtonText, attrs ) =
+            case model.saved of
+                UnsavedEmpty ->
+                    ( "Empty, not saved", [ class "text-danger" ] )
 
-            else
-                "Not Saved"
+                Saved ->
+                    ( "Saved", [] )
+
+                Unsaved ->
+                    ( "Not Saved", [] )
 
         saveButton =
             Button.button
                 [ Button.light
-                , Button.attrs [ class "save-button", onClick SaveTrigger ]
+                , Button.attrs ([ class "save-button", onClick SaveTrigger ] ++ attrs)
                 ]
                 [ renderIcon model.buildTarget SaveIcon, text saveButtonText ]
     in
