@@ -328,7 +328,7 @@ subscriptions model =
         , Http.track "uploadMedia" GotMediaUploadProgress
         , Http.track "uploadImport" GotImportUploadProgress
         , Dropdown.subscriptions model.exportDropState ExportDropMsg
-        , Time.every 10000 (\_ -> SaveExposition)
+        , Time.every 10000 (\_ -> SaveTrigger)
         , Navbar.subscriptions model.navbarState NavbarMsg
         ]
 
@@ -358,6 +358,7 @@ type Msg
     | GotImportUploadProgress Http.Progress
     | Uploaded (Result Http.Error String)
     | UploadedImport (Result Http.Error RCAPI.APIPandocImport)
+    | SaveTrigger
     | SaveExposition
     | SavedExposition (Result Http.Error String)
     | SaveMediaEdit Exposition.RCMediaObject
@@ -567,12 +568,25 @@ update msg model =
                 Err err ->
                     ( Problems.addProblem model <| Problems.CannotLoadExposition err, Cmd.none )
 
-        SaveExposition ->
-            if not model.saved then
-                ( model, RCAPI.saveExposition model.exposition SavedExposition )
+        SaveTrigger ->
+            let
+                expo = model.exposition
+                
+                empty =
+                    Exposition.isEmpty expo
+            in
+            case ( empty, model.saved ) of
+                ( True, False ) ->
+                    ( { model | confirmDialog = confirmSavingEmptyExposition expo }, Cmd.none )
 
-            else
-                ( model, Cmd.none )
+                ( False, False ) ->
+                    ( model, RCAPI.saveExposition expo SavedExposition )
+
+                ( _, True ) ->
+                    ( model, Cmd.none )
+
+        SaveExposition ->
+            (model, RCAPI.saveExposition model.exposition SavedExposition)
 
         SavedExposition result ->
             case result of
@@ -1003,6 +1017,25 @@ confirmObjectDelete object =
     UserConfirm.Model Modal.shown content messages
 
 
+confirmSavingEmptyExposition : RCExposition -> UserConfirm.Model Msg
+confirmSavingEmptyExposition exposition =
+    let
+        content =
+            Just
+                { prompt = "Exposition is empty, are you sure you want to save it ?"
+                , confirm = "Yes, save the empty exposition"
+                , reject = "Cancel. (tip: use undo to recover previous state)"
+                }
+
+        messages =
+            Just
+                { confirm = SaveExposition
+                , reject = CloseConfirmDialog
+                }
+    in
+    UserConfirm.Model Modal.shown content messages
+
+
 insertMediaUpdate : MediaInsertMethod -> RCMediaObject -> Model -> ( Model, Cmd Msg )
 insertMediaUpdate insertMethod object model =
     let
@@ -1148,7 +1181,7 @@ viewPreviewNavbarItem expositionIsSaved buildType props =
                 [ Html.Attributes.title props.title ]
 
             else
-                [ onClick SaveExposition, class "opacity-4", Html.Attributes.title "preview of unsaved content, forcing save" ]
+                [ onClick SaveTrigger, class "opacity-4", Html.Attributes.title "preview of unsaved content, forcing save" ]
     in
     Navbar.customItem
         (a
@@ -1391,7 +1424,7 @@ statusBar showStatus model =
         saveButton =
             Button.button
                 [ Button.light
-                , Button.attrs [ class "save-button", onClick SaveExposition ]
+                , Button.attrs [ class "save-button", onClick SaveTrigger ]
                 ]
                 [ renderIcon model.buildTarget SaveIcon, text saveButtonText ]
     in

@@ -1,5 +1,6 @@
 module Exposition exposing
     ( OptionalDimensions
+    , PlaySettings
     , Preload(..)
     , RCExposition
     , RCMediaObject
@@ -9,33 +10,55 @@ module Exposition exposing
     , TOC
     , TOCEntry
     , TranscodingStatus(..)
+    , addDimensions
     , addMediaUserClasses
+    , addObject
     , addOrReplaceObject
     , asHtml
     , asMarkdown
+    , attrsOfNodes
+    , createToc
     , customThumbUrl
     , customThumbUrlWH
     , defaultPlayerSettings
     , empty
+    , findHeaders
+    , getId
     , getMediaTypeString
+    , getText
+    , getWidthHeight
     , incContentVersion
     , insertToolHtml
+    , isEmpty
     , isValid
+    , makeTocEntries
     , mediaUrl
+    , minimumPdfDimensions
+    , missingMediaPlaceholder
     , mkMediaName
     , objectByNameOrId
+    , objectDiv
     , parseToolCaptions
+    , preloadToString
+    , rcClass
     , removeObjectWithID
     , renameDuplicateMedia
     , replaceImagesWithTools
     , replaceObject
     , replaceToolsWithImages
     , thumbUrl
+    , toolOrLink
+    , transcodingMediaPlaceholder
+    , updateCaption
     , updateToc
+    , validateCopyright
     , validateMediaObject
+    , validateName
+    , versionString
     , withCSS
     , withHtml
     , withMd
+    , withPrefix
     , wordCount
     )
 
@@ -881,3 +904,22 @@ wordCount expo =
 missingMediaPlaceholder : String -> String
 missingMediaPlaceholder mediaName =
     "<label title=\"You can add a file by using add media button.\" style=\"padding: 10px; border: 1px dashed rgb(119, 119, 119); background-color: rgb(255, 183, 183); font-size:0.8em;\"> Problem: media file with name \"" ++ mediaName ++ "\" does not exist in the media list. </label>"
+
+
+isEmpty : RCExposition -> Bool
+isEmpty exposition =
+    let
+        markdown =
+            exposition.markdownInput
+
+        length =
+            String.length exposition.markdownInput
+
+        onlySpaces =
+            String.all (\char -> char == ' ' || char == '\n' || char == '\t')
+    in
+    if length < 3 then
+        True
+
+    else
+        onlySpaces markdown
