@@ -623,7 +623,7 @@ update msg model =
                     ( model, Cmd.none )
 
         SaveEmptyExposition ->
-            ( model, RCAPI.saveExposition model.exposition SavedExposition )
+            ( { model | confirmDialog = UserConfirm.empty } , RCAPI.saveExposition model.exposition SavedExposition )
 
         SavedExposition result ->
             case result of
