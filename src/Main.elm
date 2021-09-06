@@ -1062,7 +1062,7 @@ confirmSavingEmptyExposition exposition =
     let
         content =
             Just
-                { prompt = "Exposition appears empty, are you sure you want to save?"
+                { prompt = "Exposition is currently empty, are you sure you want to save it without content?"
                 , confirm = "Yes"
                 , reject = "No"
                 }
