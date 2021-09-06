@@ -617,8 +617,11 @@ update msg model =
             in
             case ( model.saved, empty ) of
                 ( Unsaved, False ) ->
-                    ( model, RCAPI.saveExposition model.exposition SavedExposition )
+                    ( model , RCAPI.saveExposition model.exposition SavedExposition )
 
+                ( Unsaved, True ) ->
+                    ( { model | saved = UnsavedEmpty }, Cmd.none )
+                        
                 ( _, _ ) ->
                     ( model, Cmd.none )
 
