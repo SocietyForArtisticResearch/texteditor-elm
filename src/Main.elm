@@ -359,7 +359,7 @@ type Msg
     | Uploaded (Result Http.Error String)
     | UploadedImport (Result Http.Error RCAPI.APIPandocImport)
     | SaveTrigger
-    | SaveExposition
+    | SaveEmptyExposition
     | SavedExposition (Result Http.Error String)
     | SaveMediaEdit Exposition.RCMediaObject
     | SavedMediaEdit (Result Http.Error String)
@@ -571,7 +571,8 @@ update msg model =
         SaveTrigger ->
             let
                 expo = model.exposition
-                
+
+                -- safety, do not save the empty expo without asking :-)
                 empty =
                     Exposition.isEmpty expo
             in
@@ -585,7 +586,7 @@ update msg model =
                 ( _, True ) ->
                     ( model, Cmd.none )
 
-        SaveExposition ->
+        SaveEmptyExposition ->
             (model, RCAPI.saveExposition model.exposition SavedExposition)
 
         SavedExposition result ->
@@ -1022,14 +1023,14 @@ confirmSavingEmptyExposition exposition =
     let
         content =
             Just
-                { prompt = "Exposition is empty, are you sure you want to save it ?"
-                , confirm = "Yes, save the empty exposition"
-                , reject = "Cancel. (tip: use undo to recover previous state)"
+                { prompt = "Exposition appears empty, are you sure you want to save?"
+                , confirm = "Yes"
+                , reject = "No"
                 }
 
         messages =
             Just
-                { confirm = SaveExposition
+                { confirm = SaveEmptyExposition
                 , reject = CloseConfirmDialog
                 }
     in
