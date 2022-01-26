@@ -793,8 +793,7 @@ type alias TOCEntry =
 
 tocEntry : Int -> String -> String -> TOCEntry
 tocEntry level title id =
-    -- remove inline formatting ** 
-
+    -- remove inline formatting **
     let
         cleanTitle =
             String.replace "**" "" title
@@ -883,13 +882,13 @@ makeTocEntries lst =
             []
 
         ( "h1", title, id ) :: rest ->
-            TOCEntry 1 title id :: makeTocEntries rest
+            tocEntry 1 title id :: makeTocEntries rest
 
         ( "h2", title, id ) :: rest ->
-            TOCEntry 2 title id :: makeTocEntries rest
+            tocEntry 2 title id :: makeTocEntries rest
 
         ( "h3", title, id ) :: rest ->
-            TOCEntry 3 title id :: makeTocEntries rest
+            tocEntry 3 title id :: makeTocEntries rest
 
         _ :: rest ->
             makeTocEntries rest
