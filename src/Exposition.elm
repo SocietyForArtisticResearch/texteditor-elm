@@ -791,6 +791,17 @@ type alias TOCEntry =
     }
 
 
+tocEntry : Int -> String -> String -> TOCEntry
+tocEntry level title id =
+    -- remove inline formatting ** 
+
+    let
+        cleanTitle =
+            String.replace "**" "" title
+    in
+    TOCEntry level cleanTitle id
+
+
 type alias TOC =
     List TOCEntry
 
@@ -840,13 +851,13 @@ findHeaders : HtmlParser.Node -> List TOCEntry
 findHeaders node =
     case node of
         HtmlParser.Element "h1" attr children ->
-            [ TOCEntry 1 (getText children) (getId (attrsOfNodes children)) ]
+            [ tocEntry 1 (getText children) (getId (attrsOfNodes children)) ]
 
         HtmlParser.Element "h2" attr children ->
-            [ TOCEntry 2 (getText children) (getId (attrsOfNodes children)) ]
+            [ tocEntry 2 (getText children) (getId (attrsOfNodes children)) ]
 
         HtmlParser.Element "h3" attr children ->
-            [ TOCEntry 3 (getText children) (getId (attrsOfNodes children)) ]
+            [ tocEntry 3 (getText children) (getId (attrsOfNodes children)) ]
 
         HtmlParser.Element _ _ children ->
             List.concatMap findHeaders children
