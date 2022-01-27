@@ -796,7 +796,7 @@ tocEntry level title id =
     -- remove inline formatting **
     let
         cleanTitle =
-            String.replace "**" "" title
+            title |> String.replace "**" ""  |> String.replace "__" "" 
     in
     TOCEntry level cleanTitle id
 
