@@ -796,7 +796,17 @@ tocEntry level title id =
     -- remove inline formatting **
     let
         cleanTitle =
-            title |> String.replace "**" ""  |> String.replace "__" "" 
+            title
+                |> String.replace "\\*" "{{asterisk}}"
+                |> String.replace "\\**" "{{doubleastrisk}}"
+                |> String.replace "* " "{{space_asterisk}}"
+                |> String.replace " * " "{{isolated_asterisk}}"
+                |> String.replace "*" ""
+                |> String.replace "_" "" 
+                |> String.replace "{{asterisk}}" "*"
+                |> String.replace "{{doubleastrisk}}" "**"
+                |> String.replace "{{space_asterisk}}" "* " 
+                |> String.replace "{{isolated_asterisk}}" " * "
     in
     TOCEntry level cleanTitle id
 
