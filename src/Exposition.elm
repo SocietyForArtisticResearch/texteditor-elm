@@ -71,6 +71,7 @@ import Parser exposing ((|.), (|=))
 import Regex
 import Settings
 import Util
+import InlineMarkdown
 
 
 type alias RCExposition =
@@ -796,17 +797,7 @@ tocEntry level title id =
     -- remove inline formatting **
     let
         cleanTitle =
-            title
-                |> String.replace "\\*" "{{asterisk}}"
-                |> String.replace "\\**" "{{doubleastrisk}}"
-                |> String.replace "* " "{{space_asterisk}}"
-                |> String.replace " * " "{{isolated_asterisk}}"
-                |> String.replace "*" ""
-                |> String.replace "_" "" 
-                |> String.replace "{{asterisk}}" "*"
-                |> String.replace "{{doubleastrisk}}" "**"
-                |> String.replace "{{space_asterisk}}" "* " 
-                |> String.replace "{{isolated_asterisk}}" " * "
+            title |> InlineMarkdown.clean
     in
     TOCEntry level cleanTitle id
 
