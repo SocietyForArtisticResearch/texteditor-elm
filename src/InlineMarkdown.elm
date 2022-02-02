@@ -1,4 +1,4 @@
-module InlineMarkdown exposing (clean)
+module InlineMarkdown exposing (clean,test)
 
 import Parser
     exposing
@@ -15,6 +15,7 @@ import Parser
         , oneOf
         , succeed
         , symbol
+        , end
         )
 
 
@@ -172,3 +173,76 @@ bold_or_italic mark_symbol =
                             , succeed res
                             ]
             )
+
+type Span
+    = BoldSpan 
+    | ItalicSpan
+    | BoldItalicSpan
+    | Unformatted
+
+type State =
+    State (List String) Span
+
+
+id x = x 
+
+{-
+    todo, parse __ as well
+
+    Span needs to be extended with proper types.
+
+    id replaced by function that stores the __ or *
+
+
+-}
+
+parseSpan : Parser String
+parseSpan =
+    let 
+        helper (State spans state) =
+            case state of
+                Unformatted -> 
+                    oneOf 
+                        [ end |> map (const (Done (spans |> List.reverse |> String.concat))) 
+                        , succeed id
+                            |. symbol "**" 
+                            |= oneOf [
+                                chompIf isSpace |> map (const <| Loop (State ("** "::spans) Unformatted))
+                                , succeed () |> map (const <| Loop (State (""::spans) BoldSpan))
+                            ]
+                        , succeed id
+                            |. symbol "*" 
+                            |= oneOf [
+                                chompIf isSpace |> map (const <| Loop (State ("* "::spans) Unformatted))
+                                , succeed () |> map (const <| Loop (State (""::spans) ItalicSpan))
+                            ]
+                        , chompWhile (isStarOrUnderscore >> not) |> getChompedString |> map (\str -> (Loop (State (str::spans) Unformatted)))
+                        ]
+                    
+                BoldSpan ->
+                    oneOf [ end |> map (const (Done (spans |> List.reverse |> String.concat))) 
+                        , symbol "**" |> map (const (Loop (State spans Unformatted)))
+                        , symbol "*" |> map (const (Loop (State spans BoldItalicSpan)))
+                        , chompWhile (isStarOrUnderscore >> not) |> getChompedString |> map (\str -> (Loop (State(str::spans) BoldSpan))) ]
+
+                ItalicSpan ->
+                    oneOf [ 
+                        end |> map (const <| Done (spans |> List.reverse |> String.concat))
+                        , symbol "**" |> map (const (Loop (State spans BoldItalicSpan)))
+                        , symbol "*" |> map (const (Loop (State spans Unformatted)))
+                        , chompWhile (isStarOrUnderscore >> not) |> getChompedString |> map (\str -> (Loop (State(str::spans) ItalicSpan))) ]
+
+                BoldItalicSpan ->
+                    oneOf [ 
+                         end |> map (const <| Done (spans |> List.reverse |> String.concat))
+                        , symbol "**" |> map (const (Loop (State spans ItalicSpan)))
+                        , symbol "*" |> map (const (Loop (State spans BoldSpan)))
+                        , chompWhile (isStarOrUnderscore >> not) |> getChompedString |> map (\str -> (Loop (State(str::spans) BoldItalicSpan))) ]
+
+
+    in
+    loop (State [] Unformatted) helper
+
+test : String -> Result (List Parser.DeadEnd) String
+test input = 
+    Parser.run parseSpan input
