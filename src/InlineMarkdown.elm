@@ -31,6 +31,7 @@ type State
 id x =
     x
 
+
 oneOrMore : (Char -> Bool) -> Parser String
 oneOrMore isOk =
     succeed ()
@@ -67,7 +68,10 @@ parseSymbol sym =
     symbol sym
         |> getChompedString
 
-problem = Parser.problem
+
+problem =
+    Parser.problem
+
 
 inlineSymbols : Parser String
 inlineSymbols =
@@ -100,19 +104,23 @@ parseSpan =
         helper : State -> Parser (Step State String)
         helper (State lst) =
             Parser.oneOf
-                [ end |> Parser.map (finish lst) 
-                , escaped |> Parser.map (\esc -> Loop (State (esc :: lst))) 
-                , inlineSymbols -- we found a markdown symbol !
+                [ end |> Parser.map (finish lst)
+                , escaped |> Parser.map (\esc -> Loop (State (esc :: lst)))
+                , inlineSymbols
+                    -- we found a markdown symbol !
                     |> Parser.andThen
-                        (\symb -> 
-                            oneOf -- It is only valid syntax, if it is not the end, or a space
-                                [ end |> Parser.map (finish lst) 
+                        (\symb ->
+                            oneOf
+                                -- It is only valid syntax, if it is not the end, or a space
+                                [ end |> Parser.map (finish lst)
                                 , oneOrMore isSpace |> Parser.map (\spaces -> Loop (State (spaces :: symb :: lst))) -- a space, so it is a literal symb
-                                , succeed (Loop (State (lst))) -- the symb is not included
+                                , succeed (Loop (State lst)) -- the symb is not included
                                 ]
                         )
-                , oneOrMore (\c -> c /= '*' && c /= '_' && (not (isSpace c))) |> getChompedString |> Parser.map (\str -> Loop (State (str :: lst)))
-                , oneOrMore isSpace |> getChompedString |> Parser.map (\str -> Loop (State (str ::lst)))
+
+                -- now continue, until you find a new markdown symbol or space
+                , oneOrMore (\c -> c /= '*' && c /= '_' && not (isSpace c)) |> getChompedString |> Parser.map (\str -> Loop (State (str :: lst)))
+                , oneOrMore isSpace |> getChompedString |> Parser.map (\str -> Loop (State (str :: lst)))
                 ]
 
         start : State
@@ -138,8 +146,4 @@ clean input =
             str
 
         Err e ->
-            let
-                _ =
-                    Debug.log "parse error" e
-            in
             input
