@@ -1,4 +1,4 @@
-module InlineMarkdown exposing (clean, parseSymbol, test)
+module InlineMarkdown exposing (clean)
 
 import Parser
     exposing
@@ -103,7 +103,7 @@ parseSpan =
     let
         helper : State -> Parser (Step State String)
         helper (State lst) =
-            Parser.oneOf
+            oneOf
                 [ end |> map (finish lst)
                 , escaped |> map (\esc -> Loop (State (esc :: lst)))
                 , inlineSymbols
@@ -127,12 +127,6 @@ parseSpan =
             State []
     in
     Parser.loop start helper
-
-
-test : String -> Result (List Parser.DeadEnd) String
-test input =
-    Parser.run parseSpan input
-
 
 clean : String -> String
 clean input =

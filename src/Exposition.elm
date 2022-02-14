@@ -794,7 +794,7 @@ type alias TOCEntry =
 
 tocEntry : Int -> String -> String -> TOCEntry
 tocEntry level title id =
-    -- remove inline formatting **
+    -- remove inline formatting ** __ * _ etc..
     let
         cleanTitle =
             title |> InlineMarkdown.clean
