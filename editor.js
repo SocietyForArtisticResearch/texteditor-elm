@@ -1,7 +1,6 @@
 const version = "v 2.1.9";
 
 console.log(version);
-console.log("version : toc");
 
 var mdIt = window.markdownit({
     html: true,
