@@ -66,12 +66,12 @@ import Dict
 import Html.Parser as HtmlParser
 import Html.String as Html exposing (label, text)
 import Html.String.Attributes as Attr exposing (style, title)
+import InlineMarkdown
 import Licenses
 import Parser exposing ((|.), (|=))
 import Regex
 import Settings
 import Util
-import InlineMarkdown
 
 
 type alias RCExposition =
@@ -544,23 +544,31 @@ asMarkdown media =
     "![" ++ media.name ++ "](" ++ mediaUrl media ++ ")"
 
 
-transcodingMediaPlaceholder : String -> Html.Html msg
-transcodingMediaPlaceholder transcodingString =
-    label
-        [ title "Wait for transcoding to finish or upload media again."
-        , style "padding" "10px"
-        , style "border" "1px dashed rgb(119, 119, 119)"
-        , style "background-color" "rgb(255, 183, 183)"
-        , style "font-size" "0.8em"
-        ]
-        [ text transcodingString ]
+transcodingMediaPlaceholder : String -> RCMediaObject -> Html.Html msg
+transcodingMediaPlaceholder transcodingString media =
+    let
+        transcodingLabel =
+            label
+                [ title "Wait for transcoding to finish or upload media again."
+                , style "padding" "10px"
+                , style "border" "1px dashed rgb(119, 119, 119)"
+                , style "background-color" "rgb(255, 183, 183)"
+                , style "font-size" "0.8em"
+                ]
+                [ text transcodingString ]
+    in
+    objectDiv media <|
+        Html.figure [ Attr.id (media.id |> String.fromInt) ]
+            [ transcodingLabel
+            , Html.figcaption [] [ Html.text media.caption ]
+            ]
 
 
 asHtml : RCMediaObject -> String -> Html.Html msg
 asHtml media mediaId =
     case media.status of
         NotTranscoded str ->
-            transcodingMediaPlaceholder str
+            transcodingMediaPlaceholder str media
 
         _ ->
             case ( media.mediaType, media ) of
