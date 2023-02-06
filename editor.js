@@ -20,7 +20,6 @@ var mdLength = 0;
 var renderInterval = 100;
 
 var styleElem = document.createElement('style');
-styleElem.type = 'text/css';
 document.getElementsByTagName('head')[0].appendChild(styleElem);
 
 const editorCmMd = 0;
@@ -554,6 +553,7 @@ setInterval(setMdLength, 20000);
 setInterval(function() {
     if (toRender) {
         /* app.ports.getHtml.send(marked(mdToRender)); */
+        console.log("mdtorender",mdToRender);
         app.ports.getHtml.send({
             html: mdIt.render(mdToRender),
             toc: mdIt.headers
