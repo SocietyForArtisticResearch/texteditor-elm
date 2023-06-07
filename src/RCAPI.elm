@@ -81,7 +81,7 @@ mkMediaEntry id media description copyright name license =
         (Maybe.withDefault "" description)
         (Maybe.withDefault "" copyright)
         name
-        Licenses.defaultLicense
+        (license |> Maybe.map Licenses.fromString |> Maybe.withDefault Licenses.defaultLicense)
 
 
 type alias APIMedia =
