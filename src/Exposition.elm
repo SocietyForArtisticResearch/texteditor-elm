@@ -689,7 +689,7 @@ insertToolHtml md exp =
                             Maybe.withDefault (missingMediaPlaceholder sub) <|
                                 Maybe.map
                                     (\o ->
-                                        Html.toString 0 (asHtml o ("media-" ++ String.fromInt m.number))
+                                        Html.toString 0 (asHtml o ("media-" ++ String.fromInt m.number)) ++ "\n"
                                     )
                                     (objectByNameOrId sub exp)
 
@@ -741,7 +741,7 @@ toolOrLink ( imageIdx, originalUrl ) mediaIds =
             "!{" ++ String.fromInt i ++ "}"
 
         Nothing ->
-            "![]" ++ originalUrl ++ ")"
+            "![](" ++ originalUrl ++ ")"
 
 
 replaceImagesWithTools : String -> List Int -> String
