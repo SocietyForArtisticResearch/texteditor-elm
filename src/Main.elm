@@ -1274,8 +1274,8 @@ viewNavbar buildType model =
         navItem =
             viewNavbarItem buildType
 
-        tabLink : EditorType -> List (Html.Attribute Msg)
-        tabLink tab =
+        tabLink : EditorType -> String -> Html Msg
+        tabLink tab label =
             let
                 selectedClass =
                     if Tuple.first model.editor == tab then
@@ -1284,7 +1284,7 @@ viewNavbar buildType model =
                     else
                         "nav-link"
             in
-            [ class selectedClass, href "#", onClick (SwitchTab tab) ]
+            button [ class selectedClass, onClick (SwitchTab tab) ] [ text label ]
 
         previewUrl =
             String.join "/" [ "view", String.fromInt model.exposition.id, String.fromInt model.exposition.currentWeave ]
@@ -1295,10 +1295,10 @@ viewNavbar buildType model =
     Navbar.attrs [ Html.Attributes.style "padding-left" "0" ] (Navbar.config NavbarMsg)
         |> Navbar.withAnimation
         |> Navbar.collapseMedium
-        |> Navbar.items
-            [ Navbar.itemLink ([ Spacing.ml0 ] ++ tabLink EditorMarkdown) [ text "Markdown" ]
-            , Navbar.itemLink (tabLink EditorMedia) [ text "Media" ]
-            , Navbar.itemLink (tabLink EditorStyle) [ text "Style" ]
+        |> Navbar.customItems
+            [ Navbar.customItem (tabLink EditorMarkdown "Markdown")
+            , Navbar.customItem (tabLink EditorMedia "Media")
+            , Navbar.customItem (tabLink EditorStyle "Style")
             ]
         |> Navbar.customItems
             [ navItem { link = "https://guide.researchcatalogue.net/#text-based-editor", icon = "question.svg", title = "Help", spacing = Spacing.ml0 }
