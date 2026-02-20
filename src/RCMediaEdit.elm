@@ -113,10 +113,6 @@ cssClasses =
 
 onChange : (String -> msg) -> Html.Attribute msg
 onChange handler =
-    let
-        _ =
-            Debug.log "onChange event" ""
-    in
     Events.on "change" (Decode.map handler (Decode.at [ "target", "value" ] Decode.string))
 
 
