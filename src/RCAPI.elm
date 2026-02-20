@@ -259,7 +259,7 @@ uploadMedia researchId mediaName file expect badFileTypeMsg =
         Just m ->
             Http.request
                 { method = "POST"
-                , url = "text-editor/simple-media-add" ++ "?research=" ++ String.fromInt researchId
+                , url = "text-editor/simple-media-add" ++ "?exposition=" ++ String.fromInt researchId
                 , headers = [ header "X-Requested-With" "XMLHttpRequest" ]
                 , body =
                     Http.multipartBody

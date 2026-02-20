@@ -11299,7 +11299,7 @@ var $author$project$RCAPI$uploadMedia = F5(
 					method: 'POST',
 					timeout: $elm$core$Maybe$Nothing,
 					tracker: $elm$core$Maybe$Just('uploadMedia'),
-					url: 'text-editor/simple-media-add' + ('?research=' + $elm$core$String$fromInt(researchId))
+					url: 'text-editor/simple-media-add' + ('?exposition=' + $elm$core$String$fromInt(researchId))
 				});
 		}
 	});
@@ -16032,6 +16032,19 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Select$item = F2(
 		return $rundis$elm_bootstrap$Bootstrap$Form$Select$Item(
 			A2($elm$html$Html$option, attributes, children));
 	});
+var $author$project$RCMediaEdit$onChange = function (handler) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'change',
+		A2(
+			$elm$json$Json$Decode$map,
+			handler,
+			A2(
+				$elm$json$Json$Decode$at,
+				_List_fromArray(
+					['target', 'value']),
+				$elm$json$Json$Decode$string)));
+};
 var $rundis$elm_bootstrap$Bootstrap$Form$Select$Select = function (a) {
 	return {$: 'Select', a: a};
 };
@@ -16193,7 +16206,7 @@ var $author$project$RCMediaEdit$viewClassesPicker = F4(
 					$rundis$elm_bootstrap$Bootstrap$Form$Select$attrs(
 					_List_fromArray(
 						[
-							$elm$html$Html$Events$onInput(editMessage)
+							$author$project$RCMediaEdit$onChange(editMessage)
 						]))
 				]),
 			A2($elm$core$List$map, selectItem, classList));
