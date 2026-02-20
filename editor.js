@@ -1,4 +1,4 @@
-const version = "v 2.1.12c";
+const version = "v 2.1.12d";
 
 console.log(version);
 
@@ -114,13 +114,17 @@ if (typeof window.innerWidth != 'undefined') {
 
 var textareaMarkdown = document.getElementById("js-textarea-markdown");
 
-var app = Elm.Main.init({
-    node: document.getElementById('elm'),
-    flags: {
+const flags = {
         locationpath: window.location.path,
         buildTarget: "Release",
         version: version
-    }
+    };
+
+console.log('sending flags',flags);
+
+var app = Elm.Main.init({
+    node: document.getElementById('elm'),
+    flags: flags
 });
 
 
