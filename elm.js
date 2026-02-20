@@ -10971,15 +10971,15 @@ var $author$project$RCAPI$updateMedia = F2(
 				body: $elm$http$Http$multipartBody(
 					_List_fromArray(
 						[
-							A2($elm$http$Http$stringPart, 'name', mediaObject.name),
+							A2($elm$http$Http$stringPart, 'form[simpleMedia][name]', mediaObject.name),
 							A2(
 							$elm$http$Http$stringPart,
-							'copyrightholder',
+							'form[simpleMedia][copyrightHolder]',
 							A2($author$project$RCAPI$withDefault, 'copyright holder', mediaObject.copyright)),
-							A2($elm$http$Http$stringPart, 'description', mediaObject.description),
+							A2($elm$http$Http$stringPart, 'form[simpleMedia][description]', mediaObject.description),
 							A2(
 							$elm$http$Http$stringPart,
-							'license',
+							'form[simpleMedia][license]',
 							$author$project$Licenses$asString(mediaObject.license))
 						])),
 				expect: expect,
@@ -11278,18 +11278,18 @@ var $author$project$RCAPI$uploadMedia = F5(
 					body: $elm$http$Http$multipartBody(
 						_List_fromArray(
 							[
+								A2($elm$http$Http$stringPart, 'form[simpleMedia][name]', mediaName),
+								A2($elm$http$Http$stringPart, 'form[simpleMedia][copyrightHolder]', 'copyright holder'),
+								A2($elm$http$Http$stringPart, 'form[simpleMedia][description]', 'description'),
 								A2(
 								$elm$http$Http$stringPart,
-								'mediatype',
-								$author$project$FileTypes$toString(m)),
-								A2($elm$http$Http$stringPart, 'name', mediaName),
-								A2($elm$http$Http$stringPart, 'copyrightholder', 'copyright holder'),
-								A2($elm$http$Http$stringPart, 'description', 'description'),
-								A2(
-								$elm$http$Http$stringPart,
-								'license',
+								'form[simpleMedia][license]',
 								$author$project$Licenses$asString($author$project$Licenses$defaultLicense)),
-								A2($elm$http$Http$filePart, 'media', file)
+								A2($elm$http$Http$filePart, 'form[simpleMedia][media]', file),
+								A2(
+								$elm$http$Http$stringPart,
+								'form[simpleMedia][mediaType]',
+								$author$project$FileTypes$toString(m))
 							])),
 					expect: expect,
 					headers: _List_fromArray(
@@ -11581,12 +11581,18 @@ var $author$project$Main$update = F2(
 											$author$project$Main$setPreviewContent(expositionWithClasses.renderedHtml)
 										]),
 									A2(
-										$elm$core$List$map,
+										$elm$core$List$filterMap,
 										function (o) {
 											return A2(
-												$author$project$RCAPI$updateMedia,
-												o,
-												$elm$http$Http$expectString($author$project$Main$SavedMediaEdit));
+												$elm$core$List$any,
+												function (original) {
+													return _Utils_eq(original.id, o.id) && (_Utils_eq(original.userClass, o.userClass) && _Utils_eq(original.name, o.name));
+												},
+												mediaEntries) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(
+												A2(
+													$author$project$RCAPI$updateMedia,
+													o,
+													$elm$http$Http$expectString($author$project$Main$SavedMediaEdit)));
 										},
 										expositionWithClasses.media))));
 					}

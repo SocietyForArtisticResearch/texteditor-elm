@@ -263,12 +263,12 @@ uploadMedia researchId mediaName file expect badFileTypeMsg =
                 , headers = [ header "X-Requested-With" "XMLHttpRequest" ]
                 , body =
                     Http.multipartBody
-                        [ Http.stringPart "mediatype" (FileTypes.toString m)
-                        , Http.stringPart "name" mediaName
-                        , Http.stringPart "copyrightholder" "copyright holder"
-                        , Http.stringPart "description" "description"
-                        , Http.stringPart "license" (Licenses.defaultLicense |> Licenses.asString)
-                        , Http.filePart "media" file
+                        [ Http.stringPart "form[simpleMedia][name]" mediaName
+                        , Http.stringPart "form[simpleMedia][copyrightHolder]" "copyright holder"
+                        , Http.stringPart "form[simpleMedia][description]" "description"
+                        , Http.stringPart "form[simpleMedia][license]" (Licenses.defaultLicense |> Licenses.asString)
+                        , Http.filePart "form[simpleMedia][media]" file
+                        , Http.stringPart "form[simpleMedia][mediaType]" (FileTypes.toString m)
                         ]
                 , expect = expect
                 , timeout = Nothing
@@ -289,10 +289,10 @@ updateMedia mediaObject expect =
         , headers = [ header "X-Requested-With" "XMLHttpRequest" ]
         , body =
             Http.multipartBody
-                [ Http.stringPart "name" mediaObject.name
-                , Http.stringPart "copyrightholder" (withDefault "copyright holder" mediaObject.copyright)
-                , Http.stringPart "description" mediaObject.description
-                , Http.stringPart "license" (Licenses.asString mediaObject.license)
+                [ Http.stringPart "form[simpleMedia][name]" mediaObject.name
+                , Http.stringPart "form[simpleMedia][copyrightHolder]" (withDefault "copyright holder" mediaObject.copyright)
+                , Http.stringPart "form[simpleMedia][description]" mediaObject.description
+                , Http.stringPart "form[simpleMedia][license]" (Licenses.asString mediaObject.license)
                 ]
         , expect = expect
         , timeout = Nothing

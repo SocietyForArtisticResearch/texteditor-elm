@@ -701,7 +701,20 @@ update msg model =
                             )
                          , setPreviewContent expositionWithClasses.renderedHtml
                          ]
-                            ++ List.map (\o -> RCAPI.updateMedia o (Http.expectString SavedMediaEdit))
+                            -- Only save media objects that were changed locally.
+                            -- addMediaUserClasses can change .userClass, renameDuplicateMedia can change .name.
+                            -- We compare against the raw server response (mediaEntries) and only
+                            -- call updateMedia for objects where either field differs.
+                            -- Previously all media was saved on every GotMediaList, which
+                            -- caused unnecessary writes on every tab open or delete.
+                            ++ List.filterMap
+                                (\o ->
+                                    if List.any (\original -> original.id == o.id && original.userClass == o.userClass && original.name == o.name) mediaEntries then
+                                        Nothing
+
+                                    else
+                                        Just (RCAPI.updateMedia o (Http.expectString SavedMediaEdit))
+                                )
                                 expositionWithClasses.media
                         )
                     )
