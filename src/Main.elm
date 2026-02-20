@@ -1202,7 +1202,7 @@ viewTabs model =
                         "nav-link"
             in
             li [ class "nav-item" ]
-                [ a [ class selectedClass, href "#", onClick (SwitchTab tab) ] [ text title ]
+                [ button [ class selectedClass, onClick (SwitchTab tab) ] [ text title ]
                 ]
     in
     ul [ class "nav nav-tabs" ]

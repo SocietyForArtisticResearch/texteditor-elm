@@ -8260,7 +8260,7 @@ var $author$project$RCAPI$convertExposition = F4(
 					$elm$http$Http$expectBytesResponse,
 					expectMsg(ctype),
 					$author$project$RCAPI$resolve($elm$core$Result$Ok)),
-				url: 'text-editor/export' + ('?type=' + $author$project$RCAPI$typeEnding(ctype))
+				url: 'text-editor/export' + ('?type=' + ($author$project$RCAPI$typeEnding(ctype) + ('&exposition=' + $elm$core$String$fromInt(expo.id))))
 			});
 	});
 var $elm$json$Json$Encode$string = _Json_wrap;
