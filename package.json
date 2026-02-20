@@ -1,6 +1,6 @@
 {
   "name": "texteditor-elm",
-  "version": "2.1.12m",
+  "version": "2.1.12n",
   "description": "This is the text-based exposition editor for researchcatalogue.net",
   "main": "editor.html",
   "directories": {
