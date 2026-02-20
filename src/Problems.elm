@@ -8,7 +8,7 @@ import Json.Decode as Decode
 
 
 type Problem
-    = WrongExpositionUrl
+    = WrongExpositionUrl String
     | CannotLoadMedia Http.Error
     | NoMediaWithNameOrId String
     | CannotSave
@@ -66,8 +66,8 @@ splitResultListAcc results problems oks =
 asString : Problem -> String
 asString problem =
     case problem of
-        WrongExpositionUrl ->
-            "unknown exposition url"
+        WrongExpositionUrl str ->
+            "unknown exposition url:" ++ str
 
         CannotLoadMedia e ->
             "cannot load media " ++ httpErrorString e

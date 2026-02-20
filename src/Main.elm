@@ -200,6 +200,7 @@ parseEditorPath path =
                     D.fail ("Invalid numbers in path: " ++ path)
 
         _ ->
+            let _ = Debug.log "path =" path in
             D.fail ("Could not parse editor path: " ++ path)
 
 
@@ -241,7 +242,8 @@ init flags =
             )
 
         Err e ->
-            ( Problems.addProblem (emptyModel "" navbarState Settings.defaultBuildType -1 -1) Problems.WrongExpositionUrl
+            let decoderError = D.errorToString e in
+            ( Problems.addProblem (emptyModel "" navbarState Settings.defaultBuildType -1 -1) (Problems.WrongExpositionUrl decoderError)
             , Cmd.none
             )
 
