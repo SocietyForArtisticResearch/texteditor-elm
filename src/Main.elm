@@ -182,7 +182,7 @@ type alias Flags =
 decodeFlags : D.Decoder Flags
 decodeFlags =
     D.map3
-        (\( weave, research ) buildTarget version -> Flags weave research buildTarget version)
+        (\(  research, weave ) buildTarget version -> Flags weave research buildTarget version)
         (D.field "locationpath" D.string |> D.andThen parseEditorPath)
         (D.map Settings.buildTypeFromString (D.field "buildTarget" D.string))
         (D.field "version" D.string)

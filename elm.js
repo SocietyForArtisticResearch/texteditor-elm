@@ -5860,8 +5860,8 @@ var $author$project$Main$decodeFlags = A4(
 	$elm$json$Json$Decode$map3,
 	F3(
 		function (_v0, buildTarget, version) {
-			var weave = _v0.a;
-			var research = _v0.b;
+			var research = _v0.a;
+			var weave = _v0.b;
 			return A4($author$project$Main$Flags, weave, research, buildTarget, version);
 		}),
 	A2(
