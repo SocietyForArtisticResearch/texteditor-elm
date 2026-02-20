@@ -181,11 +181,26 @@ type alias Flags =
 
 decodeFlags : D.Decoder Flags
 decodeFlags =
-    D.map4 Flags
-        (D.field "weave" D.int)
-        (D.field "research" D.int)
+    D.map3
+        (\( weave, research ) buildTarget version -> Flags weave research buildTarget version)
+        (D.field "locationpath" D.string |> D.andThen parseEditorPath)
         (D.map Settings.buildTypeFromString (D.field "buildTarget" D.string))
         (D.field "version" D.string)
+
+
+parseEditorPath : String -> D.Decoder ( Int, Int )
+parseEditorPath path =
+    case String.split "/" path of
+        [ "", "editor", first, second ] ->
+            case Maybe.map2 Tuple.pair (String.toInt first) (String.toInt second) of
+                Just pair ->
+                    D.succeed pair
+
+                Nothing ->
+                    D.fail ("Invalid numbers in path: " ++ path)
+
+        _ ->
+            D.fail ("Could not parse editor path: " ++ path)
 
 
 emptyModel : String -> Navbar.State -> BuildType -> Int -> Int -> Model
@@ -617,16 +632,16 @@ update msg model =
             in
             case ( model.saved, empty ) of
                 ( Unsaved, False ) ->
-                    ( model , RCAPI.saveExposition model.exposition SavedExposition )
+                    ( model, RCAPI.saveExposition model.exposition SavedExposition )
 
                 ( Unsaved, True ) ->
                     ( { model | saved = UnsavedEmpty }, Cmd.none )
-                        
+
                 ( _, _ ) ->
                     ( model, Cmd.none )
 
         SaveEmptyExposition ->
-            ( { model | confirmDialog = UserConfirm.empty } , RCAPI.saveExposition model.exposition SavedExposition )
+            ( { model | confirmDialog = UserConfirm.empty }, RCAPI.saveExposition model.exposition SavedExposition )
 
         SavedExposition result ->
             case result of
