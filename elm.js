@@ -10971,15 +10971,15 @@ var $author$project$RCAPI$updateMedia = F2(
 				body: $elm$http$Http$multipartBody(
 					_List_fromArray(
 						[
-							A2($elm$http$Http$stringPart, 'form[simpleMedia][name]', mediaObject.name),
+							A2($elm$http$Http$stringPart, 'form[simpleMedia][0]', mediaObject.name),
 							A2(
 							$elm$http$Http$stringPart,
-							'form[simpleMedia][copyrightHolder]',
+							'form[simpleMedia][1]',
 							A2($author$project$RCAPI$withDefault, 'copyright holder', mediaObject.copyright)),
-							A2($elm$http$Http$stringPart, 'form[simpleMedia][description]', mediaObject.description),
+							A2($elm$http$Http$stringPart, 'form[simpleMedia][2]', mediaObject.description),
 							A2(
 							$elm$http$Http$stringPart,
-							'form[simpleMedia][license]',
+							'form[simpleMedia][3]',
 							$author$project$Licenses$asString(mediaObject.license))
 						])),
 				expect: expect,
@@ -11278,17 +11278,17 @@ var $author$project$RCAPI$uploadMedia = F5(
 					body: $elm$http$Http$multipartBody(
 						_List_fromArray(
 							[
-								A2($elm$http$Http$stringPart, 'form[simpleMedia][name]', mediaName),
-								A2($elm$http$Http$stringPart, 'form[simpleMedia][copyrightHolder]', 'copyright holder'),
-								A2($elm$http$Http$stringPart, 'form[simpleMedia][description]', 'description'),
+								A2($elm$http$Http$stringPart, 'form[simpleMedia][0]', mediaName),
+								A2($elm$http$Http$stringPart, 'form[simpleMedia][1]', 'copyright holder'),
+								A2($elm$http$Http$stringPart, 'form[simpleMedia][2]', 'description'),
 								A2(
 								$elm$http$Http$stringPart,
-								'form[simpleMedia][license]',
+								'form[simpleMedia][3]',
 								$author$project$Licenses$asString($author$project$Licenses$defaultLicense)),
-								A2($elm$http$Http$filePart, 'form[simpleMedia][media]', file),
+								A2($elm$http$Http$filePart, 'form[simpleMedia][4]', file),
 								A2(
 								$elm$http$Http$stringPart,
-								'form[simpleMedia][mediaType]',
+								'form[simpleMedia][5]',
 								$author$project$FileTypes$toString(m))
 							])),
 					expect: expect,
