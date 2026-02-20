@@ -394,6 +394,7 @@ convertExposition buildType ctype expo expectMsg =
             "text-editor/export"
                 ++ "?type="
                 ++ typeEnding ctype
+                ++ "&exposition=" ++ String.fromInt expo.id
         , body =
             Http.multipartBody
                 [ Http.stringPart "markdown" exportExpoMd ]
