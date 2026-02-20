@@ -9,7 +9,6 @@ var mdIt = window.markdownit({
 
 mdIt.headers = [];
 
-var urlParams = new URLSearchParams(window.location.search);
 
 var toRender = false;
 
@@ -118,8 +117,7 @@ var textareaMarkdown = document.getElementById("js-textarea-markdown");
 var app = Elm.Main.init({
     node: document.getElementById('elm'),
     flags: {
-        weave: parseInt(urlParams.get('weave')),
-        research: parseInt(urlParams.get('research')),
+        locationpath: window.location.path,
         buildTarget: "Release",
         version: version
     }
