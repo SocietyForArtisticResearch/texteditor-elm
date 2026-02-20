@@ -1284,7 +1284,7 @@ viewNavbar buildType model =
                     else
                         "nav-link"
             in
-            [ class selectedClass, preventDefaultOn "click" (D.succeed ( SwitchTab tab, True )) ]
+            [ class selectedClass, preventDefaultOn "click" (D.succeed ( SwitchTab tab, True )), style "cursor" "pointer" ]
 
         previewUrl =
             String.join "/" [ "view", String.fromInt model.exposition.id, String.fromInt model.exposition.currentWeave ]

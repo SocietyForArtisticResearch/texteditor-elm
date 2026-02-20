@@ -18448,7 +18448,8 @@ var $author$project$Main$viewNavbar = F2(
 					$elm$json$Json$Decode$succeed(
 						_Utils_Tuple2(
 							$author$project$Main$SwitchTab(tab),
-							true)))
+							true))),
+					A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
 				]);
 		};
 		var previewUrl = A2(
