@@ -373,6 +373,7 @@ type Msg
     | CMOpenMediaDialog E.Value
     | GotConvertedHtml { html : String, toc : List ( String, String, String ) }
     | MediaEdit ( String, Exposition.RCMediaObject )
+    | MediaEditInput ( String, Exposition.RCMediaObject )
     | MediaList (RCMediaList.Msg Msg)
     | MediaDelete Exposition.RCMediaObject
     | CloseMediaDialog
@@ -439,6 +440,29 @@ makeMediaEditFun obj field input =
 
         RCMediaEdit.LicenseField ->
             MediaEdit ( String.fromInt objId, { obj | license = Licenses.fromString input } )
+
+
+makeMediaInputFun : Exposition.RCMediaObject -> RCMediaEdit.Field -> String -> Msg
+makeMediaInputFun obj field input =
+    let
+        objId =
+            .id obj
+    in
+    case field of
+        RCMediaEdit.Name ->
+            MediaEditInput ( String.fromInt objId, { obj | name = input } )
+
+        RCMediaEdit.Description ->
+            MediaEditInput ( String.fromInt objId, { obj | description = input } )
+
+        RCMediaEdit.UserClass ->
+            MediaEditInput ( String.fromInt objId, { obj | userClass = input } )
+
+        RCMediaEdit.Copyright ->
+            MediaEditInput ( String.fromInt objId, { obj | copyright = input } )
+
+        RCMediaEdit.LicenseField ->
+            MediaEditInput ( String.fromInt objId, { obj | license = Licenses.fromString input } )
 
 
 makeTableMessages : Html Msg -> RCMediaList.TableEditConfig Msg
@@ -557,7 +581,27 @@ update msg model =
             ( RCMediaEdit.update model (RCMediaEdit.ShowMediaWithId dialogType mediaNameOrId), Cmd.none )
 
         CloseMediaDialog ->
-            forceRerender { model | mediaDialog = RCMediaEdit.empty }
+            let
+                ( closedModel, rerenderCmd ) =
+                    forceRerender { model | mediaDialog = RCMediaEdit.empty }
+            in
+            case model.mediaDialog.object of
+                Just obj ->
+                    case model.mediaDialog.objectViewState of
+                        Just viewState ->
+                            if Exposition.isValid viewState.validation then
+                                ( { closedModel | saved = Unsaved }
+                                , Cmd.batch [ RCAPI.updateMedia obj (Http.expectString SavedMediaEdit), rerenderCmd ]
+                                )
+
+                            else
+                                ( closedModel, rerenderCmd )
+
+                        Nothing ->
+                            ( closedModel, rerenderCmd )
+
+                Nothing ->
+                    ( closedModel, rerenderCmd )
 
         GotExposition exp ->
             case exp of
@@ -776,6 +820,33 @@ update msg model =
                             ( { newModel | saved = Unsaved }
                             , RCAPI.updateMedia objFromDialog (Http.expectString SavedMediaEdit)
                             )
+
+        MediaEditInput ( objInModelName, objFromDialog ) ->
+            case Exposition.objectByNameOrId objInModelName model.exposition of
+                Nothing ->
+                    let
+                        modelWithProblem =
+                            Problems.addProblem model <| Problems.NoMediaWithNameOrId objInModelName
+                    in
+                    ( modelWithProblem, Cmd.none )
+
+                Just objInModel ->
+                    let
+                        objViewState =
+                            Exposition.validateMediaObject model.exposition objInModel objFromDialog
+
+                        dialog =
+                            model.mediaDialog
+                    in
+                    ( { model
+                        | mediaDialog =
+                            { dialog
+                                | object = Just objFromDialog
+                                , objectViewState = Just objViewState
+                            }
+                      }
+                    , Cmd.none
+                    )
 
         SaveMediaEdit obj ->
             -- no longer used
@@ -1528,6 +1599,7 @@ view model =
         mediaDialogHtml =
             RCMediaEdit.view
                 model.buildTarget
+                makeMediaInputFun
                 makeMediaEditFun
                 CloseMediaDialog
                 InsertMediaAtCursor

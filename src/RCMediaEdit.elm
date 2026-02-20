@@ -173,6 +173,7 @@ type alias InputWithLabelProperties msg =
     , value : String
     , validation : Result String String
     , onInput : String -> msg
+    , onSave : String -> msg
     , help : String
     }
 
@@ -200,7 +201,8 @@ viewInputWithLabel props =
             , Input.attrs
                 [ placeholder props.placeholder
                 , value props.value
-                , onChange props.onInput
+                , Events.onInput props.onInput
+                , onChange props.onSave
                 ]
             ]
         , Form.invalidFeedback [] validationFeedback
@@ -222,6 +224,7 @@ viewTextAreaWithLabel props =
             , Textarea.attrs
                 [ value props.value
                 , Events.onInput props.onInput
+                , onChange props.onSave
                 ]
             ]
         ]
@@ -270,8 +273,8 @@ twoCols col1 col2 =
         ]
 
 
-viewBody : RCMediaObjectViewState -> MediaEditMessage msg -> RCMediaObject -> Html msg
-viewBody objectState editTool objectInEdit =
+viewBody : RCMediaObjectViewState -> MediaEditMessage msg -> MediaEditMessage msg -> RCMediaObject -> Html msg
+viewBody objectState inputFun saveFun objectInEdit =
     let
         nameProps =
             { nodeId = "name"
@@ -279,7 +282,8 @@ viewBody objectState editTool objectInEdit =
             , placeholder = ""
             , value = objectInEdit.name
             , validation = objectState.validation.name
-            , onInput = editTool Name
+            , onInput = inputFun Name
+            , onSave = saveFun Name
             , help = "" --helpFromValidation objectState.validation.name
             }
 
@@ -289,7 +293,8 @@ viewBody objectState editTool objectInEdit =
             , placeholder = "optional"
             , value = objectInEdit.description
             , validation = objectState.validation.description
-            , onInput = editTool Description
+            , onInput = inputFun Description
+            , onSave = saveFun Description
             , help = "" --helpFromValidation objectState.validation.description
             }
 
@@ -299,7 +304,8 @@ viewBody objectState editTool objectInEdit =
             , placeholder = ""
             , value = objectInEdit.copyright
             , validation = objectState.validation.copyright
-            , onInput = editTool Copyright
+            , onInput = inputFun Copyright
+            , onSave = saveFun Copyright
             , help = "" --helpFromValidation objectState.validation.copyright
             }
 
@@ -331,7 +337,7 @@ viewBody objectState editTool objectInEdit =
                       viewInputWithLabel nameProps
                     , Form.group []
                         [ Form.label [ for "classPicker" ] [ text "display size and location" ]
-                        , viewClassesPicker "classPicker" cssClasses currentClass (editTool UserClass)
+                        , viewClassesPicker "classPicker" cssClasses currentClass (saveFun UserClass)
                         , p [ class "css-class-name", title "CSS class name for this object" ] [ text <| cssClassFromObject objectInEdit ]
                         ]
                     , viewTextAreaWithLabel descriptionProps
@@ -349,7 +355,7 @@ viewBody objectState editTool objectInEdit =
                                 ]
                                 [ text "(?)" ]
                             ]
-                        , viewLicensePicker "licensePicker" allLicenses currentLicense (editTool LicenseField)
+                        , viewLicensePicker "licensePicker" allLicenses currentLicense (saveFun LicenseField)
                         ]
                     , RCMediaPreview.viewThumbnail objectInEdit RCMediaPreview.PreviewBig
                     ]
@@ -410,8 +416,8 @@ cssClassFromObject obj =
     ".rc-media-" ++ String.fromInt obj.id
 
 
-view : Settings.BuildType -> MakeMediaEditFun msg -> msg -> InsertMediaMessage msg -> InsertMediaAsLinkMessage msg -> RCExposition -> Model -> Html msg
-view buildTarget makeMediaEditFun closeMediaDialogMsg insertMediaMsg insertMediaAsLinkMsg exposition model =
+view : Settings.BuildType -> MakeMediaEditFun msg -> MakeMediaEditFun msg -> msg -> InsertMediaMessage msg -> InsertMediaAsLinkMessage msg -> RCExposition -> Model -> Html msg
+view buildTarget makeMediaInputFun makeMediaEditFun closeMediaDialogMsg insertMediaMsg insertMediaAsLinkMsg exposition model =
     let
         { visibility, object, objectViewState, allowInsert } =
             model
@@ -425,7 +431,7 @@ view buildTarget makeMediaEditFun closeMediaDialogMsg insertMediaMsg insertMedia
                 Just objViewState ->
                     let
                         mediaEditView =
-                            viewBody objViewState (makeMediaEditFun obj) obj
+                            viewBody objViewState (makeMediaInputFun obj) (makeMediaEditFun obj) obj
 
                         defaultBut =
                             View.defaultButton (insertMediaAsLinkMsg obj)
