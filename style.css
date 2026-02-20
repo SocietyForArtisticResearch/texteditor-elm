@@ -356,6 +356,11 @@ span.version-string {
     hieght: 35px;
 }
 
+.rc-media-table-row.pending-deletion {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
 .rc-media-table>thead:nth-child(1)>tr:nth-child(1)>th:nth-child(4) {
     /* sorry for this, sortable table does not have an elegant way for adding column attrs :-P */
     width: 6.3em;

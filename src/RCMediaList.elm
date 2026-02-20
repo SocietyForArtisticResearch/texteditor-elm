@@ -12,6 +12,7 @@ module RCMediaList exposing
     )
 
 import Bootstrap.Alert as Alert
+import Set exposing (Set)
 import Bootstrap.Button as Button
 import Bootstrap.Modal as Modal
 import Bootstrap.Table as BTable
@@ -90,8 +91,8 @@ empty =
     }
 
 
-configMediaList : BuildType -> PreviewedMediaId -> TableEditConfig msg -> Table.Config RCMediaObject (Msg msg)
-configMediaList buildType previewedMediaId messages =
+configMediaList : BuildType -> PreviewedMediaId -> Set Int -> TableEditConfig msg -> Table.Config RCMediaObject (Msg msg)
+configMediaList buildType previewedMediaId pendingDeletionIds messages =
     let
         buttons =
             mediaListButtons messages
@@ -111,7 +112,17 @@ configMediaList buildType previewedMediaId messages =
         , customizations =
             { defaultCustomizations
                 | tableAttrs = [ class "rc-media-table" ]
-                , rowAttrs = \object -> [ class "rc-media-table-row", onDoubleClick (doubleClickAction object) ]
+                , rowAttrs =
+                    \object ->
+                        [ class "rc-media-table-row"
+                        , onDoubleClick (doubleClickAction object)
+                        ]
+                            ++ (if Set.member object.id pendingDeletionIds then
+                                    [ class "pending-deletion" ]
+
+                                else
+                                    []
+                               )
             }
         }
 
@@ -142,13 +153,13 @@ configMediaPicker buildType previewedMediaId messages =
         }
 
 
-mediaListView : BuildType -> Model -> List RCMediaObject -> TableEditConfig msg -> Html (Msg msg)
-mediaListView buildType model objects messages =
+mediaListView : BuildType -> Model -> Set Int -> List RCMediaObject -> TableEditConfig msg -> Html (Msg msg)
+mediaListView buildType model pendingDeletionIds objects messages =
     let
         uploadBtn =
             Html.map MainMessage messages.uploadButtonHtml
     in
-    view uploadBtn MediaTable model (configMediaList buildType model.previewedMediaId messages) objects
+    view uploadBtn MediaTable model (configMediaList buildType model.previewedMediaId pendingDeletionIds messages) objects
 
 
 thumbnailColumn : BuildType -> PreviewedMediaId -> Table.Column RCMediaObject (Msg msg)

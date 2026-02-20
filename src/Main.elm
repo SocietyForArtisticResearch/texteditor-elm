@@ -13,6 +13,7 @@ import Browser
 import Browser.Navigation as Nav
 import Bytes
 import Dict
+import Set
 import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectViewState, addMediaUserClasses, incContentVersion)
 import File exposing (File)
 import File.Select as Select
@@ -54,6 +55,7 @@ type alias Model =
     , importUploadStatus : UploadStatus
     , problems : List Problems.Problem
     , mediaClassesDict : Dict.Dict Int String -- stores userclasses for media to be added to media list
+    , pendingDeletionIds : Set.Set Int
     , saved : SaveState
     , editor : ( EditorType, MarkdownEditor )
     , exportDropState : Dropdown.State
@@ -218,6 +220,7 @@ emptyModel version navbarInitState buildType research weave =
     , importUploadStatus = Ready
     , problems = []
     , mediaClassesDict = Dict.empty
+    , pendingDeletionIds = Set.empty
     , saved = Saved
     , editor = ( EditorMarkdown, CodemirrorMarkdown )
     , exportDropState = Dropdown.initialState
@@ -394,7 +397,7 @@ type Msg
     | CloseConfirmDialog
     | SwitchTab EditorType
     | NavbarMsg Navbar.State
-    | MediaDeleted (Result Http.Error ())
+    | MediaDeleted Int (Result Http.Error ())
     | AlertMsg Alert.Visibility
     | DismissAllProblems
     | SwitchMarkdownEditor MarkdownEditor
@@ -860,19 +863,29 @@ update msg model =
 
         MediaDelete obj ->
             let
-                modelWithoutObj =
-                    { model
-                        | exposition = Exposition.removeObjectWithID obj.id model.exposition
-                    }
-
                 ( modelWithClosedWindow, cmd ) =
-                    update CloseConfirmDialog modelWithoutObj
+                    update CloseConfirmDialog model
             in
-            ( modelWithClosedWindow, Cmd.batch [ cmd, RCAPI.deleteMedia obj MediaDeleted ] )
+            ( { modelWithClosedWindow | pendingDeletionIds = Set.insert obj.id model.pendingDeletionIds }
+            , Cmd.batch [ cmd, RCAPI.deleteMedia obj (MediaDeleted obj.id) ]
+            )
 
-        MediaDeleted obj ->
-            -- todo, maybe show a message that object was deleted ?
-            ( model, RCAPI.getMediaList model.research GotMediaList )
+        MediaDeleted objId result ->
+            case result of
+                Ok () ->
+                    ( { model
+                        | pendingDeletionIds = Set.remove objId model.pendingDeletionIds
+                        , exposition = Exposition.removeObjectWithID objId model.exposition
+                      }
+                    , Cmd.none
+                    )
+
+                Err e ->
+                    ( Problems.addProblem
+                        { model | pendingDeletionIds = Set.remove objId model.pendingDeletionIds }
+                        (Problems.CannotUpdateMedia e)
+                    , Cmd.none
+                    )
 
         UploadMediaFileSelect ->
             ( model
@@ -1613,7 +1626,7 @@ view model =
             Html.map
                 MediaList
             <|
-                RCMediaList.mediaListView model.buildTarget model.mediaList model.exposition.media (makeTableMessages uploadButtonHtml)
+                RCMediaList.mediaListView model.buildTarget model.mediaList model.pendingDeletionIds model.exposition.media (makeTableMessages uploadButtonHtml)
 
         alert =
             case model.problems of
