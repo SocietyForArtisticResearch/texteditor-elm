@@ -14,12 +14,12 @@ import Exposition exposing (RCExposition, RCMediaObject, RCMediaObjectValidation
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events as Events
+import Json.Decode as Decode
 import Licenses exposing (..)
 import Problems exposing (..)
 import RCMediaPreview
 import Settings
 import View
-import Json.Decode as Decode
 
 
 type Field
@@ -110,9 +110,15 @@ cssClasses =
 -- https://stackoverflow.com/questions/39371105/how-to-use-select-dropdown-tag-in-elm-lang
 -- For custom classes, we could also use "dropdown with addon", see http://elm-bootstrap.info/inputgroup
 
+
 onChange : (String -> msg) -> Html.Attribute msg
 onChange handler =
-    Events.on "change" (Decode.map handler (Decode.at ["target", "value"] Decode.string))
+    let
+        _ =
+            Debug.log "onChange event" ""
+    in
+    Events.on "change" (Decode.map handler (Decode.at [ "target", "value" ] Decode.string))
+
 
 viewClassesPicker : String -> List CssClass -> String -> (String -> msg) -> Html msg
 viewClassesPicker id classList currentSelection editMessage =

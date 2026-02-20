@@ -10971,15 +10971,15 @@ var $author$project$RCAPI$updateMedia = F2(
 				body: $elm$http$Http$multipartBody(
 					_List_fromArray(
 						[
-							A2($elm$http$Http$stringPart, 'form[simpleMedia][0]', mediaObject.name),
+							A2($elm$http$Http$stringPart, 'form[simpleMedia][name]', mediaObject.name),
 							A2(
 							$elm$http$Http$stringPart,
-							'form[simpleMedia][1]',
+							'form[simpleMedia][copyrightHolder]',
 							A2($author$project$RCAPI$withDefault, 'copyright holder', mediaObject.copyright)),
-							A2($elm$http$Http$stringPart, 'form[simpleMedia][2]', mediaObject.description),
+							A2($elm$http$Http$stringPart, 'form[simpleMedia][description]', mediaObject.description),
 							A2(
 							$elm$http$Http$stringPart,
-							'form[simpleMedia][3]',
+							'form[simpleMedia][license]',
 							$author$project$Licenses$asString(mediaObject.license))
 						])),
 				expect: expect,
@@ -11278,17 +11278,17 @@ var $author$project$RCAPI$uploadMedia = F5(
 					body: $elm$http$Http$multipartBody(
 						_List_fromArray(
 							[
-								A2($elm$http$Http$stringPart, 'form[simpleMedia][0]', mediaName),
-								A2($elm$http$Http$stringPart, 'form[simpleMedia][1]', 'copyright holder'),
-								A2($elm$http$Http$stringPart, 'form[simpleMedia][2]', 'description'),
+								A2($elm$http$Http$stringPart, 'form[simpleMedia][name]', mediaName),
+								A2($elm$http$Http$stringPart, 'form[simpleMedia][copyrightHolder]', 'copyright holder'),
+								A2($elm$http$Http$stringPart, 'form[simpleMedia][description]', 'description'),
 								A2(
 								$elm$http$Http$stringPart,
-								'form[simpleMedia][3]',
+								'form[simpleMedia][license]',
 								$author$project$Licenses$asString($author$project$Licenses$defaultLicense)),
-								A2($elm$http$Http$filePart, 'form[simpleMedia][4]', file),
+								A2($elm$http$Http$filePart, 'form[simpleMedia][media]', file),
 								A2(
 								$elm$http$Http$stringPart,
-								'form[simpleMedia][5]',
+								'form[simpleMedia][mediaType]',
 								$author$project$FileTypes$toString(m))
 							])),
 					expect: expect,
@@ -16039,6 +16039,7 @@ var $rundis$elm_bootstrap$Bootstrap$Form$Select$item = F2(
 			A2($elm$html$Html$option, attributes, children));
 	});
 var $author$project$RCMediaEdit$onChange = function (handler) {
+	var _v0 = A2($elm$core$Debug$log, 'onChange event', '');
 	return A2(
 		$elm$html$Html$Events$on,
 		'change',
