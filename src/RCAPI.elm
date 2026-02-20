@@ -246,6 +246,24 @@ getExposition researchId weave msg =
 --             Nothing
 
 
+type FormValue
+    = FilePart File
+    | StringPart String
+
+
+part mediaType fieldName value =
+    let
+        php_addr =
+            "form[" ++ FileTypes.toString mediaType ++ "][" ++ fieldName ++ "]"
+    in
+    case value of
+        FilePart f ->
+            Http.filePart php_addr f
+
+        StringPart s ->
+            Http.stringPart php_addr s
+
+
 uploadMedia : Int -> String -> File -> Http.Expect msg -> (String -> msg) -> Cmd msg
 uploadMedia researchId mediaName file expect badFileTypeMsg =
     let
@@ -263,17 +281,18 @@ uploadMedia researchId mediaName file expect badFileTypeMsg =
                 , headers = [ header "X-Requested-With" "XMLHttpRequest" ]
                 , body =
                     Http.multipartBody
-                        [ Http.stringPart "form[simpleMedia][name]" mediaName
-                        , Http.stringPart "form[simpleMedia][copyrightHolder]" "copyright holder"
-                        , Http.stringPart "form[simpleMedia][description]" "description"
-                        , Http.stringPart "form[simpleMedia][license]" (Licenses.defaultLicense |> Licenses.asString)
-                        , Http.filePart "form[simpleMedia][media]" file
-                        , Http.stringPart "form[simpleMedia][mediaType]" (FileTypes.toString m)
+                        [ part m "name" (StringPart mediaName)
+                        , part m "copyrightHolder" (StringPart "copyright holder")
+                        , part m "description" (StringPart "description")
+                        , part m "license" (StringPart (Licenses.defaultLicense |> Licenses.asString))
+                        , part m "media" (FilePart file)
+                        , part m "mediaType" (StringPart (FileTypes.toString m))
                         ]
                 , expect = expect
                 , timeout = Nothing
                 , tracker = Just "uploadMedia"
                 }
+
 
 uploadMediaLegacy : Int -> String -> File -> Http.Expect msg -> (String -> msg) -> Cmd msg
 uploadMediaLegacy researchId mediaName file expect badFileTypeMsg =
@@ -327,6 +346,7 @@ updateMedia mediaObject expect =
         , timeout = Nothing
         , tracker = Nothing
         }
+
 
 updateMediaLegacy : RCMediaObject -> Http.Expect msg -> Cmd msg
 updateMediaLegacy mediaObject expect =
@@ -446,7 +466,8 @@ convertExposition buildType ctype expo expectMsg =
             "text-editor/export"
                 ++ "?type="
                 ++ typeEnding ctype
-                ++ "&exposition=" ++ String.fromInt expo.id
+                ++ "&exposition="
+                ++ String.fromInt expo.id
         , body =
             Http.multipartBody
                 [ Http.stringPart "markdown" exportExpoMd ]
