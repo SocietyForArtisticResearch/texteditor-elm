@@ -115,12 +115,10 @@ if (typeof window.innerWidth != 'undefined') {
 var textareaMarkdown = document.getElementById("js-textarea-markdown");
 
 const flags = {
-        locationpath: window.location.path,
+        locationpath: window.location.pathname,
         buildTarget: "Release",
         version: version
     };
-
-console.log('sending flags',flags);
 
 var app = Elm.Main.init({
     node: document.getElementById('elm'),
