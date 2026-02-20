@@ -16475,7 +16475,7 @@ var $author$project$RCMediaEdit$viewInputWithLabel = function (props) {
 							[
 								$elm$html$Html$Attributes$placeholder(props.placeholder),
 								$elm$html$Html$Attributes$value(props.value),
-								$elm$html$Html$Events$onInput(props.onInput)
+								$author$project$RCMediaEdit$onChange(props.onInput)
 							]))
 					])),
 				A2($rundis$elm_bootstrap$Bootstrap$Form$invalidFeedback, _List_Nil, validationFeedback),

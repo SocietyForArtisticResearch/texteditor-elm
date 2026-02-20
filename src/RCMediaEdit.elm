@@ -200,7 +200,7 @@ viewInputWithLabel props =
             , Input.attrs
                 [ placeholder props.placeholder
                 , value props.value
-                , Events.onInput props.onInput
+                , onChange props.onInput
                 ]
             ]
         , Form.invalidFeedback [] validationFeedback
