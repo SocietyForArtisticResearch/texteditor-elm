@@ -251,17 +251,47 @@ type FormValue
     | StringPart String
 
 
-part mediaType fieldName value =
-    let
-        php_addr =
-            "form[" ++ FileTypes.toString mediaType ++ "][" ++ fieldName ++ "]"
-    in
-    case value of
-        FilePart f ->
-            Http.filePart php_addr f
+-- part mediaType fieldName value =
+--     let
+--         php_addr =
+--             "form[" ++ FileTypes.toString mediaType ++ "][" ++ fieldName ++ "]"
+--     in
+--     case value of
+--         FilePart f ->
+--             Http.filePart php_addr f
 
-        StringPart s ->
-            Http.stringPart php_addr s
+--         StringPart s ->
+--             Http.stringPart php_addr s
+
+
+-- uploadMedia : Int -> String -> File -> Http.Expect msg -> (String -> msg) -> Cmd msg
+-- uploadMedia researchId mediaName file expect badFileTypeMsg =
+--     let
+--         mediaT =
+--             FileTypes.fromFile file
+--     in
+--     case mediaT of
+--         Nothing ->
+--             Task.perform (\_ -> badFileTypeMsg (File.mime file)) Time.now
+
+--         Just m ->
+--             Http.request
+--                 { method = "POST"
+--                 , url = "text-editor/simple-media-add" ++ "?exposition=" ++ String.fromInt researchId
+--                 , headers = [ header "X-Requested-With" "XMLHttpRequest" ]
+--                 , body =
+--                     Http.multipartBody
+--                         [ part m "name" (StringPart mediaName)
+--                         , part m "copyrightHolder" (StringPart "copyright holder")
+--                         , part m "description" (StringPart "description")
+--                         , part m "license" (StringPart (Licenses.defaultLicense |> Licenses.asString))
+--                         , part m "media" (FilePart file)
+--                         , part m "mediaType" (StringPart (FileTypes.toString m))
+--                         ]
+--                 , expect = expect
+--                 , timeout = Nothing
+--                 , tracker = Just "uploadMedia"
+--                 }
 
 
 uploadMedia : Int -> String -> File -> Http.Expect msg -> (String -> msg) -> Cmd msg
@@ -281,38 +311,8 @@ uploadMedia researchId mediaName file expect badFileTypeMsg =
                 , headers = [ header "X-Requested-With" "XMLHttpRequest" ]
                 , body =
                     Http.multipartBody
-                        [ part m "name" (StringPart mediaName)
-                        , part m "copyrightHolder" (StringPart "copyright holder")
-                        , part m "description" (StringPart "description")
-                        , part m "license" (StringPart (Licenses.defaultLicense |> Licenses.asString))
-                        , part m "media" (FilePart file)
-                        , part m "mediaType" (StringPart (FileTypes.toString m))
-                        ]
-                , expect = expect
-                , timeout = Nothing
-                , tracker = Just "uploadMedia"
-                }
-
-
-uploadMediaLegacy : Int -> String -> File -> Http.Expect msg -> (String -> msg) -> Cmd msg
-uploadMediaLegacy researchId mediaName file expect badFileTypeMsg =
-    let
-        mediaT =
-            FileTypes.fromFile file
-    in
-    case mediaT of
-        Nothing ->
-            Task.perform (\_ -> badFileTypeMsg (File.mime file)) Time.now
-
-        Just m ->
-            Http.request
-                { method = "POST"
-                , url = "text-editor/simple-media-add" ++ "?exposition=" ++ String.fromInt researchId
-                , headers = [ header "X-Requested-With" "XMLHttpRequest" ]
-                , body =
-                    Http.multipartBody
                         [ Http.stringPart "name" mediaName
-                        , Http.stringPart "copyrightholder" "copyright holder"
+                        , Http.stringPart "copyrightHolder" "copyright holder"
                         , Http.stringPart "description" "description"
                         , Http.stringPart "license" (Licenses.defaultLicense |> Licenses.asString)
                         , Http.filePart "media" file
@@ -324,32 +324,32 @@ uploadMediaLegacy researchId mediaName file expect badFileTypeMsg =
                 }
 
 
+-- updateMedia : RCMediaObject -> Http.Expect msg -> Cmd msg
+-- updateMedia mediaObject expect =
+--     Http.request
+--         { method = "POST"
+--         , url =
+--             "text-editor/simple-media-edit"
+--                 ++ "?research="
+--                 ++ String.fromInt mediaObject.expositionId
+--                 ++ "&simple-media="
+--                 ++ String.fromInt mediaObject.id
+--         , headers = [ header "X-Requested-With" "XMLHttpRequest" ]
+--         , body =
+--             Http.multipartBody
+--                 [ Http.stringPart "form[simpleMedia][name]" mediaObject.name
+--                 , Http.stringPart "form[simpleMedia][copyrightHolder]" (withDefault "copyright holder" mediaObject.copyright)
+--                 , Http.stringPart "form[simpleMedia][description]" mediaObject.description
+--                 , Http.stringPart "form[simpleMedia][license]" (Licenses.asString mediaObject.license)
+--                 ]
+--         , expect = expect
+--         , timeout = Nothing
+--         , tracker = Nothing
+--         }
+
+
 updateMedia : RCMediaObject -> Http.Expect msg -> Cmd msg
 updateMedia mediaObject expect =
-    Http.request
-        { method = "POST"
-        , url =
-            "text-editor/simple-media-edit"
-                ++ "?research="
-                ++ String.fromInt mediaObject.expositionId
-                ++ "&simple-media="
-                ++ String.fromInt mediaObject.id
-        , headers = [ header "X-Requested-With" "XMLHttpRequest" ]
-        , body =
-            Http.multipartBody
-                [ Http.stringPart "form[simpleMedia][name]" mediaObject.name
-                , Http.stringPart "form[simpleMedia][copyrightHolder]" (withDefault "copyright holder" mediaObject.copyright)
-                , Http.stringPart "form[simpleMedia][description]" mediaObject.description
-                , Http.stringPart "form[simpleMedia][license]" (Licenses.asString mediaObject.license)
-                ]
-        , expect = expect
-        , timeout = Nothing
-        , tracker = Nothing
-        }
-
-
-updateMediaLegacy : RCMediaObject -> Http.Expect msg -> Cmd msg
-updateMediaLegacy mediaObject expect =
     Http.request
         { method = "POST"
         , url =
