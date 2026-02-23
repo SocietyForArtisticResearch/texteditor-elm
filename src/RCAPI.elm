@@ -323,7 +323,7 @@ uploadMedia researchId mediaName file expect badFileTypeMsg =
                 , tracker = Just "uploadMedia"
                 }
 
-
+-- THIS was a different structure, closer to the other simple media forms in RC
 -- updateMedia : RCMediaObject -> Http.Expect msg -> Cmd msg
 -- updateMedia mediaObject expect =
 --     Http.request
@@ -362,7 +362,7 @@ updateMedia mediaObject expect =
         , body =
             Http.multipartBody
                 [ Http.stringPart "name" mediaObject.name
-                , Http.stringPart "copyrightholder" (withDefault "copyright holder" mediaObject.copyright)
+                , Http.stringPart "copyrightHolder" (withDefault "copyright holder" mediaObject.copyright)
                 , Http.stringPart "description" mediaObject.description
                 , Http.stringPart "license" (Licenses.asString mediaObject.license)
                 ]
