@@ -4,4 +4,7 @@
 \#*\#
 .\#*\#
 elm-stuff
-dist		
+dist
+build
+elm.js
+elm.min.js
