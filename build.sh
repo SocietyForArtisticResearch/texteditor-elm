@@ -32,6 +32,7 @@ cp lib/markdown-it-footnote.min.js      "build/lib/"
 cp lib/markdownit-headers-browser.js    "build/lib/"
 cp lib/css.js                           "build/lib/"
 cp lib/morphdom-umd.min.js              "build/lib/"
+cp lib/bootstrap.min.css                "build/lib/"
 
 cp lib/icons/*.svg "build/lib/icons/"
 
